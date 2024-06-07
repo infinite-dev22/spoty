@@ -134,6 +134,7 @@ public class StockInMasterViewModel {
                     setStatus("");
                     setTotalCost("");
                     PENDING_DELETES.clear();
+                    StockInDetailViewModel.stockInDetailsList.clear();
                 });
     }
 

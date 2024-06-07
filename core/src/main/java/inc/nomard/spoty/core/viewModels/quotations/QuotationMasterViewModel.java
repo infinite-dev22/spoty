@@ -159,6 +159,7 @@ public class QuotationMasterViewModel {
         setDiscount("");
         setShippingFee("");
         setNote("");
+        QuotationDetailViewModel.quotationDetailsList.clear();
         PENDING_DELETES.clear();
     }
 

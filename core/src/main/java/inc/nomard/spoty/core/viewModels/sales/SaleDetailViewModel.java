@@ -136,6 +136,7 @@ public class SaleDetailViewModel {
         setQuantity(0L);
         setPrice(0);
         setSubTotalPrice(0);
+        saleDetailsList.clear();
     }
 
     public static void addSaleDetail() {
