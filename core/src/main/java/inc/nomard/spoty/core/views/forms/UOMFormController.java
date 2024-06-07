@@ -204,6 +204,8 @@ public class UOMFormController implements Initializable {
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        formsHolder.setManaged(false);
+        formsHolder.setVisible(false);
         UOMViewModel.resetUOMProperties();
         UOMViewModel.getAllUOMs(null, null);
     }

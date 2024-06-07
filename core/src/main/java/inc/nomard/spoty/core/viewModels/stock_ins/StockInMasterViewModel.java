@@ -342,9 +342,6 @@ public class StockInMasterViewModel {
                 .id(getId())
                 .notes(getNote())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            stockInMaster.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
             stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
         }

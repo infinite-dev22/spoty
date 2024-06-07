@@ -32,7 +32,6 @@ public class StockInMaster {
     private String ref;
     private ArrayList<Branch> branches;
     private List<StockInDetail> stockInDetails;
-    private LinkedList<Long> childrenToDelete;
     private String shipping;
     private Double total;
     private User approvedBy;

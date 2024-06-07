@@ -15,7 +15,6 @@
 package inc.nomard.spoty.core.viewModels.quotations;
 
 import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
@@ -34,6 +33,7 @@ public class QuotationDetailViewModel {
     private static final ListProperty<QuotationDetail> quotationDetails =
             new SimpleListProperty<>(quotationDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
+    private static final IntegerProperty tempId = new SimpleIntegerProperty(-1);
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
@@ -50,6 +50,18 @@ public class QuotationDetailViewModel {
 
     public static LongProperty idProperty() {
         return id;
+    }
+
+    public static Integer getTempId() {
+        return tempId.get();
+    }
+
+    public static void setTempId(Integer tempId) {
+        QuotationDetailViewModel.tempId.set(tempId);
+    }
+
+    public static IntegerProperty tempIdProperty() {
+        return tempId;
     }
 
     public static Product getProduct() {
@@ -130,7 +142,7 @@ public class QuotationDetailViewModel {
     }
 
     public static void updateQuotationDetail(Long index) {
-        QuotationDetail quotationDetail = quotationDetailsList.get(Math.toIntExact(index));
+        QuotationDetail quotationDetail = quotationDetailsList.get(getTempId());
         quotationDetail.setId(getId());
         quotationDetail.setProduct(getProduct());
         quotationDetail.setQuantity(getQuantity());
@@ -141,6 +153,8 @@ public class QuotationDetailViewModel {
         setTempId(getQuotationDetails().indexOf(quotationDetail));
         setId(quotationDetail.getId());
         setProduct(quotationDetail.getProduct());
+        setTax(getTax());
+        setDiscount(getDiscount());
         setQuantity(String.valueOf(quotationDetail.getQuantity()));
     }
 

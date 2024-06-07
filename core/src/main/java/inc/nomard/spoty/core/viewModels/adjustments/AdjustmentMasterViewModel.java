@@ -336,9 +336,6 @@ public class AdjustmentMasterViewModel {
                 .id(getId())
                 .notes(getNote())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            adjustmentMaster.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }

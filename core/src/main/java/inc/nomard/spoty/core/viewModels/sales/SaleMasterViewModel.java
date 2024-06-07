@@ -499,9 +499,6 @@ public class SaleMasterViewModel {
                 .paymentStatus(getPaymentStatus())
                 .notes(getNotes())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            sale.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!SaleDetailViewModel.getSaleDetailsList().isEmpty()) {
             sale.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
         }

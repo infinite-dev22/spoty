@@ -33,7 +33,6 @@ public class PurchaseMaster {
     private Date date;
     private Supplier supplier;
     private List<PurchaseDetail> purchaseDetails;
-    private LinkedList<Long> childrenToDelete;
     private double taxRate;
     private double netTax;
     private double discount;

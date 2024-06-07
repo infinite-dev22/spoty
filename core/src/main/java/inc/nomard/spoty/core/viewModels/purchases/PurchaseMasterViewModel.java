@@ -243,9 +243,6 @@ public class PurchaseMasterViewModel {
                 .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            purchaseMaster.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
         }Gson gson = new GsonBuilder()

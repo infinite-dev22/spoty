@@ -314,9 +314,6 @@ public class RequisitionMasterViewModel {
                 .supplier(getSupplier())
                 .notes(getNotes())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            requisition.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!RequisitionDetailViewModel.getRequisitionDetailsList().isEmpty()) {
             requisition.setRequisitionDetails(RequisitionDetailViewModel.getRequisitionDetails());
         }
