@@ -14,14 +14,17 @@
 
 package inc.nomard.spoty.core.views.pos;
 
+import atlantafx.base.util.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.pos.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.responsiveness.layouts.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.legacy.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -37,14 +40,18 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class PointOfSaleController implements Initializable {
+    private static volatile PointOfSaleController instance;
     private final ToggleGroup toggleGroup = new ToggleGroup();
+    private final Stage stage;
     @FXML
     private MFXFilterComboBox<Customer> customer;
     @FXML
@@ -58,7 +65,9 @@ public class PointOfSaleController implements Initializable {
     @FXML
     private HBox filterPane, leftHeaderPane;
     @FXML
-    private MFXScrollPane productHolder;
+    private MFXScrollPane productScrollPane;
+    // @FXML
+    // private BootstrapPane productHolder;
     @FXML
     private TableColumn<SaleDetail, SaleDetail> cartName;
     @FXML
@@ -81,9 +90,23 @@ public class PointOfSaleController implements Initializable {
     private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
 
+    private PointOfSaleController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static PointOfSaleController getInstance(Stage stage) {
+        if (instance == null) {
+            synchronized (PointOfSaleController.class) {
+                instance = new PointOfSaleController(stage);
+            }
+        }
+        return instance;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         checkOutBtn.setText("CheckOut $0.00");
+        configureProductScrollPane();
         setIcons();
         setSearchBar();
         setPOSComboBoxes();
@@ -151,29 +174,61 @@ public class PointOfSaleController implements Initializable {
         ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> setProductsGridView());
     }
 
-    private void setProductsGridView() {
-        GridPane productsGridView = new GridPane();
-        productsGridView.setHgap(30);
-        productsGridView.setVgap(20);
-        productsGridView.setPadding(new Insets(5));
+     private void setProductsGridView() {
+         var productsGridView = new GridPane();
+         var row = 1;
+         var column = 0;
+         productsGridView.setHgap(20);
+         productsGridView.setVgap(20);
+         productsGridView.setPadding(new Insets(5));
+         for (Product product : ProductViewModel.getProducts()) {
+             ProductCard productCard = new ProductCard(product);
+             configureProductCardAction(productCard);
+             if (column == 6) {
+                 column = 0;
+                 ++row;
+             }
+             productsGridView.add(productCard, column++, row);
+             GridPane.setMargin(productsGridView, new Insets(10));
+         }
+         productScrollPane.setContent(productsGridView);
+     }
 
-        int row = 1;
-        int column = 0;
+    // private void setProductsGridView() {
+    //     var row = new BootstrapRow();
+    //     for (Product product : ProductViewModel.getProducts()) {
+    //         ProductCard productCard = new ProductCard(product);
+    //         configureProductCardAction(productCard);
+    //         var column = new BootstrapColumn(productCard);
+    //         column.setBreakpointColumnWidth(Breakpoint.LARGE, 2);
+    //         column.setBreakpointColumnWidth(Breakpoint.SMALL, 4);
+    //         column.setBreakpointColumnWidth(Breakpoint.XSMALL, 8);
+    //         row.addColumn(column);
+    //     }
+    //     productHolder.addRow(row);
+    // }
 
-        for (Product product : ProductViewModel.getProducts()) {
-            ProductCard productCard = new ProductCard(product);
-            configureProductCardAction(productCard);
+    // private void configureProductScrollPane() {
+    //     productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+    //         if (event.getDeltaX() != 0) {
+    //             event.consume();
+    //         }
+    //     });
+    //     productScrollPane.widthProperty().addListener((obs, oV, nV) -> {
+    //         productHolder.setMaxWidth(nV.doubleValue() - 10);
+    //         productHolder.setPrefWidth(nV.doubleValue() - 10);
+    //         productHolder.setMinWidth(nV.doubleValue() - 10);
+    //     });
+    //     productHolder.setAlignment(Pos.CENTER_LEFT);
+    //     productHolder.setPadding(new Insets(10));
+    // }
 
-            if (column == 4) {
-                column = 0;
-                ++row;
+    private void configureProductScrollPane() {
+        productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaX() != 0) {
+                event.consume();
             }
-
-            productsGridView.add(productCard, column++, row);
-            GridPane.setMargin(productsGridView, new Insets(10));
-        }
-
-        productHolder.setContent(productsGridView);
+        });
     }
 
     private void configureProductCardAction(ProductCard productCard) {
@@ -376,9 +431,17 @@ public class PointOfSaleController implements Initializable {
                 .duration(MessageDuration.SHORT)
                 .icon(icon)
                 .type(type)
+                .height(60)
                 .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
 
-        SpotyMessageHolder.getInstance().addMessage(notification);
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 
     private void setIcons() {

@@ -16,7 +16,6 @@ package inc.nomard.spoty.core.views.splash;
 
 import fr.brouillard.oss.cssfx.*;
 import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.strings.*;
@@ -43,7 +42,6 @@ public class SplashScreenController implements Initializable {
     public Label applicationName,
             companyName,
             copyRight;
-    ;
     @FXML
     public AnchorPane splashScreenPane;
 
@@ -90,7 +88,7 @@ public class SplashScreenController implements Initializable {
                         Pages.setControllers(primaryStage);
                         Pages.setPanes();
                         // Load dialog views.
-                        Dialogs.setControllers();
+                        Dialogs.setControllers(primaryStage);
                         Dialogs.setDialogContent();
                         // Base view parent.
                         Parent root = Pages.getLoginPane();
@@ -110,8 +108,6 @@ public class SplashScreenController implements Initializable {
                         // This isn't necessary, just felt like adding it here.
                         primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                         primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                        // Initialize app notification handler.
-                        SpotyMessageHolder.setMessageOwner(primaryStage);
                         // Store login scene's sizes for later use on logout.
                         ProtectedGlobals.loginSceneWidth = scene.getWidth();
                         ProtectedGlobals.loginSceneHeight = scene.getHeight();

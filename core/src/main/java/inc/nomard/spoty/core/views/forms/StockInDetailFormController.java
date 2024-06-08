@@ -14,12 +14,14 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
@@ -34,30 +36,34 @@ import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class StockInDetailFormController implements Initializable {
     private static StockInDetailFormController instance;
-
+    private final Stage stage;
     @FXML
     private MFXTextField quantity, description;
-
     @FXML
     private MFXFilterComboBox<Product> product;
-
     @FXML
     private MFXButton saveBtn, cancelBtn;
-
     @FXML
     private Label productValidationLabel, quantityValidationLabel;
-
     private List<Constraint> productConstraints, quantityConstraints;
 
-    public static StockInDetailFormController getInstance() {
+    public StockInDetailFormController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static StockInDetailFormController getInstance(Stage stage) {
         if (instance == null) {
-            instance = new StockInDetailFormController();
+            synchronized (StockInDetailFormController.class) {
+                instance = new StockInDetailFormController(stage);
+            }
         }
         return instance;
     }
@@ -116,28 +122,18 @@ public class StockInDetailFormController implements Initializable {
     }
 
     private void handleSaveAction(ActionEvent event) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         validateInputs();
         if (productConstraints.isEmpty() && quantityConstraints.isEmpty()) {
             if (tempIdProperty().get() > -1) {
                 StockInDetailViewModel.updateStockInDetail();
-                showSuccessNotification(notificationHolder, "Product changed successfully");
+                successMessage("Product changed successfully");
             } else {
                 StockInDetailViewModel.addStockInDetails();
-                showSuccessNotification(notificationHolder, "Product added successfully");
+                successMessage("Product added successfully");
             }
             resetForm(event);
             closeDialog(event);
         }
-    }
-
-    private void showSuccessNotification(SpotyMessageHolder notificationHolder, String message) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon("fas-circle-check")
-                .type(MessageVariants.SUCCESS)
-                .build();
-        notificationHolder.addMessage(notification);
     }
 
     private void validateInputs() {
@@ -191,5 +187,27 @@ public class StockInDetailFormController implements Initializable {
             quantityValidationLabel.setVisible(false);
         }
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+    }
+
+    private void successMessage(String message) {
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

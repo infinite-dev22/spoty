@@ -14,17 +14,13 @@
 
 package inc.nomard.spoty.core.viewModels.purchases;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-import lombok.extern.java.Log;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import lombok.extern.java.*;
 
 @Log
 public class PurchaseDetailViewModel {

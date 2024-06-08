@@ -14,11 +14,13 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import com.dlsc.gemsfx.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -36,11 +38,13 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class LeaveRequestFormController implements Initializable {
     private static LeaveRequestFormController instance;
+    private final Stage stage;
     @FXML
     public MFXButton saveBtn, cancelBtn;
     @FXML
@@ -73,8 +77,16 @@ public class LeaveRequestFormController implements Initializable {
             toDateConstraints;
     private ActionEvent actionEvent = null;
 
-    public static LeaveRequestFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new LeaveRequestFormController();
+    public LeaveRequestFormController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static LeaveRequestFormController getInstance(Stage stage) {
+        if (Objects.equals(instance, null)) {
+            synchronized (LeaveRequestFormController.class) {
+                instance = new LeaveRequestFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -312,28 +324,28 @@ public class LeaveRequestFormController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

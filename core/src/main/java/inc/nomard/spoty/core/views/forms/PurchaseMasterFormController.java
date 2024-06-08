@@ -5,62 +5,46 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.core.viewModels.SupplierViewModel;
-import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
-import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
+import atlantafx.base.util.*;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.purchases.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class PurchaseMasterFormController implements Initializable {
     private static PurchaseMasterFormController instance;
+    private final Stage stage;
     @FXML
     private Label purchaseFormTitle, supplierValidationLabel, dateValidationLabel, statusValidationLabel;
     @FXML
@@ -80,12 +64,15 @@ public class PurchaseMasterFormController implements Initializable {
     private MFXStageDialog dialog;
 
     private PurchaseMasterFormController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(() -> initializePurchaseProductDialog(stage));
     }
 
     public static PurchaseMasterFormController getInstance(Stage stage) {
         if (instance == null) {
-            instance = new PurchaseMasterFormController(stage);
+            synchronized (PurchaseMasterFormController.class) {
+                instance = new PurchaseMasterFormController(stage);
+            }
         }
         return instance;
     }
@@ -102,7 +89,7 @@ public class PurchaseMasterFormController implements Initializable {
     private void initializePurchaseProductDialog(Stage stage) {
         try {
             FXMLLoader fxmlLoader = fxmlLoader("views/forms/PurchaseDetailForm.fxml");
-            fxmlLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance());
+            fxmlLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance(stage));
             MFXGenericDialog dialogContent = fxmlLoader.load();
 
             dialogContent.setShowMinimize(false);
@@ -146,12 +133,9 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     public void saveBtnClicked() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-
         if (!detailTable.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
-            showNotification(notificationHolder, "Table can't be Empty", MessageVariants.ERROR);
+            errorMessage("Table can't be Empty");
         }
-
         validateFields();
 
         if (isValidForm()) {
@@ -320,19 +304,28 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     private void successMessage(String message) {
-        showNotification(SpotyMessageHolder.getInstance(), message, MessageVariants.SUCCESS);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        showNotification(SpotyMessageHolder.getInstance(), message, MessageVariants.ERROR);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
     }
 
-    private void showNotification(SpotyMessageHolder notificationHolder, String message, MessageVariants type) {
+    private void displayNotification(String message, MessageVariants type, String icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
-                .icon(type == MessageVariants.SUCCESS ? "fas-circle-check" : "fas-triangle-exclamation")
+                .icon(icon)
                 .type(type)
+                .height(60)
                 .build();
-        notificationHolder.addMessage(notification);
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

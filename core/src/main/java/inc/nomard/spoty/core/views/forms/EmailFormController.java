@@ -14,12 +14,14 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.Validators.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.EmailViewModel.*;
+import inc.nomard.spoty.core.views.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.*;
@@ -28,11 +30,14 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class EmailFormController implements Initializable {
     private static EmailFormController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField bankName;
     @FXML
@@ -57,8 +62,16 @@ public class EmailFormController implements Initializable {
     public MFXButton cancelBtn;
     private ActionEvent actionEvent = null;
 
-    public static EmailFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new EmailFormController();
+    public EmailFormController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static EmailFormController getInstance(Stage stage) {
+        if (Objects.equals(instance, null)) {
+            synchronized (EmailFormController.class) {
+                instance = new EmailFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -108,7 +121,7 @@ public class EmailFormController implements Initializable {
                         actionEvent = event;
                         return;
                     }
-                    onRequiredFieldsMissing();
+                    errorMessage("Required fields can't be null");
                 });
     }
 
@@ -118,40 +131,29 @@ public class EmailFormController implements Initializable {
         EmailViewModel.getAllEmails(null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-    }
-
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

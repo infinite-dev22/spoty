@@ -14,11 +14,13 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
@@ -36,13 +38,15 @@ import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class QuotationDetailFormController implements Initializable {
     private static QuotationDetailFormController instance;
-
+    private final Stage stage;
     @FXML
     public MFXTextField quantity;
     @FXML
@@ -56,8 +60,16 @@ public class QuotationDetailFormController implements Initializable {
     @FXML
     public MFXComboBox<Tax> tax;
 
-    public static synchronized QuotationDetailFormController getInstance() {
-        if (instance == null) instance = new QuotationDetailFormController();
+    public QuotationDetailFormController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static synchronized QuotationDetailFormController getInstance(Stage stage) {
+        if (instance == null) {
+            synchronized (QuotationDetailFormController.class) {
+                instance = new QuotationDetailFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -155,7 +167,6 @@ public class QuotationDetailFormController implements Initializable {
     }
 
     private void saveForm(ActionEvent event) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         List<Constraint> productConstraints = product.validate();
         List<Constraint> quantityConstraints = quantity.validate();
@@ -165,10 +176,10 @@ public class QuotationDetailFormController implements Initializable {
 
             if (QuotationDetailViewModel.tempIdProperty().get() > -1) {
                 QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
-                showMessage(notificationHolder, "Product changed successfully");
+                successMessage("Product changed successfully");
             } else {
                 QuotationDetailViewModel.addQuotationDetails();
-                showMessage(notificationHolder, "Product added successfully");
+                successMessage("Product added successfully");
             }
 
             resetForm(event);
@@ -192,12 +203,25 @@ public class QuotationDetailFormController implements Initializable {
         dialog.sizeToScene();
     }
 
-    private void showMessage(SpotyMessageHolder notificationHolder, String message) {
+    private void successMessage(String message) {
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
-                .icon("fas-circle-check")
-                .type(MessageVariants.SUCCESS)
+                .icon(icon)
+                .type(type)
+                .height(60)
                 .build();
-        notificationHolder.addMessage(notification);
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

@@ -19,6 +19,7 @@ import inc.nomard.spoty.core.views.forms.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
 import javafx.fxml.*;
+import javafx.stage.*;
 import lombok.extern.java.*;
 
 @Log
@@ -55,9 +56,9 @@ public class Dialogs {
     private static MFXGenericDialog quotationDialogContent;
     private static MFXGenericDialog printableDialogContent;
 
-    public static void setControllers() {
-        quotationDetailFormLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance());
-        purchaseDetailFormLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance());
+    public static void setControllers(Stage stage) {
+        quotationDetailFormLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance(stage));
+        purchaseDetailFormLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance(stage));
     }
 
     public static void setDialogContent() throws IOException {

@@ -388,14 +388,12 @@ public class BaseController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
                         .icon("fas-triangle-exclamation")
                         .type(MessageVariants.ERROR)
                         .build();
-        notificationHolder.addMessage(notification);
     }
 
     private void onSuccess() {
@@ -404,14 +402,12 @@ public class BaseController implements Initializable {
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
                         .icon("fas-triangle-exclamation")
                         .type(MessageVariants.ERROR)
                         .build();
-        notificationHolder.addMessage(notification);
     }
 
     private MailNotification createMailNotification() {

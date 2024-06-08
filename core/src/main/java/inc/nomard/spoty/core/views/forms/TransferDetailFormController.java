@@ -14,14 +14,15 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -35,12 +36,15 @@ import java.util.function.*;
 import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class TransferDetailFormController implements Initializable {
     private static TransferDetailFormController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField quantity;
     @FXML
@@ -54,8 +58,16 @@ public class TransferDetailFormController implements Initializable {
     private List<Constraint> productConstraints,
             quantityConstraints;
 
-    public static TransferDetailFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new TransferDetailFormController();
+    public TransferDetailFormController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static TransferDetailFormController getInstance(Stage stage) {
+        if (Objects.equals(instance, null)) {
+            synchronized (TransferDetailFormController.class) {
+                instance = new TransferDetailFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -113,8 +125,6 @@ public class TransferDetailFormController implements Initializable {
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-
                     productConstraints = product.validate();
                     quantityConstraints = quantity.validate();
                     if (!productConstraints.isEmpty()) {
@@ -136,26 +146,14 @@ public class TransferDetailFormController implements Initializable {
                     if (productConstraints.isEmpty()
                             && quantityConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
-                                    TransferDetailViewModel.updateTransferDetail();
-                            SpotyMessage notification =
-                                    new SpotyMessage.MessageBuilder("Product changed successfully")
-                                            .duration(MessageDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(MessageVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addMessage(notification);
+                            TransferDetailViewModel.updateTransferDetail();
+                            successMessage("Product changed successfully");
                             product.clearSelection();
                             closeDialog(event);
                             return;
                         }
                         TransferDetailViewModel.addTransferDetails();
-                        SpotyMessage notification =
-                                new SpotyMessage.MessageBuilder("Product added successfully")
-                                        .duration(MessageDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(MessageVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addMessage(notification);
+                        successMessage("Product added successfully");
                         product.clearSelection();
                         closeDialog(event);
                     }
@@ -201,5 +199,27 @@ public class TransferDetailFormController implements Initializable {
                                 quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void successMessage(String message) {
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

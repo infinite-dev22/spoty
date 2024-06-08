@@ -317,15 +317,15 @@ public class SaleMasterViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
-            // Process the successful response
-            if (Objects.nonNull(onSuccess)) {
+            if (response.statusCode() == 200) {
+                // Process the successful response
                 Platform.runLater(() -> {
                     Type listType = new TypeToken<ArrayList<SaleMaster>>() {
                     }.getType();
                     ArrayList<SaleMaster> saleList = gson.fromJson(response.body(), listType);
                     salesList.clear();
                     salesList.addAll(saleList);
-                    if (response.statusCode() == 200) {
+                    if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
                 });

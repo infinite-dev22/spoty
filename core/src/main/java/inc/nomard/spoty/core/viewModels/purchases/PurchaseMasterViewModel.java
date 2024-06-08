@@ -1,33 +1,26 @@
 package inc.nomard.spoty.core.viewModels.purchases;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.PurchasesRepositoryImpl;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.utils.connectivity.Connectivity;
-import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import javafx.application.Platform;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import inc.nomard.spoty.utils.connectivity.*;
+import inc.nomard.spoty.utils.functional_paradigm.*;
+import java.lang.reflect.*;
+import java.net.http.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-import lombok.extern.java.Log;
-
-import java.lang.reflect.Type;
-import java.net.http.HttpResponse;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.CompletableFuture;
-
-import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+import javafx.collections.*;
+import lombok.*;
+import lombok.extern.java.*;
 
 @Log
 public class PurchaseMasterViewModel {
@@ -245,7 +238,8 @@ public class PurchaseMasterViewModel {
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
-        }Gson gson = new GsonBuilder()
+        }
+        Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Date.class,
                         new UnixEpochDateTypeAdapter())
                 .create();
