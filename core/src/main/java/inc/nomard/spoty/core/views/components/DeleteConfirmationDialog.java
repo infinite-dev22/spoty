@@ -15,8 +15,8 @@ import javafx.scene.shape.*;
 import javafx.stage.*;
 
 public class DeleteConfirmationDialog extends MFXStageDialog {
-    public DeleteConfirmationDialog(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, Stage stage, Pane ownerNode) {
-        this.setContent(buildDialogContent(parameterlessConsumer));
+    public DeleteConfirmationDialog(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, String itemName, Stage stage, Pane ownerNode) {
+        this.setContent(buildDialogContent(parameterlessConsumer, itemName));
         this.initOwner(stage);
         this.initModality(Modality.WINDOW_MODAL);
         this.setOwnerNode(ownerNode);
@@ -26,12 +26,12 @@ public class DeleteConfirmationDialog extends MFXStageDialog {
         this.showAndWait();
     }
 
-    private MFXGenericDialog buildDialogContent(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer) {
+    private MFXGenericDialog buildDialogContent(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, String itemName) {
         var dialogContent = new MFXGenericDialog();
         dialogContent.setPrefSize(500.0, 200.0);
         dialogContent.setPadding(new Insets(10.0));
         dialogContent.setTop(buildTop());
-        dialogContent.setCenter(buildCenter());
+        dialogContent.setCenter(buildCenter(itemName));
         dialogContent.setBottom(buildBottom(parameterlessConsumer));
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
@@ -45,14 +45,17 @@ public class DeleteConfirmationDialog extends MFXStageDialog {
         return dialogContent;
     }
 
-    private VBox buildCenter() {
+    private VBox buildCenter(String itemName) {
         var titleLabel = new Label();
         titleLabel.getStyleClass().add("dialog-title");
         titleLabel.setText("Are you sure?");
         var subTitleLabel = new Label();
         subTitleLabel.getStyleClass().add("dialog-sub-title");
-        subTitleLabel.setText("You want to delete this test suite \"Hello World\"");
-        var vbox = new VBox(titleLabel, subTitleLabel);
+        subTitleLabel.setText("Do you want to delete this item ");
+        var subTitleItemLabel = new Label();
+        subTitleItemLabel.getStyleClass().add("dialog-sub-title-item");
+        subTitleItemLabel.setText("\"" + itemName + "\"");
+        var vbox = new VBox(titleLabel, new HBox(subTitleLabel, subTitleItemLabel));
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(20.0);
         vbox.setPadding(new Insets(20.0));

@@ -156,7 +156,7 @@ public class ExpenseController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             ExpensesViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, expenseContentPane));
+        }, obj.getData().getName(), stage, expenseContentPane));
         // Edit
         edit.setOnAction(
                 e -> {

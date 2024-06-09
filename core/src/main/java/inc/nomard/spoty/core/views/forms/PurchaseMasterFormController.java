@@ -210,7 +210,7 @@ public class PurchaseMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<PurchaseDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
-        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), stage, purchaseFormContentPane)), createMenuItem("Edit", event -> handleEditAction(row)));
+        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getData().getProductName(), stage, purchaseFormContentPane)), createMenuItem("Edit", event -> handleEditAction(row)));
         return contextMenu;
     }
 

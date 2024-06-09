@@ -204,7 +204,7 @@ public class SalariesController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getEmployeeName() + "'s salary", stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {

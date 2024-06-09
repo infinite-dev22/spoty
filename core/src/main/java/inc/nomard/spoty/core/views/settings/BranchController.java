@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -163,11 +164,10 @@ public class BranchController implements Initializable {
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    BranchViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            BranchViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, obj.getData().getName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

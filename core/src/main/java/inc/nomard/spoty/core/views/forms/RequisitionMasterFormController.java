@@ -263,7 +263,7 @@ public class RequisitionMasterFormController implements Initializable {
                     obj.getData().getId(),
                     RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getProductName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {

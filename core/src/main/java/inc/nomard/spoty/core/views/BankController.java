@@ -142,7 +142,7 @@ public class BankController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             BankViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getBankName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {

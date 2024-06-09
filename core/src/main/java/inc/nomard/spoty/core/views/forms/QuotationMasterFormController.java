@@ -215,7 +215,7 @@ public class QuotationMasterFormController implements Initializable {
                     obj.getData().getId(),
                     QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
             event.consume();
-        }, stage, quotationFormContentPane));
+        }, obj.getData().getProductName(), stage, quotationFormContentPane));
         // Edit
         edit.setOnAction(
                 event -> {

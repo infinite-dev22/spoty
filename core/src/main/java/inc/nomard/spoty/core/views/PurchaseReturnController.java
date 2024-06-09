@@ -217,7 +217,7 @@ public class PurchaseReturnController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             PurchaseReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getSupplierName() + "'s purchase return", stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

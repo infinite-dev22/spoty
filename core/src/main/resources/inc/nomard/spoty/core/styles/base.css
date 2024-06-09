@@ -649,6 +649,10 @@
     -fx-font-family: 'Comfortaa Medium';
     -fx-font-size: 13;
 }
+.dialog-sub-title-item {
+    -fx-font-family: 'Comfortaa Bold';
+    -fx-font-size: 13;
+}
 .dialog-cancel-btn {
     -fx-background-color: purple;
     -fx-foreground-color: purple;

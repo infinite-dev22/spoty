@@ -171,7 +171,7 @@ public class TransferController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             TransferMasterViewModel.deleteTransfer(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getFromBranchName() + " - " + obj.getData().getToBranchName() + " transfer", stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

@@ -213,7 +213,7 @@ public class TransferMasterFormController implements Initializable {
                                     obj.getData().getId(),
                                     TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getProductName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {

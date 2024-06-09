@@ -169,7 +169,7 @@ public class StockInMasterFormController implements Initializable {
                     obj.getData().getId(),
                     StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getProductName(), stage, contentPane));
 
         // Edit
         edit.setOnAction(

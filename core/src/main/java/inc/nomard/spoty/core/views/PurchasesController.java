@@ -208,7 +208,7 @@ public class PurchasesController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             PurchaseMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getSupplierName() + "'s purchase", stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

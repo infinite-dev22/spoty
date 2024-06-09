@@ -142,7 +142,7 @@ public class BrandController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             BrandViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

@@ -125,7 +125,7 @@ public class SaleTermsController implements Initializable {
             SpotyThreader.spotyThreadPool(() -> {
             });
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

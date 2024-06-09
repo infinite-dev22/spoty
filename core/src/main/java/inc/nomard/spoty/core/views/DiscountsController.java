@@ -149,7 +149,7 @@ public class DiscountsController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             DiscountViewModel.deleteDiscount(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getName(), stage, contentPane));
         return delete;
     }
 

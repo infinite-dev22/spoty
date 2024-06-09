@@ -147,7 +147,7 @@ public class ProductCategoryController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             ProductCategoryViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, categoryPane));
+        }, obj.getData().getName(), stage, categoryPane));
         // Edit
         edit.setOnAction(
                 e -> {

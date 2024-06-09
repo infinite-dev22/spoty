@@ -145,7 +145,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
-        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), stage, adjustmentFormContentPane)));
+        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getData().getProductName(), stage, adjustmentFormContentPane)));
         return contextMenu;
     }
 

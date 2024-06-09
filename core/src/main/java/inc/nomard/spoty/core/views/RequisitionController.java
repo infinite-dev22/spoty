@@ -154,7 +154,7 @@ public class RequisitionController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             RequisitionMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, stage, contentPane));
+        }, obj.getData().getSupplierName() + "'s requisition", stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {
