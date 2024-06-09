@@ -43,10 +43,7 @@ public class DeleteConfirmationDialog extends MFXGenericDialog {
         deleteBtn.setVariants(ButtonVariants.OUTLINED);
         deleteBtn.setText("Yes, Delete");
         deleteBtn.getStyleClass().add("card-delete-btn");
-        deleteBtn.setOnAction(event -> {
-            eventConsumer.run(event);
-            GlobalActions.closeDialog(event);
-        });
+        deleteBtn.setOnAction(eventConsumer::run);
         var hbox = new HBox(cancelBtn, deleteBtn);
         hbox.setAlignment(Pos.CENTER);
         hbox.setSpacing(50.0);
