@@ -19,6 +19,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -45,6 +46,7 @@ import lombok.extern.java.*;
 @Log
 public class ProductController implements Initializable {
     private static ProductController instance;
+    private final Stage stage;
     @FXML
     public MFXTableView<Product> masterTable;
     @FXML
@@ -61,7 +63,7 @@ public class ProductController implements Initializable {
     public HBox leftHeaderPane;
     private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
-    private FXMLLoader viewFxmlLoader;private final Stage stage;
+    private FXMLLoader viewFxmlLoader;
 
     public ProductController(Stage stage) {
         this.stage = stage;
@@ -204,11 +206,10 @@ public class ProductController implements Initializable {
             event.consume();
         });
         // Delete
-        delete.setOnAction(
-                event -> {
-                    ProductViewModel.deleteProduct(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            ProductViewModel.deleteProduct(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {

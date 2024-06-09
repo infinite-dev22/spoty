@@ -19,6 +19,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -162,11 +163,10 @@ public class UnitOfMeasureController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    UOMViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            UOMViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

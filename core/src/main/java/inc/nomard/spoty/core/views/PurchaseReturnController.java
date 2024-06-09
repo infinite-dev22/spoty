@@ -19,6 +19,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.returns.purchases.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.utils.*;
@@ -46,6 +47,7 @@ import lombok.extern.java.*;
 @Log
 public class PurchaseReturnController implements Initializable {
     private static PurchaseReturnController instance;
+    private final Stage stage;
     @FXML
     public MFXTableView<PurchaseReturnMaster> masterTable;
     @FXML
@@ -61,7 +63,7 @@ public class PurchaseReturnController implements Initializable {
     @FXML
     public HBox leftHeaderPane;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;private final Stage stage;
+    private MFXStageDialog viewDialog;
 
     private PurchaseReturnController(Stage stage) {
         this.stage = stage;
@@ -212,19 +214,10 @@ public class PurchaseReturnController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    PurchaseReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            PurchaseReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

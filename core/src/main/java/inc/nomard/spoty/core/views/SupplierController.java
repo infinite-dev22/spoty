@@ -19,6 +19,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -46,6 +47,7 @@ import lombok.extern.java.*;
 @Log
 public class SupplierController implements Initializable {
     private static SupplierController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField searchBar;
     @FXML
@@ -62,7 +64,7 @@ public class SupplierController implements Initializable {
     public MFXProgressSpinner progress;
     private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;private final Stage stage;
+    private MFXStageDialog viewDialog;
 
     private SupplierController(Stage stage) {
         this.stage = stage;
@@ -161,11 +163,10 @@ public class SupplierController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    SupplierViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            SupplierViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

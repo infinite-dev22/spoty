@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -134,28 +135,21 @@ public class DiscountsController implements Initializable {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem delete = getDeleteContextMenuItem(obj);
-        // Edit
         edit.setOnAction(
                 event -> {
                     DiscountViewModel.getDiscount(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
                     event.consume();
                 });
-
         contextMenu.addItems(edit, delete);
-
         return contextMenu;
     }
 
     private MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Discount> obj) {
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-
-        // Actions
-        // Delete
-        delete.setOnAction(
-                event -> {
-                    DiscountViewModel.deleteDiscount(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            DiscountViewModel.deleteDiscount(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         return delete;
     }
 

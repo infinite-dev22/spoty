@@ -22,6 +22,7 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -144,7 +145,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
-        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> deleteRow(row)));
+        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), stage, adjustmentFormContentPane)));
         return contextMenu;
     }
 

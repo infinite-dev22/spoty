@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.views;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -28,7 +30,6 @@ import javafx.scene.paint.*;
 import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
-import atlantafx.base.util.*;
 
 @Log
 public class EmploymentStatusController implements Initializable {
@@ -175,11 +176,10 @@ public class EmploymentStatusController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    EmploymentStatusViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            EmploymentStatusViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

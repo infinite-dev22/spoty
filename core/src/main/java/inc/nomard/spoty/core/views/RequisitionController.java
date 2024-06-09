@@ -20,6 +20,7 @@ import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -45,6 +46,7 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionController implements Initializable {
     private static RequisitionController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField searchBar;
     @FXML
@@ -60,7 +62,7 @@ public class RequisitionController implements Initializable {
     @FXML
     private MFXTableView<RequisitionMaster> masterTable;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;private final Stage stage;
+    private MFXStageDialog viewDialog;
 
     public RequisitionController(Stage stage) {
         this.stage = stage;
@@ -149,11 +151,10 @@ public class RequisitionController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    RequisitionMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            RequisitionMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import inc.nomard.spoty.utils.*;
@@ -209,13 +210,12 @@ public class QuotationMasterFormController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                event -> {
-                    QuotationDetailViewModel.removeQuotationDetail(
-                            obj.getData().getId(),
-                            QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            QuotationDetailViewModel.removeQuotationDetail(
+                    obj.getData().getId(),
+                    QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
+            event.consume();
+        }, stage, quotationFormContentPane));
         // Edit
         edit.setOnAction(
                 event -> {

@@ -14,6 +14,7 @@ import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.utils.*;
@@ -209,7 +210,7 @@ public class PurchaseMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<PurchaseDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
-        contextMenu.addItems(createMenuItem("Delete", event -> handleDeleteAction(row)), createMenuItem("Edit", event -> handleEditAction(row)));
+        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), stage, purchaseFormContentPane)), createMenuItem("Edit", event -> handleEditAction(row)));
         return contextMenu;
     }
 

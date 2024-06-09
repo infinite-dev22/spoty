@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -28,7 +29,8 @@ import lombok.extern.java.*;
 
 @Log
 public class BankController implements Initializable {
-    private static BankController instance;private final Stage stage;
+    private static BankController instance;
+    private final Stage stage;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -137,16 +139,15 @@ public class BankController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    BankViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            BankViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
-                e -> {
+                event -> {
                     BankViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
-                    e.consume();
+                    event.consume();
                 });
 
         contextMenu.addItems(edit, delete);

@@ -22,6 +22,7 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -163,13 +164,12 @@ public class StockInMasterFormController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                event -> {
-                    StockInDetailViewModel.removeStockInDetail(
-                            obj.getData().getId(),
-                            StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            StockInDetailViewModel.removeStockInDetail(
+                    obj.getData().getId(),
+                    StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+            event.consume();
+        }, stage, contentPane));
 
         // Edit
         edit.setOnAction(

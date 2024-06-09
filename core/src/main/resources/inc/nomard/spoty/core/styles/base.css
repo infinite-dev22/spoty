@@ -638,3 +638,31 @@
     -fx-font-family: 'Comfortaa Medium';
     -fx-font-size: 13;
 }
+
+/** Dialogs Styling */
+.dialog-title {
+    -fx-font-family: 'Comfortaa Bold';
+    -fx-font-weight: bold;
+    -fx-font-size: 25;
+}
+.dialog-sub-title {
+    -fx-font-family: 'Comfortaa Medium';
+    -fx-font-size: 13;
+}
+.dialog-cancel-btn {
+    -fx-background-color: purple;
+    -fx-foreground-color: purple;
+    -fx-text-fill: purple;
+}
+.dialog-delete-btn {
+    -fx-background-color: red;
+    -fx-foreground-color: red;
+    -fx-text-fill: red;
+}
+.dialog-top-icon {
+    -mfx-color: red;
+    -mfx-size: 30;
+}
+.dialog-top-icon-background {
+    -fx-fill: red;
+}

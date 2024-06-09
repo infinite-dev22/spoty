@@ -29,8 +29,8 @@ import lombok.extern.java.*;
 
 @Log
 public class EmailPage extends BorderPane {
-    private MFXStageDialog dialog;
     private final Stage stage = new Stage();
+    private MFXStageDialog dialog;
 
     public EmailPage() {
         init();

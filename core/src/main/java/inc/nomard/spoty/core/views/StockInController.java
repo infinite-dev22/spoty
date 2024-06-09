@@ -45,6 +45,7 @@ import lombok.extern.java.*;
 @Log
 public class StockInController implements Initializable {
     private static StockInController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField searchBar;
     @FXML
@@ -60,7 +61,7 @@ public class StockInController implements Initializable {
     @FXML
     public MFXProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;private final Stage stage;
+    private MFXStageDialog viewDialog;
 
     public StockInController(Stage stage) {
         this.stage = stage;

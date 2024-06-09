@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.utils.*;
@@ -257,13 +258,12 @@ public class RequisitionMasterFormController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                event -> {
-                    RequisitionDetailViewModel.removeRequisitionDetail(
-                            obj.getData().getId(),
-                            RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            RequisitionDetailViewModel.removeRequisitionDetail(
+                    obj.getData().getId(),
+                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {

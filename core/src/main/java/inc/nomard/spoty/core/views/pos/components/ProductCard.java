@@ -3,22 +3,17 @@ package inc.nomard.spoty.core.views.pos.components;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.mfxcore.controls.*;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
-import lombok.Getter;
-import lombok.extern.java.Log;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import javafx.application.*;
+import javafx.concurrent.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import lombok.*;
+import lombok.extern.java.*;
 
 @Log
 public class ProductCard extends VBox {

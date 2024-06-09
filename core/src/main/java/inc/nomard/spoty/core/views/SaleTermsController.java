@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -120,12 +121,11 @@ public class SaleTermsController implements Initializable {
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                    });
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            SpotyThreader.spotyThreadPool(() -> {
+            });
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

@@ -24,7 +24,6 @@ import inc.nomard.spoty.core.views.pos.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.responsiveness.layouts.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.legacy.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -174,25 +173,25 @@ public class PointOfSaleController implements Initializable {
         ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> setProductsGridView());
     }
 
-     private void setProductsGridView() {
-         var productsGridView = new GridPane();
-         var row = 1;
-         var column = 0;
-         productsGridView.setHgap(20);
-         productsGridView.setVgap(20);
-         productsGridView.setPadding(new Insets(5));
-         for (Product product : ProductViewModel.getProducts()) {
-             ProductCard productCard = new ProductCard(product);
-             configureProductCardAction(productCard);
-             if (column == 6) {
-                 column = 0;
-                 ++row;
-             }
-             productsGridView.add(productCard, column++, row);
-             GridPane.setMargin(productsGridView, new Insets(10));
-         }
-         productScrollPane.setContent(productsGridView);
-     }
+    private void setProductsGridView() {
+        var productsGridView = new GridPane();
+        var row = 1;
+        var column = 0;
+        productsGridView.setHgap(20);
+        productsGridView.setVgap(20);
+        productsGridView.setPadding(new Insets(5));
+        for (Product product : ProductViewModel.getProducts()) {
+            ProductCard productCard = new ProductCard(product);
+            configureProductCardAction(productCard);
+            if (column == 6) {
+                column = 0;
+                ++row;
+            }
+            productsGridView.add(productCard, column++, row);
+            GridPane.setMargin(productsGridView, new Insets(10));
+        }
+        productScrollPane.setContent(productsGridView);
+    }
 
     // private void setProductsGridView() {
     //     var row = new BootstrapRow();

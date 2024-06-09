@@ -5,7 +5,6 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
-import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -24,6 +23,7 @@ import lombok.extern.java.*;
 @Log
 public class PaySlipsController implements Initializable {
     private static PaySlipsController instance;
+    private final Stage stage;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -39,7 +39,7 @@ public class PaySlipsController implements Initializable {
     @FXML
     public HBox leftHeaderPane;
     @FXML
-    public MFXProgressSpinner progress;private final Stage stage;
+    public MFXProgressSpinner progress;
 
     private PaySlipsController(Stage stage) {
         this.stage = stage;

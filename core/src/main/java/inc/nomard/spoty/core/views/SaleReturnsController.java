@@ -19,6 +19,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.returns.sales.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -46,6 +47,7 @@ import lombok.extern.java.*;
 @Log
 public class SaleReturnsController implements Initializable {
     private static SaleReturnsController instance;
+    private final Stage stage;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -61,7 +63,7 @@ public class SaleReturnsController implements Initializable {
     @FXML
     private MFXTableView<SaleReturnMaster> masterTable;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;private final Stage stage;
+    private MFXStageDialog viewDialog;
 
     private SaleReturnsController(Stage stage) {
         this.stage = stage;
@@ -197,11 +199,10 @@ public class SaleReturnsController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    SaleReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            SaleReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {

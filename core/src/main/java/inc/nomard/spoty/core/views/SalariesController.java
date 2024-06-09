@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
@@ -30,6 +31,7 @@ import lombok.extern.java.*;
 @Log
 public class SalariesController implements Initializable {
     private static SalariesController instance;
+    private final Stage stage;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -43,7 +45,7 @@ public class SalariesController implements Initializable {
     public MFXProgressSpinner progress;
     private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
-    private FXMLLoader viewFxmlLoader;private final Stage stage;
+    private FXMLLoader viewFxmlLoader;
 
     public SalariesController(Stage stage) {
         this.stage = stage;
@@ -199,11 +201,10 @@ public class SalariesController implements Initializable {
 //                    event.consume();
 //                });
         // Delete
-        delete.setOnAction(
-                event -> {
-                    SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {

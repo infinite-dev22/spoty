@@ -22,6 +22,7 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
 import inc.nomard.spoty.utils.*;
@@ -205,15 +206,14 @@ public class TransferMasterFormController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                event -> {
-                    SpotyThreader.spotyThreadPool(
-                            () ->
-                                    TransferDetailViewModel.removeTransferDetail(
-                                            obj.getData().getId(),
-                                            TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            SpotyThreader.spotyThreadPool(
+                    () ->
+                            TransferDetailViewModel.removeTransferDetail(
+                                    obj.getData().getId(),
+                                    TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
+            event.consume();
+        }, stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {
