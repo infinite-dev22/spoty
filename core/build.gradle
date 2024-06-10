@@ -190,7 +190,7 @@ jlink {
                 "--copyright", "Copyright " + LocalDate.now().getYear() + " nomard inc.",
                 "--vendor", "nomard inc.",
 //                "--icon", "src/main/resources/icon.ico",
-//                "--type", "msi",
+                "--type", "rpm",
 //                 Windows Only
 //                "--win-dir-chooser",
 //                "--win-menu", "--win-shortcut",
