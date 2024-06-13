@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.openjfx.javafxplugin' version "$jfxPlugin"
+    id 'org.openjfx.javafxplugin' version "$jfx_plugin"
 }
 
 apply plugin: 'java'

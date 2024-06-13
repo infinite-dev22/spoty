@@ -1,8 +1,8 @@
 plugins {
     id "java"
     id "application"
-    id "io.freefair.lombok" version "$lombokPlugin"
-    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
+    id "io.freefair.lombok" version "$lombok_plugin"
+    id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
 }
 
 apply plugin: 'java'

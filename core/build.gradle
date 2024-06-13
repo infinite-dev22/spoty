@@ -1,12 +1,12 @@
 plugins {
     id "java"
-    id "org.javamodularity.moduleplugin" version "$modulePlugin"
+    id "org.javamodularity.moduleplugin" version "$module_plugin"
     id "application"
-    id "org.openjfx.javafxplugin" version "$jfxPlugin"
-    id "org.beryx.jlink" version "$jlink"
-    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
-    id "io.freefair.lombok" version "$lombokPlugin"
-    id "com.github.mrcjkb.module-finder" version "0.0.7"
+    id "org.openjfx.javafxplugin" version "$jfx_plugin"
+    id "org.beryx.jlink" version "$jlink_plugin"
+    id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
+    id "io.freefair.lombok" version "$lombok_plugin"
+    id "com.github.mrcjkb.module-finder" version "$module_finder_plugin"
 }
 
 apply plugin: "java"
@@ -14,6 +14,7 @@ apply plugin: "java"
 project.description = "OpenSale ERP - Fintech Software."
 project.ext.buildDate = LocalDate.now()
 project.version = "$spoty"
+def app_copyright="Copyright " + LocalDate.now().getYear() + " nomard inc."
 
 repositories {
     mavenLocal()
@@ -29,7 +30,7 @@ repositories {
 //    toolchainDetection = true
 //
 //    agent {
-//        defaultMode = "standard" // Default agent mode if one isn't specified using `-Pagent=mode_name`
+//        defaultMode = "standard" // Default agent mode if one isn"t specified using `-Pagent=mode_name`
 //        enabled = true // Enables the agent
 //
 //        modes {
@@ -77,39 +78,39 @@ repositories {
 //    binaries {
 //        main {
 //            // Main options
-//            imageName = 'OpenSale-ERP' // The name of the native image, defaults to the project name
-//            mainClass = 'inc.nomard.spoty.core.Main' // The main class to use, defaults to the application.mainClass
+//            imageName = "OpenSale-ERP" // The name of the native image, defaults to the project name
+//            mainClass = "inc.nomard.spoty.core.Main" // The main class to use, defaults to the application.mainClass
 //            debug = true
 //            // Determines if debug info should be generated, defaults to false (alternatively add --debug-native to the CLI)
 //            verbose = true // Add verbose output, defaults to false
 //            fallback = false // Sets the fallback mode of native-image, defaults to false
 //            sharedLibrary = false
-//            // Determines if image is a shared library, defaults to false if `java-library` plugin isn't included
+//            // Determines if image is a shared library, defaults to false if `java-library` plugin isn"t included
 //            quickBuild = false
 //            // Determines if image is being built in quick build mode (alternatively use GRAALVM_QUICK_BUILD environment variable, or add --native-quick-build to the CLI)
 //            richOutput = false // Determines if native-image building should be done with rich output
-//            // requiredVersion = '22.3' // The minimal GraalVM version, can be `MAJOR`, `MAJOR.MINOR` or `MAJOR.MINOR.PATCH`
+//            // requiredVersion = "22.3" // The minimal GraalVM version, can be `MAJOR`, `MAJOR.MINOR` or `MAJOR.MINOR.PATCH`
 //
-//            // systemProperties = [name1: 'value1', name2: 'value2'] // Sets the system properties to use for the native image builder
-//            // configurationFileDirectories.from(file('src/my-config')) // Adds a native image configuration file directory, containing files like reflection configuration
+//            // systemProperties = [name1: "value1", name2: "value2"] // Sets the system properties to use for the native image builder
+//            // configurationFileDirectories.from(file("src/my-config")) // Adds a native image configuration file directory, containing files like reflection configuration
 //            // excludeConfig.put("org.example.test:artifact:version", ["^/META-INF/native-image/.*", "^/config/.*"]) // Excludes configuration that matches one of given regexes from JAR of dependency with said coordinates.
 //            // excludeConfig.put(file("path/to/artifact.jar"), listOf("^/META-INF/native-image/.*", "^/config/.*"))
 //
 //            // Advanced options
-//            // buildArgs.add('--link-at-build-time')
-//            // Passes '--link-at-build-time' to the native image builder options. This can be used to pass parameters which are not directly supported by this extension
+//            // buildArgs.add("--link-at-build-time")
+//            // Passes "--link-at-build-time" to the native image builder options. This can be used to pass parameters which are not directly supported by this extension
 //            buildArgs.add("-O4")
-//            // jvmArgs.add('flag') // Passes 'flag' directly to the JVM running the native image builder
+//            // jvmArgs.add("flag") // Passes "flag" directly to the JVM running the native image builder
 //
 //            // Runtime options
-//            runtimeArgs.add('--help') // Passes '--help' to built image, during "nativeRun" task
+//            runtimeArgs.add("--help") // Passes "--help" to built image, during "nativeRun" task
 //
 //            // useFatJar = true // Instead of passing each jar individually, builds a fat jar
 //        }
 //    }
 //
 //    binaries.configureEach {
-//        buildArgs.add('--verbose')
+//        buildArgs.add("--verbose")
 //        resources.autodetect()
 //    }
 //}
@@ -152,6 +153,8 @@ jar {
     }
 }
 
+ext.os = org.gradle.internal.os.OperatingSystem.current()
+
 jlink {
     addExtraDependencies(
             "javafx",
@@ -184,37 +187,71 @@ jlink {
 
     jpackage {
         installerOptions = [
-                "--name", "OpenSale-ERP",
+                "--name", app_installer_name,
                 "--description", project.description,
                 "--app-version", project.version,
-                "--copyright", "Copyright " + LocalDate.now().getYear() + " nomard inc.",
-                "--vendor", "nomard inc.",
-//                "--icon", "src/main/resources/icon.ico",
-//                "--type", "msi",
-//                 Windows Only
-//                "--win-dir-chooser",
-//                "--win-menu", "--win-shortcut",
-//                "--win-dir-chooser", "--win-menu",
-//                "--win-per-user-install", "--win-shortcut-prompt",
-                /*"--win-console",*/ /*"--verbose"*/
+                "--copyright", app_copyright,
+                "--vendor", app_vendor,
+                "--about-url", app_about_url,
+                "--license-file", app_eula,
         ]
+
+        if (os.linux) {
+            installerOptions += [
+                    "--icon", linux_icon,
+                    "--type", linux_installer_type,
+                    "--linux-app-release", spoty_release,
+                    "--linux-package-name", app_installer_name,
+                    "--linux-deb-maintainer", app_deb_maintainer,
+                    "--linux-menu-group", app_group_name,
+                    "--linux-app-category", app_group_name,
+                    "--linux-shortcut",
+            ]
+        }
+        if (os.macOsX) {
+            installerOptions += [
+                    "--icon", mac_icon,
+                    "--type", mac_installer_type,
+                    "--mac-package-name", app_installer_name,
+                    "--mac-package-signing-prefix", mac_package_signing_prefix,
+                    "--mac-sign",
+                    "--mac-signing-keychain", mac_signing_keychain,
+                    "--mac-signing-key-user-name", mac_signing_key_user_name,
+                    "--mac-app-store",
+                    "--mac-entitlements", mac_entitlements,
+                    "--mac-app-category", app_group_name,
+            ]
+        }
+        if (os.windows) {
+            installerOptions += [
+                    "--icon", windows_icon,
+                    "--type", windows_installer_type,
+                    "--win-dir-chooser",
+                    "--win-help-url", help_url,
+                    "--win-menu",
+                    "--win-menu-group", app_group_name,
+                    "--win-per-user-install",
+                    "--win-shortcut",
+                    "--win-shortcut-prompt",
+                    "--win-update-url", update_url,
+                    "--win-upgrade-uuid", update_uuid,
+            ]
+        }
     }
 }
 
 dependencies {
     implementation project(":network_bridge")
     implementation project(":utils")
-    implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
+    implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"
     implementation "javax.measure:unit-api:$measure_unit_api"
     implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"
-//    implementation "com.github.iAmGio:froxty:1.4.0"
     implementation "com.calendarfx:view:11.12.7"
     implementation "eu.hansolo.fx:charts:$fx_charts"
-//    implementation "io.soabase.record-builder:record-builder-core:39"
-    implementation "io.github.mkpaz:atlantafx-parent:2.0.1"
-    implementation "io.github.mkpaz:atlantafx-styles:2.0.1"
-    implementation "io.github.mkpaz:atlantafx-base:2.0.1"
-    implementation "com.google.code.gson:gson:2.10.1"
+    implementation "io.github.mkpaz:atlantafx-parent:$atlantafx"
+    implementation "io.github.mkpaz:atlantafx-styles:$atlantafx"
+    implementation "io.github.mkpaz:atlantafx-base:$atlantafx"
+    implementation "com.google.code.gson:gson:$gson"
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     implementation "org.projectlombok:lombok:$lombok"
@@ -223,7 +260,7 @@ dependencies {
     implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
     implementation "fr.brouillard.oss:cssfx:$cssfx"
-    implementation "io.github.palexdev:virtualizedfx:$virtualizedFX" // update to version -> 21.1.0 breaks the system.
+    implementation "io.github.palexdev:virtualizedfx:$virtualizedFX"
     implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
     implementation "org.junit.jupiter:junit-jupiter-api:$junit"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit"

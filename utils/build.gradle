@@ -1,9 +1,9 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'io.freefair.lombok' version '8.4'
-    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
+    id 'org.openjfx.javafxplugin' version "$jfx_plugin"
+    id 'io.freefair.lombok' version "$lombok_plugin"
+    id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
 }
 
 apply plugin: 'java'
@@ -31,7 +31,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     implementation "org.projectlombok:lombok:$lombok"
-    implementation "com.google.code.gson:gson:2.10.1"
+    implementation "com.google.code.gson:gson:$gson"
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
