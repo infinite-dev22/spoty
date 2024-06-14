@@ -100,41 +100,6 @@ public class AuthScreenController implements Initializable {
         stage = primaryStage;
     }
 
-    //    private Thread dataInit() {
-//        return SpotyThreader.singleThreadCreator(
-//                "data-tracker",
-//                () -> {
-//                    try {
-//                        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
-//                        BranchViewModel.getAllBranches(null, null);
-//                        BrandViewModel.getAllBrands(null, null);
-//                        BankViewModel.getAllBanks(null, null);
-//                        CurrencyViewModel.getAllCurrencies(null, null);
-//                        CustomerViewModel.getAllCustomers(null, null);
-//                        DesignationViewModel.getAllDesignations(null, null);
-//                        EmploymentStatusViewModel.getAllEmploymentStatuses(null, null);
-//                        ExpenseCategoryViewModel.getAllCategories(null, null);
-//                        ExpensesViewModel.getAllExpenses(null, null);
-//                        ProductCategoryViewModel.getAllProductCategories(null, null);
-//                        ProductViewModel.getAllProducts(null, null);
-//                        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
-//                        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
-//                        QuotationMasterViewModel.getAllQuotationMasters(null, null);
-//                        RequisitionMasterViewModel.getAllRequisitionMasters(null, null);
-//                        SaleMasterViewModel.getAllSaleMasters(null, null);
-//                        SaleReturnMasterViewModel.getSaleReturnMasters(null, null);
-//                        StockInMasterViewModel.getAllStockInMasters(null, null);
-//                        SupplierViewModel.getAllSuppliers(null, null);
-//                        TransferMasterViewModel.getAllTransferMasters(null, null);
-//                        UOMViewModel.getAllUOMs(null, null);
-//                        UserViewModel.getAllUsers(null, null);
-//                        RoleViewModel.getAllRoles(null, null);
-//                        PermissionsViewModel.getAllPermissions(null, null);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, AuthScreenController.class);
-//                    }
-//                });
-//    }
     private Service<Void> dataInit() {
         return new Service<>() {
             @Override
@@ -220,27 +185,21 @@ public class AuthScreenController implements Initializable {
         }
         if (emailConstraints.isEmpty()
                 && passwordConstraints.isEmpty()) {
-//            Platform.runLater(() ->
-            LoginViewModel.login(this::onLoginSuccess, this::successMessage, this::errorMessage)/*)*/;
+            LoginViewModel.login(this::onLoginSuccess, this::successMessage, this::errorMessage);
         }
     }
 
     private void onActivity() {
-//        loginBtn.setDisable(true);
-//        loginBtn.setManaged(false);
-//        activityIndicator.setVisible(true);
-//        activityIndicator.setManaged(true);
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
                         .icon("fas-circle-check")
                         .type(MessageVariants.SUCCESS)
+                        .height(60)
                         .build();
-        notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);
         AnchorPane.setTopAnchor(notification, 10.0);
 
@@ -253,14 +212,13 @@ public class AuthScreenController implements Initializable {
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
                         .icon("fas-triangle-exclamation")
                         .type(MessageVariants.ERROR)
+                        .height(60)
                         .build();
-        notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);
         AnchorPane.setTopAnchor(notification, 10.0);
 
@@ -307,8 +265,6 @@ public class AuthScreenController implements Initializable {
                     // This isn't necessary, just felt like adding it here.
                     stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
                     stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
-                    // Initialize app notification handler.
-                    SpotyMessageHolder.setMessageOwner(stage);
                 } catch (IOException e) {
                     SpotyLogger.writeToFile(e, LoginViewModel.class);
                 }
@@ -763,12 +719,8 @@ public class AuthScreenController implements Initializable {
     public void signUpBack() {
         authCreateScreen.setVisible(false);
         authCreateScreen.setManaged(false);
-//        loginScreen.setVisible(false);
-//        loginScreen.setManaged(false);
         kycScreen.setVisible(true);
         kycScreen.setManaged(true);
-//        registerScreen.setVisible(true);
-//        registerScreen.setManaged(true);
     }
 
     public void registerUser() {

@@ -84,8 +84,6 @@ public class PurchasePreviewController implements Initializable {
                 new MFXTableColumn<>("Name", false, Comparator.comparing(PurchaseDetail::getProductName));
         MFXTableColumn<PurchaseDetail> quantity =
                 new MFXTableColumn<>("Qty", false, Comparator.comparing(PurchaseDetail::getQuantity));
-        MFXTableColumn<PurchaseDetail> price =
-                new MFXTableColumn<>("Unit Cost", false, Comparator.comparing(PurchaseDetail::getCost));
         MFXTableColumn<PurchaseDetail> totalPrice =
                 new MFXTableColumn<>(
                         "Cost", false, Comparator.comparing(PurchaseDetail::getSubTotalCost));
@@ -103,12 +101,6 @@ public class PurchasePreviewController implements Initializable {
             cell.getStyleClass().add("table-cell-border");
             return cell;
         });
-        price.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getCost);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
         totalPrice.setRowCellFactory(
                 purchaseDetail -> {
                     var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalCost);
@@ -118,15 +110,14 @@ public class PurchasePreviewController implements Initializable {
                 });
 
         // Set table column width.
-        product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        price.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
 
         // Set table filter.
         itemsTable
                 .getTableColumns()
-                .addAll(product, quantity, price, totalPrice);
+                .addAll(product, quantity, totalPrice);
 
         styleTable();
 

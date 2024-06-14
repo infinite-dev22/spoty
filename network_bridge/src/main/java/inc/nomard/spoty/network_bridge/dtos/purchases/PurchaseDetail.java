@@ -29,7 +29,6 @@ import lombok.extern.java.*;
 @Log
 public class PurchaseDetail {
     private Long id;
-    private double cost;
     private Product product;
     private int quantity;
     private double subTotalCost;

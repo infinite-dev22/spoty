@@ -14,53 +14,42 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import atlantafx.base.util.*;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.LongFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class AdjustmentMasterFormController implements Initializable {
     private static AdjustmentMasterFormController instance;
+    private final Stage stage;
     @FXML
     public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
     @FXML
@@ -74,6 +63,7 @@ public class AdjustmentMasterFormController implements Initializable {
     private MFXStageDialog dialog;
 
     private AdjustmentMasterFormController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(() -> {
             try {
                 initProductDialogPane(stage);
@@ -84,7 +74,11 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     public static AdjustmentMasterFormController getInstance(Stage stage) {
-        if (instance == null) instance = new AdjustmentMasterFormController(stage);
+        if (instance == null) {
+            synchronized (AdjustmentMasterFormController.class) {
+                instance = new AdjustmentMasterFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -151,7 +145,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
-        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> deleteRow(row)));
+        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getData().getProductName(), stage, adjustmentFormContentPane)));
         return contextMenu;
     }
 
@@ -172,7 +166,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private void initProductDialogPane(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/AdjustmentDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance());
+        fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance(stage));
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
         dialogContent.setShowMinimize(false);
@@ -192,7 +186,6 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     public void adjustmentSaveBtnClicked() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
             showErrorMessage("Table can't be Empty");
             return;
@@ -225,25 +218,32 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void showErrorMessage(String message) {
-        showNotification(message, MessageVariants.ERROR);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
     }
 
     private void successMessage(String message) {
-        showNotification(message, MessageVariants.SUCCESS);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        showNotification(message, MessageVariants.ERROR);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
     }
 
-    private void showNotification(String message, MessageVariants variant) {
+    private void displayNotification(String message, MessageVariants type, String icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
-                .icon(variant == MessageVariants.SUCCESS ? "fas-circle-check" : "fas-triangle-exclamation")
-                .type(variant)
+                .icon(icon)
+                .type(type)
+                .height(60)
                 .build();
-        SpotyMessageHolder.getInstance().addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

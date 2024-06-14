@@ -14,17 +14,16 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
-<?import inc.nomard.spoty.utils.navigation.Spacer?>
-<?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import io.github.palexdev.materialfx.controls.MFXCircleToggleNode?>
-<?import io.github.palexdev.mfxcore.controls.Label?>
-<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import inc.nomard.spoty.core.components.glass_morphism.*?>
+<?import inc.nomard.spoty.utils.navigation.*?>
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.mfxcore.controls.*?>
+<?import io.github.palexdev.mfxresources.fonts.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Circle?>
-<?import java.lang.String?>
-<?import java.net.*?>
-<?import inc.nomard.spoty.core.components.glass_morphism.GlassPane?>
+<?import javafx.scene.shape.*?>
 <StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootPane" prefHeight="32767" prefWidth="32767"
            styleClass="rootPane" xmlns="http://javafx.com/javafx/21.0.1"
            fx:controller="inc.nomard.spoty.core.views.BaseController">
@@ -38,80 +37,94 @@
             <URL value="@../styles/TextFields.css"/>
             <URL value="@../styles/theming/Default.css"/>
         </stylesheets>
-        <AnchorPane styleClass="card" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="259.0"
-                    AnchorPane.rightAnchor="5.0"
-                    AnchorPane.topAnchor="5.0">
-            <HBox fx:id="windowHeader" layoutX="201.0" layoutY="7.0" prefHeight="45.0" prefWidth="1077.0" spacing="10.0"
-                  AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-                <padding>
-                    <Insets bottom="2.0" left="10.0" right="10.0" top="2.0"/>
-                </padding>
-                <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+        <BorderPane AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.bottomAnchor="2.0"
+                    AnchorPane.topAnchor="2.0">
+            <left>
+                <VBox layoutX="6.0" layoutY="6.0" prefHeight="640.0" prefWidth="250.0" spacing="10.0"
+                      styleClass="sidebar">
                     <padding>
-                        <Insets topRightBottomLeft="5.0"/>
+                        <Insets bottom="5.0"/>
                     </padding>
-                </HBox>
-                <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER">
-                    <padding>
-                        <Insets topRightBottomLeft="5.0"/>
-                    </padding>
-                    <MFXButton fx:id="notificationsBtn" styleClass="minimize-icon"/>
-                </HBox>
-                <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
-                    <padding>
-                        <Insets topRightBottomLeft="5.0"/>
-                    </padding>
-                    <MFXButton fx:id="feedbackBtn" styleClass="minimize-icon" text="Feedback"/>
-                    <MFXButton fx:id="helpBtn" styleClass="close-icon" text="Help"/>
-                </HBox>
-                <styleClass>
-                    <String fx:value="appBar"/>
-                </styleClass>
-            </HBox>
-            <StackPane fx:id="contentPane" layoutX="226.0" layoutY="45.0" prefHeight="604.0" prefWidth="1053.0"
-                       AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
-                       AnchorPane.topAnchor="55.0"/>
-        </AnchorPane>
-        <VBox layoutX="6.0" layoutY="6.0" prefHeight="640.0" prefWidth="250.0" spacing="10.0" styleClass="sidebar"
-              AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0">
-            <padding>
-                <Insets bottom="5.0"/>
-            </padding>
-            <HBox spacing="10.0">
-                <padding>
-                    <Insets topRightBottomLeft="10.0"/>
-                </padding>
-                <MFXFontIcon fx:id="closeIcon" description="fas-circle" onMouseClicked="#closeIconClicked" size="15.0"
-                             styleClass="close-icon"/>
-                <MFXFontIcon fx:id="minimizeIcon" description="fas-circle" onMouseClicked="#minimizeIconClicked" size="15.0"
-                             styleClass="minimize-icon"/>
-            </HBox>
-            <StackPane>
-                <VBox spacing="10">
-                    <padding>
-                        <Insets topRightBottomLeft="20.0"/>
-                    </padding>
-                    <HBox alignment="CENTER_LEFT" spacing="10">
-                        <Circle fx:id="imageHolder" cache="true" cacheHint="SPEED" fill="#4e4f5400" radius="30.0"
-                                stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0"/>
-                        <VBox alignment="CENTER_LEFT" spacing="10">
-                            <Label fx:id="userNameLbl" styleClass="username-label" style="-fx-text-fill: white;"/>
-                            <Label fx:id="designationLbl" styleClass="designation-label"/>
-                        </VBox>
-                        <Spacer/>
-                        <MFXFontIcon fx:id="moreActions" description="fas-ellipsis-vertical"
-                                     onMouseClicked="#moreActionsClicked" size="25.0" styleClass="side-bar-more-actions"/>
+                    <HBox spacing="10.0">
+                        <padding>
+                            <Insets topRightBottomLeft="10.0"/>
+                        </padding>
+                        <MFXFontIcon fx:id="closeIcon" description="fas-circle" onMouseClicked="#closeIconClicked"
+                                     size="15.0"
+                                     styleClass="close-icon"/>
+                        <MFXFontIcon fx:id="minimizeIcon" description="fas-circle" onMouseClicked="#minimizeIconClicked"
+                                     size="15.0"
+                                     styleClass="minimize-icon"/>
                     </HBox>
+                    <StackPane>
+                        <VBox spacing="10">
+                            <padding>
+                                <Insets topRightBottomLeft="20.0"/>
+                            </padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Circle fx:id="imageHolder" cache="true" cacheHint="SPEED" fill="#4e4f5400"
+                                        radius="30.0"
+                                        stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0"/>
+                                <VBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label fx:id="userNameLbl" styleClass="username-label"
+                                           style="-fx-text-fill: white;"/>
+                                    <Label fx:id="designationLbl" styleClass="designation-label"/>
+                                </VBox>
+                                <Spacer/>
+                                <MFXFontIcon fx:id="moreActions" description="fas-ellipsis-vertical"
+                                             onMouseClicked="#moreActionsClicked" size="25.0"
+                                             styleClass="side-bar-more-actions"/>
+                            </HBox>
+                        </VBox>
+                        <MFXCircleToggleNode fx:id="sidebarToggle" styleClass="nav-toggle" size="15.0"
+                                             StackPane.alignment="CENTER_RIGHT" visible="false">
+                            <StackPane.margin>
+                                <Insets right="-45.0" top="40.0"/>
+                            </StackPane.margin>
+                        </MFXCircleToggleNode>
+                    </StackPane>
+                    <StackPane fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               styleClass="navbar" VBox.vgrow="ALWAYS"/>
                 </VBox>
-                <MFXCircleToggleNode fx:id="sidebarToggle" styleClass="nav-toggle" size="15.0"
-                                     StackPane.alignment="CENTER_RIGHT" visible="false">
-                    <StackPane.margin>
-                        <Insets right="-45.0" top="40.0"/>
-                    </StackPane.margin>
-                </MFXCircleToggleNode>
-            </StackPane>
-            <StackPane fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                       styleClass="navbar" VBox.vgrow="ALWAYS"/>
-        </VBox>
+            </left>
+            <center>
+                <AnchorPane styleClass="card">
+                    <BorderPane.margin>
+                        <Insets left="10.0" right="5.0" top="5.0" bottom="5.0"/>
+                    </BorderPane.margin>
+                    <HBox fx:id="windowHeader" layoutX="201.0" layoutY="7.0" prefHeight="45.0" prefWidth="1077.0"
+                          spacing="10.0"
+                          AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                        <padding>
+                            <Insets bottom="2.0" left="10.0" right="10.0" top="2.0"/>
+                        </padding>
+                        <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                            <padding>
+                                <Insets topRightBottomLeft="5.0"/>
+                            </padding>
+                        </HBox>
+                        <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER">
+                            <padding>
+                                <Insets topRightBottomLeft="5.0"/>
+                            </padding>
+                            <MFXButton fx:id="notificationsBtn" styleClass="minimize-icon"/>
+                        </HBox>
+                        <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                            <padding>
+                                <Insets topRightBottomLeft="5.0"/>
+                            </padding>
+                            <MFXButton fx:id="feedbackBtn" styleClass="minimize-icon" text="Feedback"/>
+                            <MFXButton fx:id="helpBtn" styleClass="close-icon" text="Help"/>
+                        </HBox>
+                        <styleClass>
+                            <String fx:value="appBar"/>
+                        </styleClass>
+                    </HBox>
+                    <StackPane fx:id="contentPane" layoutX="226.0" layoutY="45.0" prefHeight="604.0" prefWidth="1053.0"
+                               AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                               AnchorPane.topAnchor="55.0"/>
+                </AnchorPane>
+            </center>
+        </BorderPane>
     </GlassPane>
 </StackPane>

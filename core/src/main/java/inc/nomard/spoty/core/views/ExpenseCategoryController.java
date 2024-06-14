@@ -14,10 +14,12 @@
 
 package inc.nomard.spoty.core.views;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -36,12 +38,14 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class ExpenseCategoryController implements Initializable {
     private static ExpenseCategoryController instance;
+    private final Stage stage;
     @FXML
     public HBox actionsPane;
     @FXML
@@ -59,6 +63,7 @@ public class ExpenseCategoryController implements Initializable {
     private MFXStageDialog dialog;
 
     private ExpenseCategoryController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(
                 () -> {
                     try {
@@ -139,11 +144,10 @@ public class ExpenseCategoryController implements Initializable {
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    ExpenseCategoryViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            ExpenseCategoryViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, obj.getData().getName(), stage, categoryContentPane));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -156,7 +160,7 @@ public class ExpenseCategoryController implements Initializable {
 
     private void expenseCategoryFormDialogPane(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/ExpenseCategoryForm.fxml");
-        fxmlLoader.setControllerFactory(c -> ExpenseCategoryFormController.getInstance());
+        fxmlLoader.setControllerFactory(c -> ExpenseCategoryFormController.getInstance(stage));
         MFXGenericDialog dialogContent = fxmlLoader.load();
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
@@ -201,28 +205,28 @@ public class ExpenseCategoryController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

@@ -33,7 +33,6 @@ public class RequisitionMaster {
     private String ref;
     private Supplier supplier;
     private List<RequisitionDetail> requisitionDetails;
-    private LinkedList<Long> childrenToDelete;
     private String notes;
     private User createdBy;
 

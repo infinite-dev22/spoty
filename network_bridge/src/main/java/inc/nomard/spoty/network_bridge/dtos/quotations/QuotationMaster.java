@@ -30,9 +30,7 @@ public class QuotationMaster {
     private Long id;
     private String ref;
     private Customer customer;
-    private ArrayList<Branch> branches;
     private List<QuotationDetail> quotationDetails;
-    private LinkedList<Long> childrenToDelete;
     private double taxRate;
     private double netTax;
     private double discount;

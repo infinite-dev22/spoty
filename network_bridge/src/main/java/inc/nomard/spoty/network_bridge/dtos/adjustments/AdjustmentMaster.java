@@ -32,7 +32,6 @@ public class AdjustmentMaster {
     private String ref;
     private ArrayList<Branch> branches;
     private List<AdjustmentDetail> adjustmentDetails;
-    private LinkedList<Long> childrenToDelete;
     private String notes;
     private String status;
     private Double Total;

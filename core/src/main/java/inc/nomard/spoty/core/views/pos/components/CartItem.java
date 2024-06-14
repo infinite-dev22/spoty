@@ -53,7 +53,7 @@ public class CartItem extends HBox {
             imageHolder.setFill(new ImagePattern(image));
         } else {
             var image = new Image(
-                    SpotyCoreResourceLoader.load("images/product-image-place-holder.png"),
+                    SpotyCoreResourceLoader.load("images/upload_image_placeholder.png"),
                     10000,
                     10000,
                     true,

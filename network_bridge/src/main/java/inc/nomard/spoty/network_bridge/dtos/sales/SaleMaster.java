@@ -32,10 +32,8 @@ public class SaleMaster {
     private String ref;
     private Customer customer;
     private List<SaleDetail> saleDetails;
-    private LinkedList<Long> childrenToDelete;
-    private double taxRate;
-    private double netTax;
-    private double discount;
+    private Tax tax;
+    private Discount discount;
     private double subTotal;
     private double total;
     private double amountPaid;

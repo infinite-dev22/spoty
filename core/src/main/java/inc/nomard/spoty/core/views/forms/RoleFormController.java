@@ -14,10 +14,12 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
@@ -30,11 +32,14 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class RoleFormController implements Initializable {
     private static RoleFormController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField name;
     @FXML
@@ -158,12 +163,17 @@ public class RoleFormController implements Initializable {
     private Label errorLabel;
     private ActionEvent actionEvent = null;
 
-    public RoleFormController() {
+    public RoleFormController(Stage stage) {
+        this.stage = stage;
     }
     // </editor-fold>
 
-    public static RoleFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new RoleFormController();
+    public static RoleFormController getInstance(Stage stage) {
+        if (Objects.equals(instance, null)) {
+            synchronized (RoleFormController.class) {
+                instance = new RoleFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -329,24 +339,16 @@ public class RoleFormController implements Initializable {
                         return;
                     }
                     if (PermissionsViewModel.getPermissionsList().isEmpty()) {
-                        SpotyMessage notification =
-                                new SpotyMessage.MessageBuilder("Role has no permissions")
-                                        .duration(MessageDuration.SHORT)
-                                        .icon("fas-triangle-exclamation")
-                                        .type(MessageVariants.ERROR)
-                                        .build();
-                        SpotyMessageHolder.getInstance().addMessage(notification);
+                        errorMessage("Role has no permissions");
                         return;
                     }
-                    if (constraints.isEmpty()) {
-                        if (RoleViewModel.getId() > 0) {
-                            RoleViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
-                            return;
-                        }
-                        RoleViewModel.saveRole(this::onSuccess, this::successMessage, this::errorMessage);
+                    if (RoleViewModel.getId() > 0) {
+                        RoleViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
                         actionEvent = event;
+                        return;
                     }
+                    RoleViewModel.saveRole(this::onSuccess, this::successMessage, this::errorMessage);
+                    actionEvent = event;
                 });
     }
 
@@ -1793,8 +1795,6 @@ public class RoleFormController implements Initializable {
     private void onAction() {
         cancelBtn.setDisable(true);
         saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
     }
 
     private void onSuccess() {
@@ -1833,28 +1833,28 @@ public class RoleFormController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

@@ -25,7 +25,7 @@ public class SpotyCoreResourceLoader {
     }
 
     public static FXMLLoader fxmlLoader(String path) {
-        return new FXMLLoader(SpotyCoreResourceLoader.class.getResource(path));
+        return new FXMLLoader(loadURL(path));
     }
 
     public static URL loadURL(String path) {

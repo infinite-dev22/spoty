@@ -14,6 +14,7 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
@@ -21,6 +22,7 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -40,12 +42,14 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class StockInMasterFormController implements Initializable {
     private static StockInMasterFormController instance;
+    private final Stage stage;
     @FXML
     public MFXTableView<StockInDetail> stockInDetailTable;
     @FXML
@@ -60,10 +64,11 @@ public class StockInMasterFormController implements Initializable {
     private MFXStageDialog dialog;
 
     private StockInMasterFormController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(
                 () -> {
                     try {
-                        quotationProductDialogPane(stage);
+                        quotationProductDialogPane();
                     } catch (IOException e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -71,7 +76,11 @@ public class StockInMasterFormController implements Initializable {
     }
 
     public static StockInMasterFormController getInstance(Stage stage) {
-        if (instance == null) instance = new StockInMasterFormController(stage);
+        if (instance == null) {
+            synchronized (StockInMasterFormController.class) {
+                instance = new StockInMasterFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -155,27 +164,22 @@ public class StockInMasterFormController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                event -> {
-                    StockInDetailViewModel.removeStockInDetail(
-                            obj.getData().getId(),
-                            StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
-
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            StockInDetailViewModel.removeStockInDetail(
+                    obj.getData().getId(),
+                    StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+            event.consume();
+        }, obj.getData().getProductName(), stage, contentPane));
 
         // Edit
         edit.setOnAction(
                 event -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            StockInDetailViewModel.getStockInDetail(obj.getData());
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
-                    });
-
-                    dialog.showAndWait();
+                    try {
+                        StockInDetailViewModel.getStockInDetail(obj.getData());
+                        dialog.showAndWait();
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
+                    }
                     event.consume();
                 });
 
@@ -188,9 +192,9 @@ public class StockInMasterFormController implements Initializable {
         stockInMasterProductAddBtn.setOnAction(e -> dialog.showAndWait());
     }
 
-    private void quotationProductDialogPane(Stage stage) throws IOException {
+    private void quotationProductDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/StockInDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> StockInDetailFormController.getInstance());
+        fxmlLoader.setControllerFactory(c -> StockInDetailFormController.getInstance(stage));
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -212,16 +216,9 @@ public class StockInMasterFormController implements Initializable {
     }
 
     public void stockInMasterSaveBtnClicked() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         if (!stockInDetailTable.isDisabled() && StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-            SpotyMessage notification =
-                    new SpotyMessage.MessageBuilder("Table can't be Empty")
-                            .duration(MessageDuration.SHORT)
-                            .icon("fas-triangle-exclamation")
-                            .type(MessageVariants.ERROR)
-                            .build();
-            notificationHolder.addMessage(notification);
+            errorMessage("Table can't be Empty");
             return;
         }
         if (StockInMasterViewModel.getId() > 0) {
@@ -244,28 +241,28 @@ public class StockInMasterFormController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

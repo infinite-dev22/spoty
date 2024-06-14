@@ -17,6 +17,7 @@ package inc.nomard.spoty.core.viewModels;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.core.views.pos.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
@@ -368,6 +369,7 @@ public class ProductViewModel {
                     productsList.clear();
                     productsList.addAll(productList);
                     if (Objects.nonNull(onSuccess)) {
+                        ProductCard.preloadImages();
                         onSuccess.run();
                     }
                 });

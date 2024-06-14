@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.views;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -22,11 +24,13 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class DiscountsController implements Initializable {
     private static DiscountsController instance;
+    private final Stage stage;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -46,6 +50,7 @@ public class DiscountsController implements Initializable {
     private MFXStageDialog dialog;
 
     public DiscountsController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(
                 () -> {
                     try {
@@ -130,34 +135,27 @@ public class DiscountsController implements Initializable {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem delete = getDeleteContextMenuItem(obj);
-        // Edit
         edit.setOnAction(
                 event -> {
                     DiscountViewModel.getDiscount(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
                     event.consume();
                 });
-
         contextMenu.addItems(edit, delete);
-
         return contextMenu;
     }
 
     private MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Discount> obj) {
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-
-        // Actions
-        // Delete
-        delete.setOnAction(
-                event -> {
-                    DiscountViewModel.deleteDiscount(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            DiscountViewModel.deleteDiscount(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, obj.getData().getName(), stage, contentPane));
         return delete;
     }
 
     private void productFormDialogPane(Stage stage) throws IOException {
         FXMLLoader formFxmlLoader = fxmlLoader("views/forms/DiscountForm.fxml");
-        formFxmlLoader.setControllerFactory(c -> DiscountFormController.getInstance());
+        formFxmlLoader.setControllerFactory(c -> DiscountFormController.getInstance(stage));
 
         MFXGenericDialog dialogContent = formFxmlLoader.load();
 
@@ -203,28 +201,28 @@ public class DiscountsController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

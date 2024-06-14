@@ -104,7 +104,7 @@ public class QuotationMasterViewModel {
     }
 
     public static String getTaxRate() {
-        return taxRate.get();
+        return (taxRate.get().isEmpty() && taxRate.get().isBlank()) ? "0" : taxRate.get();
     }
 
     public static void setTaxRate(String taxRate) {
@@ -116,7 +116,7 @@ public class QuotationMasterViewModel {
     }
 
     public static String getDiscount() {
-        return discount.get();
+        return (discount.get().isEmpty() && discount.get().isBlank()) ? "0" : discount.get();
     }
 
     public static void setDiscount(String discount) {
@@ -128,7 +128,7 @@ public class QuotationMasterViewModel {
     }
 
     public static String getShippingFee() {
-        return shippingFee.get();
+        return (shippingFee.get().isEmpty() && shippingFee.get().isBlank()) ? "0" : shippingFee.get();
     }
 
     public static void setShippingFee(String shippingFee) {
@@ -159,6 +159,7 @@ public class QuotationMasterViewModel {
         setDiscount("");
         setShippingFee("");
         setNote("");
+        QuotationDetailViewModel.quotationDetailsList.clear();
         PENDING_DELETES.clear();
     }
 
@@ -176,42 +177,45 @@ public class QuotationMasterViewModel {
             quotationMaster.setQuotationDetails(
                     QuotationDetailViewModel.getQuotationDetailsList());
         }
+        System.out.println(new Gson().toJson(quotationMaster));
         CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.post(quotationMaster);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 201) {
-                // Process the successful response
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                // Handle successful response
+                if (response.statusCode() == 201) {
+                    // Process the successful response
                     onSuccess.run();
                     successMessage.showMessage("Quotation created successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                } else if (response.statusCode() == 401) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Access denied");
+                    }
+                } else if (response.statusCode() == 404) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Resource not found");
+                    }
+                } else if (response.statusCode() == 500) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An error occurred");
+                    }
                 }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
+            });
         }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+            Platform.runLater(() -> {
+                // Handle exceptions during the request (e.g., network issues)
+                if (Connectivity.isConnectedToInternet()) {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An in app error occurred");
+                    }
+                } else {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("No Internet Connection");
+                    }
                 }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
+            });
             SpotyLogger.writeToFile(throwable, QuotationMasterViewModel.class);
             return null;
         });
@@ -221,10 +225,10 @@ public class QuotationMasterViewModel {
                                               SpotyGotFunctional.MessageConsumer errorMessage) {
         CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.fetchAll();
         responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200) {
-                // Process the successful response
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                // Handle successful response
+                if (response.statusCode() == 200) {
+                    // Process the successful response
                     Type listType = new TypeToken<ArrayList<QuotationMaster>>() {
                     }.getType();
                     ArrayList<QuotationMaster> quotationMasterList = gson.fromJson(response.body(), listType);
@@ -233,34 +237,36 @@ public class QuotationMasterViewModel {
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                } else if (response.statusCode() == 401) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Access denied");
+                    }
+                } else if (response.statusCode() == 404) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Resource not found");
+                    }
+                } else if (response.statusCode() == 500) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An error occurred");
+                    }
                 }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
+            });
         }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+            Platform.runLater(() -> {
+                // Handle exceptions during the request (e.g., network issues)
+                if (Connectivity.isConnectedToInternet()) {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An in app error occurred");
+                    }
+                } else {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("No Internet Connection");
+                    }
                 }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
+            });
             SpotyLogger.writeToFile(throwable, QuotationMasterViewModel.class);
             return null;
         });
@@ -272,10 +278,10 @@ public class QuotationMasterViewModel {
         var findModel = FindModel.builder().id(index).build();
         CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200) {
-                // Process the successful response
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                // Handle successful response
+                if (response.statusCode() == 200) {
+                    // Process the successful response
                     var quotationMaster = gson.fromJson(response.body(), QuotationMaster.class);
                     setId(quotationMaster.getId());
                     setNote(quotationMaster.getNotes());
@@ -285,34 +291,36 @@ public class QuotationMasterViewModel {
                     QuotationDetailViewModel.quotationDetailsList.clear();
                     QuotationDetailViewModel.quotationDetailsList.addAll(quotationMaster.getQuotationDetails());
                     onSuccess.run();
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                } else if (response.statusCode() == 401) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Access denied");
+                    }
+                } else if (response.statusCode() == 404) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Resource not found");
+                    }
+                } else if (response.statusCode() == 500) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An error occurred");
+                    }
                 }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
+            });
         }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+            Platform.runLater(() -> {
+                // Handle exceptions during the request (e.g., network issues)
+                if (Connectivity.isConnectedToInternet()) {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An in app error occurred");
+                    }
+                } else {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("No Internet Connection");
+                    }
                 }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
+            });
             SpotyLogger.writeToFile(throwable, QuotationMasterViewModel.class);
             return null;
         });
@@ -324,10 +332,10 @@ public class QuotationMasterViewModel {
         var searchModel = SearchModel.builder().search(search).build();
         CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.search(searchModel);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200) {
-                // Process the successful response
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                // Handle successful response
+                if (response.statusCode() == 200) {
+                    // Process the successful response
                     Type listType = new TypeToken<ArrayList<QuotationMaster>>() {
                     }.getType();
                     ArrayList<QuotationMaster> quotationMasterList = gson.fromJson(
@@ -335,34 +343,36 @@ public class QuotationMasterViewModel {
                     quotationsList.clear();
                     quotationsList.addAll(quotationMasterList);
                     onSuccess.run();
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                } else if (response.statusCode() == 401) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Access denied");
+                    }
+                } else if (response.statusCode() == 404) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Resource not found");
+                    }
+                } else if (response.statusCode() == 500) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An error occurred");
+                    }
                 }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
+            });
         }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+            Platform.runLater(() -> {
+                // Handle exceptions during the request (e.g., network issues)
+                if (Connectivity.isConnectedToInternet()) {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An in app error occurred");
+                    }
+                } else {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("No Internet Connection");
+                    }
                 }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
+            });
             SpotyLogger.writeToFile(throwable, QuotationMasterViewModel.class);
             return null;
         });
@@ -372,54 +382,54 @@ public class QuotationMasterViewModel {
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var quotationMaster = QuotationMaster.builder()
+                .id(getId())
                 .customer(getCustomer())
-                .notes(getNote())
                 .taxRate(Double.parseDouble(getTaxRate()))
                 .discount(Double.parseDouble(getDiscount()))
+                .notes(getNote())
                 .shippingFee(Double.parseDouble(getShippingFee()))
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            quotationMaster.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!QuotationDetailViewModel.getQuotationDetailsList().isEmpty()) {
             quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
         }
         CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.put(quotationMaster);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
-                // Process the successful response
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                // Handle successful response
+                if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
+                    // Process the successful response
                     onSuccess.run();
                     successMessage.showMessage("Quotation updated successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                } else if (response.statusCode() == 401) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Access denied");
+                    }
+                } else if (response.statusCode() == 404) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Resource not found");
+                    }
+                } else if (response.statusCode() == 500) {
+                    // Handle non-200 status codes
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An error occurred");
+                    }
                 }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
+            });
         }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+            Platform.runLater(() -> {
+                // Handle exceptions during the request (e.g., network issues)
+                if (Connectivity.isConnectedToInternet()) {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An in app error occurred");
+                    }
+                } else {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("No Internet Connection");
+                    }
                 }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
+            });
             SpotyLogger.writeToFile(throwable, QuotationMasterViewModel.class);
             return null;
         });
@@ -429,46 +439,56 @@ public class QuotationMasterViewModel {
             Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
             SpotyGotFunctional.MessageConsumer successMessage,
             SpotyGotFunctional.MessageConsumer errorMessage) {
+
         var findModel = FindModel.builder().id(index).build();
         CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.delete(findModel);
+
         responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200 || response.statusCode() == 204) {
-                // Process the successful response
-                Platform.runLater(() -> {
+            // Logging response status for debugging
+            System.out.println("Response status code: " + response.statusCode());
+
+            Platform.runLater(() -> {
+                if (response.statusCode() == 200 || response.statusCode() == 204) {
+                    // Process the successful response
+                    System.out.println("Success response received");
                     onSuccess.run();
                     successMessage.showMessage("Quotation deleted successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                } else if (response.statusCode() == 401) {
+                    // Handle non-200 status codes
+                    System.out.println("Access denied response received");
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Access denied");
+                    }
+                } else if (response.statusCode() == 404) {
+                    // Handle non-200 status codes
+                    System.out.println("Resource not found response received");
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("Resource not found");
+                    }
+                } else if (response.statusCode() == 500) {
+                    // Handle non-200 status codes
+                    System.out.println("Error response received");
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An error occurred");
+                    }
                 }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
+            });
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+            throwable.printStackTrace();
+            Platform.runLater(() -> {
+                if (Connectivity.isConnectedToInternet()) {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("An in-app error occurred");
+                    }
+                } else {
+                    if (Objects.nonNull(errorMessage)) {
+                        errorMessage.showMessage("No Internet Connection");
+                    }
                 }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
+            });
             SpotyLogger.writeToFile(throwable, QuotationMasterViewModel.class);
             return null;
         });
     }
-
 }

@@ -14,10 +14,13 @@
 
 package inc.nomard.spoty.core.views.settings;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.Currency;
 import io.github.palexdev.materialfx.controls.*;
@@ -36,12 +39,14 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class CurrencyController implements Initializable {
     private static CurrencyController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField searchBar;
     @FXML
@@ -59,6 +64,7 @@ public class CurrencyController implements Initializable {
     private MFXStageDialog dialog;
 
     private CurrencyController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(
                 () -> {
                     try {
@@ -143,12 +149,10 @@ public class CurrencyController implements Initializable {
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    CurrencyViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            CurrencyViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, obj.getData().getName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -167,7 +171,7 @@ public class CurrencyController implements Initializable {
 
     private void currencyFormDialogPane(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/CurrencyForm.fxml");
-        fxmlLoader.setControllerFactory(c -> CurrencyFormController.getInstance());
+        fxmlLoader.setControllerFactory(c -> CurrencyFormController.getInstance(stage));
         MFXGenericDialog dialogContent = fxmlLoader.load();
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
@@ -189,29 +193,29 @@ public class CurrencyController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 
     private void setIcons() {

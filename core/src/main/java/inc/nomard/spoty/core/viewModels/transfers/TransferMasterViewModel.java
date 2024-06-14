@@ -357,9 +357,6 @@ public class TransferMasterViewModel {
                 .toBranch(getToBranch())
                 .notes(getNote())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            transferMaster.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!TransferDetailViewModel.getTransferDetails().isEmpty()) {
             transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
         }

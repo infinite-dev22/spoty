@@ -35,7 +35,6 @@ public class TransferMaster {
     private Branch fromBranch;
     private Branch toBranch;
     private List<TransferDetail> transferDetails;
-    private LinkedList<Long> childrenToDelete;
     private String notes;
 
     public String getToBranchName() {

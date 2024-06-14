@@ -14,10 +14,12 @@
 
 package inc.nomard.spoty.core.views.pos;
 
+import atlantafx.base.util.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.pos.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
@@ -37,206 +39,260 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class PointOfSaleController implements Initializable {
+    private static volatile PointOfSaleController instance;
     private final ToggleGroup toggleGroup = new ToggleGroup();
+    private final Stage stage;
     @FXML
-    public MFXFilterComboBox<Customer> customer;
+    private MFXFilterComboBox<Customer> customer;
     @FXML
-    public MFXLegacyTableView<SaleDetail> cart;
+    private MFXLegacyTableView<SaleDetail> cart;
     @FXML
-    public MFXTextField discount, searchBar;
-    public String total;
+    private MFXTextField searchBar;
     @FXML
-    public MFXButton checkOutBtn, emptyCartBtn;
+    private MFXComboBox<Discount> discount;
     @FXML
-    public HBox filterPane,
-            leftHeaderPane;
+    private MFXButton checkOutBtn, emptyCartBtn;
     @FXML
-    public MFXScrollPane productHolder;
-    public TableColumn<SaleDetail, SaleDetail> cartName;
-    public TableColumn<SaleDetail, Long> cartQuantity;
-    public TableColumn<SaleDetail, Double> cartPrice;
-    public TableColumn<SaleDetail, Double> cartSubTotal;
-    public TableColumn<SaleDetail, SaleDetail> cartActions;
+    private HBox filterPane, leftHeaderPane;
     @FXML
-    public MFXScrollPane scrollPane;
+    private MFXScrollPane productScrollPane;
+    // @FXML
+    // private BootstrapPane productHolder;
     @FXML
-    public VBox cartItemHolder;
+    private TableColumn<SaleDetail, SaleDetail> cartName;
     @FXML
-    public MFXFilterComboBox<Tax> tax;
+    private TableColumn<SaleDetail, Long> cartQuantity;
     @FXML
-    public BorderPane contentPane;
+    private TableColumn<SaleDetail, Double> cartPrice;
     @FXML
-    public MFXProgressSpinner progress;
+    private TableColumn<SaleDetail, Double> cartSubTotal;
+    @FXML
+    private TableColumn<SaleDetail, SaleDetail> cartActions;
+    @FXML
+    private MFXScrollPane scrollPane;
+    @FXML
+    private VBox cartItemHolder;
+    @FXML
+    private MFXComboBox<Tax> tax;
+    @FXML
+    private BorderPane contentPane;
+    @FXML
+    private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
+
+    private PointOfSaleController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static PointOfSaleController getInstance(Stage stage) {
+        if (instance == null) {
+            synchronized (PointOfSaleController.class) {
+                instance = new PointOfSaleController(stage);
+            }
+        }
+        return instance;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         checkOutBtn.setText("CheckOut $0.00");
+        configureProductScrollPane();
         setIcons();
         setSearchBar();
         setPOSComboBoxes();
-        getCategoryFilters();
-        getProductsGridView();
+        initializeCategoryFilters();
+        initializeProductsGridView();
         setCheckoutProductsTable();
-        getTotalLabels();
+        bindTotalLabels();
+        SaleMasterViewModel.setDefaultCustomer();
     }
 
     private void setPOSComboBoxes() {
-        // Bi~Directional Binding.
-        customer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
+        setupFilterComboBox(customer, CustomerViewModel.getCustomers(), SaleMasterViewModel.customerProperty(),
+                customer -> (customer == null) ? "" : customer.getName());
+        setupComboBox(discount, DiscountViewModel.getDiscounts(), SaleMasterViewModel.discountProperty(), discount -> (discount == null) ? "" : discount.getName() + " (" + discount.getPercentage() + "%)");
+        setupComboBox(tax, TaxViewModel.getTaxes(), SaleMasterViewModel.netTaxProperty(), tax -> (tax == null) ? "" : tax.getName() + " (" + tax.getPercentage() + "%)");
+    }
 
-        // ComboBox Converters.
-        StringConverter<Customer> customerConverter =
-                FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
-
-        // ComboBox Filter Functions.
-        Function<String, Predicate<Customer>> customerFilterFunction =
-                searchStr ->
-                        customer ->
-                                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
-
-        // Set items to combo boxes and display custom text.
-        customer.setConverter(customerConverter);
-        customer.setFilterFunction(customerFilterFunction);
-        if (CustomerViewModel.getCustomers().isEmpty()) {
-            CustomerViewModel.getCustomers()
-                    .addListener(
-                            (ListChangeListener<Customer>)
-                                    c -> customer.setItems(CustomerViewModel.getCustomers()));
+    private <T> void setupFilterComboBox(MFXFilterComboBox<T> comboBox, ObservableList<T> items,
+                                         Property<T> property, Function<T, String> converter) {
+        if (property != null) {
+            comboBox.valueProperty().bindBidirectional(property);
+        }
+        if (converter != null) {
+            StringConverter<T> itemConverter = FunctionalStringConverter.to(converter);
+            Function<String, Predicate<T>> filterFunction = searchStr -> item ->
+                    StringUtils.containsIgnoreCase(itemConverter.toString(item), searchStr);
+            comboBox.setConverter(itemConverter);
+            comboBox.setFilterFunction(filterFunction);
+        }
+        if (items.isEmpty()) {
+            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
         } else {
-            customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
+            comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
         }
     }
 
-    private void getProductsGridView() {
-        setProductsGridView();
-        updateProductsGridView();
+    private <T> void setupComboBox(MFXComboBox<T> comboBox, ObservableList<T> items,
+                                   Property<T> property, Function<T, String> converter) {
+        if (property != null) {
+            comboBox.valueProperty().bindBidirectional(property);
+        }
+        if (converter != null) {
+            StringConverter<T> itemConverter = FunctionalStringConverter.to(converter);
+            comboBox.setConverter(itemConverter);
+        }
+        if (items.isEmpty()) {
+            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+        } else {
+            comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
+        }
     }
 
-    private void getCategoryFilters() {
+
+    private void initializeProductsGridView() {
+        updateProductsGridView();
+        setProductsGridView();
+    }
+
+    private void initializeCategoryFilters() {
         setCategoryFilters();
         updateCategoryFilters();
     }
 
     private void updateProductsGridView() {
-        ProductViewModel.getProducts()
-                .addListener((ListChangeListener<Product>) c -> setProductsGridView());
+        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> setProductsGridView());
     }
 
     private void setProductsGridView() {
-        GridPane productsGridView = new GridPane();
-        productsGridView.setHgap(30);
+        var productsGridView = new GridPane();
+        var row = 1;
+        var column = 0;
+        productsGridView.setHgap(20);
         productsGridView.setVgap(20);
         productsGridView.setPadding(new Insets(5));
-
-        int row = 1;
-        int column = 0;
-
         for (Product product : ProductViewModel.getProducts()) {
             ProductCard productCard = new ProductCard(product);
-            productCardOnAction(productCard);
-
-            if (column == 4) {
+            configureProductCardAction(productCard);
+            if (column == 6) {
                 column = 0;
                 ++row;
             }
-
             productsGridView.add(productCard, column++, row);
             GridPane.setMargin(productsGridView, new Insets(10));
         }
-
-        productHolder.setContent(productsGridView);
+        productScrollPane.setContent(productsGridView);
     }
 
-    private void productCardOnAction(ProductCard productCard) {
-        productCard.setOnMouseClicked(
-                event -> {
-                    // Check if a sale detail with currently clicked product already exists else create new sale detail.
-                    // Useful to update sale detail product quantity.
-                    if (SaleDetailViewModel.getSaleDetails().stream()
-                            .anyMatch(saleDetail -> saleDetail.getProduct() == productCard.getProduct())) {
-                        // Get existing sale detail into an optional... just to cater for null safety but looks like it
-                        // ain't required.
-                        Optional<SaleDetail> optionalSaleDetail =
-                                SaleDetailViewModel.getSaleDetails().stream()
-                                        .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct())
-                                        .findAny();
-                        // If optional(sale detail that's already proved present, duh...) is present else tap out.
-                        if (optionalSaleDetail.isPresent()) {
-                            SaleDetail saleDetail = optionalSaleDetail.get();
-                            try {
-                                // Get product quantity in existing sale detail.
-                                var quantity = calculateQuantity(saleDetail);
-                                availableProductQuantity = quantity;
-                                // If actual product quantity is greater or equal to existing sale detail's product
-                                // quantity then increment by 1 else out of stock.
-                                if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
-                                    SaleDetailViewModel.getCartSale(saleDetail);
-                                    SaleDetailViewModel.setProduct(productCard.getProduct());
-                                    SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
-                                    SaleDetailViewModel.setQuantity(quantity);
-                                    SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+    // private void setProductsGridView() {
+    //     var row = new BootstrapRow();
+    //     for (Product product : ProductViewModel.getProducts()) {
+    //         ProductCard productCard = new ProductCard(product);
+    //         configureProductCardAction(productCard);
+    //         var column = new BootstrapColumn(productCard);
+    //         column.setBreakpointColumnWidth(Breakpoint.LARGE, 2);
+    //         column.setBreakpointColumnWidth(Breakpoint.SMALL, 4);
+    //         column.setBreakpointColumnWidth(Breakpoint.XSMALL, 8);
+    //         row.addColumn(column);
+    //     }
+    //     productHolder.addRow(row);
+    // }
 
-                                    SaleDetailViewModel.updateCartSale(
-                                            (long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
-                                } else {
-                                    SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-                                    SpotyMessage notification =
-                                            new SpotyMessage.MessageBuilder("Product out of stock")
-                                                    .duration(MessageDuration.SHORT)
-                                                    .icon("fas-triangle-exclamation")
-                                                    .type(MessageVariants.ERROR)
-                                                    .build();
-                                    notificationHolder.addMessage(notification);
-                                }
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
-                        }
-                    } else {
-                        // Check if actual product quantity greater than zero(0) else out of stock.
-                        if (productCard.getProduct().getQuantity() > 0) {
-                            SaleDetailViewModel.setProduct(productCard.getProduct());
-                            SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
-                            SaleDetailViewModel.setQuantity(1L);
-                            availableProductQuantity = 1L;
-                            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
-                            SaleDetailViewModel.addSaleDetail();
-                        } else {
-                            SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-                            SpotyMessage notification =
-                                    new SpotyMessage.MessageBuilder("Product out of stock")
-                                            .duration(MessageDuration.SHORT)
-                                            .icon("fas-triangle-exclamation")
-                                            .type(MessageVariants.ERROR)
-                                            .build();
-                            notificationHolder.addMessage(notification);
-                        }
-                    }
-                });
+    // private void configureProductScrollPane() {
+    //     productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+    //         if (event.getDeltaX() != 0) {
+    //             event.consume();
+    //         }
+    //     });
+    //     productScrollPane.widthProperty().addListener((obs, oV, nV) -> {
+    //         productHolder.setMaxWidth(nV.doubleValue() - 10);
+    //         productHolder.setPrefWidth(nV.doubleValue() - 10);
+    //         productHolder.setMinWidth(nV.doubleValue() - 10);
+    //     });
+    //     productHolder.setAlignment(Pos.CENTER_LEFT);
+    //     productHolder.setPadding(new Insets(10));
+    // }
+
+    private void configureProductScrollPane() {
+        productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaX() != 0) {
+                event.consume();
+            }
+        });
+    }
+
+    private void configureProductCardAction(ProductCard productCard) {
+        productCard.setOnMouseClicked(event -> handleProductCardClick(productCard));
+    }
+
+    private void handleProductCardClick(ProductCard productCard) {
+        Optional<SaleDetail> existingSaleDetail = SaleDetailViewModel.getSaleDetails().stream()
+                .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct()).findAny();
+
+        existingSaleDetail.ifPresentOrElse(saleDetail -> updateExistingSaleDetail(saleDetail, productCard),
+                () -> addNewSaleDetail(productCard));
+    }
+
+    private void updateExistingSaleDetail(SaleDetail saleDetail, ProductCard productCard) {
+        try {
+            long quantity = calculateQuantity(saleDetail);
+            availableProductQuantity = quantity;
+
+            if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
+                SaleDetailViewModel.getCartSale(saleDetail);
+                updateSaleDetail(saleDetail, productCard, quantity);
+            } else {
+                displayNotification("Product out of stock", MessageVariants.ERROR, "fas-triangle-exclamation");
+            }
+        } catch (Exception e) {
+            SpotyLogger.writeToFile(e, this.getClass());
+        }
+    }
+
+    private void updateSaleDetail(SaleDetail saleDetail, ProductCard productCard, long quantity) {
+        SaleDetailViewModel.setProduct(productCard.getProduct());
+        SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
+        SaleDetailViewModel.setQuantity(quantity);
+        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+        SaleDetailViewModel.updateCartSale((long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
+    }
+
+    private void addNewSaleDetail(ProductCard productCard) {
+        if (productCard.getProduct().getQuantity() > 0) {
+            SaleDetailViewModel.setProduct(productCard.getProduct());
+            SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
+            SaleDetailViewModel.setQuantity(1L);
+            availableProductQuantity = 1L;
+            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+            SaleDetailViewModel.addSaleDetail();
+        } else {
+            displayNotification("Product out of stock", MessageVariants.ERROR, "fas-triangle-exclamation");
+        }
     }
 
     private double calculateSubTotal(Product product) {
-        return (SaleDetailViewModel.getQuantity()
-                * ((product.getTax().getPercentage() > 0) ? (product.getTax().getPercentage() / 100) : 1.0))
-                * product.getSalePrice();
+        double subTotal = product.getSalePrice();
+
+        if (Objects.nonNull(product.getTax()) && product.getTax().getPercentage() > 0) {
+            subTotal += (product.getTax().getPercentage() / 100) * subTotal;
+        }
+        if (Objects.nonNull(product.getDiscount()) && product.getDiscount().getPercentage() > 0) {
+            subTotal -= (product.getDiscount().getPercentage() / 100) * subTotal;
+        }
+        return subTotal;
     }
 
     private double calculateTotal(ObservableList<SaleDetail> saleDetails) {
-        double totalPrice = 0;
-
-        for (SaleDetail saleDetail : saleDetails) {
-            totalPrice += saleDetail.getSubTotalPrice();
-        }
-
-        return totalPrice;
+        return saleDetails.stream().mapToDouble(SaleDetail::getSubTotalPrice).sum();
     }
 
     private long calculateQuantity(SaleDetail saleDetail) {
@@ -244,28 +300,20 @@ public class PointOfSaleController implements Initializable {
     }
 
     private void setCategoryFilters() {
-        ProductCategoryViewModel.getCategories()
-                .forEach(
-                        productCategory -> {
-                            ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
-                            filterPane.getChildren().addAll(toggleButton);
-                        });
+        ProductCategoryViewModel.getCategories().forEach(productCategory -> {
+            ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
+            filterPane.getChildren().add(toggleButton);
+        });
     }
 
     private void updateCategoryFilters() {
-        ProductCategoryViewModel.getCategories()
-                .addListener(
-                        (ListChangeListener<ProductCategory>)
-                                c -> {
-                                    filterPane.getChildren().clear();
-                                    ProductCategoryViewModel.getCategories()
-                                            .forEach(
-                                                    productCategory -> {
-                                                        ToggleButton toggleButton =
-                                                                createToggle(productCategory.getName(), toggleGroup);
-                                                        filterPane.getChildren().addAll(toggleButton);
-                                                    });
-                                });
+        ProductCategoryViewModel.getCategories().addListener((ListChangeListener<ProductCategory>) c -> {
+            filterPane.getChildren().clear();
+            ProductCategoryViewModel.getCategories().forEach(productCategory -> {
+                ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
+                filterPane.getChildren().add(toggleButton);
+            });
+        });
     }
 
     private ToggleButton createToggle(String text, ToggleGroup toggleGroup) {
@@ -279,130 +327,120 @@ public class PointOfSaleController implements Initializable {
     }
 
     private void setCheckoutProductsTable() {
-        cartName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        cartName.setCellFactory(
-                tc ->
-                        new TableCell<>() {
-                            @Override
-                            public void updateItem(SaleDetail item, boolean empty) {
-                                super.updateItem(item, empty);
+        setupCartTableColumns();
 
-                                if (empty || item == null) {
-                                    setText(null);
-                                    setGraphic(null);
-                                } else {
-                                    setText(item.getProductName());
-                                }
-                            }
-                        });
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) c -> {
+            cart.setItems(SaleDetailViewModel.getSaleDetails());
+            enableButtonsOnSaleDetailsChange();
+        });
+    }
+
+    private void setupCartTableColumns() {
+        cartName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        cartName.setCellFactory(tc -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getProductName());
+            }
+        });
 
         cartQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         cartPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-
         cartSubTotal.setCellValueFactory(new PropertyValueFactory<>("subTotalPrice"));
+
         cartActions.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        cartActions.setCellFactory(
-                param ->
-                        new TableCell<>() {
-                            final MFXFontIcon delete = new MFXFontIcon("fas-trash", Color.RED);
+        cartActions.setCellFactory(param -> new TableCell<>() {
+            final MFXFontIcon delete = new MFXFontIcon("fas-trash", Color.RED);
 
-                            @Override
-                            protected void updateItem(SaleDetail item, boolean empty) {
-                                super.updateItem(item, empty);
-
-                                if (Objects.equals(item, null)) {
-                                    setGraphic(null);
-                                    return;
-                                }
-
-                                setGraphic(delete);
-
-                                delete.setOnMouseClicked(event -> {
-                                    getTableView().getItems().remove(item);
-                                    availableProductQuantity = 0L;
-                                });
-                            }
-                        });
-
-        SaleDetailViewModel.getSaleDetails()
-                .addListener(
-                        (ListChangeListener<SaleDetail>)
-                                c -> cart.setItems(SaleDetailViewModel.getSaleDetails()));
-
-//        SaleDetailViewModel.getSaleDetails()
-//                .addListener(
-//                        (ListChangeListener<SaleDetail>)
-//                                c -> SaleDetailViewModel.getSaleDetails().forEach(saleDetail -> {
-//                                    var cartItem = new CartItem(
-//                                            saleDetail.getProduct().getImage(),
-//                                            saleDetail.getProductName(),
-//                                            String.valueOf(saleDetail.getProduct().getPrice()),
-//                                            saleDetail.getQuantity()
-//                                    );
-//                                    cartItemHolder.getChildren().add(cartItem);
-//                                }));
+            @Override
+            protected void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(delete);
+                    delete.setOnMouseClicked(event -> removeItemFromCart(item));
+                }
+            }
+        });
     }
 
-    private void getTotalLabels() {
-        SaleDetailViewModel.getSaleDetails()
-                .addListener(
-                        (ListChangeListener<SaleDetail>)
-                                listener -> checkOutBtn.setText("CheckOut $" + calculateTotal(SaleDetailViewModel.getSaleDetails())));
+    private void removeItemFromCart(SaleDetail item) {
+        cart.getItems().remove(item);
+        availableProductQuantity = 0L;
+    }
+
+    private void enableButtonsOnSaleDetailsChange() {
+        if (checkOutBtn.isDisabled()) {
+            checkOutBtn.setDisable(false);
+        }
+        if (emptyCartBtn.isDisabled()) {
+            emptyCartBtn.setDisable(false);
+        }
+    }
+
+    private void bindTotalLabels() {
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) listener ->
+                checkOutBtn.setText("CheckOut $" + calculateTotal(SaleDetailViewModel.getSaleDetails()))
+        );
     }
 
     public void clearCart() {
         SaleDetailViewModel.getSaleDetails().clear();
         availableProductQuantity = 0L;
+        checkOutBtn.setDisable(true);
+        emptyCartBtn.setDisable(true);
     }
 
     public void savePOSSale() {
         SaleMasterViewModel.setSaleStatus("Complete");
         SaleMasterViewModel.setPaymentStatus("Paid");
-        SaleMasterViewModel.setTotal(calculateTotal(SaleDetailViewModel.getSaleDetails()));
-        SaleMasterViewModel.setAmountPaid(calculateTotal(SaleDetailViewModel.getSaleDetails()));
+        double total = calculateTotal(SaleDetailViewModel.getSaleDetails());
+        SaleMasterViewModel.setTotal(total);
+        SaleMasterViewModel.setAmountPaid(total);
         SaleMasterViewModel.setNotes("Approved.");
-        SpotyThreader.spotyThreadPool(
-                () -> {
-                    try {
-                        SaleMasterViewModel.saveSaleMaster(this::onSuccess, this::successMessage, this::errorMessage);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                });
+
+        SpotyThreader.spotyThreadPool(() -> {
+            try {
+                SaleMasterViewModel.saveSaleMaster(this::onSuccess, this::displaySuccessMessage, this::displayErrorMessage);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
+        });
     }
 
     private void onSuccess() {
-            SaleDetailViewModel.getSaleDetails().clear();
-        availableProductQuantity = 0L;
+        clearCart();
         SaleMasterViewModel.setDefaultCustomer();
         SaleMasterViewModel.getAllSaleMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
     }
 
-    private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+    private void displaySuccessMessage(String message) {
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
-    private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+    private void displayErrorMessage(String message) {
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 
     private void setIcons() {
@@ -410,17 +448,15 @@ public class PointOfSaleController implements Initializable {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
-            if (Objects.equals(ov, nv)) {
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (Objects.equals(oldValue, newValue)) {
                 return;
             }
-            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
+            if (oldValue.isBlank() && newValue.isBlank()) {
                 ProductViewModel.getAllProducts(null, null);
             }
             progress.setVisible(true);
-            ProductViewModel.searchItem(nv, () -> {
-                progress.setVisible(false);
-            }, this::errorMessage);
+            ProductViewModel.searchItem(newValue, () -> progress.setVisible(false), this::displayErrorMessage);
         });
     }
 }

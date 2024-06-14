@@ -14,11 +14,13 @@
 
 package inc.nomard.spoty.core.views;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -37,12 +39,14 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class QuotationController implements Initializable {
     private static QuotationController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField searchBar;
     @FXML
@@ -61,6 +65,7 @@ public class QuotationController implements Initializable {
     private MFXStageDialog viewDialog;
 
     public QuotationController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(() ->
         {
             try {
@@ -160,11 +165,10 @@ public class QuotationController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    QuotationMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            QuotationMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, obj.getData().getCustomerName() + "'s quotation", stage, contentPane));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -224,29 +228,29 @@ public class QuotationController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 
     private void setIcons() {

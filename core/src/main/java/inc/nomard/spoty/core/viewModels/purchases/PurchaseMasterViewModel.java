@@ -1,23 +1,8 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 package inc.nomard.spoty.core.viewModels.purchases;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.network_bridge.models.*;
@@ -39,15 +24,13 @@ import lombok.extern.java.*;
 
 @Log
 public class PurchaseMasterViewModel {
+
     @Getter
-    public static final ObservableList<PurchaseMaster> purchasesList =
-            FXCollections.observableArrayList();
+    public static final ObservableList<PurchaseMaster> purchasesList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(Date.class, new UnixEpochDateTypeAdapter())
             .create();
-    private static final ListProperty<PurchaseMaster> purchases =
-            new SimpleListProperty<>(purchasesList);
+    private static final ListProperty<PurchaseMaster> purchases = new SimpleListProperty<>(purchasesList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
@@ -133,16 +116,15 @@ public class PurchaseMasterViewModel {
     }
 
     public static void resetProperties() {
-        Platform.runLater(
-                () -> {
-                    setId(0L);
-                    setDate("");
-                    setSupplier(null);
-                    setStatus("");
-                    setNote("");
-                    PENDING_DELETES.clear();
-                    PurchaseDetailViewModel.getPurchaseDetails().clear();
-                });
+        Platform.runLater(() -> {
+            setId(0L);
+            setDate("");
+            setSupplier(null);
+            setStatus("");
+            setNote("");
+            PENDING_DELETES.clear();
+            PurchaseDetailViewModel.getPurchaseDetails().clear();
+        });
     }
 
     public static void savePurchaseMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -161,197 +143,80 @@ public class PurchaseMasterViewModel {
                 .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
-        if (!PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
-            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailsList);
+        if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
+            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
         }
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.post(purchaseMaster);
-        responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 201) {
-                // Process the successful response
-                Platform.runLater(() -> {
-                    onSuccess.run();
-                    successMessage.showMessage("Purchase created successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
-            SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
-            return null;
-        });
+        responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
+                .exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void getAllPurchaseMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                              SpotyGotFunctional.MessageConsumer errorMessage) {
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetchAll();
         responseFuture.thenAccept(response -> {
-            // Handle successful response
             if (response.statusCode() == 200) {
-                // Process the successful response
                 Platform.runLater(() -> {
                     Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
                     }.getType();
                     ArrayList<PurchaseMaster> purchaseList = gson.fromJson(response.body(), listType);
                     purchasesList.clear();
                     purchasesList.addAll(purchaseList);
-                    if (Objects.nonNull(onSuccess)) {
+                    if (onSuccess != null) {
                         onSuccess.run();
                     }
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
-    public static void getPurchaseMaster(Long index,
-                                         SpotyGotFunctional.ParameterlessConsumer onSuccess,
+    public static void getPurchaseMaster(Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                          SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
             if (response.statusCode() == 200) {
-                // Process the successful response
                 Platform.runLater(() -> {
                     var purchaseMaster = gson.fromJson(response.body(), PurchaseMaster.class);
                     setId(purchaseMaster.getId());
                     setNote(purchaseMaster.getNotes());
                     setDate(purchaseMaster.getLocaleDate());
-                    PurchaseDetailViewModel.purchaseDetailsList.clear();
-                    PurchaseDetailViewModel.purchaseDetailsList.addAll(purchaseMaster.getPurchaseDetails());
-                    onSuccess.run();
+                    setSupplier(purchaseMaster.getSupplier());
+                    setStatus(purchaseMaster.getPurchaseStatus());
+                    PurchaseDetailViewModel.getPurchaseDetails().clear();
+                    PurchaseDetailViewModel.getPurchaseDetails().addAll(purchaseMaster.getPurchaseDetails());
+                    if (onSuccess != null) {
+                        onSuccess.run();
+                    }
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
-    public static void searchItem(String search,
-                                  SpotyGotFunctional.ParameterlessConsumer onSuccess,
+    public static void searchItem(String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.search(searchModel);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
             if (response.statusCode() == 200) {
-                // Process the successful response
                 Platform.runLater(() -> {
                     Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
                     }.getType();
-                    ArrayList<PurchaseMaster> purchaseList = gson.fromJson(
-                            response.body(), listType);
+                    ArrayList<PurchaseMaster> purchaseList = gson.fromJson(response.body(), listType);
                     purchasesList.clear();
                     purchasesList.addAll(purchaseList);
-                    onSuccess.run();
+                    if (onSuccess != null) {
+                        onSuccess.run();
+                    }
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -371,96 +236,79 @@ public class PurchaseMasterViewModel {
                 .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            purchaseMaster.setChildrenToDelete(PENDING_DELETES);
-        }
-        if (!PurchaseDetailViewModel.getPurchaseDetailsList().isEmpty()) {
+        if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
         }
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class,
+                        new UnixEpochDateTypeAdapter())
+                .create();
+        System.out.println(gson.toJson(purchaseMaster));
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.put(purchaseMaster);
-        responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
-                // Process the successful response
-                Platform.runLater(() -> {
-                    onSuccess.run();
-                    successMessage.showMessage("Purchase updated successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
+        responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
+                .exceptionally(throwable -> handleException(throwable, errorMessage));
+    }
+
+    public static void deleteItem(Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
+        var findModel = FindModel.builder().id(index).build();
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.delete(findModel);
+        responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
+                .exceptionally(throwable -> handleException(throwable, errorMessage));
+    }
+
+    private static void handleResponse(HttpResponse<String> response, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                       SpotyGotFunctional.MessageConsumer successMessage,
+                                       SpotyGotFunctional.MessageConsumer errorMessage) {
+        Platform.runLater(() -> {
+            switch (response.statusCode()) {
+                case 200:
+                case 201:
+                case 204:
+                    if (onSuccess != null) {
+                        onSuccess.run();
+                    }
+                    if (successMessage != null) {
+                        successMessage.showMessage("Operation successful");
+                    }
+                    break;
+                default:
+                    handleNon200Status(response, errorMessage);
+                    break;
             }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
-            SpotyLogger.writeToFile(throwable, AdjustmentMasterViewModel.class);
-            return null;
         });
     }
 
-    public static void deleteItem(
-            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
-            SpotyGotFunctional.MessageConsumer successMessage,
-            SpotyGotFunctional.MessageConsumer errorMessage) {
-        var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.delete(findModel);
-        responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200 || response.statusCode() == 204) {
-                // Process the successful response
-                Platform.runLater(() -> {
-                    onSuccess.run();
-                    successMessage.showMessage("Purchase deleted successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
+    private static void handleNon200Status(HttpResponse<String> response, SpotyGotFunctional.MessageConsumer errorMessage) {
+        Platform.runLater(() -> {
+            String message;
+            switch (response.statusCode()) {
+                case 401:
+                    message = "Access denied";
+                    break;
+                case 404:
+                    message = "Resource not found";
+                    break;
+                case 500:
+                default:
+                    message = "An error occurred";
+                    break;
             }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+            if (errorMessage != null) {
+                errorMessage.showMessage(message);
             }
-            SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
-            return null;
         });
+    }
+
+    private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
+        Platform.runLater(() -> {
+            SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
+            String message = Connectivity.isConnectedToInternet() ? "An in-app error occurred" : "No Internet Connection";
+            if (errorMessage != null) {
+                errorMessage.showMessage(message);
+            }
+        });
+        return null;
     }
 }

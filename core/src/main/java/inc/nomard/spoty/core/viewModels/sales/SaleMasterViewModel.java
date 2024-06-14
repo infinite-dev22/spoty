@@ -50,9 +50,8 @@ public class SaleMasterViewModel {
     private static final StringProperty saleStatus = new SimpleStringProperty("");
     private static final DoubleProperty total = new SimpleDoubleProperty();
     private static final DoubleProperty amountPaid = new SimpleDoubleProperty();
-    private static final DoubleProperty taxRate = new SimpleDoubleProperty();
-    private static final DoubleProperty netTax = new SimpleDoubleProperty();
-    private static final DoubleProperty discount = new SimpleDoubleProperty();
+    private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
     private static final DoubleProperty subTotal = new SimpleDoubleProperty();
     private static final DoubleProperty amountDue = new SimpleDoubleProperty();
     private static final DoubleProperty changeAmount = new SimpleDoubleProperty();
@@ -157,39 +156,27 @@ public class SaleMasterViewModel {
         return amountPaid;
     }
 
-    public static double getTaxRate() {
-        return taxRate.get();
+    public static Tax getTax() {
+        return tax.get();
     }
 
-    public static void setTaxRate(double taxRate) {
-        SaleMasterViewModel.taxRate.set(taxRate);
+    public static void setTax(Tax tax) {
+        SaleMasterViewModel.tax.set(tax);
     }
 
-    public static DoubleProperty taxRateProperty() {
-        return taxRate;
+    public static ObjectProperty<Tax> netTaxProperty() {
+        return tax;
     }
 
-    public static double getNetTax() {
-        return netTax.get();
-    }
-
-    public static void setNetTax(double netTax) {
-        SaleMasterViewModel.netTax.set(netTax);
-    }
-
-    public static DoubleProperty netTaxProperty() {
-        return netTax;
-    }
-
-    public static double getDiscount() {
+    public static Discount getDiscount() {
         return discount.get();
     }
 
-    public static void setDiscount(double discount) {
+    public static void setDiscount(Discount discount) {
         SaleMasterViewModel.discount.set(discount);
     }
 
-    public static DoubleProperty discountProperty() {
+    public static ObjectProperty<Discount> discountProperty() {
         return discount;
     }
 
@@ -251,9 +238,8 @@ public class SaleMasterViewModel {
                     setNotes("");
                     setTotal(0);
                     setAmountPaid(0);
-                    setTaxRate(0);
-                    setNetTax(0);
-                    setDiscount(0);
+                    setTax(null);
+                    setDiscount(null);
                     setSubTotal(0);
                     setAmountDue(0);
                     setChangeAmount(0);
@@ -271,9 +257,8 @@ public class SaleMasterViewModel {
                 .customer(getCustomer())
                 .total(getTotal())
                 .amountPaid(getAmountPaid())
-                .taxRate(0)
-                .netTax(0)
-                .discount(0)
+                .tax(getTax())
+                .discount(getDiscount())
                 .subTotal(0)
                 .amountDue(0)
                 .changeAmount(0)
@@ -332,15 +317,15 @@ public class SaleMasterViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
-            // Process the successful response
-            if (Objects.nonNull(onSuccess)) {
+            if (response.statusCode() == 200) {
+                // Process the successful response
                 Platform.runLater(() -> {
                     Type listType = new TypeToken<ArrayList<SaleMaster>>() {
                     }.getType();
                     ArrayList<SaleMaster> saleList = gson.fromJson(response.body(), listType);
                     salesList.clear();
                     salesList.addAll(saleList);
-                    if (response.statusCode() == 200) {
+                    if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
                 });
@@ -394,8 +379,7 @@ public class SaleMasterViewModel {
                     setPaymentStatus(saleMaster.getPaymentStatus());
                     setTotal(saleMaster.getTotal());
                     setAmountPaid(saleMaster.getAmountPaid());
-                    setTaxRate(saleMaster.getTaxRate());
-                    setNetTax(saleMaster.getNetTax());
+                    setTax(saleMaster.getTax());
                     setDiscount(saleMaster.getDiscount());
                     setSubTotal(saleMaster.getSubTotal());
                     setAmountDue(saleMaster.getAmountDue());
@@ -499,9 +483,6 @@ public class SaleMasterViewModel {
                 .paymentStatus(getPaymentStatus())
                 .notes(getNotes())
                 .build();
-        if (!PENDING_DELETES.isEmpty()) {
-            sale.setChildrenToDelete(PENDING_DELETES);
-        }
         if (!SaleDetailViewModel.getSaleDetailsList().isEmpty()) {
             sale.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
         }

@@ -122,18 +122,18 @@ public class StockInDetailViewModel {
     }
 
     public static void updateStockInDetail() {
-        var stockInDetail = StockInDetail.builder()
-                .id(getId())
-                .product(getProduct())
-                .quantity(getQuantity())
-                .description(getDescription())
-                .build();
+        var stockInDetail = stockInDetailsList.get(getTempId());
+        stockInDetail.setProduct(getProduct());
+        stockInDetail.setQuantity(getQuantity());
+        stockInDetail.setDescription(getDescription());
         stockInDetailsList.set(getTempId(), stockInDetail);
     }
 
     public static void getStockInDetail(StockInDetail stockInDetail) {
         setTempId(getStockInDetails().indexOf(stockInDetail));
-        setId(stockInDetail.getId());
+        if (Objects.nonNull(stockInDetail.getId())) {
+            setId(stockInDetail.getId());
+        }
         setProduct(stockInDetail.getProduct());
         setQuantity(String.valueOf(stockInDetail.getQuantity()));
         setDescription(stockInDetail.getDescription());

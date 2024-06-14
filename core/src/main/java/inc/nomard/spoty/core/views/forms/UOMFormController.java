@@ -14,10 +14,12 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
@@ -34,6 +36,7 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
@@ -45,6 +48,7 @@ public class UOMFormController implements Initializable {
      * present i.e. not just have a scroll view.
      */
     private static UOMFormController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField name,
             shortName,
@@ -69,8 +73,16 @@ public class UOMFormController implements Initializable {
             operatorValueConstraints;
     private ActionEvent actionEvent = null;
 
-    public static UOMFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new UOMFormController();
+    public UOMFormController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static UOMFormController getInstance(Stage stage) {
+        if (Objects.equals(instance, null)) {
+            synchronized (UOMFormController.class) {
+                instance = new UOMFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -204,6 +216,8 @@ public class UOMFormController implements Initializable {
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        formsHolder.setManaged(false);
+        formsHolder.setVisible(false);
         UOMViewModel.resetUOMProperties();
         UOMViewModel.getAllUOMs(null, null);
     }
@@ -269,28 +283,28 @@ public class UOMFormController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

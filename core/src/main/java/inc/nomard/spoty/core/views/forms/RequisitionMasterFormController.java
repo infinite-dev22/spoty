@@ -14,6 +14,7 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
@@ -22,6 +23,7 @@ import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.utils.*;
@@ -54,6 +56,7 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionMasterFormController implements Initializable {
     private static RequisitionMasterFormController instance;
+    private final Stage stage;
     @FXML
     public Label title,
             supplierValidationLabel,
@@ -74,6 +77,7 @@ public class RequisitionMasterFormController implements Initializable {
     private MFXStageDialog dialog;
 
     private RequisitionMasterFormController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(
                 () -> {
                     try {
@@ -85,7 +89,11 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     public static RequisitionMasterFormController getInstance(Stage stage) {
-        if (instance == null) instance = new RequisitionMasterFormController(stage);
+        if (instance == null) {
+            synchronized (RequisitionMasterFormController.class) {
+                instance = new RequisitionMasterFormController(stage);
+            }
+        }
         return instance;
     }
 
@@ -127,7 +135,7 @@ public class RequisitionMasterFormController implements Initializable {
 
     private void createRequisitionProductDialog(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/RequisitionDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance());
+        fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance(stage));
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -149,16 +157,9 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     public void saveBtnClicked() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         if (!detailTable.isDisabled() && RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
-            SpotyMessage notification =
-                    new SpotyMessage.MessageBuilder("Table can't be Empty")
-                            .duration(MessageDuration.SHORT)
-                            .icon("fas-triangle-exclamation")
-                            .type(MessageVariants.ERROR)
-                            .build();
-            notificationHolder.addMessage(notification);
+            errorMessage("Table can't be Empty");
         }
         List<Constraint> supplierConstraints = supplier.validate();
         List<Constraint> statusConstraints = status.validate();
@@ -257,13 +258,12 @@ public class RequisitionMasterFormController implements Initializable {
 
         // Actions
         // Delete
-        delete.setOnAction(
-                event -> {
-                    RequisitionDetailViewModel.removeRequisitionDetail(
-                            obj.getData().getId(),
-                            RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
-                    event.consume();
-                });
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            RequisitionDetailViewModel.removeRequisitionDetail(
+                    obj.getData().getId(),
+                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
+            event.consume();
+        }, obj.getData().getProductName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {
@@ -351,28 +351,28 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     private void successMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

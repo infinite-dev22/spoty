@@ -14,14 +14,14 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import static inc.nomard.spoty.core.GlobalActions.*;
+import atlantafx.base.util.*;
+import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -32,219 +32,196 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
+import javafx.beans.binding.*;
+import javafx.beans.property.*;
 import javafx.collections.*;
+import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class QuotationDetailFormController implements Initializable {
     private static QuotationDetailFormController instance;
+    private final Stage stage;
     @FXML
     public MFXTextField quantity;
     @FXML
     public MFXFilterComboBox<Product> product;
     @FXML
-    public MFXButton saveBtn,
-            cancelBtn;
+    public MFXButton saveBtn, cancelBtn;
     @FXML
-    public Label productValidationLabel,
-            quantityValidationLabel;
+    public Label productValidationLabel, quantityValidationLabel;
     @FXML
     public MFXComboBox<Discount> discount;
     @FXML
     public MFXComboBox<Tax> tax;
-    private List<Constraint> productConstraints,
-            quantityConstraints;
 
-    public static QuotationDetailFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new QuotationDetailFormController();
+    public QuotationDetailFormController(Stage stage) {
+        this.stage = stage;
+    }
+
+    public static synchronized QuotationDetailFormController getInstance(Stage stage) {
+        if (instance == null) {
+            synchronized (QuotationDetailFormController.class) {
+                instance = new QuotationDetailFormController(stage);
+            }
+        }
         return instance;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Bind form input values.
-        quantity
-                .textProperty()
-                .bindBidirectional(QuotationDetailViewModel.quantityProperty());
-        product
-                .valueProperty()
-                .bindBidirectional(QuotationDetailViewModel.productProperty());
+        bindFormInputs();
+        setupComboBoxes();
+        setupValidators();
+        setupActions();
+    }
+
+    private void bindFormInputs() {
+        quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
+        product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         discount.valueProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
         tax.valueProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
-
-        // Combo box Converter.
-        StringConverter<Product> productVariantConverter =
-                FunctionalStringConverter.to(
-                        productDetail -> (productDetail == null) ? "" : productDetail.getName());
-        StringConverter<Discount> discountConverter =
-                FunctionalStringConverter.to(discount -> (discount == null) ? "" : discount.getName() + "(" + discount.getPercentage() + ")");
-        StringConverter<Tax> taxConverter =
-                FunctionalStringConverter.to(tax -> (tax == null) ? "" : tax.getName() + "(" + tax.getPercentage() + ")");
-
-        // Combo box Filter Function.
-        Function<String, Predicate<Product>> productVariantFilterFunction =
-                searchStr ->
-                        productDetail ->
-                                StringUtils.containsIgnoreCase(
-                                        productVariantConverter.toString(productDetail), searchStr);
-
-        // Combo box properties.
-        product.setConverter(productVariantConverter);
-        product.setFilterFunction(productVariantFilterFunction);
-        if (ProductViewModel.getProducts().isEmpty()) {
-            ProductViewModel.getProducts()
-                    .addListener(
-                            (ListChangeListener<Product>)
-                                    c -> product.setItems(ProductViewModel.getProducts()));
-        } else {
-            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
-        }
-        // Discount combo box
-        discount.setConverter(discountConverter);
-        if (DiscountViewModel.getDiscounts().isEmpty()) {
-            DiscountViewModel.getDiscounts()
-                    .addListener(
-                            (ListChangeListener<Discount>)
-                                    c -> discount.setItems(DiscountViewModel.getDiscounts()));
-        } else {
-            discount.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
-        }
-        // Tax combo box
-        tax.setConverter(taxConverter);
-        if (TaxViewModel.getTaxes().isEmpty()) {
-            TaxViewModel.getTaxes()
-                    .addListener(
-                            (ListChangeListener<Tax>)
-                                    c -> tax.setItems(TaxViewModel.getTaxes()));
-        } else {
-            tax.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
-        }
-
-        // Input validators.
-        requiredValidator();
-
-        dialogOnActions();
     }
 
-    private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    closeDialog(event);
-                    QuotationDetailViewModel.resetProperties();
-                    product.clearSelection();
-                    productValidationLabel.setVisible(false);
-                    quantityValidationLabel.setVisible(false);
+    private void setupComboBoxes() {
+        product.setConverter(createStringConverter(Product::getName));
+        product.setFilterFunction(createFilterFunction(Product::getName));
+        bindComboBoxItems(product, ProductViewModel.getProducts(), ProductViewModel.productsProperty());
 
-                    productValidationLabel.setManaged(false);
-                    quantityValidationLabel.setManaged(false);
+        discount.setConverter(createStringConverter(d -> d.getName() + "(" + d.getPercentage() + ")"));
+        bindComboBoxItems(discount, DiscountViewModel.getDiscounts(), DiscountViewModel.discountsProperty());
 
-                    product.clearSelection();
-
-                    product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
-        saveBtn.setOnAction(
-                (event) -> {
-                    SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-
-                    productConstraints = product.validate();
-                    quantityConstraints = quantity.validate();
-                    if (!productConstraints.isEmpty()) {
-                        productValidationLabel.setManaged(true);
-                        productValidationLabel.setVisible(true);
-                        productValidationLabel.setText(productConstraints.getFirst().getMessage());
-                        product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) product.getScene().getWindow();
-                        dialog.sizeToScene();
-                    }
-                    if (!quantityConstraints.isEmpty()) {
-                        quantityValidationLabel.setManaged(true);
-                        quantityValidationLabel.setVisible(true);
-                        quantityValidationLabel.setText(quantityConstraints.getFirst().getMessage());
-                        quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
-                        dialog.sizeToScene();
-                    }
-                    if (productConstraints.isEmpty()
-                            && quantityConstraints.isEmpty()) {
-                        if (tempIdProperty().get() > -1) {
-                            QuotationDetailViewModel.updateQuotationDetail(
-                                    QuotationDetailViewModel.getId());
-
-                            SpotyMessage notification =
-                                    new SpotyMessage.MessageBuilder("Product changed successfully")
-                                            .duration(MessageDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(MessageVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addMessage(notification);
-
-                            product.clearSelection();
-                            QuotationDetailViewModel.resetProperties();
-
-                            closeDialog(event);
-                            return;
-                        }
-                        QuotationDetailViewModel.addQuotationDetails();
-
-                        SpotyMessage notification =
-                                new SpotyMessage.MessageBuilder("Product added successfully")
-                                        .duration(MessageDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(MessageVariants.SUCCESS)
-                                        .build();
-
-                        notificationHolder.addMessage(notification);
-
-                        product.clearSelection();
-                        QuotationDetailViewModel.resetProperties();
-
-                        closeDialog(event);
-                    }
-                });
+        tax.setConverter(createStringConverter(t -> t.getName() + "(" + t.getPercentage() + ")"));
+        bindComboBoxItems(tax, TaxViewModel.getTaxes(), TaxViewModel.taxesProperty());
     }
 
-    public void requiredValidator() {
-        // Name input validation.
-        Constraint productConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Product is required")
-                        .setCondition(product.textProperty().length().greaterThan(0))
-                        .get();
-        product.getValidator().constraint(productConstraint);
-        Constraint quantityConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Quantity is required")
-                        .setCondition(quantity.textProperty().length().greaterThan(0))
-                        .get();
-        quantity.getValidator().constraint(quantityConstraint);
-        // Display error.
-        product
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                productValidationLabel.setManaged(false);
-                                productValidationLabel.setVisible(false);
-                                product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        quantity
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                quantityValidationLabel.setManaged(false);
-                                quantityValidationLabel.setVisible(false);
-                                quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
+    private <T> StringConverter<T> createStringConverter(Function<T, String> toStringFunction) {
+        return FunctionalStringConverter.to(obj -> (obj == null) ? "" : toStringFunction.apply(obj));
+    }
+
+    private <T> Function<String, Predicate<T>> createFilterFunction(Function<T, String> toStringFunction) {
+        return searchStr -> obj -> StringUtils.containsIgnoreCase(toStringFunction.apply(obj), searchStr);
+    }
+
+    private <T> void bindComboBoxItems(MFXComboBox<T> comboBox, ObservableList<T> items, ListProperty<T> itemsProperty) {
+        if (items.isEmpty()) {
+            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+        } else {
+            comboBox.itemsProperty().bindBidirectional(itemsProperty);
+        }
+    }
+
+    private void setupValidators() {
+        createAndAddConstraint(product, "Product is required", product.textProperty().length().greaterThan(0));
+        createAndAddConstraint(quantity, "Quantity is required", quantity.textProperty().length().greaterThan(0));
+
+        product.getValidator().validProperty().addListener((obs, oldVal, newVal) -> updateValidationState(newVal, productValidationLabel, product));
+        quantity.getValidator().validProperty().addListener((obs, oldVal, newVal) -> updateValidationState(newVal, quantityValidationLabel, quantity));
+    }
+
+    private void createAndAddConstraint(MFXTextField control, String message, BooleanExpression condition) {
+        Constraint constraint = Constraint.Builder.build()
+                .setSeverity(Severity.ERROR)
+                .setMessage(message)
+                .setCondition(condition)
+                .get();
+        control.getValidator().constraint(constraint);
+    }
+
+    private void updateValidationState(boolean isValid, Label validationLabel, MFXTextField control) {
+        validationLabel.setManaged(!isValid);
+        validationLabel.setVisible(!isValid);
+        control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !isValid);
+    }
+
+    private void setupActions() {
+        cancelBtn.setOnAction(this::resetForm);
+        saveBtn.setOnAction(this::saveForm);
+    }
+
+    private void resetForm(ActionEvent event) {
+        GlobalActions.closeDialog(event);
+        QuotationDetailViewModel.resetProperties();
+        clearSelections();
+        hideValidationLabels();
+    }
+
+    private void clearSelections() {
+        product.clearSelection();
+        tax.clearSelection();
+        discount.clearSelection();
+    }
+
+    private void hideValidationLabels() {
+        productValidationLabel.setVisible(false);
+        quantityValidationLabel.setVisible(false);
+        productValidationLabel.setManaged(false);
+        quantityValidationLabel.setManaged(false);
+        product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+    }
+
+    private void saveForm(ActionEvent event) {
+
+        List<Constraint> productConstraints = product.validate();
+        List<Constraint> quantityConstraints = quantity.validate();
+
+        if (validateConstraints(productConstraints, productValidationLabel, product)
+                && validateConstraints(quantityConstraints, quantityValidationLabel, quantity)) {
+
+            if (QuotationDetailViewModel.tempIdProperty().get() > -1) {
+                QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
+                successMessage("Product changed successfully");
+            } else {
+                QuotationDetailViewModel.addQuotationDetails();
+                successMessage("Product added successfully");
+            }
+
+            resetForm(event);
+        }
+    }
+
+    private boolean validateConstraints(List<Constraint> constraints, Label validationLabel, MFXTextField control) {
+        if (!constraints.isEmpty()) {
+            validationLabel.setText(constraints.getFirst().getMessage());
+            validationLabel.setManaged(true);
+            validationLabel.setVisible(true);
+            control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+            resizeDialog(control);
+            return false;
+        }
+        return true;
+    }
+
+    private void resizeDialog(MFXTextField control) {
+        MFXStageDialog dialog = (MFXStageDialog) control.getScene().getWindow();
+        dialog.sizeToScene();
+    }
+
+    private void successMessage(String message) {
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+    }
+
+    private void displayNotification(String message, MessageVariants type, String icon) {
+        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
+                .duration(MessageDuration.SHORT)
+                .icon(icon)
+                .type(type)
+                .height(60)
+                .build();
+        AnchorPane.setTopAnchor(notification, 5.0);
+        AnchorPane.setRightAnchor(notification, 5.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
+            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+        }
     }
 }

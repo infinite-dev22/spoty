@@ -71,8 +71,6 @@ public class PurchaseReturnsPreviewController implements Initializable {
                 new MFXTableColumn<>("Name", false, Comparator.comparing(PurchaseDetail::getProductName));
         MFXTableColumn<PurchaseDetail> quantity =
                 new MFXTableColumn<>("Qty", false, Comparator.comparing(PurchaseDetail::getQuantity));
-        MFXTableColumn<PurchaseDetail> cost =
-                new MFXTableColumn<>("Unit Cost", false, Comparator.comparing(PurchaseDetail::getCost));
         MFXTableColumn<PurchaseDetail> subTotalCost =
                 new MFXTableColumn<>(
                         "Total", false, Comparator.comparing(PurchaseDetail::getSubTotalCost));
@@ -90,12 +88,6 @@ public class PurchaseReturnsPreviewController implements Initializable {
             cell.getStyleClass().add("table-cell-border");
             return cell;
         });
-        cost.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getCost);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
         subTotalCost.setRowCellFactory(
                 purchaseDetail -> {
                     var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalCost);
@@ -105,15 +97,14 @@ public class PurchaseReturnsPreviewController implements Initializable {
                 });
 
         // Set table column width.
-        product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        cost.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        subTotalCost.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        subTotalCost.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
 
         // Set table filter.
         itemsTable
                 .getTableColumns()
-                .addAll(product, quantity, cost, subTotalCost);
+                .addAll(product, quantity, subTotalCost);
 
         styleTable();
 
