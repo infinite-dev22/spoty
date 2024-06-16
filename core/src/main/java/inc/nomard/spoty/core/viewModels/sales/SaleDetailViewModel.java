@@ -144,7 +144,6 @@ public class SaleDetailViewModel {
                 SaleDetail.builder()
                         .product(getProduct())
                         .quantity(getQuantity())
-                        .price(getPrice())
                         .subTotalPrice(getSubTotalPrice())
                         .build();
         saleDetailsList.add(saleDetail);
@@ -154,7 +153,6 @@ public class SaleDetailViewModel {
         var saleDetail = getSaleDetails().get(Math.toIntExact(index));
         saleDetail.setProduct(getProduct());
         saleDetail.setQuantity(getQuantity());
-        saleDetail.setPrice(getPrice());
         saleDetail.setSubTotalPrice(getSubTotalPrice());
         getSaleDetails().set(Math.toIntExact(index), saleDetail);
     }
@@ -162,7 +160,6 @@ public class SaleDetailViewModel {
     public static void getCartSale(SaleDetail saleDetail) {
         setProduct(saleDetail.getProduct());
         setQuantity((long) saleDetail.getQuantity());
-        setPrice(saleDetail.getPrice());
         setSubTotalPrice(saleDetail.getSubTotalPrice());
     }
 }

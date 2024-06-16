@@ -83,7 +83,7 @@ public class SalePreviewController implements Initializable {
         MFXTableColumn<SaleDetail> quantity =
                 new MFXTableColumn<>("Qnty", false, Comparator.comparing(SaleDetail::getQuantity));
         MFXTableColumn<SaleDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(SaleDetail::getPrice));
+                new MFXTableColumn<>("Price", false, Comparator.comparing(SaleDetail::getProductPrice));
         MFXTableColumn<SaleDetail> totalPrice =
                 new MFXTableColumn<>(
                         "Total Price", false, Comparator.comparing(SaleDetail::getSubTotalPrice));
@@ -102,7 +102,7 @@ public class SalePreviewController implements Initializable {
             return cell;
         });
         price.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(SaleDetail::getPrice);
+            var cell = new MFXTableRowCell<>(SaleDetail::getProductPrice);
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.getStyleClass().add("table-cell-border");
             return cell;
