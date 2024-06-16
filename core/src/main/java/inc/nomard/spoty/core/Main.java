@@ -14,6 +14,7 @@
 
 package inc.nomard.spoty.core;
 
+import inc.nomard.spoty.core.auto_updater.v2.*;
 import inc.nomard.spoty.core.views.splash.*;
 import javafx.application.*;
 import javafx.stage.*;
@@ -35,6 +36,12 @@ public class Main extends Application {
         // Schedule periodic checks
 //        scheduler = Executors.newSingleThreadScheduledExecutor();
 //        scheduler.scheduleAtFixedRate(SeamlessUpdater::checkForUpdates, 0, 3, TimeUnit.HOURS);
+
+        // Apply update if available
+        AutoUpdater.applyUpdateIfAvailable();
+
+        // Start the update checker
+        UpdateScheduler.startUpdateChecker();
 
         Application.launch(Main.class, args);
     }
