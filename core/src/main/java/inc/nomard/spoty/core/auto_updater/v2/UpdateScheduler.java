@@ -17,10 +17,5 @@ public class UpdateScheduler {
         // Schedule the task to run every 24 hours (86400000 milliseconds)
         timer.schedule(task, 0, 86400000);
     }
-
-    public static void main(String[] args) {
-        // Start JavaFX Application
-        javafx.application.Application.launch(Main.class, args);
-    }
 }
 
