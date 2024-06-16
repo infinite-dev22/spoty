@@ -14,7 +14,7 @@ apply plugin: "java"
 project.description = "OpenSale ERP - Fintech Software."
 project.ext.buildDate = LocalDate.now()
 project.version = "$spoty"
-def app_copyright="Copyright " + LocalDate.now().getYear() + " nomard inc."
+def app_copyright = "Copyright " + LocalDate.now().getYear() + " nomard inc."
 
 repositories {
     mavenLocal()
@@ -133,15 +133,21 @@ run {
             "-XX:NewRatio=1",
             "-Xms256m",
             "-Xmx1G",
-            "-XX:ReservedCodeCacheSize=512m",
+            "-XX:ReservedCodeCacheSize=128m",
             "-XX:+UseG1GC",
+            "-XX:MaxGCPauseMillis=200",
             "-XX:SoftRefLRUPolicyMSPerMB=50",
-            "-XX:CICompilerCount=2",
             "-XX:+HeapDumpOnOutOfMemoryError",
-            "-Dsun.io.useCanonCaches=false",
             "-Djbr.catch.SIGABRT=true",
             "-Djdk.attach.allowAttachSelf=true",
+            "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
             "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
+            "-Xshare:on",
+            "-XX:+TieredCompilation",
+            "-XX:+UseStringDeduplication",
+            "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
+            "-Djava.security.egd=file:/dev/urandom",
+            "-XX:+AlwaysPreTouch"
     ]
 }
 
@@ -172,16 +178,21 @@ jlink {
                 "-XX:NewRatio=1",
                 "-Xms256m",
                 "-Xmx1G",
-                "-XX:ReservedCodeCacheSize=512m",
+                "-XX:ReservedCodeCacheSize=128m",
                 "-XX:+UseG1GC",
+                "-XX:MaxGCPauseMillis=200",
                 "-XX:SoftRefLRUPolicyMSPerMB=50",
-                "-XX:CICompilerCount=2",
                 "-XX:+HeapDumpOnOutOfMemoryError",
-                "-Dsun.io.useCanonCaches=false",
                 "-Djbr.catch.SIGABRT=true",
                 "-Djdk.attach.allowAttachSelf=true",
                 "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
                 "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
+                "-Xshare:on",
+                "-XX:+TieredCompilation",
+                "-XX:+UseStringDeduplication",
+                "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
+                "-Djava.security.egd=file:/dev/urandom",
+                "-XX:+AlwaysPreTouch"
         ]
     }
 
