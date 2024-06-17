@@ -14,8 +14,8 @@ public class UpdateScheduler {
                 AutoUpdater.checkForUpdates();
             }
         };
-        // Schedule the task to run every 24 hours (86400000 milliseconds)
-        timer.schedule(task, 0, 86400000);
+        // Schedule the task to run every 3 hours (10800000 milliseconds)
+        timer.schedule(task, 0, 10800000);
     }
 }
 
