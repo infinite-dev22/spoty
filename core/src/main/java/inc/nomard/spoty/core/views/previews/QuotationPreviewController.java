@@ -153,12 +153,9 @@ public class QuotationPreviewController implements Initializable {
         customerNumber.setText(quotation.getCustomer().getPhone());
         customerEmail.setText(quotation.getCustomer().getEmail());
         quotationDetailsList.addAll(quotation.getQuotationDetails());
-        subTotal.setText(String.valueOf(quotation.getSubTotal()));
         discount.setText(String.valueOf(quotation.getDiscount()));
         tax.setText(String.valueOf(quotation.getNetTax()));
         shipping.setText(String.valueOf(quotation.getShippingFee()));
         netPrice.setText(String.valueOf(quotation.getTotal()));
-        paidAmount.setText(String.valueOf(quotation.getAmountPaid()));
-        changeDue.setText(String.valueOf(quotation.getChangeAmount()));
     }
 }

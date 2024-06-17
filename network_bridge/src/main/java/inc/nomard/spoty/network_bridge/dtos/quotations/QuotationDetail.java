@@ -28,7 +28,6 @@ import lombok.extern.java.*;
 public class QuotationDetail {
     private Long id;
     private Product product;
-    private QuotationMaster quotation;
     private int quantity;
     private Discount discount;
     private Tax tax;

@@ -18,6 +18,7 @@ import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import java.util.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
@@ -38,6 +39,7 @@ public class QuotationDetailViewModel {
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
     private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
+    private static final DoubleProperty subTotal = new SimpleDoubleProperty();
     private static final QuotationsRepositoryImpl quotationsRepository = new QuotationsRepositoryImpl();
 
     public static Long getId() {
@@ -112,6 +114,18 @@ public class QuotationDetailViewModel {
         return tax;
     }
 
+    public static Double getSubTotal() {
+        return subTotal.get();
+    }
+
+    public static void setSubTotal(Double subTotal) {
+        QuotationDetailViewModel.subTotal.set(subTotal);
+    }
+
+    public static DoubleProperty subTotalProperty() {
+        return subTotal;
+    }
+
     public static ObservableList<QuotationDetail> getQuotationDetails() {
         return quotationDetails.get();
     }
@@ -129,29 +143,39 @@ public class QuotationDetailViewModel {
         setTempId(-1);
         setProduct(null);
         setQuantity("");
+        setTax(null);
+        setDiscount(null);
+        setSubTotal(0.00);
     }
 
     public static void addQuotationDetails() {
+        var subTotal = getSubTotal() * getQuantity();
         var quotationDetail = QuotationDetail.builder()
                 .product(getProduct())
                 .quantity(getQuantity())
                 .discount(getDiscount())
                 .tax(getTax())
+                .subTotal(subTotal)
                 .build();
         quotationDetailsList.add(quotationDetail);
     }
 
-    public static void updateQuotationDetail(Long index) {
+    public static void updateQuotationDetail() {
         QuotationDetail quotationDetail = quotationDetailsList.get(getTempId());
-        quotationDetail.setId(getId());
+        if (!Objects.equals(getId(), 0L)) {
+            quotationDetail.setId(getId());
+        }
         quotationDetail.setProduct(getProduct());
         quotationDetail.setQuantity(getQuantity());
+        quotationDetail.setSubTotal(getSubTotal());
         quotationDetailsList.set(getTempId(), quotationDetail);
     }
 
     public static void getQuotationDetail(QuotationDetail quotationDetail) {
         setTempId(getQuotationDetails().indexOf(quotationDetail));
-        setId(quotationDetail.getId());
+        if (Objects.nonNull(quotationDetail.getId())) {
+            setId(quotationDetail.getId());
+        }
         setProduct(quotationDetail.getProduct());
         setTax(getTax());
         setDiscount(getDiscount());

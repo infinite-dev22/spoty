@@ -53,6 +53,7 @@ public class QuotationMasterViewModel {
     private static final StringProperty discount = new SimpleStringProperty("");
     private static final StringProperty shippingFee = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
+    private static final StringProperty status = new SimpleStringProperty("");
     private static final QuotationsRepositoryImpl quotationRepository = new QuotationsRepositoryImpl();
 
     public static Long getId() {
@@ -77,6 +78,18 @@ public class QuotationMasterViewModel {
 
     public static ObjectProperty<Branch> branchProperty() {
         return branch;
+    }
+
+    public static String getStatus() {
+        return status.get();
+    }
+
+    public static void setStatus(String status) {
+        QuotationMasterViewModel.status.set(status);
+    }
+
+    public static StringProperty statusProperty() {
+        return status;
     }
 
     public static String getNote() {
@@ -169,7 +182,7 @@ public class QuotationMasterViewModel {
         var quotationMaster = QuotationMaster.builder()
                 .customer(getCustomer())
                 .notes(getNote())
-                .taxRate(Double.parseDouble(getTaxRate()))
+                .status(getStatus())
                 .discount(Double.parseDouble(getDiscount()))
                 .shippingFee(Double.parseDouble(getShippingFee()))
                 .build();
@@ -177,7 +190,6 @@ public class QuotationMasterViewModel {
             quotationMaster.setQuotationDetails(
                     QuotationDetailViewModel.getQuotationDetailsList());
         }
-        System.out.println(new Gson().toJson(quotationMaster));
         CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.post(quotationMaster);
         responseFuture.thenAccept(response -> {
             Platform.runLater(() -> {
@@ -384,7 +396,7 @@ public class QuotationMasterViewModel {
         var quotationMaster = QuotationMaster.builder()
                 .id(getId())
                 .customer(getCustomer())
-                .taxRate(Double.parseDouble(getTaxRate()))
+                .status(getStatus())
                 .discount(Double.parseDouble(getDiscount()))
                 .notes(getNote())
                 .shippingFee(Double.parseDouble(getShippingFee()))

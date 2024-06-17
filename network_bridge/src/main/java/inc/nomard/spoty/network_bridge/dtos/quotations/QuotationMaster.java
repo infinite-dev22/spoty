@@ -31,15 +31,11 @@ public class QuotationMaster {
     private String ref;
     private Customer customer;
     private List<QuotationDetail> quotationDetails;
-    private double taxRate;
     private double netTax;
     private double discount;
-    private double subTotal;
-    private double amountPaid;
-    private double amountDue;
-    private double changeAmount;
     private double shippingFee;
     private double total;
+    private String status;
     private String notes;
 
     public String getCustomerName() {
