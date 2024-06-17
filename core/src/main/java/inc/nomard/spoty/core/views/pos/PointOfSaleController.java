@@ -29,6 +29,7 @@ import io.github.palexdev.materialfx.controls.legacy.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.net.*;
 import java.util.*;
@@ -52,6 +53,8 @@ public class PointOfSaleController implements Initializable {
     private final ToggleGroup toggleGroup = new ToggleGroup();
     private final Stage stage;
     @FXML
+    public TableColumn<SaleDetail, SaleDetail> productDiscount;
+    @FXML
     private MFXFilterComboBox<Customer> customer;
     @FXML
     private MFXLegacyTableView<SaleDetail> cart;
@@ -72,7 +75,7 @@ public class PointOfSaleController implements Initializable {
     @FXML
     private TableColumn<SaleDetail, Long> cartQuantity;
     @FXML
-    private TableColumn<SaleDetail, Double> cartPrice;
+    private TableColumn<SaleDetail, SaleDetail> productTax;
     @FXML
     private TableColumn<SaleDetail, Double> cartSubTotal;
     @FXML
@@ -286,7 +289,7 @@ public class PointOfSaleController implements Initializable {
             subTotal += (product.getTax().getPercentage() / 100) * subTotal;
         }
         if (Objects.nonNull(product.getDiscount()) && product.getDiscount().getPercentage() > 0) {
-            subTotal -= (product.getDiscount().getPercentage() / 100) * subTotal;
+            subTotal += (product.getDiscount().getPercentage() / 100) * subTotal;
         }
         return subTotal;
     }
@@ -346,7 +349,6 @@ public class PointOfSaleController implements Initializable {
         });
 
         cartQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        cartPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         cartSubTotal.setCellValueFactory(new PropertyValueFactory<>("subTotalPrice"));
 
         cartActions.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
@@ -361,6 +363,46 @@ public class PointOfSaleController implements Initializable {
                 } else {
                     setGraphic(delete);
                     delete.setOnMouseClicked(event -> removeItemFromCart(item));
+                }
+            }
+        });
+
+        productTax.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        productTax.setCellFactory(param -> new TableCell<>() {
+            final Label value = new Label();
+
+            @Override
+            protected void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(value);
+                    value.setText(
+                            (Objects.nonNull(item.getProduct().getTax()))
+                                    ? String.valueOf(item.getProduct().getTax().getPercentage())
+                                    : "0.00"
+                    );
+                }
+            }
+        });
+
+        productDiscount.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        productDiscount.setCellFactory(param -> new TableCell<>() {
+            final Label value = new Label();
+
+            @Override
+            protected void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(value);
+                    value.setText(
+                            (Objects.nonNull(item.getProduct().getDiscount()))
+                                    ? String.valueOf(item.getProduct().getDiscount().getPercentage())
+                                    : "0.00"
+                    );
                 }
             }
         });

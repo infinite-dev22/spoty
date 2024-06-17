@@ -55,7 +55,8 @@
                         <TableColumn fx:id="cartName" editable="false" prefWidth="75.0" sortable="false" text="Name"/>
                         <TableColumn fx:id="cartQuantity" editable="false" prefWidth="50.0" sortable="false"
                                      text="Qnty"/>
-                        <TableColumn fx:id="cartPrice" editable="false" prefWidth="75.0" sortable="false" text="Price"/>
+                        <TableColumn fx:id="productTax" editable="false" prefWidth="40.0" sortable="false" text="Tax(%)"/>
+                        <TableColumn fx:id="productDiscount" editable="false" prefWidth="60.0" sortable="false" text="Discount(%)"/>
                         <TableColumn fx:id="cartSubTotal" editable="false" prefWidth="75.0" sortable="false"
                                      text="Sub Total"/>
                         <TableColumn fx:id="cartActions" editable="false" prefWidth="20.0" sortable="false"/>
