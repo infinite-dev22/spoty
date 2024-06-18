@@ -72,7 +72,7 @@ public class AutoUpdater {
                     notifyUserForRestart();
                 }
             } catch (Exception e) {
-                LoggerConfig.LOGGER.log(Level.SEVERE, "Error checking for updates", e);
+                SpotyLogger.writeToFile(new Throwable("Error checking for updates" + e), AutoUpdater.class);
             }
         }).start();
     }
@@ -118,7 +118,7 @@ public class AutoUpdater {
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
-            LoggerConfig.LOGGER.info("Update downloaded successfully.");
+            SpotyLogger.writeToFile(new Throwable("Update downloaded successfully."), AutoUpdater.class);
         }
     }
 
@@ -146,7 +146,7 @@ public class AutoUpdater {
                 Files.delete(Paths.get(getFlagFile()));
                 System.exit(0); // Exit the current application to allow the update to proceed
             } catch (IOException e) {
-                LoggerConfig.LOGGER.log(Level.SEVERE, "Error applying update", e);
+                SpotyLogger.writeToFile(new Throwable("Error applying update" + e), AutoUpdater.class);
             }
         }
     }
