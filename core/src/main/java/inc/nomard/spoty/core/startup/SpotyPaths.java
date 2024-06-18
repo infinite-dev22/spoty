@@ -23,28 +23,17 @@ import lombok.extern.java.*;
 public class SpotyPaths {
     public static void createPaths() {
         // Create DB Location path on system.
-        Path dbPath;
-        Path logPath;
-        Path imagesPath;
+        Path logPath = null;
+
+        switch (OSUtil.getOs()) {
+            case LINUX, MACOS -> logPath = Paths.get(
+                    System.getProperty("user.home") + "/.config/OpenSaleERP/sys-log-data/logs/stack");
+            case WINDOWS -> logPath = Paths.get(System.getProperty("user.home")
+                    + "\\AppData\\Local\\OpenSaleERP\\sys-log-data\\logs\\stack");
+        }
 
         try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                dbPath = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\OpenSaleERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
-                logPath = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\OpenSaleERP\\sys-log-data\\logs\\stack");
-                imagesPath = Paths.get(System.getProperty("user.home") + "\\AppData\\Local\\OpenSaleERP\\system\\caches\\images");
-            } else {
-                dbPath = Paths.get(
-                        System.getProperty("user.home") + "/.config/OpenSaleERP/data/datastores/databases/offline/sync/sqlite/db");
-                logPath = Paths.get(
-                        System.getProperty("user.home") + "/.config/OpenSaleERP/sys-log-data/logs/stack");
-                imagesPath = Paths.get(System.getProperty("user.home") + "/.config/OpenSaleERP/system/caches/images");
-            }
-
-            Files.createDirectories(dbPath);
             Files.createDirectories(logPath);
-            Files.createDirectories(imagesPath);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, SpotyPaths.class);
         }
