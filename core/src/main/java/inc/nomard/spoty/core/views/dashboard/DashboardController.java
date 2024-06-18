@@ -15,9 +15,9 @@
 package inc.nomard.spoty.core.views.dashboard;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.data.*;
-import inc.nomard.spoty.core.models.*;
+import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.responsiveness.layouts.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -36,7 +36,7 @@ public class DashboardController implements Initializable {
     public MFXScrollPane scrollPane;
 
     @FXML
-    private BootstrapPane quickStatsContainer;
+    public BootstrapPane kpisContainer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -46,25 +46,25 @@ public class DashboardController implements Initializable {
             }
         });
         scrollPane.widthProperty().addListener((obs, oV, nV) -> {
-            quickStatsContainer.setMaxWidth(nV.doubleValue() - 10);
-            quickStatsContainer.setPrefWidth(nV.doubleValue() - 10);
-            quickStatsContainer.setMinWidth(nV.doubleValue() - 10);
+            kpisContainer.setMaxWidth(nV.doubleValue() - 10);
+            kpisContainer.setPrefWidth(nV.doubleValue() - 10);
+            kpisContainer.setMinWidth(nV.doubleValue() - 10);
         });
 
-        List<QuickStats> quickStatsList = new ArrayList<>(SampleData.quickStatsSampleData());
+        List<DashboardKPIModel> kpisList = new ArrayList<>(DashboardViewModel.getKPIs());
         var row1 = new BootstrapRow();
         var row2 = new BootstrapRow();
         var row3 = new BootstrapRow();
-        quickStatsContainer.setAlignment(Pos.CENTER_LEFT);
-        quickStatsContainer.setPadding(new Insets(10));
+        kpisContainer.setAlignment(Pos.CENTER_LEFT);
+        kpisContainer.setPadding(new Insets(10));
 
-        for (QuickStats quickStat : quickStatsList) {
+        for (DashboardKPIModel kpi : kpisList) {
             try {
                 FXMLLoader cardLoader = fxmlLoader("components/cards/SmallCard.fxml");
                 AnchorPane smallCardPane = cardLoader.load();
 
                 SmallCardController smallCard = cardLoader.getController();
-                smallCard.setData(quickStat);
+                smallCard.setData(kpi);
 
                 var column = new BootstrapColumn(smallCardPane);
                 column.setBreakpointColumnWidth(Breakpoint.LARGE, 3);
@@ -124,8 +124,8 @@ public class DashboardController implements Initializable {
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }
-        quickStatsContainer.addRow(row1);
-        quickStatsContainer.addRow(row2);
-        quickStatsContainer.addRow(row3);
+        kpisContainer.addRow(row1);
+        kpisContainer.addRow(row2);
+        kpisContainer.addRow(row3);
     }
 }

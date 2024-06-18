@@ -15,6 +15,7 @@
 package inc.nomard.spoty.core.views.components;
 
 import inc.nomard.spoty.core.models.*;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import java.net.*;
 import java.util.*;
 import javafx.fxml.*;
@@ -34,8 +35,8 @@ public class SmallCardController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
     }
 
-    public void setData(QuickStats quickStats) {
-        this.title.setText(quickStats.getTitle());
-        this.subtitle.setText(quickStats.getSubtitle());
+    public void setData(DashboardKPIModel kpiModel) {
+        this.title.setText(kpiModel.getName());
+        this.subtitle.setText(kpiModel.getValue().toString());
     }
 }
