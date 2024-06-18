@@ -18,6 +18,7 @@ import fr.brouillard.oss.cssfx.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.startup.*;
+import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
@@ -90,6 +91,8 @@ public class SplashScreenController implements Initializable {
                         // Load dialog views.
                         Dialogs.setControllers(primaryStage);
                         Dialogs.setDialogContent();
+                        // PreloadData.
+                        PreloadedData.preloadImages();
                         // Base view parent.
                         Parent root = Pages.getLoginPane();
                         Scene scene = new Scene(root);

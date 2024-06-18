@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.pos.components;
 
-import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.mfxcore.controls.*;
 import java.util.*;
@@ -22,9 +22,9 @@ public class ProductCard extends VBox {
     private static final double ARC_SIZE = 20;
     private static final double SPACING = 10;
     private static final double LABEL_WIDTH = 200;
-    private static final String PLACEHOLDER_IMAGE = SpotyCoreResourceLoader.load("images/product-image-placeholder.png");
-    private static final String NO_IMAGE_PLACEHOLDER = SpotyCoreResourceLoader.load("images/no-image-placeholder.png");
-    private static final String IMAGE_FAILED_TO_LOAD_PLACEHOLDER = SpotyCoreResourceLoader.load("images/image-loading-failed.png");
+    //    private static final String PLACEHOLDER_IMAGE = SpotyCoreResourceLoader.load("images/product-image-placeholder.png");
+//    private static final String NO_IMAGE_PLACEHOLDER = SpotyCoreResourceLoader.load("images/no-image-placeholder.png");
+//    private static final String IMAGE_FAILED_TO_LOAD_PLACEHOLDER = SpotyCoreResourceLoader.load("images/image-loading-failed.png");
     private static final List<String> IMAGE_PATHS = List.of(
             "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=rachit-tank-2cFZ_FB08UM-unsplash.jpg",
             "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=c-d-x-PDX_a_82obo-unsplash.jpg",
@@ -57,7 +57,7 @@ public class ProductCard extends VBox {
         this.getStyleClass().add("pos-product-card");
 
         getChildren().addAll(
-                getProductImage(PLACEHOLDER_IMAGE),
+                getProductImage(),
                 productNameLbl,
                 productPriceLbl,
                 productQuantityLbl,
@@ -86,8 +86,8 @@ public class ProductCard extends VBox {
         setSpacing(SPACING);
     }
 
-    private Rectangle getProductImage(String image) {
-        productImage = getCachedImage(image);
+    private Rectangle getProductImage() {
+        productImage = PreloadedData.productPlaceholderImage/*getCachedImage(image)*/;
         updateProductImageHolder();
         return productImageHolder;
     }
@@ -144,7 +144,7 @@ public class ProductCard extends VBox {
                     return new Image(imagePath, IMAGE_SIZE, IMAGE_SIZE, true, false);
                 } catch (IllegalArgumentException e) {
                     log.warning("Invalid image URL: " + imagePath);
-                    return new Image(IMAGE_FAILED_TO_LOAD_PLACEHOLDER, IMAGE_SIZE, IMAGE_SIZE, true, false);
+                    return PreloadedData.imageErrorPlaceholderImage;
                 }
             }
         };
@@ -167,7 +167,7 @@ public class ProductCard extends VBox {
     }
 
     private void updateProductImageHolderWithPlaceholder() {
-        productImage = getCachedImage(NO_IMAGE_PLACEHOLDER);
+        productImage = PreloadedData.noImagePlaceholderImage;
         updateProductImageHolder();
     }
 
