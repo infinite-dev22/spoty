@@ -22,51 +22,29 @@ import lombok.extern.java.*;
 
 @Log
 public class SpotyLogger {
-    static SimpleFormatter formatter = new SimpleFormatter();
-
-    static FileHandler fileHandler;
-
-    /**
-     * Write logs to file.
-     *
-     * @param throwable    exception to be written to log file.
-     * @param currentClass class in which the exception is handled.
-     */
-//    public static <T> void writeToFile(Throwable throwable, Class<T> currentClass) {
-//        throwable.printStackTrace();
-//    }
-
-
-    // Doesn.t actually write errors to file
     public static <T> void writeToFile(Throwable throwable, Class<T> currentClass) {
         Logger logger = Logger.getLogger(currentClass.getName());
-        Path path;
+        var logFilePath = "";
+
+        switch (OSUtil.getOs()) {
+            case LINUX, MACOS -> logFilePath += Paths.get(
+                    System.getProperty("user.home") + "/.config/OpenSaleERP/sys-log-data/logs/stack/application.log");
+            case WINDOWS -> logFilePath += Paths.get(System.getProperty("user.home")
+                    + "\\AppData\\Local\\OpenSaleERP\\sys-log-data\\logs\\stack\\application.log");
+        }
+
         try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                path = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\OpenSaleERP\\sys-log-data\\logs\\stack\\spoty_log.log");
-            } else {
-                path = Paths.get(System.getProperty("user.home")
-                        + "/.config/OpenSaleERP/sys-log-data/logs/stack/spoty_log.log");
-            }
-            if (Objects.isNull(fileHandler)) fileHandler =
-                    new FileHandler(
-                            path.toString(), 1000, 1, true);
-
-            fileHandler.setFormatter(formatter);
-
+            FileHandler fileHandler = new FileHandler(logFilePath, true);
+            fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
-
             logger.log(
                     Level.ALL,
                     throwable.getMessage()
                             + "\n"
                             + Arrays.toString(throwable.getStackTrace())
                             + "\n\n");
-            throw new RuntimeException(throwable);
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, SpotyLogger.class);
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "Failed to initialize logger", e);
         }
     }
 }
