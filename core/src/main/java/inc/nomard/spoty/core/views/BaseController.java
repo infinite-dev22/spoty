@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.components.payment_plan_card.*;
+import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
@@ -129,18 +130,17 @@ public class BaseController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        var image = new Image(
-                SpotyCoreResourceLoader.load((
-                        Objects.nonNull(ProtectedGlobals.user)
-                                && Objects.nonNull(ProtectedGlobals.user.getAvatar())
-                                && !ProtectedGlobals.user.getAvatar().isEmpty()
-                                && !ProtectedGlobals.user.getAvatar().isBlank()) ? ProtectedGlobals.user.getAvatar()
-                        : "images/user-place-holder.png"),
+        var image = (Objects.nonNull(ProtectedGlobals.user)
+                && Objects.nonNull(ProtectedGlobals.user.getAvatar())
+                && !ProtectedGlobals.user.getAvatar().isEmpty()
+                && !ProtectedGlobals.user.getAvatar().isBlank())
+                ? new Image(
+                SpotyCoreResourceLoader.load(ProtectedGlobals.user.getAvatar()),
                 10000,
                 10000,
                 true,
-                true
-        );
+                true)
+                : PreloadedData.userPlaceholderImage;
         imageHolder.setFill(new ImagePattern(image));
         initializeLoader();
         initAppBar();

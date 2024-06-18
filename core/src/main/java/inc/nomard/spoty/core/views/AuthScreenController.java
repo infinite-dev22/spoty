@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.values.strings.*;
@@ -28,12 +27,11 @@ import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 import javafx.animation.*;
 import javafx.application.*;
 import javafx.beans.binding.*;
-import javafx.concurrent.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
@@ -100,46 +98,76 @@ public class AuthScreenController implements Initializable {
         stage = primaryStage;
     }
 
-    private Service<Void> dataInit() {
-        return new Service<>() {
-            @Override
-            protected Task<Void> createTask() {
-                return new Task<>() {
-                    @Override
-                    protected Void call() {
-                        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
-                        BranchViewModel.getAllBranches(null, null);
-                        BrandViewModel.getAllBrands(null, null);
-                        BankViewModel.getAllBanks(null, null);
-                        CurrencyViewModel.getAllCurrencies(null, null);
-                        CustomerViewModel.getAllCustomers(null, null);
-                        DesignationViewModel.getAllDesignations(null, null);
-                        DiscountViewModel.getDiscounts(null, null);
-                        EmploymentStatusViewModel.getAllEmploymentStatuses(null, null);
-                        ExpenseCategoryViewModel.getAllCategories(null, null);
-                        ExpensesViewModel.getAllExpenses(null, null);
-                        PermissionsViewModel.getAllPermissions(null, null);
-                        ProductCategoryViewModel.getAllProductCategories(null, null);
-                        ProductViewModel.getAllProducts(null, null);
-                        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
-                        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
-                        QuotationMasterViewModel.getAllQuotationMasters(null, null);
-                        RequisitionMasterViewModel.getAllRequisitionMasters(null, null);
-                        RoleViewModel.getAllRoles(null, null);
-                        SaleMasterViewModel.getAllSaleMasters(null, null);
-                        SaleReturnMasterViewModel.getSaleReturnMasters(null, null);
-                        StockInMasterViewModel.getAllStockInMasters(null, null);
-                        SupplierViewModel.getAllSuppliers(null, null);
-                        TaxViewModel.getTaxes(null, null);
-                        TransferMasterViewModel.getAllTransferMasters(null, null);
-                        UOMViewModel.getAllUOMs(null, null);
-                        UserViewModel.getAllUsers(null, null);
-                        SaleMasterViewModel.setDefaultCustomer();
-                        return null;
-                    }
-                };
-            }
-        };
+    private void initData() {
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null)),
+                CompletableFuture.runAsync(() -> BranchViewModel.getAllBranches(null, null)),
+                CompletableFuture.runAsync(() -> BrandViewModel.getAllBrands(null, null)),
+                CompletableFuture.runAsync(() -> BankViewModel.getAllBanks(null, null)),
+                CompletableFuture.runAsync(() -> CurrencyViewModel.getAllCurrencies(null, null)),
+                CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null)),
+                CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null)),
+                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null)),
+                CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null)),
+                CompletableFuture.runAsync(() -> ExpenseCategoryViewModel.getAllCategories(null, null)),
+                CompletableFuture.runAsync(() -> ExpensesViewModel.getAllExpenses(null, null)),
+                CompletableFuture.runAsync(() -> PermissionsViewModel.getAllPermissions(null, null)),
+                CompletableFuture.runAsync(() -> ProductCategoryViewModel.getAllProductCategories(null, null)),
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null)),
+                CompletableFuture.runAsync(() -> PurchaseMasterViewModel.getAllPurchaseMasters(null, null)),
+                CompletableFuture.runAsync(() -> PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null)),
+                CompletableFuture.runAsync(() -> QuotationMasterViewModel.getAllQuotationMasters(null, null)),
+                CompletableFuture.runAsync(() -> RequisitionMasterViewModel.getAllRequisitionMasters(null, null)),
+                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null)),
+                CompletableFuture.runAsync(() -> SaleMasterViewModel.getAllSaleMasters(null, null)),
+                CompletableFuture.runAsync(() -> SaleReturnMasterViewModel.getSaleReturnMasters(null, null)),
+                CompletableFuture.runAsync(() -> StockInMasterViewModel.getAllStockInMasters(null, null)),
+                CompletableFuture.runAsync(() -> SupplierViewModel.getAllSuppliers(null, null)),
+                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null)),
+                CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null)),
+                CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null)),
+                CompletableFuture.runAsync(() -> UserViewModel.getAllUsers(null, null))
+        );
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, AuthScreenController.class);
+        return null;
+    }
+
+    private void onDataInitializationSuccess() {
+        Platform.runLater(() -> {
+            Timeline timeline = new Timeline(new KeyFrame(Duration.millis(3500), event -> loadMainView()));
+            timeline.play();
+        });
+    }
+
+    private void loadMainView() {
+        try {
+            stage.hide();
+            FXMLLoader loader = SpotyCoreResourceLoader.fxmlLoader("views/Base.fxml");
+            loader.setControllerFactory(c -> BaseController.getInstance(stage));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+            scene.setFill(null);
+            stage.setScene(scene);
+            stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
+            stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
+            stage.setTitle(Labels.APP_NAME);
+            stage.getIcons().add(new Image(SpotyCoreResourceLoader.load("icon.png")));
+            stage.show();
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, AuthScreenController.class);
+        }
+    }
+
+    public void onLoginSuccess() {
+        initData();
     }
 
     @Override
@@ -185,11 +213,11 @@ public class AuthScreenController implements Initializable {
         }
         if (emailConstraints.isEmpty()
                 && passwordConstraints.isEmpty()) {
+            email.setDisable(true);
+            password.setDisable(true);
+            loginBtn.setDisable(true);
             LoginViewModel.login(this::onLoginSuccess, this::successMessage, this::errorMessage);
         }
-    }
-
-    private void onActivity() {
     }
 
     private void successMessage(String message) {
@@ -212,6 +240,9 @@ public class AuthScreenController implements Initializable {
     }
 
     private void errorMessage(String message) {
+        email.setDisable(false);
+        password.setDisable(false);
+        loginBtn.setDisable(false);
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
@@ -228,54 +259,6 @@ public class AuthScreenController implements Initializable {
             in.playFromStart();
             in.setOnFinished(actionEvent -> delay(notification));
         }
-    }
-
-    private void onLoginSuccess() {
-        var dataInit = dataInit();
-        dataInit.start();
-        dataInit.setOnSucceeded(workerStateEvent -> {
-            Duration delay = Duration.millis(3500);
-            KeyFrame keyFrame = new KeyFrame(delay, event -> {
-                stage.hide();
-                Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-                try {
-                    LoginViewModel.resetProperties();
-                    // Set base view.
-                    FXMLLoader loader = fxmlLoader("views/Base.fxml");
-                    loader.setControllerFactory(c -> BaseController.getInstance(stage));
-                    // Base view parent.
-                    Parent root = loader.load();
-                    Scene scene = stage.getScene();
-                    scene.setRoot(root);
-                    // Set application scene theme to MFX modern themes.
-                    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-                    // Fixes black edges showing in main app scene.
-                    scene.setFill(null);
-                    stage.setScene(scene);
-                    // stage.initStyle(StageStyle.TRANSPARENT);
-                    // Set initial window size.
-                    stage.setHeight(primScreenBounds.getHeight());
-                    stage.setWidth(primScreenBounds.getWidth());
-                    // Set window title name, this name will only be seen when cursor hovers over app icon in
-                    // taskbar. Not necessary too but added since other apps also do this.
-                    stage.setTitle(Labels.APP_NAME);
-                    stage.getIcons().add(new Image(SpotyCoreResourceLoader.load("icon.png")));
-                    stage.show();
-                    // Set window position to center of screen.
-                    // This isn't necessary, just felt like adding it here.
-                    stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-                    stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
-                } catch (IOException e) {
-                    SpotyLogger.writeToFile(e, LoginViewModel.class);
-                }
-            });
-            Timeline timeline = new Timeline(keyFrame);
-            timeline.play();
-            // var backgroundWorker = OnlineQueryWorker.fetchDataTask();
-            // backgroundWorker.setPeriod(Duration.seconds(10));
-            // backgroundWorker.setDelay(Duration.seconds(30));
-            // backgroundWorker.start();
-        });
     }
 
     private void onSignupSuccess() {
@@ -707,12 +690,8 @@ public class AuthScreenController implements Initializable {
                 && signUpEmailConstraints.isEmpty()) {
             kycScreen.setVisible(false);
             kycScreen.setManaged(false);
-//        registerScreen.setVisible(false);
-//        registerScreen.setManaged(false);
             authCreateScreen.setVisible(true);
             authCreateScreen.setManaged(true);
-//        loginScreen.setVisible(true);
-//        loginScreen.setManaged(true);
         }
     }
 
