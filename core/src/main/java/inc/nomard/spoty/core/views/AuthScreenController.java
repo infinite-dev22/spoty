@@ -4,6 +4,7 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import static inc.nomard.spoty.core.values.strings.Values.*;
 import inc.nomard.spoty.core.viewModels.*;
@@ -158,7 +159,14 @@ public class AuthScreenController implements Initializable {
             stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
             stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
             stage.setTitle(Labels.APP_NAME);
-            stage.getIcons().add(new Image(SpotyCoreResourceLoader.load("icon.png")));
+            stage.getIcons().addAll(
+                    PreloadedData.icon16,
+                    PreloadedData.icon32,
+                    PreloadedData.icon64,
+                    PreloadedData.icon128,
+                    PreloadedData.icon256,
+                    PreloadedData.icon512
+            );
             stage.show();
             stage.centerOnScreen();
         } catch (IOException e) {
