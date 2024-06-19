@@ -157,6 +157,7 @@ jlink {
                 "--vendor", app_vendor,
                 "--about-url", app_about_url,
                 "--license-file", app_eula,
+                "--resource-dir", resource_dir,
         ]
 
         if (os.linux) {

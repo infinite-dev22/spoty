@@ -15,7 +15,6 @@
 package inc.nomard.spoty.core.views.splash;
 
 import fr.brouillard.oss.cssfx.*;
-import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.*;
@@ -32,7 +31,6 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import lombok.extern.java.*;
@@ -91,8 +89,6 @@ public class SplashScreenController implements Initializable {
                         // Load dialog views.
                         Dialogs.setControllers(primaryStage);
                         Dialogs.setDialogContent();
-                        // PreloadData.
-                        PreloadedData.preloadImages();
                         // Base view parent.
                         Parent root = Pages.getLoginPane();
                         Scene scene = new Scene(root);
@@ -105,7 +101,14 @@ public class SplashScreenController implements Initializable {
                         // Set window title name, this name will only be seen when cursor hovers over app icon in
                         // taskbar. Not necessary too but added since other apps also do this.
                         primaryStage.setTitle(Labels.APP_NAME);
-                        primaryStage.getIcons().add(new Image(SpotyCoreResourceLoader.load("icon.png")));
+                        primaryStage.getIcons().addAll(
+                                PreloadedData.icon16,
+                                PreloadedData.icon32,
+                                PreloadedData.icon64,
+                                PreloadedData.icon128,
+                                PreloadedData.icon256,
+                                PreloadedData.icon512
+                        );
                         primaryStage.show();
                         // Set window position to center of screen.
                         // This isn't necessary, just felt like adding it here.
