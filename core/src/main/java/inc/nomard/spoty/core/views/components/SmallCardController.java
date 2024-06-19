@@ -14,7 +14,6 @@
 
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.models.*;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import java.net.*;
 import java.util.*;

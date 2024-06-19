@@ -2,8 +2,8 @@ package inc.nomard.spoty.core.views.components;
 
 import inc.nomard.spoty.core.components.*;
 import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.core.viewModels.dashboard.*;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
@@ -20,7 +20,7 @@ import lombok.extern.java.*;
 public class TopProductsController implements Initializable {
     public ViewAll viewAll;
     public Label cardTitle;
-    public MFXTableView<Product> products;
+    public MFXTableView<ProductSalesModel> products;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -31,33 +31,37 @@ public class TopProductsController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Product> productName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Product::getName));
-        MFXTableColumn<Product> productPrice =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(Product::getSalePrice));
-        MFXTableColumn<Product> productType =
-                new MFXTableColumn<>("Total Sales", false, Comparator.comparing(Product::getQuantity));
+        MFXTableColumn<ProductSalesModel> name =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(ProductSalesModel::getName));
+        MFXTableColumn<ProductSalesModel> cost =
+                new MFXTableColumn<>("Cost", false, Comparator.comparing(ProductSalesModel::getCostPrice));
+        MFXTableColumn<ProductSalesModel> price =
+                new MFXTableColumn<>("Price", false, Comparator.comparing(ProductSalesModel::getSalePrice));
+        MFXTableColumn<ProductSalesModel> totalSale =
+                new MFXTableColumn<>("Total Sales", false, Comparator.comparing(ProductSalesModel::getTotalQuantity));
 
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getName));
-        productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getSalePrice));
-        productType.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getQuantity));
+        name.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getName));
+        cost.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getCostPrice));
+        price.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getSalePrice));
+        totalSale.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getTotalQuantity));
 
-        productName.prefWidthProperty().bind(products.widthProperty().multiply(.4));
-        productPrice.prefWidthProperty().bind(products.widthProperty().multiply(.4));
-        productType.prefWidthProperty().bind(products.widthProperty().multiply(.4));
+        name.prefWidthProperty().bind(products.widthProperty().multiply(.3));
+        cost.prefWidthProperty().bind(products.widthProperty().multiply(.25));
+        price.prefWidthProperty().bind(products.widthProperty().multiply(.25));
+        totalSale.prefWidthProperty().bind(products.widthProperty().multiply(.25));
 
         products
                 .getTableColumns()
-                .addAll(productName, productPrice, productType);
+                .addAll(name, cost, price, totalSale);
         getTable();
 
-        if (ProductViewModel.getProducts().isEmpty()) {
-            ProductViewModel.getProducts()
+        if (DashboardViewModel.getTopProducts().isEmpty()) {
+            DashboardViewModel.getTopProducts()
                     .addListener(
-                            (ListChangeListener<Product>)
-                                    c -> products.setItems(ProductViewModel.getProducts()));
+                            (ListChangeListener<ProductSalesModel>)
+                                    c -> products.setItems(DashboardViewModel.getTopProducts()));
         } else {
-            products.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
+            products.itemsProperty().bindBidirectional(DashboardViewModel.topProductsProperty());
         }
     }
 
@@ -68,7 +72,7 @@ public class TopProductsController implements Initializable {
 
         products.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Product> row = new MFXTableRow<>(products, t);
+                    MFXTableRow<ProductSalesModel> row = new MFXTableRow<>(products, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
 //                                showContextMenu((MFXTableRow<Product>) event.getSource())

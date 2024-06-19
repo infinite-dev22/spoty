@@ -46,5 +46,6 @@ public class SpotyLogger {
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to initialize logger", e);
         }
+        throwable.printStackTrace();
     }
 }

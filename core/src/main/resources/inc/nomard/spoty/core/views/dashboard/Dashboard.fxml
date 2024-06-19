@@ -24,7 +24,7 @@
             <MFXScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"
                            style="-fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.bottomAnchor="0.0"
                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <BootstrapPane fx:id="quickStatsContainer" hgap="20.0" vgap="20.0"/>
+                <BootstrapPane fx:id="kpisContainer" hgap="20.0" vgap="20.0"/>
             </MFXScrollPane>
         </AnchorPane>
     </center>
