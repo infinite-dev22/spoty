@@ -100,27 +100,19 @@ public class DashboardController implements Initializable {
             row2.addColumn(column2);
             row2.addColumn(column3);
 
-            AnchorPane topCustomersCardPane = fxmlLoader("components/cards/TopCustomersCard.fxml").load();
-            AnchorPane topSuppliersCardPane = fxmlLoader("components/cards/TopSuppliersCard.fxml").load();
+            AnchorPane ordersCardPane = fxmlLoader("components/cards/OrdersCard.fxml").load();
+            AnchorPane stockAlertsPane = fxmlLoader("components/cards/StockAlertsCard.fxml").load();
 
-            var column4 = new BootstrapColumn(topCustomersCardPane);
+            var column4 = new BootstrapColumn(ordersCardPane);
             column4.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
             column4.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
             column4.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
-            var column5 = new BootstrapColumn(topSuppliersCardPane);
+            var column5 = new BootstrapColumn(stockAlertsPane);
             column5.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
             column5.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
             column5.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
             row2.addColumn(column4);
             row2.addColumn(column5);
-
-            AnchorPane ordersCardPane = fxmlLoader("components/cards/OrdersCard.fxml").load();
-
-            var column6 = new BootstrapColumn(ordersCardPane);
-            column6.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
-            column6.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
-            column6.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
-            row2.addColumn(column6);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }

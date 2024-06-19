@@ -23,7 +23,7 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" minHeight="351.0" prefHeight="551.0" maxHeight="751.0"
             styleClass="card-flat"
             xmlns="http://javafx.com/javafx/19"
-            fx:controller="inc.nomard.spoty.core.views.components.TopCustomersController">
+            fx:controller="inc.nomard.spoty.core.views.components.StockAlertsController">
     <HBox spacing="20" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <padding>
             <Insets topRightBottomLeft="20.0"/>
@@ -36,5 +36,5 @@
             <Insets topRightBottomLeft="5.0"/>
         </padding>
     </HBox>
-    <MFXTableView fx:id="customers" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0" AnchorPane.bottomAnchor="0.0"/>
+    <MFXTableView fx:id="stockAlert" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0" AnchorPane.bottomAnchor="0.0"/>
 </AnchorPane>
