@@ -18,6 +18,8 @@ import eu.hansolo.fx.charts.*;
 import eu.hansolo.fx.charts.data.*;
 import eu.hansolo.fx.charts.series.*;
 import inc.nomard.spoty.core.components.*;
+import inc.nomard.spoty.core.viewModels.dashboard.*;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
@@ -65,7 +67,7 @@ public class GraphCardController implements Initializable {
     }
 
     private void buildLineChart() {
-        XYPane lineChartPane = new XYPane(createSeries1(), createSeries2());
+        XYPane lineChartPane = new XYPane(expenseSeries(), incomeSeries());
 
         lineChart = new XYChart<>(lineChartPane, createGrids(), yAxisLeft, xAxisBottom);
         AnchorPane.setTopAnchor(lineChart, 0d);
@@ -153,49 +155,18 @@ public class GraphCardController implements Initializable {
                 .build();
     }
 
-    private XYSeries createSeries1() {
-        var t1 = RND.nextDouble() * 500 + 200;
-        var t2 = RND.nextDouble() * 500 + 200;
-        var t3 = RND.nextDouble() * 500 + 200;
-        var t4 = RND.nextDouble() * 500 + 200;
-        var t5 = RND.nextDouble() * 500 + 200;
-        var t6 = RND.nextDouble() * 500 + 200;
-        var t7 = RND.nextDouble() * 500 + 200;
-        var t8 = RND.nextDouble() * 500 + 200;
-        var t9 = RND.nextDouble() * 500 + 200;
-        var t10 = RND.nextDouble() * 500 + 200;
-        var t11 = RND.nextDouble() * 500 + 200;
-        var t12 = RND.nextDouble() * 500 + 200;
-
-        XYChartItem p1 = new XYChartItem(1, t1, "Jan", t1 + "\tJanuary");
-        XYChartItem p2 = new XYChartItem(2, t2, "Feb", t2 + "\tFebruary");
-        XYChartItem p3 = new XYChartItem(3, t3, "Mar", t3 + "\tMarch");
-        XYChartItem p4 = new XYChartItem(4, t4, "Apr", t4 + "\tApril");
-        XYChartItem p5 = new XYChartItem(5, t5, "May", t5 + "\tMay");
-        XYChartItem p6 = new XYChartItem(6, t6, "Jun", t6 + "\tJune");
-        XYChartItem p7 = new XYChartItem(7, t7, "Jul", t7 + "\tJuly");
-        XYChartItem p8 = new XYChartItem(8, t8, "Aug", t8 + "\tAugust");
-        XYChartItem p9 = new XYChartItem(9, t9, "Sep", t9 + "\tSeptember");
-        XYChartItem p10 = new XYChartItem(10, t10, "Oct", t10 + "\tOctober");
-        XYChartItem p11 = new XYChartItem(11, t11, "Nov", t11 + "\tNovember");
-        XYChartItem p12 = new XYChartItem(12, t12, "Dec", t12 + "\tDecember");
-
-
-        p1.setY(RND.nextDouble() * 500 + 200);
-        p2.setY(RND.nextDouble() * 500 + 200);
-        p3.setY(RND.nextDouble() * 500 + 200);
-        p4.setY(RND.nextDouble() * 500 + 200);
-        p5.setY(RND.nextDouble() * 500 + 200);
-        p6.setY(RND.nextDouble() * 500 + 200);
-        p7.setY(RND.nextDouble() * 500 + 200);
-        p8.setY(RND.nextDouble() * 500 + 200);
-        p9.setY(RND.nextDouble() * 500 + 200);
-        p10.setY(RND.nextDouble() * 500 + 200);
-        p11.setY(RND.nextDouble() * 500 + 200);
-        p12.setY(RND.nextDouble() * 500 + 200);
+    private XYSeries expenseSeries() {
+        var plots = new LinkedList<XYItem>();
+        var i = 1;
+        for (LineChartModel data : DashboardViewModel.getExpenses()) {
+            XYChartItem item = new XYChartItem(i, data.getTotalValue(), data.getPeriod(), data.getTotalValue() + " " + data.getPeriod());
+            item.setY(RND.nextDouble() * 500 + 200);
+            plots.add(item);
+            i++;
+        }
 
         XYSeries xySeries1 = XYSeriesBuilder.create()
-                .items(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)
+                .items(plots)
                 .chartType(ChartType.SMOOTH_AREA)
 //                .fill(Color.web("#00AEF520"))
                 .stroke(expenseColor)
@@ -208,33 +179,18 @@ public class GraphCardController implements Initializable {
         return xySeries1;
     }
 
-    private XYSeries createSeries2() {
-        var t1 = RND.nextDouble() * 500 + 200;
-        var t2 = RND.nextDouble() * 500 + 200;
-        var t3 = RND.nextDouble() * 500 + 200;
-        var t4 = RND.nextDouble() * 500 + 200;
-        var t5 = RND.nextDouble() * 500 + 200;
-        var t6 = RND.nextDouble() * 500 + 200;
-        var t7 = RND.nextDouble() * 500 + 200;
-        var t8 = RND.nextDouble() * 500 + 200;
-        var t9 = RND.nextDouble() * 500 + 200;
-        var t10 = RND.nextDouble() * 500 + 200;
-        var t11 = RND.nextDouble() * 500 + 200;
-        var t12 = RND.nextDouble() * 500 + 200;
+    private XYSeries incomeSeries() {
+        var plots = new LinkedList<XYItem>();
+        var i = 1;
+        for (LineChartModel data : DashboardViewModel.getExpenses()) {
+            XYChartItem item = new XYChartItem(i, data.getTotalValue(), data.getPeriod(), data.getTotalValue() + " " + data.getPeriod());
+            item.setY(RND.nextDouble() * 500 + 200);
+            plots.add(item);
+            i++;
+        }
 
         XYSeries xySeries2 = XYSeriesBuilder.create()
-                .items(new XYChartItem(1, t1, "Jan", t1 + "\tJanuary"),
-                        new XYChartItem(2, t2, "Feb", t2 + "\tFebruary"),
-                        new XYChartItem(3, t3, "Mar", t3 + "\tMarch"),
-                        new XYChartItem(4, t4, "Apr", t4 + "\tApril"),
-                        new XYChartItem(5, t5, "May", t5 + "\tMay"),
-                        new XYChartItem(6, t6, "Jun", t6 + "\tJune"),
-                        new XYChartItem(7, t7, "Jul", t7 + "\tJuly"),
-                        new XYChartItem(8, t8, "Aug", t8 + "\tAugust"),
-                        new XYChartItem(9, t9, "Sep", t9 + "\tSeptember"),
-                        new XYChartItem(10, t10, "Oct", t10 + "\tOctober"),
-                        new XYChartItem(11, t11, "Nov", t11 + "\tNovember"),
-                        new XYChartItem(12, t12, "Dec", t12 + "\tDecember"))
+                .items(plots)
                 .chartType(ChartType.SMOOTH_AREA)
 //                .fill(Color.web("#4EE29B20"))
                 .stroke(incomeColor)

@@ -1,6 +1,5 @@
 package inc.nomard.spoty.network_bridge.dtos.dashboard;
 
-import java.math.BigDecimal;
 import lombok.*;
 
 @Getter
@@ -9,5 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 public class LineChartModel {
     private String period;
-    private BigDecimal totalValue;
+    private Double totalValue;
 }
