@@ -9,6 +9,7 @@ import inc.nomard.spoty.core.values.strings.*;
 import static inc.nomard.spoty.core.values.strings.Values.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
@@ -35,7 +36,6 @@ import javafx.beans.binding.*;
 import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
@@ -127,7 +127,17 @@ public class AuthScreenController implements Initializable {
                 CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null)),
                 CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null)),
                 CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null)),
-                CompletableFuture.runAsync(() -> UserViewModel.getAllUsers(null, null))
+                CompletableFuture.runAsync(() -> UserViewModel.getAllUsers(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getKPIs(null, null)),
+                // CompletableFuture.runAsync(() -> DashboardViewModel.getYearlyExpenses(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyExpenses(null, null)),
+                // CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyExpenses(null, null)),
+                // CompletableFuture.runAsync(() -> DashboardViewModel.getYearlyIncomes(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyIncomes(null, null)),
+                // CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyIncomes(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getTopProducts(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getRecentOrders(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getStockAlerts(null, null))
         );
 
         allDataInitialization.thenRun(this::onDataInitializationSuccess)
