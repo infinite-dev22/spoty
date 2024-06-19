@@ -2,7 +2,7 @@ package inc.nomard.spoty.core.views.components;
 
 import inc.nomard.spoty.core.components.*;
 import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
+import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
@@ -66,13 +66,13 @@ public class OrdersController implements Initializable {
                         saleAmountPaid);
         styleSaleMasterTable();
 
-        if (SaleMasterViewModel.getSales().isEmpty()) {
-            SaleMasterViewModel.getSales()
+        if (DashboardViewModel.getRecentOrders().isEmpty()) {
+            DashboardViewModel.getRecentOrders()
                     .addListener(
                             (ListChangeListener<SaleMaster>)
-                                    c -> saleOrders.setItems(SaleMasterViewModel.getSales()));
+                                    c -> saleOrders.setItems(DashboardViewModel.getRecentOrders()));
         } else {
-            saleOrders.itemsProperty().bindBidirectional(SaleMasterViewModel.salesProperty());
+            saleOrders.itemsProperty().bindBidirectional(DashboardViewModel.recentOrdersProperty());
         }
     }
 
