@@ -37,7 +37,7 @@
         <HBox BorderPane.alignment="CENTER"/>
     </top>
     <right>
-        <VBox prefHeight="584.0" prefWidth="538.0" spacing="10.0" styleClass="card-flat" BorderPane.alignment="CENTER">
+        <VBox prefHeight="584.0" minWidth="338.0" prefWidth="538.0" maxWidth="538.0" spacing="10.0" styleClass="card-flat" BorderPane.alignment="CENTER">
             <BorderPane.margin>
                 <Insets left="5.0"/>
             </BorderPane.margin>

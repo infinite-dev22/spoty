@@ -180,8 +180,8 @@ public class PointOfSaleController implements Initializable {
         var productsGridView = new GridPane();
         var row = 1;
         var column = 0;
-        productsGridView.setHgap(20);
-        productsGridView.setVgap(20);
+        productsGridView.setHgap(15);
+        productsGridView.setVgap(15);
         productsGridView.setPadding(new Insets(5));
         for (Product product : ProductViewModel.getProducts()) {
             ProductCard productCard = new ProductCard(product);
