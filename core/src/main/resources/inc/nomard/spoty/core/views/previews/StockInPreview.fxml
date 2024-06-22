@@ -55,7 +55,6 @@
                     </VBox.margin>
                     <MFXTableView fx:id="itemsTable" prefWidth="200.0"/>
                 </VBox>
-                <Separator/>
                 <VBox>
                     <padding>
                         <Insets right="50.0"/>
