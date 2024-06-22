@@ -79,13 +79,11 @@
                                 <Insets top="10.0" bottom="10.0"/>
                             </VBox.margin>
                             <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">
-                                <Label styleClass="preview-header" text="Sub Total:"/>
                                 <Label styleClass="preview-header" text="Discount(3%):"/>
                                 <Label styleClass="preview-header" text="Tax:"/>
                                 <Label styleClass="preview-header" text="Shipping:"/>
                             </VBox>
                             <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">
-                                <Label fx:id="subTotal" layoutX="10.0" layoutY="10.0"/>
                                 <Label fx:id="discount" layoutX="10.0" layoutY="10.0"/>
                                 <Label fx:id="tax" layoutX="10.0" layoutY="10.0"/>
                                 <Label fx:id="shipping" layoutX="10.0" layoutY="10.0"/>
@@ -104,22 +102,6 @@
                             </VBox>
                         </HBox>
                     </VBox>
-                    <Separator/>
-                    <HBox alignment="CENTER_RIGHT">
-                        <VBox.margin>
-                            <Insets top="10.0"/>
-                        </VBox.margin>
-                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">
-                            <Label styleClass="preview-header" text="Paid Amount:"/>
-                            <Label styleClass="preview-header" text="Change:"/>
-                            <Label styleClass="preview-header" text="Balance:"/>
-                        </VBox>
-                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">
-                            <Label fx:id="paidAmount" layoutX="10.0" layoutY="10.0"/>
-                            <Label fx:id="changeDue" layoutX="10.0" layoutY="10.0"/>
-                            <Label fx:id="balance" layoutX="10.0" layoutY="10.0"/>
-                        </VBox>
-                    </HBox>
                 </VBox>
                 <Separator/>
                 <HBox>

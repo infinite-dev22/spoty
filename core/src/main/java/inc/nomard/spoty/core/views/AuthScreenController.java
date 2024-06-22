@@ -128,13 +128,19 @@ public class AuthScreenController implements Initializable {
                 CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null)),
                 CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null)),
                 CompletableFuture.runAsync(() -> UserViewModel.getAllUsers(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getKPIs(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getTotalEarnings(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getTotalPurchases(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getCountProducts(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getCountCustomers(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getCountSuppliers(null, null)),
                 // CompletableFuture.runAsync(() -> DashboardViewModel.getYearlyExpenses(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyExpenses(null, null)),
                 // CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyExpenses(null, null)),
                 // CompletableFuture.runAsync(() -> DashboardViewModel.getYearlyIncomes(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyIncomes(null, null)),
                 // CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyIncomes(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyRevenue(null, null)),
+                CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyRevenue(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getTopProducts(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getRecentOrders(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getStockAlerts(null, null))
@@ -179,6 +185,11 @@ public class AuthScreenController implements Initializable {
             );
             stage.show();
             stage.centerOnScreen();
+
+            var service = OnlineQueryWorker.fetchDataTask();
+            service.start();
+            service.setPeriod(Duration.seconds(10));
+            service.setDelay(Duration.seconds(0));
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, AuthScreenController.class);
         }

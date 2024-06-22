@@ -4,30 +4,62 @@ import inc.nomard.spoty.core.components.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import java.net.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
+import javafx.geometry.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.*;
 import lombok.extern.java.*;
 
 @Log
-public class StockAlertsController implements Initializable {
+public class StockAlerts extends AnchorPane {
     public MFXTableView<StockAlertModel> stockAlert;
-    public Label cardTitle;
-    public ViewAll viewAll;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        cardTitle.setText(Labels.STOCK_ALERTS);
+    public StockAlerts() {
+        this.setMinHeight(351d);
+        this.setPrefHeight(551d);
+        this.setMaxHeight(751d);
+        this.getStyleClass().add("card-flat");
+        this.getChildren().addAll(buildTop(), buildBottom());
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.setSpacing(20d);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(
+                buildTitle(),
+                new Spacer(),
+                buildViewAll()
+        );
+        UIUtils.anchor(hbox, 0d, 0d, null, 0d);
+        return hbox;
+    }
+
+    private io.github.palexdev.mfxcore.controls.Label buildTitle() {
+        var label = new io.github.palexdev.mfxcore.controls.Label(Labels.RECENT_ORDERS);
+        label.getStyleClass().add("card-title");
+        UIUtils.anchor(label, 0d, null, 0d, 0d);
+        return label;
+    }
+
+    private ViewAll buildViewAll() {
+        var viewAll = new ViewAll();
+        return viewAll;
+    }
+
+    private MFXTableView<StockAlertModel> buildBottom() {
+        stockAlert = new MFXTableView<>();
         stockAlert.setFooterVisible(false);
         stockAlert.setBorder(null);
-        Platform.runLater(this::setupTable);
+        setupTable();
+        UIUtils.anchor(stockAlert, 32d, 0d, 0d, 0d);
+        return stockAlert;
     }
 
     private void setupTable() {

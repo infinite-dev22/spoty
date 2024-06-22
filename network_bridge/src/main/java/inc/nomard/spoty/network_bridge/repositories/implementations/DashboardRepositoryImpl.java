@@ -11,9 +11,57 @@ import lombok.extern.java.*;
 @Log
 public class DashboardRepositoryImpl extends ProtectedGlobals implements DashboardRepository {
     @Override
-    public CompletableFuture<HttpResponse<String>> kpis() {
+    public CompletableFuture<HttpResponse<String>> kpiEarnings() {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Dashboard.kpis))
+                .uri(URI.create(EndPoints.Dashboard.kpiEarnings))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+    @Override
+    public CompletableFuture<HttpResponse<String>> kpiPurchases() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Dashboard.kpiPurchases))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+    @Override
+    public CompletableFuture<HttpResponse<String>> kpiProducts() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Dashboard.kpiProducts))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+    @Override
+    public CompletableFuture<HttpResponse<String>> kpiCustomers() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Dashboard.kpiCustomers))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+    @Override
+    public CompletableFuture<HttpResponse<String>> kpiSuppliers() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Dashboard.kpiSuppliers))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -89,9 +137,22 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
     }
 
     @Override
-    public CompletableFuture<HttpResponse<String>> weeklyIncomes() {
+    public CompletableFuture<HttpResponse<String>> monthlyRevenue() {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Dashboard.weeklyIncomes))
+                .uri(URI.create(EndPoints.Dashboard.monthlyRevenue))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
+    public CompletableFuture<HttpResponse<String>> weeklyRevenue() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Dashboard.weeklyRevenue))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

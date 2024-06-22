@@ -33,8 +33,6 @@ import lombok.extern.java.*;
 public class Pages {
     //Login
     private static final FXMLLoader loginLoader = fxmlLoader("views/AuthScreen.fxml");
-    //Dashboard
-    private static final FXMLLoader dashboardLoader = fxmlLoader("views/dashboard/Dashboard.fxml");
     // Sale
     private static final FXMLLoader posLoader = fxmlLoader("views/PointOfSale.fxml");
     private static final FXMLLoader saleLoader = fxmlLoader("views/Orders.fxml");
@@ -127,9 +125,6 @@ public class Pages {
     // Login
     @Getter
     private static BorderPane loginPane;
-    // Dashboard
-    @Getter
-    private static BorderPane dashboardPane;
 
     @Getter
     // Sale
@@ -315,10 +310,6 @@ public class Pages {
         loginLoader.setControllerFactory(e -> new AuthScreenController(stage));
     }
 
-    private static void setDashboard() {
-        dashboardLoader.setControllerFactory(e -> new DashboardController());
-    }
-
     private static void setSales(Stage stage) {
         saleLoader.setControllerFactory(e -> OrdersController.getInstance(stage));
         posLoader.setControllerFactory(e -> PointOfSaleController.getInstance(stage));
@@ -432,8 +423,6 @@ public class Pages {
     public static void setPanes() throws IOException {
         // Login
         loginPane = loginLoader.load();
-        // Dashboard
-        dashboardPane = dashboardLoader.load();
         // Sales
         posPane = posLoader.load();
         salePane = saleLoader.load();
@@ -514,7 +503,6 @@ public class Pages {
 
     public static void setControllers(Stage stage) {
         setLogin(stage);
-        setDashboard();
         setSales(stage);
         setCustomer(stage);
         setSupplier(stage);

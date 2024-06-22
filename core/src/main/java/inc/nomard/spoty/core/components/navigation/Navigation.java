@@ -14,6 +14,7 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
+import inc.nomard.spoty.core.views.dashboard.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.flavouring.*;
 import java.util.*;
@@ -41,7 +42,7 @@ public class Navigation {
     public static Navigation getInstance(StackPane viewWindow) {
         if (instance == null) {
             instance = new Navigation(viewWindow);
-            instance.loadView(Pages.getDashboardPane());
+            instance.loadView(new Dashboard());
         }
         return instance;
     }
@@ -169,7 +170,7 @@ public class Navigation {
 
     private NavTree.NavTreeItem createTree() {
         var dashboard =
-                NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", Pages.getDashboardPane());
+                NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", new Dashboard());
 
         NavTree.NavTreeItem sale;
         if (flavor == AppFlavor.TRACTION) {

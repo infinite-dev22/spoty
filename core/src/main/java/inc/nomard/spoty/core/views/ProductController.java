@@ -91,7 +91,6 @@ public class ProductController implements Initializable {
 
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
-        genericDialog.setShowClose(false);
 
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);
