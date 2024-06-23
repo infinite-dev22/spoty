@@ -4,7 +4,7 @@ import lombok.extern.java.*;
 
 @Log
 public class EndPoints {
-    public static final String appDNS = "http://localhost:8080";
+    public static final String appDNS = "http://152.69.198.227:8080";
     public static final String apiUrl = appDNS + "/api/v1";
 
     public static final class Adjustments {
