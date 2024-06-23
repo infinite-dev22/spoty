@@ -670,3 +670,24 @@
 .dialog-top-icon-background {
     -fx-fill: red;
 }
+/*
+* LineChart Styling
+*/
+.default-color0.chart-series-line {
+    -fx-stroke: #00AEF5;
+}
+.default-color1.chart-series-line {
+    -fx-stroke: #4EE29B;
+}
+.default-color0.chart-line-symbol {
+    -fx-background-color: black, #00AEF5;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px;
+}
+.default-color1.chart-line-symbol {
+     -fx-background-color: black, #4EE29B;
+     -fx-background-insets: 0, 2;
+     -fx-background-radius: 10px;
+     -fx-padding: 5px;
+ }

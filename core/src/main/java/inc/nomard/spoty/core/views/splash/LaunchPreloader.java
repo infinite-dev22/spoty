@@ -16,6 +16,7 @@ package inc.nomard.spoty.core.views.splash;
 
 import inc.nomard.spoty.core.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import io.github.palexdev.materialfx.theming.*;
 import javafx.application.*;
@@ -45,7 +46,16 @@ public class LaunchPreloader extends Preloader {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
         primaryStage.setTitle(Labels.APP_NAME);
-        primaryStage.getIcons().add(new Image(SpotyCoreResourceLoader.load("icon.png")));
+        // PreloadData.
+        PreloadedData.preloadImages();
+        primaryStage.getIcons().addAll(
+                PreloadedData.icon16,
+                PreloadedData.icon32,
+                PreloadedData.icon64,
+                PreloadedData.icon128,
+                PreloadedData.icon256,
+                PreloadedData.icon512
+        );
         primaryStage.setAlwaysOnTop(false);
         primaryStage.show();
     }

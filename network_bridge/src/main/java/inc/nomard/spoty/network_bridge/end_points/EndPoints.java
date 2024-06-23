@@ -422,4 +422,23 @@ public class EndPoints {
         public static final String airtelMoPay = paymentsUrl + "/pay/airtel";
         public static final String trial = apiUrl + "/tenants/start/trial";
     }
+
+    public static final class Dashboard {
+        public static final String dashboardUrl = apiUrl + "/dashboard";
+        public static final String kpiEarnings = dashboardUrl + "/kpi/earnings";
+        public static final String kpiPurchases = dashboardUrl + "/kpi/purchases";
+        public static final String kpiProducts = dashboardUrl + "/kpi/products";
+        public static final String kpiCustomers = dashboardUrl + "/kpi/customers";
+        public static final String kpiSuppliers = dashboardUrl + "/kpi/suppliers";
+        public static final String yearlyExpenses = dashboardUrl + "/expense/yearly";
+        public static final String monthlyExpenses = dashboardUrl + "/expense/monthly";
+        public static final String weeklyExpenses = dashboardUrl + "/expense/weekly";
+        public static final String yearlyIncomes = dashboardUrl + "/income/yearly";
+        public static final String monthlyIncomes = dashboardUrl + "/income/monthly";
+        public static final String monthlyRevenue = dashboardUrl + "/revenue/monthly";
+        public static final String weeklyRevenue = dashboardUrl + "/revenue/weekly";
+        public static final String topProducts = dashboardUrl + "/top/products";
+        public static final String recentOrders = dashboardUrl + "/recent/orders";
+        public static final String stockAlerts = dashboardUrl + "/stock/alerts";
+    }
 }

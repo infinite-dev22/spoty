@@ -28,11 +28,14 @@ import lombok.extern.java.*;
 public class SaleDetail {
     private Long id;
     private Product product;
-    private double price;
     private int quantity;
     private double subTotalPrice;
 
     public String getProductName() {
         return product.getName();
+    }
+
+    public Double getProductPrice() {
+        return product.getSalePrice();
     }
 }

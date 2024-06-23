@@ -1,17 +1,67 @@
 package inc.nomard.spoty.core.auto_updater.v2;
 
+import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.startup.*;
+import inc.nomard.spoty.utils.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.util.*;
 import java.util.logging.*;
 
 public class AutoUpdater {
 
     private static final String VERSION_URL = "http://yourserver.com/version.txt";
-    private static final String UPDATE_URL = "http://yourserver.com/application-installer.exe";
-    private static final String DOWNLOAD_PATH = "path/to/download/location/application-installer.exe";
-    private static final String CURRENT_VERSION = "1.0.0";
-    private static final String FLAG_FILE = "path/to/download/location/update-available.flag";
+
+    private static String getUpdateUrl() {
+        var updateUrl = "";
+        switch (OSUtil.getOs()) {
+            case LINUX -> updateUrl = "http://yourserver.com/releases/application-installer.rpm";
+            case MACOS -> updateUrl = "http://yourserver.com/releases/application-installer.dmg";
+            case WINDOWS -> updateUrl = "http://yourserver.com/releases/application-installer.exe";
+        }
+        return updateUrl;
+    }
+
+    private static String getDownloadPath() {
+        Path downloadPath = null;
+        String installerFilePath = null;
+        switch (OSUtil.getOs()) {
+            case LINUX, MACOS -> downloadPath = Paths.get(
+                    System.getProperty("user.home") + "/.config/OpenSaleERP/data/updates");
+            case WINDOWS -> downloadPath = Paths.get(System.getProperty("user.home")
+                    + "\\AppData\\Local\\OpenSaleERP\\data\\updates");
+        }
+        try {
+            Files.createDirectories(downloadPath);
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, SpotyPaths.class);
+        }
+        switch (OSUtil.getOs()) {
+            case LINUX -> installerFilePath = downloadPath + "/application-installer.rpm";
+            case MACOS -> installerFilePath = downloadPath + "/application-installer.dmg";
+            case WINDOWS -> installerFilePath = downloadPath + "\\application-installer.exe";
+        }
+        return installerFilePath;
+    }
+
+    private static String getFlagFile() {
+        Path flagFilePath = null;
+
+        switch (OSUtil.getOs()) {
+            case LINUX, MACOS -> flagFilePath = Paths.get(
+                    System.getProperty("user.home") + "/.config/OpenSaleERP/data/updates/flag");
+            case WINDOWS -> flagFilePath = Paths.get(System.getProperty("user.home")
+                    + "\\AppData\\Local\\OpenSaleERP\\data\\updates\\flag");
+        }
+
+        try {
+            Files.createDirectories(flagFilePath);
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, SpotyPaths.class);
+        }
+        return flagFilePath.toString() + "update-available.flag";
+    }
 
     public static void checkForUpdates() {
         new Thread(() -> {
@@ -22,18 +72,25 @@ public class AutoUpdater {
                     notifyUserForRestart();
                 }
             } catch (Exception e) {
-                LoggerConfig.LOGGER.log(Level.SEVERE, "Error checking for updates", e);
+                SpotyLogger.writeToFile(new Throwable("Error checking for updates" + e), AutoUpdater.class);
             }
         }).start();
     }
 
+    private static String getCurrentVersion() throws IOException {
+        var appPropertiesPath = SpotyCoreResourceLoader.load("application.properties");
+        var appProps = new Properties();
+        appProps.load(new FileInputStream(appPropertiesPath));
+        return appProps.getProperty("version");
+    }
+
     private static boolean isUpdateAvailable() throws IOException {
-        URL url = new URL(VERSION_URL);
+        URL url = URI.create(VERSION_URL).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
             String latestVersion = in.readLine();
-            return compareVersions(CURRENT_VERSION, latestVersion) < 0;
+            return compareVersions(getCurrentVersion(), latestVersion) < 0;
         }
     }
 
@@ -54,19 +111,19 @@ public class AutoUpdater {
     }
 
     private static void downloadUpdate() throws IOException {
-        try (BufferedInputStream in = new BufferedInputStream(new URL(UPDATE_URL).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream(DOWNLOAD_PATH)) {
-            byte dataBuffer[] = new byte[1024];
+        try (BufferedInputStream in = new BufferedInputStream(URI.create(getUpdateUrl()).toURL().openStream());
+             FileOutputStream fileOutputStream = new FileOutputStream(getDownloadPath())) {
+            byte[] dataBuffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
-            LoggerConfig.LOGGER.info("Update downloaded successfully.");
+            SpotyLogger.writeToFile(new Throwable("Update downloaded successfully."), AutoUpdater.class);
         }
     }
 
     private static void markUpdateAvailable() throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(FLAG_FILE)) {
+        try (FileOutputStream fos = new FileOutputStream(getFlagFile())) {
             fos.write("update available".getBytes());
         }
     }
@@ -83,13 +140,13 @@ public class AutoUpdater {
     }
 
     public static void applyUpdateIfAvailable() {
-        if (Files.exists(Paths.get(FLAG_FILE))) {
+        if (Files.exists(Paths.get(getFlagFile()))) {
             try {
-                Runtime.getRuntime().exec(DOWNLOAD_PATH);
-                Files.delete(Paths.get(FLAG_FILE));
+                Runtime.getRuntime().exec(getDownloadPath());
+                Files.delete(Paths.get(getFlagFile()));
                 System.exit(0); // Exit the current application to allow the update to proceed
             } catch (IOException e) {
-                LoggerConfig.LOGGER.log(Level.SEVERE, "Error applying update", e);
+                SpotyLogger.writeToFile(new Throwable("Error applying update" + e), AutoUpdater.class);
             }
         }
     }

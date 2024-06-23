@@ -51,15 +51,13 @@ public class PurchasePreviewController implements Initializable {
     @FXML
     public Label tax;
     @FXML
-    public Label shipping;
-    @FXML
     public Label netCost;
-    @FXML
-    public Label paidAmount;
-    @FXML
-    public Label changeDue;
-    @FXML
-    public Label balance;
+//    @FXML
+//    public Label paidAmount;
+//    @FXML
+//    public Label changeDue;
+//    @FXML
+//    public Label balance;
     @FXML
     public Label purchaseNote;
     @FXML
@@ -151,7 +149,7 @@ public class PurchasePreviewController implements Initializable {
         discount.setText(String.valueOf(purchase.getDiscount()));
         tax.setText(String.valueOf(purchase.getTaxRate()));
         netCost.setText(String.valueOf(purchase.getTotal()));
-        paidAmount.setText(String.valueOf(purchase.getAmountPaid()));
+//        paidAmount.setText(String.valueOf(purchase.getAmountPaid()));
         purchaseNote.setText(purchase.getNotes());
 //        doneBy.setText(purchase.doneBy());
     }

@@ -91,6 +91,24 @@ public class QuotationDetailFormController implements Initializable {
     private void setupComboBoxes() {
         product.setConverter(createStringConverter(Product::getName));
         product.setFilterFunction(createFilterFunction(Product::getName));
+        product.selectedItemProperty().addListener((obs, o, n) -> {
+            if (Objects.nonNull(n) && !Objects.equals(n, o)) {
+                var salePrice = n.getSalePrice();
+                if (Objects.nonNull(n.getTax())) {
+                    QuotationDetailViewModel.setTax(n.getTax());
+                    salePrice += salePrice * (n.getTax().getPercentage() / 100);
+                } else {
+                    QuotationDetailViewModel.setTax(null);
+                }
+                if (Objects.nonNull(n.getDiscount())) {
+                    QuotationDetailViewModel.setDiscount(n.getDiscount());
+                    salePrice += salePrice * (n.getDiscount().getPercentage() / 100);
+                } else {
+                    QuotationDetailViewModel.setDiscount(null);
+                }
+                QuotationDetailViewModel.setSubTotal(salePrice);
+            }
+        });
         bindComboBoxItems(product, ProductViewModel.getProducts(), ProductViewModel.productsProperty());
 
         discount.setConverter(createStringConverter(d -> d.getName() + "(" + d.getPercentage() + ")"));
@@ -175,7 +193,7 @@ public class QuotationDetailFormController implements Initializable {
                 && validateConstraints(quantityConstraints, quantityValidationLabel, quantity)) {
 
             if (QuotationDetailViewModel.tempIdProperty().get() > -1) {
-                QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
+                QuotationDetailViewModel.updateQuotationDetail();
                 successMessage("Product changed successfully");
             } else {
                 QuotationDetailViewModel.addQuotationDetails();

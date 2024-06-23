@@ -6,10 +6,10 @@ module spoty.network_bridge {
     requires javafx.graphics;
     requires java.logging;
 
-
     opens inc.nomard.spoty.network_bridge.auth;
     opens inc.nomard.spoty.network_bridge.dtos;
     opens inc.nomard.spoty.network_bridge.dtos.adjustments;
+    opens inc.nomard.spoty.network_bridge.dtos.dashboard;
     opens inc.nomard.spoty.network_bridge.dtos.hrm.employee;
     opens inc.nomard.spoty.network_bridge.dtos.hrm.leave;
     opens inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
@@ -44,4 +44,5 @@ module spoty.network_bridge {
     exports inc.nomard.spoty.network_bridge.repositories.implementations;
     exports inc.nomard.spoty.network_bridge.repositories.interfaces;
     exports inc.nomard.spoty.network_bridge.dtos.payments;
+    exports inc.nomard.spoty.network_bridge.dtos.dashboard;
 }

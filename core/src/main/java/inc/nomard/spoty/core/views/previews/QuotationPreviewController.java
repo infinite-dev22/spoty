@@ -45,8 +45,6 @@ public class QuotationPreviewController implements Initializable {
     @FXML
     public MFXTableView<QuotationDetail> itemsTable;
     @FXML
-    public Label subTotal;
-    @FXML
     public Label discount;
     @FXML
     public Label tax;
@@ -54,12 +52,6 @@ public class QuotationPreviewController implements Initializable {
     public Label shipping;
     @FXML
     public Label netPrice;
-    @FXML
-    public Label paidAmount;
-    @FXML
-    public Label changeDue;
-    @FXML
-    public Label balance;
     @FXML
     public Label doneBy;
 
@@ -86,7 +78,7 @@ public class QuotationPreviewController implements Initializable {
                 new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getProductPrice));
         MFXTableColumn<QuotationDetail> totalPrice =
                 new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(QuotationDetail::getSubTotal));
+                        "Sub Total Price", false, Comparator.comparing(QuotationDetail::getSubTotal));
 
         // Set table column data.
         product.setRowCellFactory(quotationDetail -> {
@@ -153,12 +145,9 @@ public class QuotationPreviewController implements Initializable {
         customerNumber.setText(quotation.getCustomer().getPhone());
         customerEmail.setText(quotation.getCustomer().getEmail());
         quotationDetailsList.addAll(quotation.getQuotationDetails());
-        subTotal.setText(String.valueOf(quotation.getSubTotal()));
         discount.setText(String.valueOf(quotation.getDiscount()));
         tax.setText(String.valueOf(quotation.getNetTax()));
         shipping.setText(String.valueOf(quotation.getShippingFee()));
         netPrice.setText(String.valueOf(quotation.getTotal()));
-        paidAmount.setText(String.valueOf(quotation.getAmountPaid()));
-        changeDue.setText(String.valueOf(quotation.getChangeAmount()));
     }
 }

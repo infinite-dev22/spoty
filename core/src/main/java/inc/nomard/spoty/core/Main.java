@@ -24,25 +24,11 @@ import lombok.extern.java.*;
 public class Main extends Application {
 
     public static Stage primaryStage = null;
-//    private static ScheduledExecutorService scheduler;
 
     public static void main(String... args) {
         System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
-
-//        if (SeamlessUpdater.checkForPendingUpdate()) {
-//            SeamlessUpdater.launchInstallerAndExit();
-//        }
-
-        // Schedule periodic checks
-//        scheduler = Executors.newSingleThreadScheduledExecutor();
-//        scheduler.scheduleAtFixedRate(SeamlessUpdater::checkForUpdates, 0, 3, TimeUnit.HOURS);
-
-        // Apply update if available
         AutoUpdater.applyUpdateIfAvailable();
-
-        // Start the update checker
         UpdateScheduler.startUpdateChecker();
-
         Application.launch(Main.class, args);
     }
 
@@ -54,11 +40,5 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
-    }
-
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-//        scheduler.shutdown(); // Shutdown the scheduler on application exit
     }
 }

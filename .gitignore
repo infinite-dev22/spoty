@@ -12,6 +12,7 @@ build/
 .idea/shelf/
 .idea/misc.xml
 .idea/workspace.xml
+.idea/google-java-format.xml
 *.iws
 *.iml
 *.ipr
@@ -49,3 +50,8 @@ out
 
 ### VCS ###
 *.patch
+
+### Development Branch ###
+*.json
+*.log
+*.hprof

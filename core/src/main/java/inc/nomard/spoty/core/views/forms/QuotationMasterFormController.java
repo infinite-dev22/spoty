@@ -104,6 +104,9 @@ public class QuotationMasterFormController implements Initializable {
         customer
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.customerProperty());
+        status
+                .valueProperty()
+                .bindBidirectional(QuotationMasterViewModel.statusProperty());
         quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
 
         // ComboBox Converters.
@@ -279,21 +282,15 @@ public class QuotationMasterFormController implements Initializable {
 
     public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getQuotationPane());
-
         QuotationMasterViewModel.resetProperties();
-
         customerValidationLabel.setVisible(false);
         statusValidationLabel.setVisible(false);
-
         customerValidationLabel.setManaged(false);
         statusValidationLabel.setManaged(false);
-
         customer.clearSelection();
         status.clearSelection();
-
         customer.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-
         customer.clearSelection();
         status.clearSelection();
     }
