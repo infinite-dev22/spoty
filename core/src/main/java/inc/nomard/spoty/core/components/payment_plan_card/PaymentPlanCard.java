@@ -178,7 +178,8 @@ public class PaymentPlanCard extends VBox {
                 + planColor.getRed() * 255 + ", "
                 + planColor.getGreen() * 255 + ", "
                 + planColor.getBlue() * 255 +
-                ");");
+                ");" +
+                "-fx-text-fill: white;");
         button.setOnAction(actionEvent -> onAction.run());
 
         if (canTry) {

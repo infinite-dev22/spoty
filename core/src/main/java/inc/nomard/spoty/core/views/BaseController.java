@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.components.payment_plan_card.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -351,40 +352,19 @@ public class BaseController implements Initializable {
             closeIcon.setColor(Color.RED);
             close.setGraphic(closeIcon);
             close.setVariants(ButtonVariants.OUTLINED);
-            close.setOnAction(actionEvent1 -> buildDialog().showAndWait());
+            close.setOnAction(actionEvent -> new InformativeDialog(() -> {
+                GlobalActions.closeDialog(actionEvent);
+                morphPane.morph(false);
+                rootPane.getChildren().removeAll(vBox);
+                primaryStage.hide();
+                primaryStage.close();
+                SpotyThreader.disposeSpotyThreadPool();
+                Platform.exit();
+            }, primaryStage, contentPane));
             StackPane.setAlignment(hBox1, Pos.CENTER);
             StackPane.setAlignment(hBox2, Pos.BOTTOM_CENTER);
             rootPane.getChildren().addAll(vBox);
         }
-    }
-
-    private MFXStageDialog buildDialog() {
-        var cancel = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Cancel");
-        var proceed = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Proceed");
-        var dialogContent = new MFXGenericDialog("Confirm exit!", "Are you sure you want to exit and close this app?");
-        dialogContent.addActions(proceed, cancel);
-        cancel.setVariants(ButtonVariants.FILLED);
-        proceed.setVariants(ButtonVariants.OUTLINED);
-        cancel.setOnAction(GlobalActions::closeDialog);
-        proceed.setOnAction(actionEvent -> {
-            GlobalActions.closeDialog(actionEvent);
-            morphPane.morph(false);
-            rootPane.getChildren().removeAll(vBox);
-            primaryStage.hide();
-            primaryStage.close();
-            SpotyThreader.disposeSpotyThreadPool();
-            Platform.exit();
-        });
-        var dialog = MFXGenericDialogBuilder.build(dialogContent)
-                .toStageDialogBuilder()
-                .initOwner(primaryStage)
-                .initModality(Modality.WINDOW_MODAL)
-                .setOwnerNode(contentPane)
-                .setScrimPriority(ScrimPriority.WINDOW)
-                .setScrimOwner(true)
-                .get();
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-        return dialog;
     }
 
     private void successMessage(String message) {
