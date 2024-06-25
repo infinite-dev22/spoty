@@ -670,6 +670,16 @@
 .dialog-top-icon-background {
     -fx-fill: red;
 }
+.primary-color {
+    -fx-background-color: purple;
+    -fx-foreground-color: purple;
+    -fx-text-fill: white;
+}
+.secondary-color {
+    -fx-background-color: white;
+    -fx-foreground-color: purple;
+    -fx-text-fill: purple;
+}
 /*
 * LineChart Styling
 */

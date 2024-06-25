@@ -1,21 +1,38 @@
 package inc.nomard.spoty.core.auto_updater.v2;
 
-import inc.nomard.spoty.core.*;
-import java.util.Timer;
-import java.util.TimerTask;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.utils.*;
+import java.util.concurrent.*;
+import javafx.concurrent.*;
+import javafx.util.*;
 
 public class UpdateScheduler {
+    private static final ScheduledService<Void> scheduledService;
 
-    public static void startUpdateChecker() {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
+    static {
+        scheduledService = new ScheduledService<>() {
             @Override
-            public void run() {
-                AutoUpdater.checkForUpdates();
+            protected Task<Void> createTask() {
+                return new Task<>() {
+                    @Override
+                    protected Void call() {
+                        CompletableFuture.runAsync(AutoUpdater::checkForUpdates).exceptionally(this::onFailure);
+                        return null;
+                    }
+
+                    private Void onFailure(Throwable throwable) {
+                        SpotyLogger.writeToFile(throwable, AuthScreenController.class);
+                        return null;
+                    }
+                };
             }
         };
-        // Schedule the task to run every 3 hours (10800000 milliseconds)
-        timer.schedule(task, 0, 10800000);
+    }
+
+    public static void startUpdateChecker() {
+        scheduledService.setDelay(new Duration(0d));
+        scheduledService.setPeriod(Duration.hours(3d));
+        scheduledService.start();
     }
 }
 
