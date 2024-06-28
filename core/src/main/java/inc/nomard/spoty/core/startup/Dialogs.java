@@ -31,7 +31,7 @@ public class Dialogs {
     private static final FXMLLoader saleDetailFormLoader = fxmlLoader("views/forms/SaleDetailForm.fxml");
     private static final FXMLLoader stockInDetailFormLoader = fxmlLoader("views/forms/StockInDetailForm.fxml");
     private static final FXMLLoader transferDetailFormLoader = fxmlLoader("views/forms/TransferDetailForm.fxml");
-    private static final FXMLLoader bankFormLoader = fxmlLoader("views/forms/BankForm.fxml");
+    private static final FXMLLoader bankFormLoader = fxmlLoader("views/forms/AccountForm.fxml");
     private static final FXMLLoader beneficiaryTypeFormLoader = fxmlLoader("views/forms/BeneficiaryTypeForm.fxml");
     private static final FXMLLoader beneficiaryBadgeFormLoader = fxmlLoader("views/forms/BeneficiaryBadgeForm.fxml");
     private static final FXMLLoader branchFormLoader = fxmlLoader("views/forms/BranchForm.fxml");

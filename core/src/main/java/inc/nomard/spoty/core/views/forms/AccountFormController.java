@@ -19,7 +19,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
-import static inc.nomard.spoty.core.viewModels.BankViewModel.*;
+import static inc.nomard.spoty.core.viewModels.AccountViewModel.*;
 import inc.nomard.spoty.core.views.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
@@ -37,37 +37,33 @@ import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class BankFormController implements Initializable {
-    private static BankFormController instance;
+public class AccountFormController implements Initializable {
+    private static AccountFormController instance;
     private final Stage stage;
     @FXML
-    public MFXTextField bankName,
+    public MFXTextField balance,
             accountName,
-            accountNumber,
-            branch;
+            accountNumber;
     @FXML
-    public Label bankNameValidationLabel,
-            accountNameValidationLabel,
-            accountNumberValidationLabel,
-            branchValidationLabel;
+    public TextArea description;
     @FXML
-    public MFXButton logo,
-            saveBtn,
+    public Label accountNameValidationLabel,
+            accountNumberValidationLabel;
+    @FXML
+    public MFXButton saveBtn,
             cancelBtn;
-    private List<Constraint> bankNameConstraints,
-            accountNameConstraints,
-            accountNumberConstraints,
-            branchConstraints;
+    private List<Constraint> accountNameConstraints,
+            accountNumberConstraints;
     private ActionEvent actionEvent = null;
 
-    private BankFormController(Stage stage) {
+    private AccountFormController(Stage stage) {
         this.stage = stage;
     }
 
-    public static BankFormController getInstance(Stage stage) {
+    public static AccountFormController getInstance(Stage stage) {
         if (Objects.equals(instance, null)) {
-            synchronized (BankFormController.class) {
-                instance = new BankFormController(stage);
+            synchronized (AccountFormController.class) {
+                instance = new AccountFormController(stage);
             }
         }
         return instance;
@@ -76,10 +72,17 @@ public class BankFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        bankName.textProperty().bindBidirectional(BankViewModel.nameProperty());
-        accountName.textProperty().bindBidirectional(BankViewModel.emailProperty());
-        accountNumber.textProperty().bindBidirectional(BankViewModel.phoneProperty());
-        branch.textProperty().bindBidirectional(BankViewModel.townProperty());
+        balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty());
+        accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
+        accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
+        description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
+        AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> {
+            if (Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0) {
+                balance.setDisable(true);
+            } else {
+                balance.setDisable(false);
+            }
+        });
         // Input listeners.
         requiredValidator();
         dialogOnActions();
@@ -91,35 +94,18 @@ public class BankFormController implements Initializable {
                     clearBankData();
                     closeDialog(event);
 
-                    bankNameValidationLabel.setVisible(false);
                     accountNameValidationLabel.setVisible(false);
                     accountNumberValidationLabel.setVisible(false);
-                    branchValidationLabel.setVisible(false);
-
-                    bankNameValidationLabel.setManaged(false);
                     accountNameValidationLabel.setManaged(false);
                     accountNumberValidationLabel.setManaged(false);
-                    branchValidationLabel.setManaged(false);
 
-                    bankName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     accountName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     accountNumber.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    branch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    bankNameConstraints = bankName.validate();
                     accountNameConstraints = accountName.validate();
                     accountNumberConstraints = accountNumber.validate();
-                    branchConstraints = branch.validate();
-                    if (!bankNameConstraints.isEmpty()) {
-                        bankNameValidationLabel.setManaged(true);
-                        bankNameValidationLabel.setVisible(true);
-                        bankNameValidationLabel.setText(bankNameConstraints.getFirst().getMessage());
-                        bankName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) bankName.getScene().getWindow();
-                        dialog.sizeToScene();
-                    }
                     if (!accountNameConstraints.isEmpty()) {
                         accountNameValidationLabel.setManaged(true);
                         accountNameValidationLabel.setVisible(true);
@@ -136,43 +122,25 @@ public class BankFormController implements Initializable {
                         MFXStageDialog dialog = (MFXStageDialog) accountNumber.getScene().getWindow();
                         dialog.sizeToScene();
                     }
-                    if (!branchConstraints.isEmpty()) {
-                        branchValidationLabel.setManaged(true);
-                        branchValidationLabel.setVisible(true);
-                        branchValidationLabel.setText(branchConstraints.getFirst().getMessage());
-                        branch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) branch.getScene().getWindow();
-                        dialog.sizeToScene();
-                    }
-                    if (bankNameConstraints.isEmpty()
-                            && accountNameConstraints.isEmpty()
-                            && accountNumberConstraints.isEmpty()
-                            && branchConstraints.isEmpty()) {
+                    if (accountNameConstraints.isEmpty()
+                            && accountNumberConstraints.isEmpty()) {
                         actionEvent = event;
-                        if (BankViewModel.getId() > 0) {
-                            BankViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                        if (AccountViewModel.getId() > 0) {
+                            AccountViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
                             return;
                         }
-                        BankViewModel.saveBank(this::onSuccess, this::successMessage, this::errorMessage);
+                        AccountViewModel.saveBank(this::onSuccess, this::successMessage, this::errorMessage);
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
-        BankViewModel.clearBankData();
-        BankViewModel.getAllBanks(null, null);
+        AccountViewModel.clearBankData();
+        AccountViewModel.getAllAccounts(null, null);
     }
 
     public void requiredValidator() {
-        // Name input validation.
-        Constraint bankNameConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Bank name is required")
-                        .setCondition(bankName.textProperty().length().greaterThan(0))
-                        .get();
-        bankName.getValidator().constraint(bankNameConstraint);
         Constraint accountNameConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -187,25 +155,7 @@ public class BankFormController implements Initializable {
                         .setCondition(accountNumber.textProperty().length().greaterThan(0))
                         .get();
         accountNumber.getValidator().constraint(accountNumberConstraint);
-        Constraint branchConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Branch is required")
-                        .setCondition(branch.textProperty().length().greaterThan(0))
-                        .get();
-        branch.getValidator().constraint(branchConstraint);
         // Display error.
-        bankName
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                bankNameValidationLabel.setManaged(false);
-                                bankNameValidationLabel.setVisible(false);
-                                bankName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
         accountName
                 .getValidator()
                 .validProperty()
@@ -226,17 +176,6 @@ public class BankFormController implements Initializable {
                                 accountNumberValidationLabel.setManaged(false);
                                 accountNumberValidationLabel.setVisible(false);
                                 accountNumber.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        branch
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                branchValidationLabel.setManaged(false);
-                                branchValidationLabel.setVisible(false);
-                                branch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
     }

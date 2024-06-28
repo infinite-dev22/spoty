@@ -33,44 +33,33 @@ import javafx.collections.*;
 import lombok.extern.java.*;
 
 @Log
-public class BankViewModel {
+public class AccountViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty bankName = new SimpleStringProperty("");
     private static final StringProperty accountName = new SimpleStringProperty("");
     private static final StringProperty accountNumber = new SimpleStringProperty("");
+    private static final StringProperty credit = new SimpleStringProperty("");
+    private static final StringProperty debit = new SimpleStringProperty("");
     private static final StringProperty balance = new SimpleStringProperty("");
-    private static final StringProperty logo = new SimpleStringProperty("");
-    private static final ObjectProperty<Bank> bank = new SimpleObjectProperty<>();
-    public static ObservableList<Bank> banksList = FXCollections.observableArrayList();
-    private static final ListProperty<Bank> banks = new SimpleListProperty<>(banksList);
-    public static BanksRepositoryImpl banksRepository = new BanksRepositoryImpl();
+    private static final StringProperty description = new SimpleStringProperty("");
+    private static final ObjectProperty<Account> account = new SimpleObjectProperty<>();
+    public static ObservableList<Account> accountsList = FXCollections.observableArrayList();
+    private static final ListProperty<Account> ACCOUNTS = new SimpleListProperty<>(accountsList);
+    public static AccountRepositoryImplAccount accountsRepository = new AccountRepositoryImplAccount();
 
     public static Long getId() {
         return id.get();
     }
 
     public static void setId(Long id) {
-        BankViewModel.id.set(id);
+        AccountViewModel.id.set(id);
     }
 
     public static LongProperty idProperty() {
         return id;
-    }
-
-    public static String getBankName() {
-        return bankName.get();
-    }
-
-    public static void setBankName(String bankName) {
-        BankViewModel.bankName.set(bankName);
-    }
-
-    public static StringProperty nameProperty() {
-        return bankName;
     }
 
     public static String getAccountName() {
@@ -78,10 +67,10 @@ public class BankViewModel {
     }
 
     public static void setAccountName(String accountName) {
-        BankViewModel.accountName.set(accountName);
+        AccountViewModel.accountName.set(accountName);
     }
 
-    public static StringProperty emailProperty() {
+    public static StringProperty accountNameProperty() {
         return accountName;
     }
 
@@ -90,11 +79,35 @@ public class BankViewModel {
     }
 
     public static void setAccountNumber(String accountNumber) {
-        BankViewModel.accountNumber.set(accountNumber);
+        AccountViewModel.accountNumber.set(accountNumber);
     }
 
-    public static StringProperty phoneProperty() {
+    public static StringProperty accountNumberProperty() {
         return accountNumber;
+    }
+
+    public static String getCredit() {
+        return credit.get();
+    }
+
+    public static void setCredit(String credit) {
+        AccountViewModel.credit.set(credit);
+    }
+
+    public static StringProperty creditProperty() {
+        return credit;
+    }
+
+    public static String getDebit() {
+        return debit.get();
+    }
+
+    public static void setDebit(String debit) {
+        AccountViewModel.debit.set(debit);
+    }
+
+    public static StringProperty debitProperty() {
+        return debit;
     }
 
     public static String getBalance() {
@@ -102,49 +115,50 @@ public class BankViewModel {
     }
 
     public static void setBalance(String balance) {
-        BankViewModel.balance.set(balance);
+        AccountViewModel.balance.set(balance);
     }
 
-    public static StringProperty townProperty() {
+    public static StringProperty balanceProperty() {
         return balance;
     }
 
-    public static String getLogo() {
-        return logo.get();
+    public static String getDescription() {
+        return description.get();
     }
 
-    public static void setLogo(String logo) {
-        BankViewModel.logo.set(logo);
+    public static void setDescription(String description) {
+        AccountViewModel.description.set(description);
     }
 
-    public static StringProperty cityProperty() {
-        return logo;
+    public static StringProperty descriptionProperty() {
+        return description;
     }
 
-    public static ObservableList<Bank> getBanks() {
-        return banks.get();
+    public static ObservableList<Account> getAccounts() {
+        return ACCOUNTS.get();
     }
 
-    public static void setBanks(ObservableList<Bank> banks) {
-        BankViewModel.banks.set(banks);
+    public static void setAccounts(ObservableList<Account> accounts) {
+        AccountViewModel.ACCOUNTS.set(accounts);
     }
 
-    public static ListProperty<Bank> banksProperty() {
-        return banks;
+    public static ListProperty<Account> accountsProperty() {
+        return ACCOUNTS;
     }
 
     public static void saveBank(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                 SpotyGotFunctional.MessageConsumer successMessage,
                                 SpotyGotFunctional.MessageConsumer errorMessage) {
-        var bank =
-                Bank.builder()
-                        .bankName(getBankName())
+        var account =
+                Account.builder()
                         .accountName(getAccountName())
                         .accountNumber(getAccountNumber())
+                        .credit(getCredit())
+                        .debit(getDebit())
                         .balance(getBalance())
-                        .logo(getLogo())
+                        .description(getDescription())
                         .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = banksRepository.post(bank);
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.post(account);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
@@ -180,33 +194,34 @@ public class BankViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, BankViewModel.class);
+            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
             return null;
         });
     }
 
     public static void clearBankData() {
         setId(0L);
-        setBankName("");
-        setLogo("");
+        setDescription("");
         setAccountNumber("");
         setAccountName("");
         setBalance("");
+        setCredit("");
+        setDebit("");
     }
 
-    public static void getAllBanks(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = banksRepository.fetchAll();
+    public static void getAllAccounts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                      SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Bank>>() {
+                    Type listType = new TypeToken<ArrayList<Account>>() {
                     }.getType();
-                    ArrayList<Bank> bankList = gson.fromJson(response.body(), listType);
-                    banksList.clear();
-                    banksList.addAll(bankList);
+                    ArrayList<Account> accountList = gson.fromJson(response.body(), listType);
+                    accountsList.clear();
+                    accountsList.addAll(accountList);
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
@@ -238,7 +253,7 @@ public class BankViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, BankViewModel.class);
+            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
             return null;
         });
     }
@@ -247,19 +262,20 @@ public class BankViewModel {
             Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = banksRepository.fetch(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    var bank = gson.fromJson(response.body(), Bank.class);
-                    setId(bank.getId());
-                    setBankName(bank.getBankName());
-                    setAccountName(bank.getAccountName());
-                    setAccountNumber(bank.getAccountNumber());
-                    setLogo(bank.getLogo());
-                    setBalance(bank.getBalance());
+                    var account = gson.fromJson(response.body(), Account.class);
+                    setId(account.getId());
+                    setAccountName(account.getAccountName());
+                    setAccountNumber(account.getAccountNumber());
+                    setDescription(account.getDescription());
+                    setCredit(account.getCredit());
+                    setDebit(account.getDebit());
+                    setBalance(account.getBalance());
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {
@@ -289,7 +305,7 @@ public class BankViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, BankViewModel.class);
+            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
             return null;
         });
     }
@@ -298,18 +314,18 @@ public class BankViewModel {
             String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = banksRepository.search(searchModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.search(searchModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Bank>>() {
+                    Type listType = new TypeToken<ArrayList<Account>>() {
                     }.getType();
-                    ArrayList<Bank> bankList = gson.fromJson(
+                    ArrayList<Account> accountList = gson.fromJson(
                             response.body(), listType);
-                    banksList.clear();
-                    banksList.addAll(bankList);
+                    accountsList.clear();
+                    accountsList.addAll(accountList);
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {
@@ -339,7 +355,7 @@ public class BankViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, BankViewModel.class);
+            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
             return null;
         });
     }
@@ -347,15 +363,16 @@ public class BankViewModel {
     public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        var bank = Bank.builder()
+        var account = Account.builder()
                 .id(getId())
-                .bankName(getBankName())
                 .accountName(getAccountName())
                 .accountNumber(getAccountNumber())
+                .credit(getCredit())
+                .debit(getDebit())
                 .balance(getBalance())
-                .logo(getLogo())
+                .description(getDescription())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = banksRepository.put(bank);
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.put(account);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
@@ -391,7 +408,7 @@ public class BankViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, BankViewModel.class);
+            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
             return null;
         });
     }
@@ -401,7 +418,7 @@ public class BankViewModel {
             SpotyGotFunctional.MessageConsumer successMessage,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = banksRepository.delete(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.delete(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
@@ -437,7 +454,7 @@ public class BankViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, BankViewModel.class);
+            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
             return null;
         });
     }

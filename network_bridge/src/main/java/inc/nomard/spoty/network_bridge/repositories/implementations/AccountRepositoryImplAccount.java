@@ -12,11 +12,11 @@ import java.util.concurrent.*;
 import lombok.extern.java.*;
 
 @Log
-public class BanksRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
+public class AccountRepositoryImplAccount extends ProtectedGlobals implements AccountTransactionRepository {
     @Override
     public CompletableFuture<HttpResponse<String>> fetchAll() {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Banks.allBanks))
+                .uri(URI.create(EndPoints.Accounts.allAccounts))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -29,7 +29,7 @@ public class BanksRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> fetch(FindModel findModel) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Banks.bankById))
+                .uri(URI.create(EndPoints.Accounts.accountById))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -42,7 +42,7 @@ public class BanksRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> search(SearchModel searchModel) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Banks.searchBanks))
+                .uri(URI.create(EndPoints.Accounts.searchAccounts))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -55,7 +55,7 @@ public class BanksRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> post(Object object) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Banks.addBank))
+                .uri(URI.create(EndPoints.Accounts.addAccount))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -68,7 +68,7 @@ public class BanksRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> put(Object object) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Banks.updateBank))
+                .uri(URI.create(EndPoints.Accounts.updateAccount))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -81,7 +81,7 @@ public class BanksRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> delete(FindModel findModel) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Banks.deleteBank))
+                .uri(URI.create(EndPoints.Accounts.deleteAccount))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -94,11 +94,24 @@ public class BanksRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Banks.deleteBanks))
+                .uri(URI.create(EndPoints.Accounts.deleteAccounts))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
+    public CompletableFuture<HttpResponse<String>> fetchAllTransactions() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Accounts.transactions))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());

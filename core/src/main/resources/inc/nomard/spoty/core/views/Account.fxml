@@ -23,9 +23,11 @@
 <?import javafx.scene.layout.HBox?>
 
 <?import io.github.palexdev.materialfx.controls.MFXProgressSpinner?>
-<BorderPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.BankController">
+<BorderPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/Common.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="inc.nomard.spoty.core.views.AccountController">
     <padding>
-        <Insets top="5.0" />
+        <Insets top="5.0"/>
     </padding>
     <top>
         <HBox styleClass="card-flat" BorderPane.alignment="CENTER_LEFT">
@@ -41,7 +43,7 @@
             </HBox>
             <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
                 <MFXTextField fx:id="searchBar" floatMode="DISABLED" maxWidth="700.0" minWidth="300.0" prefWidth="500.0"
-                              promptText="Search banks"/>
+                              promptText="Search accounts"/>
             </HBox>
             <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" HBox.hgrow="ALWAYS">
                 <MFXButton onMouseClicked="#createBtnClicked" styleClass="filled" text="Create"/>
@@ -50,7 +52,8 @@
     </top>
     <center>
         <AnchorPane BorderPane.alignment="CENTER">
-            <MFXTableView fx:id="masterTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0" />
+            <MFXTableView fx:id="masterTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0"/>
         </AnchorPane>
     </center>
 </BorderPane>

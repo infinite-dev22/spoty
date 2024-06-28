@@ -28,8 +28,8 @@ import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class BankController implements Initializable {
-    private static BankController instance;
+public class AccountController implements Initializable {
+    private static AccountController instance;
     private final Stage stage;
     @FXML
     public BorderPane contentPane;
@@ -38,14 +38,14 @@ public class BankController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXTableView<Bank> masterTable;
+    public MFXTableView<Account> masterTable;
     @FXML
     public HBox leftHeaderPane;
     @FXML
     public MFXProgressSpinner progress;
     private MFXStageDialog dialog;
 
-    private BankController(Stage stage) {
+    private AccountController(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {
@@ -57,8 +57,8 @@ public class BankController implements Initializable {
                 });
     }
 
-    public static BankController getInstance(Stage stage) {
-        if (instance == null) instance = new BankController(stage);
+    public static AccountController getInstance(Stage stage) {
+        if (instance == null) instance = new AccountController(stage);
         return instance;
     }
 
@@ -70,57 +70,63 @@ public class BankController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Bank> bankName =
-                new MFXTableColumn<>("Bank Name", false, Comparator.comparing(Bank::getBankName));
-        MFXTableColumn<Bank> accountName =
-                new MFXTableColumn<>("A/C Name", false, Comparator.comparing(Bank::getAccountName));
-        MFXTableColumn<Bank> accountNumber =
-                new MFXTableColumn<>("A/C Number", false, Comparator.comparing(Bank::getAccountNumber));
-        MFXTableColumn<Bank> balance =
-                new MFXTableColumn<>("Balance", false, Comparator.comparing(Bank::getBalance));
+        MFXTableColumn<Account> accountName =
+                new MFXTableColumn<>("Account Name", false, Comparator.comparing(Account::getAccountName));
+        MFXTableColumn<Account> accountNumber =
+                new MFXTableColumn<>("Account Number", false, Comparator.comparing(Account::getAccountNumber));
+        MFXTableColumn<Account> credit =
+                new MFXTableColumn<>("Credit", false, Comparator.comparing(Account::getCredit));
+        MFXTableColumn<Account> debit =
+                new MFXTableColumn<>("Debit", false, Comparator.comparing(Account::getDebit));
+        MFXTableColumn<Account> balance =
+                new MFXTableColumn<>("Balance", false, Comparator.comparing(Account::getBalance));
+        MFXTableColumn<Account> description =
+                new MFXTableColumn<>("Description", false, Comparator.comparing(Account::getDescription));
 
-        bankName.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getBankName));
-        accountName.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getAccountName));
-        accountNumber.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getAccountNumber));
-        balance.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getBalance));
+        accountName.setRowCellFactory(customer -> new MFXTableRowCell<>(Account::getAccountName));
+        accountNumber.setRowCellFactory(customer -> new MFXTableRowCell<>(Account::getAccountNumber));
+        credit.setRowCellFactory(customer -> new MFXTableRowCell<>(Account::getCredit));
+        debit.setRowCellFactory(customer -> new MFXTableRowCell<>(Account::getDebit));
+        balance.setRowCellFactory(customer -> new MFXTableRowCell<>(Account::getBalance));
+        description.setRowCellFactory(customer -> new MFXTableRowCell<>(Account::getDescription));
 
-        bankName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
-        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
-        balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
+        accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        credit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        debit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
 
         masterTable
                 .getTableColumns()
-                .addAll(bankName, accountName, accountNumber, balance);
+                .addAll(accountName, accountNumber, credit, debit, balance, description);
         masterTable
                 .getFilters()
-                .addAll(
-                        new StringFilter<>("Bank Name", Bank::getBankName),
-                        new StringFilter<>("A/C Name", Bank::getAccountName),
-                        new StringFilter<>("A/C Number", Bank::getAccountNumber),
-                        new StringFilter<>("Balance", Bank::getBalance));
-        styleBankTable();
+                .addAll(new StringFilter<>("Account Name", Account::getAccountName),
+                        new StringFilter<>("Account Number", Account::getAccountNumber),
+                        new StringFilter<>("Balance", Account::getBalance));
+        styleAccountTable();
 
-        if (BankViewModel.getBanks().isEmpty()) {
-            BankViewModel.getBanks().addListener(
-                    (ListChangeListener<Bank>)
-                            c -> masterTable.setItems(BankViewModel.banksList));
+        if (AccountViewModel.getAccounts().isEmpty()) {
+            AccountViewModel.getAccounts().addListener(
+                    (ListChangeListener<Account>)
+                            c -> masterTable.setItems(AccountViewModel.accountsList));
         } else {
-            masterTable.itemsProperty().bindBidirectional(BankViewModel.banksProperty());
+            masterTable.itemsProperty().bindBidirectional(AccountViewModel.accountsProperty());
         }
     }
 
-    private void styleBankTable() {
+    private void styleAccountTable() {
         masterTable.setPrefSize(1000, 1000);
         masterTable.features().enableBounceEffect();
         masterTable.features().enableSmoothScrolling(0.5);
 
         masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Bank> row = new MFXTableRow<>(masterTable, t);
+                    MFXTableRow<Account> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<Bank>) event.getSource())
+                                showContextMenu((MFXTableRow<Account>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -132,33 +138,40 @@ public class BankController implements Initializable {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Bank> obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<Account> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        MFXContextMenuItem deposit = new MFXContextMenuItem("Deposit");
 
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            BankViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            AccountViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getBankName(), stage, contentPane));
+        }, obj.getData().getAccountName(), stage, contentPane));
         // Edit
         edit.setOnAction(
                 event -> {
-                    BankViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    AccountViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    event.consume();
+                });
+        // Deposit
+        deposit.setOnAction(
+                event -> {
+                    AccountViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
                     event.consume();
                 });
 
-        contextMenu.addItems(edit, delete);
+        contextMenu.addItems(deposit, edit, delete);
 
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
     private void customerFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/BankForm.fxml");
-        fxmlLoader.setControllerFactory(c -> BankFormController.getInstance(stage));
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/AccountForm.fxml");
+        fxmlLoader.setControllerFactory(c -> AccountFormController.getInstance(stage));
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -183,7 +196,7 @@ public class BankController implements Initializable {
     }
 
     private void onSuccess() {
-        BankViewModel.getAllBanks(null, null);
+        AccountViewModel.getAllAccounts(null, null);
     }
 
     private void setIcons() {
@@ -196,10 +209,10 @@ public class BankController implements Initializable {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                BankViewModel.getAllBanks(null, null);
+                AccountViewModel.getAllAccounts(null, null);
             }
             progress.setVisible(true);
-            BankViewModel.searchItem(nv, () -> {
+            AccountViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
             }, this::errorMessage);
         });
