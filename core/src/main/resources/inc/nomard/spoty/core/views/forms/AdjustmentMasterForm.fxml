@@ -44,7 +44,7 @@
                 </rowConstraints>
                 <HBox prefHeight="100.0" prefWidth="200.0"/>
             </GridPane>
-            <MFXButton fx:id="adjustmentProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
+            <MFXButton fx:id="adjustmentProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product" styleClass="filled"
                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0"/>
             <MFXTableView fx:id="adjustmentDetailTable" layoutX="5.0" layoutY="172.0" AnchorPane.bottomAnchor="78.0"
                           AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="160.0"/>
