@@ -88,7 +88,7 @@
                                   VBox.vgrow="ALWAYS"/>
                 </VBox>
             </GridPane>
-            <MFXButton onMouseClicked="#addBtnClicked" text="Add" AnchorPane.leftAnchor="0.0"
+            <MFXButton onMouseClicked="#addBtnClicked" styleClass="filled" text="Add" AnchorPane.leftAnchor="0.0"
                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="170.0"/>
             <MFXTableView fx:id="detailTable" AnchorPane.bottomAnchor="78.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="220.0"/>
