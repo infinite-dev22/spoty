@@ -16,7 +16,6 @@ package inc.nomard.spoty.core.components.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.views.*;
-import inc.nomard.spoty.core.views.dashboard.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.previews.*;
@@ -77,7 +76,7 @@ public class Pages {
     private static final FXMLLoader beneficiaryBadgeLoader = fxmlLoader("views/BeneficiaryBadge.fxml");
     private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/BeneficiaryType.fxml");
     // Bank
-    private static final FXMLLoader banksLoader = fxmlLoader("views/Bank.fxml");
+    private static final FXMLLoader banksLoader = fxmlLoader("views/Account.fxml");
     // Quotation
     private static final FXMLLoader quotationLoader =
             fxmlLoader("views/Quotation.fxml");
@@ -109,6 +108,7 @@ public class Pages {
     private static final FXMLLoader expenseCategoryLoader =
             fxmlLoader("views/Category.fxml");
     private static final FXMLLoader expenseLoader = fxmlLoader("views/Expense.fxml");
+    private static final FXMLLoader transactionLoader = fxmlLoader("views/AccountTransaction.fxml");
     private static final FXMLLoader quotationMasterFormLoader =
             fxmlLoader("views/forms/QuotationMasterForm.fxml");
     private static final FXMLLoader purchaseMasterFormLoader =
@@ -289,6 +289,9 @@ public class Pages {
     private static BorderPane expensePane;
 
     @Getter
+    private static BorderPane transactionPane;
+
+    @Getter
     private static BorderPane adjustmentMasterFormPane;
 
     @Getter
@@ -368,7 +371,7 @@ public class Pages {
     }
 
     private static void setBank(Stage stage) {
-        banksLoader.setControllerFactory(e -> BankController.getInstance(stage));
+        banksLoader.setControllerFactory(e -> AccountController.getInstance(stage));
     }
 
     private static void setQuotation(Stage stage) {
@@ -403,6 +406,7 @@ public class Pages {
     private static void setExpenses(Stage stage) {
         expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryController.getInstance(stage));
         expenseLoader.setControllerFactory(e -> ExpenseController.getInstance(stage));
+        transactionLoader.setControllerFactory(e -> AccountTransactionController.getInstance(stage));
     }
 
     private static void setMasterForms(Stage stage) {
@@ -492,6 +496,7 @@ public class Pages {
 
         expenseCategoryPane = expenseCategoryLoader.load();
         expensePane = expenseLoader.load();
+        transactionPane = transactionLoader.load();
 
         adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
         quotationMasterFormPane = quotationMasterFormLoader.load();

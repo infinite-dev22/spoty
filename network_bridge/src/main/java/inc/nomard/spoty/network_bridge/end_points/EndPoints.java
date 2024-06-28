@@ -35,15 +35,16 @@ public class EndPoints {
         public static final String signup = authUrl + "/register";
     }
 
-    public static final class Banks {
-        public static final String banksUrl = apiUrl + "/banks";
-        public static final String allBanks = banksUrl + "/all";
-        public static final String bankById = banksUrl + "/single";
-        public static final String searchBanks = banksUrl + "/search";
-        public static final String addBank = banksUrl + "/add";
-        public static final String updateBank = banksUrl + "/update";
-        public static final String deleteBank = banksUrl + "/delete/single";
-        public static final String deleteBanks = banksUrl + "/delete/multiple";
+    public static final class Accounts {
+        public static final String accountsUrl = apiUrl + "/accounts";
+        public static final String allAccounts = accountsUrl + "/all";
+        public static final String accountById = accountsUrl + "/single";
+        public static final String searchAccounts = accountsUrl + "/search";
+        public static final String addAccount = accountsUrl + "/add";
+        public static final String updateAccount = accountsUrl + "/update";
+        public static final String deleteAccount = accountsUrl + "/delete/single";
+        public static final String deleteAccounts = accountsUrl + "/delete/multiple";
+        public static final String transactions = accountsUrl + "/transactions";
     }
 
     public static final class Branches {
