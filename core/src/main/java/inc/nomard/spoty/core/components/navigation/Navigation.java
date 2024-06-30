@@ -14,6 +14,7 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.dashboard.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.flavouring.*;
@@ -22,26 +23,29 @@ import javafx.animation.*;
 import javafx.beans.property.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class Navigation {
     static final int PAGE_TRANSITION_DURATION = 300;
-    private static final Map<String, NavTree.NavTreeItem> NAV_TREE = createNavItems();
     private static StackPane viewWindow;
     private static Navigation instance;
+    private static Stage stage = null;
+    private static final Map<String, NavTree.NavTreeItem> NAV_TREE = createNavItems();
     private final AppFlavor flavor = AppConfig.getActiveFlavor();
     private final ReadOnlyObjectWrapper<NavTree.NavTreeItem> navTree =
             new ReadOnlyObjectWrapper<>(createTree());
 
-    private Navigation(StackPane viewWindow) {
+    private Navigation(Stage stage, StackPane viewWindow) {
+        Navigation.stage = stage;
         Navigation.viewWindow = viewWindow;
     }
 
-    public static Navigation getInstance(StackPane viewWindow) {
+    public static Navigation getInstance(Stage stage, StackPane viewWindow) {
         if (instance == null) {
-            instance = new Navigation(viewWindow);
+            instance = new Navigation(stage, viewWindow);
             instance.loadView(new Dashboard());
         }
         return instance;
@@ -70,7 +74,7 @@ public class Navigation {
         map.put("TRANSFERS", NavTree.NavTreeItem.page("Transfers", Pages.getTransferPane()));
         map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", Pages.getAdjustmentPane()));
         // Accounting
-        map.put("ACCOUNTS", NavTree.NavTreeItem.page("Accounts", Pages.getBankPane()));
+        map.put("ACCOUNTS", NavTree.NavTreeItem.page("Accounts", new AccountPage(Navigation.stage)));
         map.put(
                 "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", Pages.getExpenseCategoryPane()));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
@@ -376,11 +380,11 @@ public class Navigation {
         return root;
     }
 
-    public void navigate(BorderPane view) {
+    public void navigate(Pane view) {
         loadView(view);
     }
 
-    private void loadView(BorderPane view) {
+    private void loadView(Pane view) {
         try {
             final BorderPane prevWindow =
                     (BorderPane)
@@ -388,7 +392,7 @@ public class Navigation {
                                     .filter(c -> c instanceof BorderPane)
                                     .findFirst()
                                     .orElse(null);
-            final BorderPane nextWindow = view;
+            final Pane nextWindow = view;
             BorderPane existingNextChild =
                     (BorderPane)
                             viewWindow.getChildren().stream().findAny().filter(c -> c.equals(view)).orElse(null);

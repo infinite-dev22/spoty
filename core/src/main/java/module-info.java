@@ -40,4 +40,5 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.previews;
 
     exports inc.nomard.spoty.core;
+    opens inc.nomard.spoty.core.views.util;
 }

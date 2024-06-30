@@ -19,7 +19,7 @@ import javafx.scene.*;
 import javafx.scene.layout.*;
 
 record Nav(
-        String title, String tag, Node graphic, BorderPane view, List<String> searchKeywords) {
+        String title, String tag, Node graphic, Pane view, List<String> searchKeywords) {
 
     // Treeview parent not.
     public static final Nav ROOT = new Nav("ROOT", null, null, null, null);

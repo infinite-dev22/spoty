@@ -150,7 +150,7 @@ public class BaseController implements Initializable {
     }
 
     public void initializeLoader() {
-        navigation = Navigation.getInstance(contentPane);
+        navigation = Navigation.getInstance(primaryStage, contentPane);
         navBar.getChildren().add(navigation.createNavigation());
     }
 

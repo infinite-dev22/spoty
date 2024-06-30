@@ -239,7 +239,7 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static NavTreeItem mainPage(String title, String icon, BorderPane view) {
+        public static NavTreeItem mainPage(String title, String icon, Pane view) {
             MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
             return new NavTreeItem(new Nav(title, null, wrapper, view, null));
         }
@@ -251,7 +251,7 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static NavTreeItem page(String title, BorderPane view) {
+        public static NavTreeItem page(String title, Pane view) {
             return new NavTreeItem(new Nav(title, null, null, view, null));
         }
 
@@ -262,11 +262,11 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static NavTreeItem page(String title, BorderPane view, String... searchKeywords) {
+        public static NavTreeItem page(String title, Pane view, String... searchKeywords) {
             return new NavTreeItem(new Nav(title, null, null, view, List.of(searchKeywords)));
         }
 
-        public BorderPane view() {
+        public Pane view() {
             return nav.view();
         }
 

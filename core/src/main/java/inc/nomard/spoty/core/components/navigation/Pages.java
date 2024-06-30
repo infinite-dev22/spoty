@@ -75,8 +75,6 @@ public class Pages {
     private static final FXMLLoader salariesLoader = fxmlLoader("views/Salaries.fxml");
     private static final FXMLLoader beneficiaryBadgeLoader = fxmlLoader("views/BeneficiaryBadge.fxml");
     private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/BeneficiaryType.fxml");
-    // Bank
-    private static final FXMLLoader banksLoader = fxmlLoader("views/Account.fxml");
     // Quotation
     private static final FXMLLoader quotationLoader =
             fxmlLoader("views/Quotation.fxml");
@@ -217,10 +215,6 @@ public class Pages {
 
     @Getter
     private static BorderPane beneficiaryTypePane;
-
-    @Getter
-    // Bank
-    private static BorderPane bankPane;
 
     @Getter
     // Quotation
@@ -370,10 +364,6 @@ public class Pages {
         beneficiaryTypeLoader.setControllerFactory(e -> BeneficiaryTypeController.getInstance(stage));
     }
 
-    private static void setBank(Stage stage) {
-        banksLoader.setControllerFactory(e -> AccountController.getInstance(stage));
-    }
-
     private static void setQuotation(Stage stage) {
         quotationLoader.setControllerFactory(e -> QuotationController.getInstance(stage));
     }
@@ -470,8 +460,6 @@ public class Pages {
         salariesPane = salariesLoader.load();
         beneficiaryBadgePane = beneficiaryBadgeLoader.load();
         beneficiaryTypePane = beneficiaryTypeLoader.load();
-        // Bank
-        bankPane = banksLoader.load();
         // Quotation
         quotationPane = quotationLoader.load();
         // Deductions
@@ -516,7 +504,6 @@ public class Pages {
         setHRM(stage);
         setLeave(stage);
         setPayRoll(stage);
-        setBank(stage);
         setQuotation(stage);
         setDeductions(stage);
         setSingleItems(stage);
