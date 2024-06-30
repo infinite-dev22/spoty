@@ -304,24 +304,24 @@ public class Pages {
     }
 
     private static void setSales(Stage stage) {
-        saleLoader.setControllerFactory(e -> OrdersController.getInstance(stage));
+        saleLoader.setControllerFactory(e -> OrderPage.getInstance(stage));
         posLoader.setControllerFactory(e -> PointOfSaleController.getInstance(stage));
-        salesTermLoader.setControllerFactory(e -> SaleTermsController.getInstance(stage));
+        salesTermLoader.setControllerFactory(e -> SaleTermPage.getInstance(stage));
     }
 
     private static void setCustomer(Stage stage) {
-        customerLoader.setControllerFactory(e -> CustomerController.getInstance(stage));
+        customerLoader.setControllerFactory(e -> CustomerPage.getInstance(stage));
     }
 
     private static void setSupplier(Stage stage) {
-        supplierLoader.setControllerFactory(e -> SupplierController.getInstance(stage));
+        supplierLoader.setControllerFactory(e -> SupplierPage.getInstance(stage));
     }
 
     private static void setProduct(Stage stage) {
-        productCategoryLoader.setControllerFactory(e -> ProductCategoryController.getInstance(stage));
+        productCategoryLoader.setControllerFactory(e -> ProductCategoryPage.getInstance(stage));
         brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
-        unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
-        productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
+        unitLoader.setControllerFactory(e -> UnitOfMeasurePage.getInstance(stage));
+        productLoader.setControllerFactory(e -> ProductPage.getInstance(stage));
         adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance(stage));
     }
 
@@ -342,56 +342,56 @@ public class Pages {
     }
 
     private static void setHRM(Stage stage) {
-        designationsLoader.setControllerFactory(e -> DesignationsController.getInstance(stage));
-        employeesLoader.setControllerFactory(e -> EmployeesController.getInstance(stage));
+        designationsLoader.setControllerFactory(e -> DesignationPage.getInstance(stage));
+        employeesLoader.setControllerFactory(e -> EmployeePage.getInstance(stage));
         userProfileLoader.setControllerFactory(e -> UserPreviewController.getInstance(stage));
-        employmentStatusLoader.setControllerFactory(e -> EmploymentStatusController.getInstance(stage));
+        employmentStatusLoader.setControllerFactory(e -> EmploymentStatusPage.getInstance(stage));
     }
 
     private static void setLeave(Stage stage) {
-        leaveRequestLoader.setControllerFactory(e -> LeaveRequestController.getInstance(stage));
-        calendarLoader.setControllerFactory(e -> CalendarController.getInstance());
+        leaveRequestLoader.setControllerFactory(e -> LeaveRequestPage.getInstance(stage));
+        calendarLoader.setControllerFactory(e -> CalendarPage.getInstance());
     }
 
     private static void setPayRoll(Stage stage) {
         paySlipsLoader.setControllerFactory(e -> PaySlipsController.getInstance(stage));
-        salariesLoader.setControllerFactory(e -> SalariesController.getInstance(stage));
+        salariesLoader.setControllerFactory(e -> SalaryPage.getInstance(stage));
         beneficiaryBadgeLoader.setControllerFactory(e -> BeneficiaryBadgeController.getInstance(stage));
         beneficiaryTypeLoader.setControllerFactory(e -> BeneficiaryTypeController.getInstance(stage));
     }
 
     private static void setQuotation(Stage stage) {
-        quotationLoader.setControllerFactory(e -> QuotationController.getInstance(stage));
+        quotationLoader.setControllerFactory(e -> QuotationPage.getInstance(stage));
     }
 
     private static void setDeductions(Stage stage) {
-        taxesLoader.setControllerFactory(e -> TaxesController.getInstance(stage));
-        discountsLoader.setControllerFactory(e -> DiscountsController.getInstance(stage));
+        taxesLoader.setControllerFactory(e -> TaxPage.getInstance(stage));
+        discountsLoader.setControllerFactory(e -> DiscountPage.getInstance(stage));
     }
 
     private static void setSingleItems(Stage stage) {
-        requisitionLoader.setControllerFactory(e -> RequisitionController.getInstance(stage));
-        purchaseLoader.setControllerFactory(e -> PurchasesController.getInstance(stage));
-        transferLoader.setControllerFactory(e -> TransferController.getInstance(stage));
-        stockInLoader.setControllerFactory(e -> StockInController.getInstance(stage));
+        requisitionLoader.setControllerFactory(e -> RequisitionPage.getInstance(stage));
+        purchaseLoader.setControllerFactory(e -> PurchasePage.getInstance(stage));
+        transferLoader.setControllerFactory(e -> TransferPage.getInstance(stage));
+        stockInLoader.setControllerFactory(e -> StockInPage.getInstance(stage));
     }
 
     private static void setReturns(Stage stage) {
-        saleReturnLoader.setControllerFactory(e -> SaleReturnsController.getInstance(stage));
-        purchaseReturnLoader.setControllerFactory(e -> PurchaseReturnController.getInstance(stage));
+        saleReturnLoader.setControllerFactory(e -> SaleReturnPage.getInstance(stage));
+        purchaseReturnLoader.setControllerFactory(e -> PurchaseReturnPage.getInstance(stage));
     }
 
     private static void setSystemSettings(Stage stage) {
         appSettingsLoader.setControllerFactory(c -> new AppSettingsController());
-        branchesLoader.setControllerFactory(c -> BranchController.getInstance(stage));
+        branchesLoader.setControllerFactory(c -> BranchPage.getInstance(stage));
         companySettingsLoader.setControllerFactory(c -> CompanyDetailsController.getInstance());
-        currencyLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
-        rolesLoader.setControllerFactory(c -> RolesController.getInstance(stage));
+        currencyLoader.setControllerFactory(c -> CurrencyPage.getInstance(stage));
+        rolesLoader.setControllerFactory(c -> RolePage.getInstance(stage));
     }
 
     private static void setExpenses(Stage stage) {
-        expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryController.getInstance(stage));
-        expenseLoader.setControllerFactory(e -> ExpenseController.getInstance(stage));
+        expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryPage.getInstance(stage));
+        expenseLoader.setControllerFactory(e -> ExpensePage.getInstance(stage));
     }
 
     private static void setMasterForms(Stage stage) {
