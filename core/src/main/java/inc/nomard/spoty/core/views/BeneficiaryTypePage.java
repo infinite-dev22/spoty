@@ -39,7 +39,7 @@ public class BeneficiaryTypePage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private BeneficiaryTypePage(Stage stage) {
+    public BeneficiaryTypePage(Stage stage) {
         super();
         this.stage = stage;
         Platform.runLater(

@@ -55,7 +55,7 @@ public class CurrencyPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private CurrencyPage(Stage stage) {
+    public CurrencyPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

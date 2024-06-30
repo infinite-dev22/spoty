@@ -39,7 +39,7 @@ public class LeaveRequestPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private LeaveRequestPage(Stage stage) {
+    public LeaveRequestPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

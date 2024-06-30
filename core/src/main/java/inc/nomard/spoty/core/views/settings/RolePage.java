@@ -54,7 +54,7 @@ public class RolePage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private RolePage(Stage stage) {
+    public RolePage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

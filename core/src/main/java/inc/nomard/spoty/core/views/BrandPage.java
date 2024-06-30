@@ -54,7 +54,7 @@ public class BrandPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private BrandPage(Stage stage) {
+    public BrandPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

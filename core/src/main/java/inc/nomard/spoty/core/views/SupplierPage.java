@@ -57,7 +57,7 @@ public class SupplierPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    private SupplierPage(Stage stage) {
+    public SupplierPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

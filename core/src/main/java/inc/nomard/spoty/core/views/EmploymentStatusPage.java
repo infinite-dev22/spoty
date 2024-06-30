@@ -41,7 +41,7 @@ public class EmploymentStatusPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private EmploymentStatusPage(Stage stage) {
+    public EmploymentStatusPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

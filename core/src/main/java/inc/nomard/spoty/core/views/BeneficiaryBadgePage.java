@@ -38,7 +38,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private BeneficiaryBadgePage(Stage stage) {
+    public BeneficiaryBadgePage(Stage stage) {
         super();
         this.stage = stage;
         try {

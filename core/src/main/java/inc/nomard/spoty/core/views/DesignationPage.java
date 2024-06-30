@@ -39,7 +39,7 @@ public class DesignationPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private DesignationPage(Stage stage) {
+    public DesignationPage(Stage stage) {
         super();
         this.stage = stage;
         Platform.runLater(

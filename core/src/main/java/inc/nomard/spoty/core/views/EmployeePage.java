@@ -39,7 +39,7 @@ public class EmployeePage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private EmployeePage(Stage stage) {
+    public EmployeePage(Stage stage) {
         super();
         this.stage = stage;
         Platform.runLater(

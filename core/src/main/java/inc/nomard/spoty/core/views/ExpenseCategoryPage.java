@@ -54,7 +54,7 @@ public class ExpenseCategoryPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private ExpenseCategoryPage(Stage stage) {
+    public ExpenseCategoryPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

@@ -57,7 +57,7 @@ public class PurchaseReturnPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    private PurchaseReturnPage(Stage stage) {
+    public PurchaseReturnPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(() ->
         {

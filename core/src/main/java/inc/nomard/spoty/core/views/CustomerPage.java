@@ -57,7 +57,7 @@ public class CustomerPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    private CustomerPage(Stage stage) {
+    public CustomerPage(Stage stage) {
         super();
         this.stage = stage;
         Platform.runLater(

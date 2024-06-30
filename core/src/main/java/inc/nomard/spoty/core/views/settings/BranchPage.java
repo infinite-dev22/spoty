@@ -56,7 +56,7 @@ public class BranchPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private BranchPage(Stage stage) {
+    public BranchPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {

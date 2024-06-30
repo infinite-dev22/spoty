@@ -17,7 +17,7 @@ public class SaleTermPage extends OutlinePage {
     private MFXTextField searchBar;
     private MFXTableView<SaleTermAndCondition> masterTable;
 
-    private SaleTermPage() {
+    public SaleTermPage() {
         addNode(init());
     }
 

@@ -53,7 +53,7 @@ public class SaleReturnPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    private SaleReturnPage(Stage stage) {
+    public SaleReturnPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(() ->
         {
