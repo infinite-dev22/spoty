@@ -46,7 +46,7 @@ public class Navigation {
     public static Navigation getInstance(Stage stage, StackPane viewWindow) {
         if (instance == null) {
             instance = new Navigation(stage, viewWindow);
-            instance.loadView(new Dashboard());
+            instance.loadView(new DashboardPage());
         }
         return instance;
     }
@@ -78,7 +78,7 @@ public class Navigation {
         map.put(
                 "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", Pages.getExpenseCategoryPane()));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
-        map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", Pages.getTransactionPane()));
+        map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", new AccountTransactionPage(stage)));
         // Reports
         map.put("STOCK_REPORT", NavTree.NavTreeItem.page("Stock Report", Pages.getStockReportPane()));
         map.put("CLOSING", NavTree.NavTreeItem.page("Closing", Pages.getClosingPane()));
@@ -175,7 +175,7 @@ public class Navigation {
 
     private NavTree.NavTreeItem createTree() {
         var dashboard =
-                NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", new Dashboard());
+                NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", new DashboardPage());
 
         NavTree.NavTreeItem sale;
         if (flavor == AppFlavor.TRACTION) {

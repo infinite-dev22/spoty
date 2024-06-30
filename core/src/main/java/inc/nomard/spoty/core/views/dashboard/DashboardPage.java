@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.views.dashboard;
 
 import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.wrappers.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.responsiveness.layouts.*;
@@ -14,41 +15,46 @@ import javafx.scene.layout.*;
 import lombok.extern.java.*;
 
 @Log
-public class Dashboard extends BorderPane {
-    private MFXScrollPane scrollPane;
+public class DashboardPage extends OutlinePage {
     private BootstrapPane kpisContainer;
 
-    public Dashboard() {
-        configureScrollPane();
+    public DashboardPage() {
+        super();
+        addNode(init());
         configureKPIContainer();
         loadDashboardComponents();
     }
 
-    private void configureScrollPane() {
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setCenter(configureScrollPane());
+        return pane;
+    }
+
+    private AnchorPane configureScrollPane() {
         kpisContainer = new BootstrapPane();
         kpisContainer.setHgap(20.0);
         kpisContainer.setVgap(20.0);
-        scrollPane = new MFXScrollPane(kpisContainer);
+        MFXScrollPane scrollPane = new MFXScrollPane(kpisContainer);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-border-radius: 10; -fx-background-radius: 10;");
         UIUtils.anchor(scrollPane, 0d, 0d, 0d, 0d);
-        var pane = new AnchorPane();
-        pane.getChildren().add(scrollPane);
-        this.setCenter(pane);
         scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.getDeltaX() != 0) {
                 event.consume();
             }
         });
-
         scrollPane.widthProperty().addListener((obs, oldWidth, newWidth) -> {
             double width = newWidth.doubleValue() - 10;
             kpisContainer.setMaxWidth(width);
             kpisContainer.setPrefWidth(width);
             kpisContainer.setMinWidth(width);
         });
+        var pane = new AnchorPane();
+        pane.getChildren().add(scrollPane);
+        return pane;
     }
 
     private void configureKPIContainer() {

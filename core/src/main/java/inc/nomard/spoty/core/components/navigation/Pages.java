@@ -106,7 +106,6 @@ public class Pages {
     private static final FXMLLoader expenseCategoryLoader =
             fxmlLoader("views/Category.fxml");
     private static final FXMLLoader expenseLoader = fxmlLoader("views/Expense.fxml");
-    private static final FXMLLoader transactionLoader = fxmlLoader("views/AccountTransaction.fxml");
     private static final FXMLLoader quotationMasterFormLoader =
             fxmlLoader("views/forms/QuotationMasterForm.fxml");
     private static final FXMLLoader purchaseMasterFormLoader =
@@ -283,9 +282,6 @@ public class Pages {
     private static BorderPane expensePane;
 
     @Getter
-    private static BorderPane transactionPane;
-
-    @Getter
     private static BorderPane adjustmentMasterFormPane;
 
     @Getter
@@ -396,7 +392,6 @@ public class Pages {
     private static void setExpenses(Stage stage) {
         expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryController.getInstance(stage));
         expenseLoader.setControllerFactory(e -> ExpenseController.getInstance(stage));
-        transactionLoader.setControllerFactory(e -> new AccountTransactionPage(stage));
     }
 
     private static void setMasterForms(Stage stage) {
@@ -484,7 +479,6 @@ public class Pages {
 
         expenseCategoryPane = expenseCategoryLoader.load();
         expensePane = expenseLoader.load();
-        transactionPane = transactionLoader.load();
 
         adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
         quotationMasterFormPane = quotationMasterFormLoader.load();
