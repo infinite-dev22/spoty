@@ -15,7 +15,6 @@
 package inc.nomard.spoty.core.components.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.previews.*;
@@ -29,8 +28,6 @@ import lombok.extern.java.*;
 
 @Log
 public class Pages {
-    //Login
-    private static final FXMLLoader loginLoader = fxmlLoader("views/AuthScreen.fxml");
     // Sale
     private static final FXMLLoader posLoader = fxmlLoader("views/PointOfSale.fxml");
     // Reports
@@ -62,10 +59,6 @@ public class Pages {
             fxmlLoader("views/forms/TransferMasterForm.fxml");
     private static final FXMLLoader adjustmentMasterFormLoader =
             fxmlLoader("views/forms/AdjustmentMasterForm.fxml");
-
-    // Login
-    @Getter
-    private static BorderPane loginPane;
 
     @Getter
     private static BorderPane posPane;
@@ -130,10 +123,6 @@ public class Pages {
     @Getter
     private static BorderPane transferMasterFormPane;
 
-    private static void setLogin(Stage stage) {
-        loginLoader.setControllerFactory(e -> new AuthScreenController(stage));
-    }
-
     private static void setSales(Stage stage) {
         posLoader.setControllerFactory(e -> PointOfSaleController.getInstance(stage));
     }
@@ -174,8 +163,6 @@ public class Pages {
     }
 
     public static void setPanes() throws IOException {
-        // Login
-        loginPane = loginLoader.load();
         // Sales
         posPane = posLoader.load();
         // Reports
@@ -206,7 +193,6 @@ public class Pages {
     }
 
     public static void setControllers(Stage stage) {
-        setLogin(stage);
         setSales(stage);
         setReports();
         setHRM(stage);

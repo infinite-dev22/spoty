@@ -21,30 +21,34 @@ import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.enums.*;
 import static io.github.palexdev.materialfx.utils.StringUtils.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.*;
 import javafx.animation.*;
 import javafx.application.*;
 import javafx.beans.binding.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class AuthScreenController implements Initializable {
+public class AuthScreen extends BorderPane {
     private final Stage stage;
     @FXML
     public MFXTextField email,
@@ -95,8 +99,561 @@ public class AuthScreenController implements Initializable {
     @FXML
     public HBox registerScreen;
 
-    public AuthScreenController(Stage primaryStage) {
+    public AuthScreen(Stage primaryStage) {
         stage = primaryStage;
+        init();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+    // App branding.
+    private VBox buildAppBranding() {
+        loginAppNameLbl = new Label();
+        loginAppNameLbl.setAlignment(Pos.CENTER);
+        loginAppNameLbl.setContentDisplay(ContentDisplay.CENTER);
+        loginAppNameLbl.getStyleClass().add("app-label");
+        loginAppNameLbl.setText(Labels.APP_NAME);
+        VBox.setVgrow(loginAppNameLbl, Priority.ALWAYS);
+        loginPoweredByLbl = new Label();
+        loginPoweredByLbl.setAlignment(Pos.CENTER);
+        loginPoweredByLbl.setContentDisplay(ContentDisplay.CENTER);
+        loginPoweredByLbl.getStyleClass().add("company-label");
+        loginPoweredByLbl.setText("Powered by " + Labels.COMPANY_NAME);
+        VBox.setVgrow(loginPoweredByLbl, Priority.ALWAYS);
+
+        var vbox = new VBox();
+        vbox.setAlignment(Pos.BOTTOM_CENTER);
+        vbox.setSpacing(5d);
+        vbox.getChildren().addAll(loginAppNameLbl, loginPoweredByLbl);
+        return vbox;
+    }
+
+    // Title.
+    private Label buildLoginTitle() {
+        var label = new Label("Login");
+        label.getStyleClass().add("login-title");
+        return label;
+    }
+
+    // Email Input.
+    private VBox buildLoginEmail() {
+        // Input.
+        email = new MFXTextField();
+        email.setFloatMode(FloatMode.BORDER);
+        email.setFloatingText("Email");
+        email.setPrefWidth(350d);
+        email.textProperty().bindBidirectional(LoginViewModel.emailProperty());
+        // Validation.
+        emailValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(email, emailValidationLabel);
+        return vbox;
+    }
+
+    // Password input.
+    private VBox buildPassword() {
+        // Input.
+        password = new MFXPasswordField();
+        password.setFloatMode(FloatMode.BORDER);
+        password.setFloatingText("Password");
+        password.setPrefWidth(350d);
+        password.textProperty().bindBidirectional(LoginViewModel.passwordProperty());
+        // Validation.
+        passwordValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(password, passwordValidationLabel);
+        return vbox;
+    }
+
+    // Forgot password.
+    private HBox buildForgotPassword() {
+        forgotPassword = new Label("Forgot Password?");
+        forgotPassword.getStyleClass().add("link");
+        forgotPassword.setUnderline(true);
+        forgotPassword.setCursor(Cursor.HAND);
+        var hbox = new HBox(forgotPassword);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        return hbox;
+    }
+
+    // Login button.
+    private HBox buildLoginButton() {
+        loginBtn = new MFXButton("Login");
+        loginBtn.setPrefWidth(352d);
+        loginBtn.setVariants(ButtonVariants.FILLED);
+        loginBtn.setOnAction(actionEvent -> onLoginPressed());
+        var hbox = new HBox(loginBtn);
+        hbox.setAlignment(Pos.CENTER);
+        return hbox;
+    }
+
+    // Don't have an account link.
+    private HBox buildRegistrationLink() {
+        var label = new Label("Don't have an account? ");
+        label.setAlignment(Pos.CENTER);
+        label.setContentDisplay(ContentDisplay.CENTER);
+        signUpLink = new Label("Create one");
+        signUpLink.getStyleClass().add("link");
+        signUpLink.setUnderline(true);
+        signUpLink.setCursor(Cursor.HAND);
+        signUpLink.setOnMouseClicked(event -> signUpLinkAction());
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.TOP_CENTER);
+        VBox.setVgrow(hbox, Priority.ALWAYS);
+        hbox.getChildren().addAll(label, signUpLink);
+        return hbox;
+    }
+
+    // Login screen UI.
+    private VBox buildLoginScreenUI() {
+        var region = new Region();
+        VBox.setVgrow(region, Priority.ALWAYS);
+
+        loginScreen = new VBox();
+        loginScreen.setAlignment(Pos.CENTER);
+        loginScreen.setPrefHeight(500d);
+        loginScreen.setPrefWidth(540d);
+        loginScreen.setSpacing(20d);
+        loginScreen.getStyleClass().addAll("card-raised");
+        loginScreen.setStyle("-fx-background-color: white;");
+        UIUtils.anchor(loginScreen, 0d, 0d, 0d, 599d);
+        loginScreen.setPadding(new Insets(16d));
+        loginScreen.getChildren().addAll(region,
+                buildLoginTitle(),
+                buildLoginEmail(),
+                buildPassword(),
+                buildForgotPassword(),
+                buildLoginButton(),
+                buildRegistrationLink(),
+                buildAppBranding());
+        return loginScreen;
+    }
+
+    // Title.
+    private Label buildKYCTitle() {
+        var label = new Label("Register (User Details)");
+        label.getStyleClass().add("login-title");
+        return label;
+    }
+
+    // First name input.
+    private VBox buildFirstName() {
+        // Input.
+        firstName = new MFXTextField();
+        firstName.setFloatMode(FloatMode.BORDER);
+        firstName.setFloatingText("First name");
+        firstName.setPrefWidth(350d);
+        firstName.textProperty().bindBidirectional(SignupViewModel.firstNameProperty());
+        // Validation.
+        firstNameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(firstName, firstNameValidationLabel);
+        return vbox;
+    }
+
+    // Last name input.
+    private VBox buildLastName() {
+        // Input.
+        lastName = new MFXTextField();
+        lastName.setFloatMode(FloatMode.BORDER);
+        lastName.setFloatingText("Last name");
+        lastName.setPrefWidth(350d);
+        lastName.textProperty().bindBidirectional(SignupViewModel.lastNameProperty());
+        // Validation.
+        lastNameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(lastName, lastNameValidationLabel);
+        return vbox;
+    }
+
+    private HBox buildNames() {
+        var hbox = new HBox();
+        hbox.setSpacing(10d);
+        hbox.getChildren().addAll(buildFirstName(), buildLastName());
+        return hbox;
+    }
+
+    // Other name input.
+    private VBox buildOtherName() {
+        // Input.
+        otherName = new MFXTextField();
+        otherName.setFloatMode(FloatMode.BORDER);
+        otherName.setFloatingText("Other name (Optional)");
+        otherName.setPrefWidth(350d);
+        otherName.textProperty().bindBidirectional(SignupViewModel.otherNameProperty());
+        var vbox = new VBox(otherName);
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        return vbox;
+    }
+
+    // Phone number input.
+    private VBox buildPhoneName() {
+        // Input.
+        phoneNumber = new MFXTextField();
+        phoneNumber.setFloatMode(FloatMode.BORDER);
+        phoneNumber.setFloatingText("Phone number");
+        phoneNumber.setPrefWidth(350d);
+        phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
+        // Validation.
+        phoneNumberValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(phoneNumber, phoneNumberValidationLabel);
+        return vbox;
+    }
+
+    // Email input.
+    private VBox buildKYCEmail() {
+        // Input.
+        signUpEmail = new MFXTextField();
+        signUpEmail.setFloatMode(FloatMode.BORDER);
+        signUpEmail.setFloatingText("Email");
+        signUpEmail.setPrefWidth(350d);
+        signUpEmail.textProperty().bindBidirectional(SignupViewModel.emailProperty());
+        // Validation.
+        signUpEmailValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(signUpEmail, signUpEmailValidationLabel);
+        return vbox;
+    }
+
+    // Back button.
+    private HBox buildKYCBackButton() {
+        backBtn = new MFXButton("Back to Login");
+        backBtn.setPrefWidth(150d);
+        backBtn.setVariants(ButtonVariants.OUTLINED);
+        backBtn.setOnAction(event -> backToLogin());
+        var hbox = new HBox(backBtn);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
+    }
+
+    // Next button.
+    private HBox buildKYCNextButton() {
+        nextBtn = new MFXButton("Proceed");
+        nextBtn.setPrefWidth(120d);
+        nextBtn.setVariants(ButtonVariants.FILLED);
+        nextBtn.setOnAction(event -> goNext());
+        var hbox = new HBox(nextBtn);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        return hbox;
+    }
+
+    private HBox buildKYCButtons() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER);
+        hbox.getChildren().addAll(buildKYCBackButton(), buildKYCNextButton());
+        return hbox;
+    }
+
+    // KYC Screen UI.
+    private VBox buildKYCScreenUI() {
+        var region = new Region();
+        VBox.setVgrow(region, Priority.ALWAYS);
+
+        kycScreen = new VBox();
+        kycScreen.setAlignment(Pos.CENTER);
+        kycScreen.setPrefWidth(390d);
+        kycScreen.setSpacing(20d);
+        kycScreen.getStyleClass().addAll("card-raised");
+        kycScreen.setStyle("-fx-background-color: white;");
+        kycScreen.setPadding(new Insets(16d));
+        kycScreen.getChildren().addAll(region,
+                buildKYCTitle(),
+                buildNames(),
+                buildOtherName(),
+                buildPhoneName(),
+                buildKYCEmail(),
+                buildKYCButtons(),
+                buildAppBranding());
+        return kycScreen;
+    }
+
+    // Title.
+    private Label buildRegisterTitle() {
+        var label = new Label("Register (Authentication)");
+        label.getStyleClass().add("login-title");
+        return label;
+    }
+
+    // Password input.
+    private VBox buildRegisterPassword() {
+        // Input.
+        signUpPassword = new MFXPasswordField();
+        signUpPassword.setFloatMode(FloatMode.BORDER);
+        signUpPassword.setFloatingText("Password");
+        signUpPassword.setPrefWidth(350d);
+        signUpPassword.textProperty().bindBidirectional(SignupViewModel.passwordProperty());
+        // Validation.
+        signUpPasswordValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(signUpPassword, signUpPasswordValidationLabel);
+        return vbox;
+    }
+
+    // Confirm password input.
+    private VBox buildRegisterConfirmPassword() {
+        // Input.
+        confirmPassword = new MFXPasswordField();
+        confirmPassword.setFloatMode(FloatMode.BORDER);
+        confirmPassword.setFloatingText("Confirm Password");
+        confirmPassword.setPrefWidth(350d);
+        confirmPassword.textProperty().bindBidirectional(SignupViewModel.confirmPasswordProperty());
+        // Validation.
+        confirmPasswordValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(confirmPassword, confirmPasswordValidationLabel);
+        return vbox;
+    }
+
+    // Back button.
+    private HBox buildRegisterBackButton() {
+        signUpBack = new MFXButton("Back");
+        signUpBack.setPrefWidth(120d);
+        signUpBack.setVariants(ButtonVariants.OUTLINED);
+        signUpBack.setOnAction(event -> signUpBack());
+        var hbox = new HBox(signUpBack);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
+    }
+
+    // Register button.
+    private HBox buildRegisterButton() {
+        registerBtn = new MFXButton("Register");
+        registerBtn.setPrefWidth(150d);
+        registerBtn.setVariants(ButtonVariants.FILLED);
+        registerBtn.setOnAction(event -> registerUser());
+        var hbox = new HBox(registerBtn);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        return hbox;
+    }
+
+    private HBox buildRegisterButtons() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.getChildren().addAll(buildRegisterBackButton(), buildRegisterButton());
+        return hbox;
+    }
+
+    // Already have an account link.
+    private HBox buildLoginLink() {
+        var label = new Label("Already have an account? ");
+        label.setAlignment(Pos.CENTER);
+        label.setContentDisplay(ContentDisplay.CENTER);
+        loginLink = new Label("Login");
+        loginLink.getStyleClass().add("link");
+        loginLink.setUnderline(true);
+        loginLink.setCursor(Cursor.HAND);
+        loginLink.setOnMouseClicked(event -> backToLogin());
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.TOP_CENTER);
+        VBox.setVgrow(hbox, Priority.ALWAYS);
+        hbox.getChildren().addAll(label, loginLink);
+        return hbox;
+    }
+
+    // Auth Create screen UI.
+    private VBox buildAuthCreateScreenUI() {
+        var region = new Region();
+        VBox.setVgrow(region, Priority.ALWAYS);
+
+        authCreateScreen = new VBox();
+        authCreateScreen.setManaged(false);
+        authCreateScreen.setVisible(false);
+        authCreateScreen.setAlignment(Pos.CENTER);
+        authCreateScreen.setPrefWidth(390d);
+        authCreateScreen.setSpacing(20d);
+        authCreateScreen.getStyleClass().addAll("card-raised");
+        authCreateScreen.setStyle("-fx-background-color: white;");
+        authCreateScreen.setPadding(new Insets(16d));
+        authCreateScreen.getChildren().addAll(region,
+                buildRegisterTitle(),
+                buildRegisterPassword(),
+                buildRegisterConfirmPassword(),
+                buildRegisterButtons(),
+                buildLoginLink(),
+                buildAppBranding());
+        return authCreateScreen;
+    }
+
+    // Register screen UI.
+    private HBox buildRegisterScreenUI() {
+        registerScreen = new HBox();
+        registerScreen.setManaged(false);
+        registerScreen.setVisible(false);
+        UIUtils.anchor(registerScreen, 0d, 599d, 0d, 0d);
+        registerScreen.getChildren().addAll(buildKYCScreenUI(),
+                buildAuthCreateScreenUI());
+        return registerScreen;
+    }
+
+    // Close button.
+    private MFXFontIcon buildLoginCloseButton() {
+        closeLoginIcon = new MFXFontIcon("fas-circle");
+        closeLoginIcon.setSize(15d);
+        closeLoginIcon.getStyleClass().add("close-icon");
+        closeLoginIcon.setOnMouseClicked(event -> closeIconClicked());
+        UIUtils.anchor(closeLoginIcon, 10d, 10d, null, null);
+        return closeLoginIcon;
+    }
+
+    private MFXFontIcon buildSignupCloseButton() {
+        closeSignupIcon = new MFXFontIcon("fas-circle");
+        closeSignupIcon.setSize(15d);
+        closeSignupIcon.getStyleClass().add("close-icon");
+        closeSignupIcon.setVisible(false);
+        closeSignupIcon.setManaged(false);
+        closeSignupIcon.setOnMouseClicked(event -> closeIconClicked());
+        UIUtils.anchor(closeSignupIcon, 10d, null, null, 10d);
+        return closeSignupIcon;
+    }
+
+    // Screen background design.
+    private Rectangle createRectangle(double layoutX, double layoutY, double rotate, double width, double height, double arcWidth, double arcHeight, Stop[] stops) {
+        Rectangle rectangle = new Rectangle(width, height);
+        rectangle.setLayoutX(layoutX);
+        rectangle.setLayoutY(layoutY);
+        rectangle.setRotate(rotate);
+        rectangle.setArcWidth(arcWidth);
+        rectangle.setArcHeight(arcHeight);
+        rectangle.setStroke(Color.TRANSPARENT);
+        rectangle.setStrokeLineCap(StrokeLineCap.ROUND);
+        rectangle.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        rectangle.setStrokeType(StrokeType.INSIDE);
+        rectangle.setStrokeWidth(0.0);
+        rectangle.getStyleClass().add("card");
+        rectangle.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE, stops));
+        return rectangle;
+    }
+
+    private List<Rectangle> buildBackground() {
+        Rectangle rectangle1 = createRectangle(35, -186, -59, 306, 400, 50, 50, new Stop[]{
+                new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
+                new Stop(1, Color.color(0.33725491166114807, 0, 0.6000000238418579))
+        });
+
+        Rectangle rectangle2 = createRectangle(234, 249, 121, 370, 400, 50, 50, new Stop[]{
+                new Stop(0, Color.color(0.33725491166114807, 0, 0.6000000238418579)),
+                new Stop(1, Color.color(1, 0, 0.9019607901573181))
+        });
+        rectangle2.setY(30);
+
+        Rectangle rectangle3 = createRectangle(-161, 118, 59, 339, 400, 50, 50, new Stop[]{
+                new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
+                new Stop(1, Color.color(1, 0, 0.9019607901573181))
+        });
+        rectangle3.setRotationAxis(new Point3D(0, 0, -37));
+
+        Rectangle rectangle4 = createRectangle(454, -42, -59, 306, 400, 50, 50, new Stop[]{
+                new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
+                new Stop(1, Color.color(1, 0, 0.9019607901573181))
+        });
+
+        Rectangle rectangle5 = createRectangle(625, -343, -60, 306, 400, 50, 50, new Stop[]{
+                new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
+                new Stop(1, Color.color(0.33725491166114807, 0, 0.6000000238418579))
+        });
+        rectangle5.setY(17);
+
+        Rectangle rectangle6 = createRectangle(938, -27, -60, 339, 400, 50, 50, new Stop[]{
+                new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
+                new Stop(1, Color.color(1, 0, 0.9019607901573181))
+        });
+
+        Rectangle rectangle7 = createRectangle(770, 254, -60, 306, 400, 50, 50, new Stop[]{
+                new Stop(0, Color.color(0.33725491166114807, 0, 0.6000000238418579)),
+                new Stop(1, Color.color(1, 0, 0.9019607901573181))
+        });
+        rectangle7.setY(30);
+
+        return Stream.of(rectangle1, rectangle2, rectangle3, rectangle4, rectangle5, rectangle6, rectangle7).toList();
+    }
+
+    // Actual content pane.
+    private AnchorPane buildActualContentPane() {
+        actualContentPane = new AnchorPane();
+        actualContentPane.setCache(true);
+        actualContentPane.setCacheHint(CacheHint.SPEED);
+        actualContentPane.setMaxSize(983, 500);
+        actualContentPane.setMinSize(983, 500);
+        actualContentPane.setPrefSize(983, 500);
+        actualContentPane.getChildren().addAll(buildBackground());
+        actualContentPane.getChildren().addAll(
+                buildLoginScreenUI(),
+                buildLoginCloseButton(),
+                buildRegisterScreenUI(),
+                buildSignupCloseButton());
+        return actualContentPane;
+    }
+
+    // Content pane.
+    private Pane buildContentPane() {
+        contentPane = new Pane(buildActualContentPane());
+        contentPane.setMinHeight(500d);
+        contentPane.setPrefHeight(500d);
+        contentPane.setMaxHeight(500d);
+        contentPane.setMinWidth(983d);
+        contentPane.setPrefWidth(983d);
+        contentPane.setMaxWidth(983d);
+        contentPane.getStyleClass().add("card-raised");
+        BorderPane.setAlignment(contentPane, Pos.TOP_LEFT);
+        Rectangle clipRect = new Rectangle(contentPane.getPrefWidth(), contentPane.getPrefHeight());
+        clipRect.setArcWidth(20);
+        clipRect.setArcHeight(20);
+        contentPane.setClip(clipRect);
+        return contentPane;
+    }
+
+    // Border pane.
+    private void init() {
+        this.setMinHeight(500d);
+        this.setPrefHeight(500d);
+        this.setMaxHeight(500d);
+        this.setMinWidth(983d);
+        this.setPrefWidth(983d);
+        this.setMaxWidth(983d);
+        this.getStyleClass().add("card-raised");
+        this.getChildren().add(buildContentPane());
+        this.getStylesheets().addAll(
+                SpotyCoreResourceLoader.load("styles/base.css"),
+                SpotyCoreResourceLoader.load("styles/Splash.css"),
+                SpotyCoreResourceLoader.load("styles/Common.css"),
+                SpotyCoreResourceLoader.load("styles/theming/Default.css"),
+                SpotyCoreResourceLoader.load("styles/toolitip.css"),
+                SpotyCoreResourceLoader.load("styles/TextFields.css")
+        );
+        // Input listeners.
+        requiredValidator();
+        focusControl();
     }
 
     private void initData() {
@@ -151,7 +708,7 @@ public class AuthScreenController implements Initializable {
     }
 
     private Void onDataInitializationFailure(Throwable throwable) {
-        SpotyLogger.writeToFile(throwable, AuthScreenController.class);
+        SpotyLogger.writeToFile(throwable, AuthScreen.class);
         return null;
     }
 
@@ -191,38 +748,12 @@ public class AuthScreenController implements Initializable {
             service.setPeriod(Duration.seconds(10));
             service.setDelay(Duration.seconds(0));
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, AuthScreenController.class);
+            SpotyLogger.writeToFile(e, AuthScreen.class);
         }
     }
 
     public void onLoginSuccess() {
         initData();
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        signUpEmail.textProperty().bindBidirectional(SignupViewModel.emailProperty());
-        phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
-        otherName.textProperty().bindBidirectional(SignupViewModel.otherNameProperty());
-        lastName.textProperty().bindBidirectional(SignupViewModel.lastNameProperty());
-        firstName.textProperty().bindBidirectional(SignupViewModel.firstNameProperty());
-        signUpPassword.textProperty().bindBidirectional(SignupViewModel.passwordProperty());
-        confirmPassword.textProperty().bindBidirectional(SignupViewModel.confirmPasswordProperty());
-        email.textProperty().bindBidirectional(LoginViewModel.emailProperty());
-        password.textProperty().bindBidirectional(LoginViewModel.passwordProperty());
-        // Input listeners.
-        requiredValidator();
-        focusControl();
-        signUpLink.setOnMouseClicked(event -> signUpLinkAction());
-        loginLink.setOnMouseClicked(event -> backToLogin());
-
-        loginBtn.setOnAction(actionEvent -> onLoginPressed());
-        Rectangle clipRect = new Rectangle(contentPane.getPrefWidth(), contentPane.getPrefHeight());
-        clipRect.setArcWidth(20);
-        clipRect.setArcHeight(20);
-        contentPane.setClip(clipRect);
-        loginAppNameLbl.setText(Labels.APP_NAME);
-        loginPoweredByLbl.setText("Powered by " + Labels.COMPANY_NAME);
     }
 
     private void onLoginPressed() {

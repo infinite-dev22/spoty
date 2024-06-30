@@ -20,6 +20,7 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
@@ -94,7 +95,7 @@ public class SplashScreen extends BorderPane {
                         Dialogs.setControllers(primaryStage);
                         Dialogs.setDialogContent();
                         // Base view parent.
-                        Parent root = Pages.getLoginPane();
+                        Parent root = new AuthScreen(primaryStage);
                         Scene scene = new Scene(root);
                         // Set application scene theme to MFX modern themes.
                         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
