@@ -199,7 +199,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     public void adjustmentCancelBtnClicked() {
-        BaseController.navigation.navigate(Pages.getAdjustmentPane());
+        BaseController.navigation.navigate(new AdjustmentPage(stage));
         AdjustmentMasterViewModel.resetProperties();
     }
 

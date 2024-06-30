@@ -702,7 +702,40 @@
      -fx-padding: 5px;
 }
 
+.h1 {
+    -fx-font-size: 2.5em;
+    -fx-font-weight: bold;
+}
+
+.h2 {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+}
+
+.h3 {
+    -fx-font-size: 1.75em;
+    -fx-font-weight: bold;
+}
+
 .h4 {
-    -fx-font-family: 'Roboto Bold';
-    -fx-font-size: 25;
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
+}
+
+.h5 {
+    -fx-font-size: 1.25em;
+    -fx-font-weight: bold;
+}
+
+.h6 {
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+}
+
+.disabled-text {
+    -fx-text-fill: #908686;
+}
+
+.fs-italic {
+    -fx-font-style: italic;
 }

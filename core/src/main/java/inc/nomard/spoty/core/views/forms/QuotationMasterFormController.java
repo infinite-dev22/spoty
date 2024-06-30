@@ -281,7 +281,7 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(Pages.getQuotationPane());
+        BaseController.navigation.navigate(new QuotationPage(stage));
         QuotationMasterViewModel.resetProperties();
         customerValidationLabel.setVisible(false);
         statusValidationLabel.setVisible(false);

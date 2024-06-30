@@ -238,7 +238,7 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(Pages.getPurchasePane());
+        BaseController.navigation.navigate(new PurchasePage(stage));
         resetForm();
     }
 

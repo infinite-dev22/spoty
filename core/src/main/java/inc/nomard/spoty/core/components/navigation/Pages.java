@@ -20,7 +20,6 @@ import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.report.*;
-import inc.nomard.spoty.core.views.settings.*;
 import java.io.*;
 import javafx.fxml.*;
 import javafx.scene.layout.*;
@@ -34,19 +33,6 @@ public class Pages {
     private static final FXMLLoader loginLoader = fxmlLoader("views/AuthScreen.fxml");
     // Sale
     private static final FXMLLoader posLoader = fxmlLoader("views/PointOfSale.fxml");
-    private static final FXMLLoader saleLoader = fxmlLoader("views/Orders.fxml");
-    private static final FXMLLoader saleReturnLoader = fxmlLoader("views/SaleReturns.fxml");
-    private static final FXMLLoader salesTermLoader = fxmlLoader("views/SaleTerms.fxml");
-    // Customer
-    private static final FXMLLoader customerLoader =
-            fxmlLoader("views/Customers.fxml");
-    // Supplier
-    private static final FXMLLoader supplierLoader =
-            fxmlLoader("views/Suppliers.fxml");
-    // Purchases
-    private static final FXMLLoader purchaseLoader = fxmlLoader("views/Purchases.fxml");
-    private static final FXMLLoader purchaseReturnLoader =
-            fxmlLoader("views/PurchaseReturns.fxml");
     // Reports
     private static final FXMLLoader stockReportLoader = fxmlLoader("views/report/StockReport.fxml");
     private static final FXMLLoader closingLoader = fxmlLoader("views/report/Closing.fxml");
@@ -63,49 +49,7 @@ public class Pages {
     private static final FXMLLoader userSalesReportLoader = fxmlLoader("views/report/UserSalesReport.fxml");
     // HUMAN RESOURCE
     // Human Resource Management
-    private static final FXMLLoader designationsLoader = fxmlLoader("views/Designations.fxml");
     private static final FXMLLoader userProfileLoader = fxmlLoader("views/previews/UserPreview.fxml");
-    private static final FXMLLoader employeesLoader = fxmlLoader("views/Employees.fxml");
-    private static final FXMLLoader employmentStatusLoader = fxmlLoader("views/EmploymentStatus.fxml");
-    // Leave
-    private static final FXMLLoader leaveRequestLoader = fxmlLoader("views/LeaveRequest.fxml");
-    private static final FXMLLoader calendarLoader = fxmlLoader("views/Calendar.fxml");
-    // PayRoll
-    private static final FXMLLoader paySlipsLoader = fxmlLoader("views/PaySlips.fxml");
-    private static final FXMLLoader salariesLoader = fxmlLoader("views/Salaries.fxml");
-    private static final FXMLLoader beneficiaryBadgeLoader = fxmlLoader("views/BeneficiaryBadge.fxml");
-    private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/BeneficiaryType.fxml");
-    // Quotation
-    private static final FXMLLoader quotationLoader =
-            fxmlLoader("views/Quotation.fxml");
-    // Deductions
-    private static final FXMLLoader taxesLoader =
-            fxmlLoader("views/Taxes.fxml");
-    private static final FXMLLoader discountsLoader =
-            fxmlLoader("views/Discounts.fxml");
-    // SETTINGS
-    private static final FXMLLoader rolesLoader = fxmlLoader("views/Roles.fxml");
-    private static final FXMLLoader appSettingsLoader = fxmlLoader("views/AppSettings.fxml");
-    private static final FXMLLoader branchesLoader = fxmlLoader("views/Branches.fxml");
-    private static final FXMLLoader companySettingsLoader = fxmlLoader("views/CompanyDetails.fxml");
-    private static final FXMLLoader currencyLoader = fxmlLoader("views/Currency.fxml");
-
-    private static final FXMLLoader productCategoryLoader =
-            fxmlLoader("views/ProductCategory.fxml");
-    private static final FXMLLoader brandLoader = fxmlLoader("views/Brand.fxml");
-    private static final FXMLLoader unitLoader =
-            fxmlLoader("views/UnitOfMeasure.fxml");
-    private static final FXMLLoader productLoader =
-            fxmlLoader("views/Products.fxml");
-    private static final FXMLLoader adjustmentLoader =
-            fxmlLoader("views/Adjustment.fxml");
-    private static final FXMLLoader requisitionLoader =
-            fxmlLoader("views/Requisition.fxml");
-    private static final FXMLLoader transferLoader = fxmlLoader("views/Transfer.fxml");
-    private static final FXMLLoader stockInLoader = fxmlLoader("views/StockIn.fxml");
-    private static final FXMLLoader expenseCategoryLoader =
-            fxmlLoader("views/Category.fxml");
-    private static final FXMLLoader expenseLoader = fxmlLoader("views/Expense.fxml");
     private static final FXMLLoader quotationMasterFormLoader =
             fxmlLoader("views/forms/QuotationMasterForm.fxml");
     private static final FXMLLoader purchaseMasterFormLoader =
@@ -124,22 +68,7 @@ public class Pages {
     private static BorderPane loginPane;
 
     @Getter
-    // Sale
-    private static BorderPane salePane;
-
-    @Getter
     private static BorderPane posPane;
-
-    @Getter
-    private static BorderPane salesTermPane;
-
-    @Getter
-    // Customer
-    private static BorderPane customerPane;
-
-    @Getter
-    // Supplier
-    private static BorderPane supplierPane;
 
     // Reports
     @Getter
@@ -170,9 +99,6 @@ public class Pages {
     private static BorderPane salesReportPane;
 
     @Getter
-    private static BorderPane salesReturnPane;
-
-    @Getter
     private static BorderPane shippingCostReportPane;
 
     @Getter
@@ -182,104 +108,9 @@ public class Pages {
     private static BorderPane userSalesReportPane;
 
     // HUMAN RESOURCE
-    @Getter
-    // Human Resource Management
-    private static BorderPane designationsPane;
-
-    @Getter
-    private static BorderPane employeesPane;
 
     @Getter
     private static BorderPane userProfilePane;
-
-    @Getter
-    private static BorderPane employmentStatusPane;
-
-    // Leave
-    @Getter
-    private static BorderPane leaveRequestPane;
-
-    @Getter
-    private static BorderPane calendarPane;
-
-    @Getter
-    // PayRoll
-    private static BorderPane paySlipsPane;
-
-    @Getter
-    private static BorderPane salariesPane;
-
-    @Getter
-    private static BorderPane beneficiaryBadgePane;
-
-    @Getter
-    private static BorderPane beneficiaryTypePane;
-
-    @Getter
-    // Quotation
-    private static BorderPane quotationPane;
-
-    // Deductions
-    @Getter
-    private static BorderPane taxesPane;
-    @Getter
-    private static BorderPane discountsPane;
-
-    // SETTINGS
-
-    @Getter
-    private static BorderPane rolesPane;
-
-    @Getter
-    private static BorderPane appSettingsPane;
-
-    @Getter
-    private static BorderPane branchesPane;
-
-    @Getter
-    private static BorderPane companySettingsPane;
-
-    @Getter
-    private static BorderPane currencyPane;
-
-    @Getter
-    private static BorderPane productCategoryPane;
-
-    @Getter
-    private static BorderPane brandPane;
-
-    @Getter
-    private static BorderPane unitPane;
-
-    @Getter
-    private static BorderPane productPane;
-
-    @Getter
-    private static BorderPane adjustmentPane;
-
-    @Getter
-    private static BorderPane requisitionPane;
-
-    @Getter
-    private static BorderPane purchasePane;
-
-    @Getter
-    private static BorderPane transferPane;
-
-    @Getter
-    private static BorderPane stockInPane;
-
-    @Getter
-    private static BorderPane saleReturnPane;
-
-    @Getter
-    private static BorderPane purchaseReturnPane;
-
-    @Getter
-    private static BorderPane expenseCategoryPane;
-
-    @Getter
-    private static BorderPane expensePane;
 
     @Getter
     private static BorderPane adjustmentMasterFormPane;
@@ -304,28 +135,10 @@ public class Pages {
     }
 
     private static void setSales(Stage stage) {
-        saleLoader.setControllerFactory(e -> OrderPage.getInstance(stage));
         posLoader.setControllerFactory(e -> PointOfSaleController.getInstance(stage));
-        salesTermLoader.setControllerFactory(e -> SaleTermPage.getInstance(stage));
     }
 
-    private static void setCustomer(Stage stage) {
-        customerLoader.setControllerFactory(e -> CustomerPage.getInstance(stage));
-    }
-
-    private static void setSupplier(Stage stage) {
-        supplierLoader.setControllerFactory(e -> SupplierPage.getInstance(stage));
-    }
-
-    private static void setProduct(Stage stage) {
-        productCategoryLoader.setControllerFactory(e -> ProductCategoryPage.getInstance(stage));
-        brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
-        unitLoader.setControllerFactory(e -> UnitOfMeasurePage.getInstance(stage));
-        productLoader.setControllerFactory(e -> ProductPage.getInstance(stage));
-        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance(stage));
-    }
-
-    private static void setReports(Stage stage) {
+    private static void setReports() {
         stockReportLoader.setControllerFactory(e -> new StockReportController());
         closingLoader.setControllerFactory(e -> new ClosingController());
         closingReportLoader.setControllerFactory(e -> new ClosingReportController());
@@ -342,56 +155,7 @@ public class Pages {
     }
 
     private static void setHRM(Stage stage) {
-        designationsLoader.setControllerFactory(e -> DesignationPage.getInstance(stage));
-        employeesLoader.setControllerFactory(e -> EmployeePage.getInstance(stage));
         userProfileLoader.setControllerFactory(e -> UserPreviewController.getInstance(stage));
-        employmentStatusLoader.setControllerFactory(e -> EmploymentStatusPage.getInstance(stage));
-    }
-
-    private static void setLeave(Stage stage) {
-        leaveRequestLoader.setControllerFactory(e -> LeaveRequestPage.getInstance(stage));
-        calendarLoader.setControllerFactory(e -> CalendarPage.getInstance());
-    }
-
-    private static void setPayRoll(Stage stage) {
-        paySlipsLoader.setControllerFactory(e -> PaySlipsController.getInstance(stage));
-        salariesLoader.setControllerFactory(e -> SalaryPage.getInstance(stage));
-        beneficiaryBadgeLoader.setControllerFactory(e -> BeneficiaryBadgeController.getInstance(stage));
-        beneficiaryTypeLoader.setControllerFactory(e -> BeneficiaryTypeController.getInstance(stage));
-    }
-
-    private static void setQuotation(Stage stage) {
-        quotationLoader.setControllerFactory(e -> QuotationPage.getInstance(stage));
-    }
-
-    private static void setDeductions(Stage stage) {
-        taxesLoader.setControllerFactory(e -> TaxPage.getInstance(stage));
-        discountsLoader.setControllerFactory(e -> DiscountPage.getInstance(stage));
-    }
-
-    private static void setSingleItems(Stage stage) {
-        requisitionLoader.setControllerFactory(e -> RequisitionPage.getInstance(stage));
-        purchaseLoader.setControllerFactory(e -> PurchasePage.getInstance(stage));
-        transferLoader.setControllerFactory(e -> TransferPage.getInstance(stage));
-        stockInLoader.setControllerFactory(e -> StockInPage.getInstance(stage));
-    }
-
-    private static void setReturns(Stage stage) {
-        saleReturnLoader.setControllerFactory(e -> SaleReturnPage.getInstance(stage));
-        purchaseReturnLoader.setControllerFactory(e -> PurchaseReturnPage.getInstance(stage));
-    }
-
-    private static void setSystemSettings(Stage stage) {
-        appSettingsLoader.setControllerFactory(c -> new AppSettingsController());
-        branchesLoader.setControllerFactory(c -> BranchPage.getInstance(stage));
-        companySettingsLoader.setControllerFactory(c -> CompanyDetailsController.getInstance());
-        currencyLoader.setControllerFactory(c -> CurrencyPage.getInstance(stage));
-        rolesLoader.setControllerFactory(c -> RolePage.getInstance(stage));
-    }
-
-    private static void setExpenses(Stage stage) {
-        expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryPage.getInstance(stage));
-        expenseLoader.setControllerFactory(e -> ExpensePage.getInstance(stage));
     }
 
     private static void setMasterForms(Stage stage) {
@@ -414,13 +178,6 @@ public class Pages {
         loginPane = loginLoader.load();
         // Sales
         posPane = posLoader.load();
-        salePane = saleLoader.load();
-        saleReturnPane = saleReturnLoader.load();
-        salesTermPane = salesTermLoader.load();
-        // Customer
-        customerPane = customerLoader.load();
-        // Supplier
-        supplierPane = supplierLoader.load();
         // Reports
         stockReportPane = stockReportLoader.load();
         closingPane = closingLoader.load();
@@ -431,54 +188,14 @@ public class Pages {
         profitReportPane = profitReportLoader.load();
         purchaseReportPane = purchaseReportLoader.load();
         salesReportPane = salesReportLoader.load();
-        salesReturnPane = salesReturnLoader.load();
         shippingCostReportPane = shippingCostReportLoader.load();
         taxReportPane = taxReportLoader.load();
         userSalesReportPane = userSalesReportLoader.load();
         // HUMAN RESOURCE
         // HUMAN RESOURCE
         // Human Resource Management
-        designationsPane = designationsLoader.load();
-        employeesPane = employeesLoader.load();
         userProfilePane = userProfileLoader.load();
-        employmentStatusPane = employmentStatusLoader.load();
-        // Purchase
-        purchasePane = purchaseLoader.load();
-        purchaseReturnPane = purchaseReturnLoader.load();
         // HUMAN RESOURCE
-        // Leave
-        leaveRequestPane = leaveRequestLoader.load();
-        calendarPane = calendarLoader.load();
-        // HUMAN RESOURCE
-        // PayRoll
-        paySlipsPane = paySlipsLoader.load();
-        salariesPane = salariesLoader.load();
-        beneficiaryBadgePane = beneficiaryBadgeLoader.load();
-        beneficiaryTypePane = beneficiaryTypeLoader.load();
-        // Quotation
-        quotationPane = quotationLoader.load();
-        // Deductions
-        taxesPane = taxesLoader.load();
-        discountsPane = discountsLoader.load();
-        // SETTINGS
-        rolesPane = rolesLoader.load();
-        appSettingsPane = appSettingsLoader.load();
-        branchesPane = branchesLoader.load();
-        companySettingsPane = companySettingsLoader.load();
-        currencyPane = currencyLoader.load();
-
-        productCategoryPane = productCategoryLoader.load();
-        brandPane = brandLoader.load();
-        unitPane = unitLoader.load();
-        productPane = productLoader.load();
-        adjustmentPane = adjustmentLoader.load();
-
-        requisitionPane = requisitionLoader.load();
-        transferPane = transferLoader.load();
-        stockInPane = stockInLoader.load();
-
-        expenseCategoryPane = expenseCategoryLoader.load();
-        expensePane = expenseLoader.load();
 
         adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
         quotationMasterFormPane = quotationMasterFormLoader.load();
@@ -491,19 +208,8 @@ public class Pages {
     public static void setControllers(Stage stage) {
         setLogin(stage);
         setSales(stage);
-        setCustomer(stage);
-        setSupplier(stage);
-        setProduct(stage);
-        setReports(stage);
+        setReports();
         setHRM(stage);
-        setLeave(stage);
-        setPayRoll(stage);
-        setQuotation(stage);
-        setDeductions(stage);
-        setSingleItems(stage);
-        setReturns(stage);
-        setExpenses(stage);
         setMasterForms(stage);
-        setSystemSettings(stage);
     }
 }

@@ -306,7 +306,7 @@ public class TransferMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(Pages.getTransferPane());
+        BaseController.navigation.navigate(new TransferPage(stage));
         TransferMasterViewModel.resetProperties();
         toBranchValidationLabel.setVisible(false);
         fromBranchValidationLabel.setVisible(false);

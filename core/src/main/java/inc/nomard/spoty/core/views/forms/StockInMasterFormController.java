@@ -229,7 +229,7 @@ public class StockInMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(Pages.getStockInPane());
+        BaseController.navigation.navigate(new StockInPage(stage));
         StockInMasterViewModel.resetProperties();
     }
 

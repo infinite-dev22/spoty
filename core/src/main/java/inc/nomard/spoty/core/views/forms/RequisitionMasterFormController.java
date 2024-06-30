@@ -284,7 +284,7 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(Pages.getRequisitionPane());
+        BaseController.navigation.navigate(new RequisitionPage(stage));
         RequisitionMasterViewModel.resetProperties();
         supplierValidationLabel.setVisible(false);
         statusValidationLabel.setVisible(false);

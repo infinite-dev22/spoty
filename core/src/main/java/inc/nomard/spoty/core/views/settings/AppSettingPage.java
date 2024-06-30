@@ -1,0 +1,86 @@
+package inc.nomard.spoty.core.views.settings;
+
+import inc.nomard.spoty.core.views.settings.app_settings.*;
+import inc.nomard.spoty.core.views.util.*;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import lombok.extern.java.*;
+
+@Log
+public class AppSettingPage extends OutlinePage {
+    private final Stage stage;
+    public AppSettingPage(Stage stage) {
+        this.stage = stage;
+        addNode(init());
+    }
+
+    private BorderPane init() {
+        BorderPane pane = new BorderPane();
+        pane.setPrefSize(600, 400);
+        // Set center pane to border pane
+        pane.setCenter(buildCenter());
+        return pane;
+    }
+
+    private AnchorPane buildCenter() {
+        AnchorPane pane = new AnchorPane();
+        BorderPane.setAlignment(pane, Pos.CENTER);
+        pane.getChildren().add(buildTabPane());
+        return pane;
+    }
+
+    private TabPane buildTabPane() {
+        TabPane tabbedPane = new TabPane();
+        tabbedPane.setPrefSize(200, 200);
+        tabbedPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        // Add tabs to tab pane
+        tabbedPane.getTabs().addAll(buildEmailTab(), buildAppearanceTab(), buildPrintingTab(), buildReceiptsTab());
+        // Add custom styles
+        tabbedPane.getStyleClass().addAll("card-flat", "tabbed-pane");
+        // Add tab pane to center pane
+        NodeUtils.setAnchors(tabbedPane, new Insets(0d));
+        return tabbedPane;
+    }
+
+    private Tab buildEmailTab() {
+        // Email Tab
+        EmailPage emailPage = new EmailPage(stage);
+        AnchorPane tabContent = new AnchorPane();
+        tabContent.getStyleClass().add("rounded");
+        tabContent.getChildren().add(emailPage);
+        Tab tab = new Tab("Email", tabContent);
+        NodeUtils.setAnchors(emailPage, new Insets(0d));
+        return tab;
+    }
+
+    private Tab buildAppearanceTab() {
+        // Appearance & Language Tab
+        AnchorPane tabContent = new AnchorPane();
+        tabContent.getStyleClass().add("rounded");
+        Appearance appearance = new Appearance();
+        tabContent.getChildren().add(appearance);
+        Tab tab = new Tab("Appearance & Language", tabContent);
+        NodeUtils.setAnchors(appearance, new Insets(0d));
+        return tab;
+    }
+
+    private Tab buildPrintingTab() {
+        // Printers & Printing Tab
+        Tab tab = new Tab("Printers & Printing");
+        AnchorPane tabContent = new AnchorPane();
+        tabContent.getStyleClass().add("rounded");
+        tab.setContent(tabContent);
+        return tab;
+    }
+
+    private Tab buildReceiptsTab() {
+        // Reports & Receipts Tab
+        Tab tab = new Tab("Reports & Receipts");
+        AnchorPane tabContent = new AnchorPane();
+        tabContent.getStyleClass().add("rounded");
+        tab.setContent(tabContent);
+        return tab;
+    }
+}

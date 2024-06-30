@@ -16,6 +16,7 @@ package inc.nomard.spoty.core.components.navigation;
 
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.dashboard.*;
+import inc.nomard.spoty.core.views.settings.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.flavouring.*;
 import java.util.*;
@@ -54,30 +55,30 @@ public class Navigation {
     public static Map<String, NavTree.NavTreeItem> createNavItems() {
         var map = new HashMap<String, NavTree.NavTreeItem>();
         // People
-        map.put("SUPPLIERS", NavTree.NavTreeItem.page("Suppliers", Pages.getSupplierPane()));
-        map.put("CUSTOMERS", NavTree.NavTreeItem.page("Customers", Pages.getCustomerPane()));
+        map.put("SUPPLIERS", NavTree.NavTreeItem.page("Suppliers", new SupplierPage(stage)));
+        map.put("CUSTOMERS", NavTree.NavTreeItem.page("Customers", new CustomerPage(stage)));
         // Deductions
-        map.put("TAXES", NavTree.NavTreeItem.page("Taxes", Pages.getTaxesPane()));
-        map.put("DISCOUNTS", NavTree.NavTreeItem.page("Discounts", Pages.getDiscountsPane()));
+        map.put("TAXES", NavTree.NavTreeItem.page("Taxes", new TaxPage(stage)));
+        map.put("DISCOUNTS", NavTree.NavTreeItem.page("Discounts", new DiscountPage(stage)));
         // Sales
         map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", Pages.getPosPane()));
-        map.put("ORDERS", NavTree.NavTreeItem.page("Orders", Pages.getSalePane()));
-        map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", Pages.getSaleReturnPane()));
-        map.put("SALE_TERMS", NavTree.NavTreeItem.page("Sale Terms", Pages.getSalesTermPane()));
+        map.put("ORDERS", NavTree.NavTreeItem.page("Orders", new OrderPage(stage)));
+        map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", new SaleReturnPage(stage)));
+        map.put("SALE_TERMS", NavTree.NavTreeItem.page("Sale Terms", new SaleTermPage()));
         // Inventory
-        map.put("CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getProductCategoryPane()));
-        map.put("BRAND", NavTree.NavTreeItem.page("Brand", Pages.getBrandPane()));
-        map.put("UNIT", NavTree.NavTreeItem.page("Unit", Pages.getUnitPane()));
-        map.put("PRODUCTS", NavTree.NavTreeItem.page("Products", Pages.getProductPane()));
-        map.put("REQUISITIONS", NavTree.NavTreeItem.page("Requisitions", Pages.getRequisitionPane()));
-        map.put("STOCK_INS", NavTree.NavTreeItem.page("Stock Ins", Pages.getStockInPane()));
-        map.put("TRANSFERS", NavTree.NavTreeItem.page("Transfers", Pages.getTransferPane()));
-        map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", Pages.getAdjustmentPane()));
+        map.put("CATEGORY", NavTree.NavTreeItem.page("Category", new ProductCategoryPage(stage)));
+        map.put("BRAND", NavTree.NavTreeItem.page("Brand", new BrandPage(stage)));
+        map.put("UNIT", NavTree.NavTreeItem.page("Unit", new UnitOfMeasurePage(stage)));
+        map.put("PRODUCTS", NavTree.NavTreeItem.page("Products", new ProductPage(stage)));
+        map.put("REQUISITIONS", NavTree.NavTreeItem.page("Requisitions", new RequisitionPage(stage)));
+        map.put("STOCK_INS", NavTree.NavTreeItem.page("Stock Ins", new StockInPage(stage)));
+        map.put("TRANSFERS", NavTree.NavTreeItem.page("Transfers", new TransferPage(stage)));
+        map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", new AdjustmentPage(stage)));
         // Accounting
         map.put("ACCOUNTS", NavTree.NavTreeItem.page("Accounts", new AccountPage(Navigation.stage)));
         map.put(
-                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", Pages.getExpenseCategoryPane()));
-        map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
+                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", new ExpenseCategoryPage(stage)));
+        map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", new ExpensePage(stage)));
         map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", new AccountTransactionPage(stage)));
         // Reports
         map.put("STOCK_REPORT", NavTree.NavTreeItem.page("Stock Report", Pages.getStockReportPane()));
@@ -89,31 +90,30 @@ public class Navigation {
         map.put("PROFIT_REPORT", NavTree.NavTreeItem.page("Profit Report", Pages.getProfitReportPane()));
         map.put("PURCHASE_REPORT", NavTree.NavTreeItem.page("Purchase Report", Pages.getPurchaseReportPane()));
         map.put("SALES_REPORT", NavTree.NavTreeItem.page("Sales Report", Pages.getSalesReportPane()));
-        map.put("SALES_RETURN", NavTree.NavTreeItem.page("Sales Return", Pages.getSalesReturnPane()));
         map.put("SHIPPING_COST_REPORT", NavTree.NavTreeItem.page("Shipping Cost Report", Pages.getShippingCostReportPane()));
         map.put("TAX_REPORT", NavTree.NavTreeItem.page("Tax Report", Pages.getTaxReportPane()));
         map.put("USER_SALES_REPORT", NavTree.NavTreeItem.page("User Sales Report", Pages.getUserSalesReportPane()));
         // HUMAN RESOURCE
         // HRM
-        map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", Pages.getDesignationsPane()));
-        map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", Pages.getEmployeesPane()));
-        map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", Pages.getEmploymentStatusPane()));
+        map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", new DesignationPage(stage)));
+        map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", new EmployeePage(stage)));
+        map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", new EmploymentStatusPage(stage)));
         // Leave
-        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Requests", Pages.getLeaveRequestPane()));
-        map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", Pages.getCalendarPane()));
+        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Requests", new LeaveRequestPage(stage)));
+        map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", new CalendarPage()));
         // PayRoll
-        map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", Pages.getPaySlipsPane()));
-        map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", Pages.getBeneficiaryBadgePane()));
-        map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", Pages.getBeneficiaryTypePane()));
+        map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", new PaySlipPage(stage)));
+        map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", new BeneficiaryBadgePage(stage)));
+        map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", new BeneficiaryTypePage(stage)));
         // Purchases
-        map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", Pages.getPurchasePane()));
-        map.put("PURCHASE_RETURNS", NavTree.NavTreeItem.page("Purchases Returns", Pages.getPurchaseReturnPane()));
+        map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", new PurchasePage(stage)));
+        map.put("PURCHASE_RETURNS", NavTree.NavTreeItem.page("Purchases Returns", new PurchaseReturnPage(stage)));
         // SETTINGS
-        map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", Pages.getAppSettingsPane()));
-        map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", Pages.getBranchesPane()));
-        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", Pages.getCompanySettingsPane()));
-        map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", Pages.getCurrencyPane()));
-        map.put("ROLES", NavTree.NavTreeItem.page("Roles", Pages.getRolesPane()));
+        map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", new AppSettingPage(stage)));
+        map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", new BranchPage(stage)));
+        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", new CompanyDetailPage()));
+        map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", new CurrencyPage(stage)));
+        map.put("ROLES", NavTree.NavTreeItem.page("Roles", new RolePage(stage)));
 
         return map;
     }
@@ -212,7 +212,7 @@ public class Navigation {
                             NAV_TREE.get("PURCHASES"),
                             NAV_TREE.get("PURCHASE_RETURNS"));
         } else {
-            purchase = NavTree.NavTreeItem.page("Purchases", Pages.getPurchasePane());
+            purchase = NavTree.NavTreeItem.page("Purchases", new PurchasePage(stage));
         }
 
         var inventory = NavTree.NavTreeItem.group("Inventory", "fas-cubes");
@@ -306,9 +306,7 @@ public class Navigation {
                 NAV_TREE.get("EXPENSE"),
                 NAV_TREE.get("TRANSACTIONS"));
 
-        var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
-
-        var tax = NavTree.NavTreeItem.mainPage("Tax", "fas-money-bill-wheat", Pages.getTaxesPane());
+        var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", new QuotationPage(stage));
 
         var deductions = NavTree.NavTreeItem.group("Deductions", "fas-coins");
         deductions.getChildren().setAll(
@@ -366,7 +364,6 @@ public class Navigation {
                             quotation,
                             sale,
                             accounts,
-                            tax,
                             reports,
                             settings);
         } else if (flavor == AppFlavor.MVP) {
@@ -386,15 +383,15 @@ public class Navigation {
 
     private void loadView(Pane view) {
         try {
-            final BorderPane prevWindow =
-                    (BorderPane)
+            final Pane prevWindow =
+                    (Pane)
                             viewWindow.getChildren().stream()
-                                    .filter(c -> c instanceof BorderPane)
+                                    .filter(c -> c instanceof Pane)
                                     .findFirst()
                                     .orElse(null);
             final Pane nextWindow = view;
-            BorderPane existingNextChild =
-                    (BorderPane)
+            Pane existingNextChild =
+                    (Pane)
                             viewWindow.getChildren().stream().findAny().filter(c -> c.equals(view)).orElse(null);
 
             if (Objects.equals(prevWindow, nextWindow)) return;
