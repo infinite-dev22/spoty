@@ -8,6 +8,7 @@ import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.previews.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
@@ -16,12 +17,12 @@ import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -29,25 +30,16 @@ import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class SalariesController implements Initializable {
-    private static SalariesController instance;
+public class SalaryPage extends OutlinePage {
     private final Stage stage;
-    @FXML
-    public BorderPane contentPane;
-    @FXML
-    public MFXTextField searchBar;
-    @FXML
-    public MFXTableView<SalaryAdvance> masterTable;
-    public HBox actionsPane;
-    @FXML
-    public HBox leftHeaderPane;
-    @FXML
-    public MFXProgressSpinner progress;
+    private MFXTextField searchBar;
+    private MFXTableView<SalaryAdvance> masterTable;
+    private MFXProgressSpinner progress;
     private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
     private FXMLLoader viewFxmlLoader;
 
-    public SalariesController(Stage stage) {
+    public SalaryPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {
@@ -58,11 +50,71 @@ public class SalariesController implements Initializable {
                         throw new RuntimeException(ex);
                     }
                 });
+        addNode(init());
     }
 
-    public static SalariesController getInstance(Stage stage) {
-        if (instance == null) instance = new SalariesController(stage);
-        return instance;
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
+        setIcons();
+        setSearchBar();
+        setupTable();
+        createBtnAction();
+        return pane;
+    }
+
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildRightTop() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
+    }
+
+    private AnchorPane buildCenter() {
+        masterTable = new MFXTableView<>();
+        AnchorPane.setBottomAnchor(masterTable, 0d);
+        AnchorPane.setLeftAnchor(masterTable, 0d);
+        AnchorPane.setRightAnchor(masterTable, 0d);
+        AnchorPane.setTopAnchor(masterTable, 10d);
+        return new AnchorPane(masterTable);
     }
 
     private void productViewDialogPane(Stage stage) throws IOException {
@@ -83,7 +135,7 @@ public class SalariesController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
+                        .setOwnerNode(this)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .setCenterInOwnerNode(false)
@@ -91,13 +143,6 @@ public class SalariesController implements Initializable {
                         .get();
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        setIcons();
-        setSearchBar();
-        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
@@ -204,7 +249,7 @@ public class SalariesController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getEmployeeName() + "'s salary", stage, contentPane));
+        }, obj.getData().getEmployeeName() + "'s salary", stage, this));
         // Edit
         edit.setOnAction(
                 event -> {
@@ -231,7 +276,7 @@ public class SalariesController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
+                        .setOwnerNode(this)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -275,7 +320,7 @@ public class SalariesController implements Initializable {
         }
     }
 
-    public void createBtnClicked(MouseEvent event) {
+    public void createBtnAction() {
     }
 
     private void setIcons() {
