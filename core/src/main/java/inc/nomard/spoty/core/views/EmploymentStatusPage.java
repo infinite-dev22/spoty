@@ -7,6 +7,7 @@ import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
@@ -14,9 +15,9 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
@@ -32,26 +33,15 @@ import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class EmploymentStatusController implements Initializable {
-    private static EmploymentStatusController instance;
+public class EmploymentStatusPage extends OutlinePage {
     private final Stage stage;
-    @FXML
-    public BorderPane contentPane;
-    @FXML
-    public MFXTextField searchBar;
-    @FXML
-    public HBox actionsPane;
-    @FXML
-    public MFXButton createBtn;
-    @FXML
-    public MFXTableView<EmploymentStatus> masterTable;
-    @FXML
-    public MFXProgressSpinner progress;
-    @FXML
-    public HBox leftHeaderPane;
+    private MFXTextField searchBar;
+    private MFXTableView<EmploymentStatus> masterTable;
+    private MFXProgressSpinner progress;
+    private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private EmploymentStatusController(Stage stage) {
+    private EmploymentStatusPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {
@@ -61,11 +51,73 @@ public class EmploymentStatusController implements Initializable {
                         throw new RuntimeException(ex);
                     }
                 });
+        addNode(init());
     }
 
-    public static EmploymentStatusController getInstance(Stage stage) {
-        if (instance == null) instance = new EmploymentStatusController(stage);
-        return instance;
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
+        setIcons();
+        setSearchBar();
+        setupTable();
+        createBtnAction();
+        return pane;
+    }
+
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildRightTop() {
+        createBtn = new MFXButton("Create");
+        createBtn.setVariants(ButtonVariants.FILLED);
+        var hbox = new HBox(createBtn);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
+    }
+
+    private AnchorPane buildCenter() {
+        masterTable = new MFXTableView<>();
+        AnchorPane.setBottomAnchor(masterTable, 0d);
+        AnchorPane.setLeftAnchor(masterTable, 0d);
+        AnchorPane.setRightAnchor(masterTable, 0d);
+        AnchorPane.setTopAnchor(masterTable, 10d);
+        return new AnchorPane(masterTable);
     }
 
     private void formDialogPane(Stage stage) throws IOException {
@@ -83,7 +135,7 @@ public class EmploymentStatusController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
+                        .setOwnerNode(this)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -179,7 +231,7 @@ public class EmploymentStatusController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             EmploymentStatusViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), stage, contentPane));
+        }, obj.getData().getName(), stage, this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -192,19 +244,12 @@ public class EmploymentStatusController implements Initializable {
         return contextMenu;
     }
 
-    public void createBtnClicked() {
-        dialog.showAndWait();
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> dialog.showAndWait());
     }
 
     private void onSuccess() {
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null);
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        setIcons();
-        setSearchBar();
-        Platform.runLater(this::setupTable);
     }
 
     private void setIcons() {
