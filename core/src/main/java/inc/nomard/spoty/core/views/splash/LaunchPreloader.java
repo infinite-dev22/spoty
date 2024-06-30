@@ -14,14 +14,11 @@
 
 package inc.nomard.spoty.core.views.splash;
 
-import inc.nomard.spoty.core.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import io.github.palexdev.materialfx.theming.*;
 import javafx.application.*;
 import javafx.scene.*;
-import javafx.scene.image.*;
 import javafx.stage.*;
 import lombok.extern.java.*;
 
@@ -40,7 +37,7 @@ public class LaunchPreloader extends Preloader {
                 .setGlobal();
 
         this.preloadStage = primaryStage;
-        Scene scene = new Scene(fxmlLoader("views/SplashScreen.fxml").load());
+        Scene scene = new Scene(new SplashScreen());
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         scene.setFill(null);
         primaryStage.initStyle(StageStyle.TRANSPARENT);

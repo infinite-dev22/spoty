@@ -15,17 +15,17 @@
 package inc.nomard.spoty.core.views.splash;
 
 import fr.brouillard.oss.cssfx.*;
+import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.theming.*;
 import java.io.*;
-import java.net.*;
 import java.time.*;
-import java.util.*;
 import javafx.application.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -36,13 +36,17 @@ import javafx.stage.*;
 import lombok.extern.java.*;
 
 @Log
-public class SplashScreenController implements Initializable {
+public class SplashScreen extends BorderPane {
     @FXML
     public Label applicationName,
             companyName,
             copyRight;
     @FXML
     public AnchorPane splashScreenPane;
+
+    public SplashScreen() {
+        init();
+    }
 
     public static void checkFunctions() {
         var sysPathCreator = sysPathCreater();
@@ -51,7 +55,7 @@ public class SplashScreenController implements Initializable {
             sysPathCreator.join();
             startApp();
         } catch (InterruptedException e) {
-            SpotyLogger.writeToFile(e, SplashScreenController.class);
+            SpotyLogger.writeToFile(e, SplashScreen.class);
         }
     }
 
@@ -62,7 +66,7 @@ public class SplashScreenController implements Initializable {
                     try {
                         SpotyPaths.createPaths();
                     } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+                        SpotyLogger.writeToFile(e, SplashScreen.class);
                     }
                 });
     }
@@ -118,15 +122,55 @@ public class SplashScreenController implements Initializable {
                         ProtectedGlobals.loginSceneWidth = scene.getWidth();
                         ProtectedGlobals.loginSceneHeight = scene.getHeight();
                     } catch (IOException e) {
-                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+                        SpotyLogger.writeToFile(e, SplashScreen.class);
                     }
                 });
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        companyName.setText("Powered by " + Labels.COMPANY_NAME);
-        copyRight.setText("©" + Year.now() + " nomard® Labs");
+    private void init() {
+        this.getStyleClass().add("rounded");
+        this.setPadding(new Insets(5d, 0d, 0d, 0d));
+        this.getStylesheets().addAll(
+                SpotyCoreResourceLoader.load("styles/base.css"),
+                SpotyCoreResourceLoader.load("styles/Splash.css"),
+                SpotyCoreResourceLoader.load("styles/Common.css"),
+                SpotyCoreResourceLoader.load("styles/TextFields.css")
+        );
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+    }
+
+    private AnchorPane buildCenter() {
+        applicationName = new Label();
+        applicationName.getStyleClass().add("splashName");
         applicationName.setText(Labels.APP_NAME);
+
+        var vbox = new VBox(applicationName);
+        vbox.setAlignment(Pos.CENTER);
+        NodeUtils.setAnchors(vbox, new Insets(0d));
+
+        splashScreenPane = new AnchorPane(vbox);
+        splashScreenPane.setPrefHeight(350d);
+        splashScreenPane.setPrefWidth(550d);
+        return splashScreenPane;
+    }
+
+    private AnchorPane buildBottom() {
+        companyName = new Label();
+        companyName.getStyleClass().add("company-label");
+        UIUtils.anchor(companyName, 0d, 0d, 0d, null);
+        companyName.setPadding(new Insets(0d, 10d, 5d, 0d));
+        companyName.setText("Powered by " + Labels.COMPANY_NAME);
+
+        copyRight = new Label();
+        copyRight.getStyleClass().add("company-label");
+        UIUtils.anchor(copyRight, 0d, null, 0d, 0d);
+        copyRight.setPadding(new Insets(0d, 0d, 5d, 10d));
+        copyRight.setText("©" + Year.now() + " nomard® Labs");
+
+        var pane = new AnchorPane();
+        BorderPane.setAlignment(pane, Pos.CENTER);
+        pane.getChildren().addAll(companyName, copyRight);
+        return pane;
     }
 }

@@ -34,7 +34,7 @@ public class Main extends Application {
 
     @Override
     public void init() {
-        SplashScreenController.checkFunctions();
+        SplashScreen.checkFunctions();
     }
 
     @Override
