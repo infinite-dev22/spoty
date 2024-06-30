@@ -7,6 +7,7 @@ import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
@@ -15,6 +16,7 @@ import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
+import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
 import javafx.collections.*;
@@ -28,82 +30,78 @@ import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class EmailPage extends BorderPane {
-    private final Stage stage = new Stage();
+public class EmailPage extends OutlinePage {
+    private final Stage stage;
+    private MFXTextField searchBar;
+    private MFXTableView<Account> masterTable;
+    private MFXProgressSpinner progress;
+    private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    public EmailPage() {
-        init();
+    public EmailPage(Stage stage) {
+        this.stage = stage;
+        addNode(init());
     }
 
-    private HBox buildBreadcrumbHolder() {
-        var breadCrumbHolder = new HBox();
-        breadCrumbHolder.setAlignment(Pos.CENTER);
-        breadCrumbHolder.setPadding(new Insets(0.0, 10.0, 0.0, 10.0));
-
-        AnchorPane.setTopAnchor(breadCrumbHolder, 0.0);
-        AnchorPane.setLeftAnchor(breadCrumbHolder, 0.0);
-        AnchorPane.setBottomAnchor(breadCrumbHolder, 0.0);
-
-        return breadCrumbHolder;
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
+        setIcons();
+        setSearchBar();
+        createBtnAction();
+        return pane;
     }
 
-    private MFXTextField buildSearchField() {
-        var searchField = new MFXTextField();
-        searchField.setFloatMode(FloatMode.DISABLED);
-        searchField.setPromptText("Search");
-        searchField.setPrefWidth(300.0);
-
-        AnchorPane.setTopAnchor(searchField, 0.0);
-        AnchorPane.setLeftAnchor(searchField, 50.0);
-        AnchorPane.setBottomAnchor(searchField, 0.0);
-
-        return searchField;
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
     }
 
-    private HBox buildActions() {
-        var actions = new HBox();
-        actions.setAlignment(Pos.CENTER_RIGHT);
-        actions.setSpacing(20.0);
-        actions.setPadding(new Insets(0.0, 10.0, 0.0, 10.0));
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
 
-        var createBtn = new MFXButton();
-        createBtn.setText("Create");
+    private HBox buildRightTop() {
+        createBtn = new MFXButton("Create");
         createBtn.setVariants(ButtonVariants.FILLED);
-
-        actions.getChildren().add(createBtn);
-
-        AnchorPane.setTopAnchor(actions, 0.0);
-        AnchorPane.setRightAnchor(actions, 0.0);
-        AnchorPane.setBottomAnchor(actions, 0.0);
-
-        return actions;
+        var hbox = new HBox(createBtn);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
     }
 
-    private AnchorPane buildActionsPane() {
-        var anchorPane = new AnchorPane();
-        anchorPane.setPadding(new Insets(5.0));
-        anchorPane.getStyleClass().add("card-flat");
-
-        AnchorPane.setTopAnchor(anchorPane, 0.0);
-        AnchorPane.setLeftAnchor(anchorPane, 0.0);
-        AnchorPane.setRightAnchor(anchorPane, 0.0);
-
-        BorderPane.setAlignment(anchorPane, Pos.CENTER);
-
-        anchorPane.getChildren().addAll(
-                buildBreadcrumbHolder(),
-                buildSearchField(),
-                buildActions()
-        );
-
-        return anchorPane;
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
     }
 
-    private void init() {
+    public BorderPane buildCenter() {
         var anchorPane = new AnchorPane();
         anchorPane.getChildren().addAll(
-                buildActionsPane(),
                 buildEmailsTable()
         );
 
@@ -111,7 +109,10 @@ public class EmailPage extends BorderPane {
 
         this.setPrefHeight(600.0);
         this.setPrefWidth(600.0);
-        this.setCenter(anchorPane);
+        var pane = new BorderPane();
+        pane.setCenter(anchorPane);
+        createBtnAction();
+        return pane;
     }
 
     private MFXTableView<Email> buildEmailsTable() {
@@ -223,8 +224,8 @@ public class EmailPage extends BorderPane {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void createBtnClicked() {
-        dialog.showAndWait();
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> dialog.showAndWait());
     }
 
     private void onSuccess() {
@@ -255,5 +256,24 @@ public class EmailPage extends BorderPane {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
         }
+    }
+
+    private void setIcons() {
+        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
+    }
+
+    public void setSearchBar() {
+        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+            if (Objects.equals(ov, nv)) {
+                return;
+            }
+            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
+                CurrencyViewModel.getAllCurrencies(null, null);
+            }
+            progress.setVisible(true);
+            CurrencyViewModel.searchItem(nv, () -> {
+                progress.setVisible(false);
+            }, this::errorMessage);
+        });
     }
 }
