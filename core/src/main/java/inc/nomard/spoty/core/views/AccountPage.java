@@ -291,11 +291,6 @@ public class AccountPage extends OutlinePage {
     }
 
     @Override
-    public String getName() {
-        return "";
-    }
-
-    @Override
     public Node getStyleableNode() {
         return super.getStyleableNode();
     }

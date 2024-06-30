@@ -19,8 +19,6 @@ public interface Page {
     int VGAP_10 = 10;
     int VGAP_20 = 20;
 
-    String getName();
-
     Parent getView();
 
     Node getSnapshotTarget();
