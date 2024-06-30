@@ -396,7 +396,7 @@ public class Pages {
     private static void setExpenses(Stage stage) {
         expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryController.getInstance(stage));
         expenseLoader.setControllerFactory(e -> ExpenseController.getInstance(stage));
-        transactionLoader.setControllerFactory(e -> AccountTransactionController.getInstance(stage));
+        transactionLoader.setControllerFactory(e -> new AccountTransactionPage(stage));
     }
 
     private static void setMasterForms(Stage stage) {

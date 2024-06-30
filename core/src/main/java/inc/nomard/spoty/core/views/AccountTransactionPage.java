@@ -1,69 +1,92 @@
 package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
-import java.net.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class AccountTransactionController implements Initializable {
-    private static AccountTransactionController instance;
+public class AccountTransactionPage extends OutlinePage {
     private final Stage stage;
-    @FXML
-    public BorderPane contentPane;
-    @FXML
-    public MFXTextField searchBar;
-    @FXML
-    public HBox actionsPane;
-    @FXML
-    public MFXTableView<AccountTransaction> masterTable;
-    @FXML
-    public HBox leftHeaderPane;
-    @FXML
-    public MFXProgressSpinner progress;
-    private MFXStageDialog dialog;
+    private MFXTextField searchBar;
+    private MFXTableView<AccountTransaction> masterTable;
 
-    private AccountTransactionController(Stage stage) {
+    public AccountTransactionPage(Stage stage) {
+        super(stage);
         this.stage = stage;
-        Platform.runLater(
-                () -> {
-                    try {
-                        customerFormDialogPane(stage);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
+        addNode(init());
     }
 
-    public static AccountTransactionController getInstance(Stage stage) {
-        if (instance == null) instance = new AccountTransactionController(stage);
-        return instance;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
         setIcons();
         setSearchBar();
-        Platform.runLater(this::setupTable);
+        setupTable();
+        return pane;
+    }
+
+    private HBox buildLeftTop() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildRightTop() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
+    }
+
+    private AnchorPane buildCenter() {
+        masterTable = new MFXTableView<>();
+        AnchorPane.setBottomAnchor(masterTable, 0d);
+        AnchorPane.setLeftAnchor(masterTable, 0d);
+        AnchorPane.setRightAnchor(masterTable, 0d);
+        AnchorPane.setTopAnchor(masterTable, 10d);
+        return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
@@ -120,32 +143,6 @@ public class AccountTransactionController implements Initializable {
         masterTable.setPrefSize(1000, 1000);
         masterTable.features().enableBounceEffect();
         masterTable.features().enableSmoothScrolling(0.5);
-    }
-
-    private void customerFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/AccountForm.fxml");
-        fxmlLoader.setControllerFactory(c -> AccountFormController.getInstance(stage));
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-    }
-
-    public void createBtnClicked() {
-        dialog.showAndWait();
     }
 
     private void setIcons() {
