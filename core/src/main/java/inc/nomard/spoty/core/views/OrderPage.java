@@ -18,9 +18,11 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.previews.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
@@ -28,14 +30,15 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -44,27 +47,16 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class OrdersController implements Initializable {
-    private static OrdersController instance;
+public class OrderPage extends OutlinePage {
     private final Stage stage;
-    @FXML
-    public MFXTextField searchBar;
-    @FXML
-    public HBox actionsPane;
-    @FXML
-    public MFXButton createBtn;
-    @FXML
-    public BorderPane contentPane;
-    @FXML
-    public MFXProgressSpinner progress;
-    @FXML
-    public HBox leftHeaderPane;
-    @FXML
+    private MFXTextField searchBar;
     private MFXTableView<SaleMaster> masterTable;
+    private MFXProgressSpinner progress;
+    private MFXButton createBtn;
+    private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
 
-    public OrdersController(Stage stage) {
+    public OrderPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(() ->
         {
@@ -74,18 +66,73 @@ public class OrdersController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+        addNode(init());
     }
 
-    public static OrdersController getInstance(Stage stage) {
-        if (instance == null) instance = new OrdersController(stage);
-        return instance;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
         setIcons();
         setSearchBar();
-        Platform.runLater(this::setupTable);
+        setupTable();
+        createBtnAction();
+        return pane;
+    }
+
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildRightTop() {
+        createBtn = new MFXButton("Create");
+        createBtn.setVariants(ButtonVariants.FILLED);
+        var hbox = new HBox(createBtn);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
+    }
+
+    private AnchorPane buildCenter() {
+        masterTable = new MFXTableView<>();
+        AnchorPane.setBottomAnchor(masterTable, 0d);
+        AnchorPane.setLeftAnchor(masterTable, 0d);
+        AnchorPane.setRightAnchor(masterTable, 0d);
+        AnchorPane.setTopAnchor(masterTable, 10d);
+        return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
@@ -186,7 +233,7 @@ public class OrdersController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             SaleMasterViewModel.deleteSaleMaster(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getCustomerName() + "'s order", stage, contentPane));
+        }, obj.getData().getCustomerName() + "'s order", stage, this));
         // View
         view.setOnAction(
                 event -> {
@@ -199,10 +246,8 @@ public class OrdersController implements Initializable {
         return contextMenu;
     }
 
-    public void createBtnClicked() {
-//        BaseController.navigation.navigate(Pages.getPosPane());
-
-        SaleMasterViewModel.getAllSaleMasters(null, null);
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> BaseController.navigation.navigate(Pages.getPosPane()));
     }
 
     private void onSuccess() {
@@ -220,25 +265,25 @@ public class OrdersController implements Initializable {
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);
 
-        viewDialog =
+        dialog =
                 MFXGenericDialogBuilder.build(genericDialog)
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
+                        .setOwnerNode(this)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .setCenterInOwnerNode(false)
                         .setOverlayClose(true)
                         .get();
 
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
     public void viewShow(SaleMaster saleMaster) {
         SalePreviewController controller = viewFxmlLoader.getController();
         controller.init(saleMaster);
-        viewDialog.showAndWait();
+        dialog.showAndWait();
     }
 
     private void successMessage(String message) {
