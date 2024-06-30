@@ -18,9 +18,8 @@ import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.*;
 import com.calendarfx.model.*;
 import com.calendarfx.view.*;
-import java.net.*;
+import inc.nomard.spoty.core.views.util.*;
 import java.time.*;
-import java.util.*;
 import javafx.application.*;
 import javafx.fxml.*;
 import javafx.scene.layout.*;
@@ -28,18 +27,23 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class CalendarController implements Initializable {
-    private static CalendarController instance;
+public class CalendarPage extends OutlinePage {
+    private static CalendarPage instance;
     @FXML
     public BorderPane contentPane;
 
-    public static CalendarController getInstance() {
-        if (instance == null) instance = new CalendarController();
-        return instance;
+    public CalendarPage() {
+        super();
+        addNode(init());
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setCenter(buildCenter());
+        return pane;
+    }
+
+    public CalendarView buildCenter() {
         CalendarView calendarView = new CalendarView(); // (1)
 
         Calendar birthdays = new Calendar("Birthdays"); // (2)
@@ -78,7 +82,6 @@ public class CalendarController implements Initializable {
         updateTimeThread.setPriority(Thread.MIN_PRIORITY);
         updateTimeThread.setDaemon(true);
         updateTimeThread.start();
-
-        contentPane.setCenter(calendarView);
+        return calendarView;
     }
 }
