@@ -26,7 +26,7 @@ public class AccountTransactionPage extends OutlinePage {
     private MFXTableView<AccountTransaction> masterTable;
 
     public AccountTransactionPage(Stage stage) {
-        super(stage);
+        super();
         this.stage = stage;
         addNode(init());
     }

@@ -39,7 +39,7 @@ public class AccountPage extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
     public AccountPage(Stage stage) {
-        super(stage);
+        super();
         this.stage = stage;
         try {
             customerFormDialogPane(stage);

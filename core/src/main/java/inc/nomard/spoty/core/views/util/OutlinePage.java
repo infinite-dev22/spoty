@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.util;
 
 import javafx.scene.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 
 public abstract class OutlinePage extends StackPane implements Page {
 
@@ -10,7 +9,7 @@ public abstract class OutlinePage extends StackPane implements Page {
     protected final StackPane userContentArea = new StackPane();
     protected boolean isRendered = false;
 
-    protected OutlinePage(Stage stage) {
+    protected OutlinePage() {
         super();
 
         getStyleClass().add("outline-page");
