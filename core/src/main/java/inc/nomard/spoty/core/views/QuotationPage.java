@@ -22,20 +22,23 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.previews.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -44,27 +47,16 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class QuotationController implements Initializable {
-    private static QuotationController instance;
+public class QuotationPage extends OutlinePage {
     private final Stage stage;
-    @FXML
-    public MFXTextField searchBar;
-    @FXML
-    public HBox actionsPane;
-    @FXML
-    public BorderPane contentPane;
-    @FXML
-    public MFXButton createBtn;
-    @FXML
-    public MFXProgressSpinner progress;
-    @FXML
-    public HBox leftHeaderPane;
-    @FXML
+    private MFXTextField searchBar;
     private MFXTableView<QuotationMaster> masterTable;
+    private MFXProgressSpinner progress;
+    private MFXButton createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public QuotationController(Stage stage) {
+    public QuotationPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(() ->
         {
@@ -74,18 +66,73 @@ public class QuotationController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+        addNode(init());
     }
 
-    public static QuotationController getInstance(Stage stage) {
-        if (instance == null) instance = new QuotationController(stage);
-        return instance;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
         setIcons();
         setSearchBar();
-        Platform.runLater(this::setupTable);
+        setupTable();
+        createBtnAction();
+        return pane;
+    }
+
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildRightTop() {
+        createBtn = new MFXButton("Create");
+        createBtn.setVariants(ButtonVariants.FILLED);
+        var hbox = new HBox(createBtn);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
+    }
+
+    private AnchorPane buildCenter() {
+        masterTable = new MFXTableView<>();
+        AnchorPane.setBottomAnchor(masterTable, 0d);
+        AnchorPane.setLeftAnchor(masterTable, 0d);
+        AnchorPane.setRightAnchor(masterTable, 0d);
+        AnchorPane.setTopAnchor(masterTable, 10d);
+        return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
@@ -168,11 +215,11 @@ public class QuotationController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             QuotationMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getCustomerName() + "'s quotation", stage, contentPane));
+        }, obj.getData().getCustomerName() + "'s quotation", stage, this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    QuotationMasterViewModel.getQuotationMaster(obj.getData().getId(), this::createBtnClicked, this::errorMessage);
+                    QuotationMasterViewModel.getQuotationMaster(obj.getData().getId(), this::createBtnAction, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -187,8 +234,8 @@ public class QuotationController implements Initializable {
         return contextMenu;
     }
 
-    public void createBtnClicked() {
-        BaseController.navigation.navigate(Pages.getQuotationMasterFormPane());
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> BaseController.navigation.navigate(Pages.getQuotationMasterFormPane()));
     }
 
     private void onSuccess() {
@@ -211,7 +258,7 @@ public class QuotationController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
+                        .setOwnerNode(this)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .setCenterInOwnerNode(false)
