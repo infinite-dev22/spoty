@@ -22,20 +22,23 @@ import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.previews.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -44,27 +47,16 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class TransferController implements Initializable {
-    private static TransferController instance;
+public class TransferPage extends OutlinePage {
     private final Stage stage;
-    @FXML
-    public MFXTextField searchBar;
-    @FXML
-    public HBox actionsPane;
-    @FXML
-    public MFXTableView<TransferMaster> masterTable;
-    @FXML
-    public BorderPane contentPane;
-    @FXML
-    public MFXButton createBtn;
-    @FXML
-    public MFXProgressSpinner progress;
-    @FXML
-    public HBox leftHeaderPane;
+    private MFXTextField searchBar;
+    private MFXTableView<TransferMaster> masterTable;
+    private MFXProgressSpinner progress;
+    private MFXButton createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public TransferController(Stage stage) {
+    public TransferPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(() ->
         {
@@ -74,18 +66,73 @@ public class TransferController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+        addNode(init());
     }
 
-    public static TransferController getInstance(Stage stage) {
-        if (instance == null) instance = new TransferController(stage);
-        return instance;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
         setIcons();
         setSearchBar();
-        Platform.runLater(this::setupTable);
+        setupTable();
+        createBtnAction();
+        return pane;
+    }
+
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildRightTop() {
+        createBtn = new MFXButton("Create");
+        createBtn.setVariants(ButtonVariants.FILLED);
+        var hbox = new HBox(createBtn);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
+    }
+
+    private AnchorPane buildCenter() {
+        masterTable = new MFXTableView<>();
+        AnchorPane.setBottomAnchor(masterTable, 0d);
+        AnchorPane.setLeftAnchor(masterTable, 0d);
+        AnchorPane.setRightAnchor(masterTable, 0d);
+        AnchorPane.setTopAnchor(masterTable, 10d);
+        return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
@@ -171,11 +218,11 @@ public class TransferController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             TransferMasterViewModel.deleteTransfer(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getFromBranchName() + " - " + obj.getData().getToBranchName() + " transfer", stage, contentPane));
+        }, obj.getData().getFromBranchName() + " - " + obj.getData().getToBranchName() + " transfer", stage, this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    TransferMasterViewModel.getTransfer(obj.getData().getId(), this::createBtnClicked, this::errorMessage);
+                    TransferMasterViewModel.getTransfer(obj.getData().getId(), this::createBtnAction, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -190,9 +237,8 @@ public class TransferController implements Initializable {
         return contextMenu;
     }
 
-    @FXML
-    private void createBtnClicked() {
-        BaseController.navigation.navigate(Pages.getTransferMasterFormPane());
+    private void createBtnAction() {
+        createBtn.setOnAction(event -> BaseController.navigation.navigate(Pages.getTransferMasterFormPane()));
     }
 
     private void onSuccess() {
@@ -215,7 +261,7 @@ public class TransferController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
+                        .setOwnerNode(this)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .setCenterInOwnerNode(false)
