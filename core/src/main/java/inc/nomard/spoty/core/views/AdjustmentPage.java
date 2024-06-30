@@ -33,7 +33,6 @@ import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -58,14 +57,11 @@ public class AdjustmentPage extends OutlinePage {
     public AdjustmentPage(Stage stage) {
         super();
         this.stage = stage;
-        Platform.runLater(() ->
-        {
-            try {
-                viewDialogPane(stage);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        try {
+            viewDialogPane(stage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         addNode(init());
     }
 
