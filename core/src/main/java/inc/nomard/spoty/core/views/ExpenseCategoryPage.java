@@ -21,20 +21,23 @@ import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -43,26 +46,15 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class ExpenseCategoryController implements Initializable {
-    private static ExpenseCategoryController instance;
+public class ExpenseCategoryPage extends OutlinePage {
     private final Stage stage;
-    @FXML
-    public HBox actionsPane;
-    @FXML
-    public BorderPane categoryContentPane;
-    @FXML
-    public MFXTableView<ExpenseCategory> categoryExpenseTable;
-    @FXML
-    public MFXTextField searchBar;
-    @FXML
-    public HBox refresh;
-    @FXML
-    public MFXProgressSpinner progress;
-    @FXML
-    public HBox leftHeaderPane;
+    private MFXTextField searchBar;
+    private MFXTableView<ExpenseCategory> tableView;
+    private MFXProgressSpinner progress;
+    private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private ExpenseCategoryController(Stage stage) {
+    private ExpenseCategoryPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {
@@ -72,18 +64,73 @@ public class ExpenseCategoryController implements Initializable {
                         throw new RuntimeException(ex);
                     }
                 });
+        addNode(init());
     }
 
-    public static ExpenseCategoryController getInstance(Stage stage) {
-        if (instance == null) instance = new ExpenseCategoryController(stage);
-        return instance;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
         setIcons();
         setSearchBar();
-        Platform.runLater(this::setupTable);
+        setupTable();
+        createBtnAction();
+        return pane;
+    }
+
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildCenterTop() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildRightTop() {
+        createBtn = new MFXButton("Create");
+        createBtn.setVariants(ButtonVariants.FILLED);
+        var hbox = new HBox(createBtn);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
+    }
+
+    private AnchorPane buildCenter() {
+        tableView = new MFXTableView<>();
+        AnchorPane.setBottomAnchor(tableView, 0d);
+        AnchorPane.setLeftAnchor(tableView, 0d);
+        AnchorPane.setRightAnchor(tableView, 0d);
+        AnchorPane.setTopAnchor(tableView, 10d);
+        return new AnchorPane(tableView);
     }
 
     private void setupTable() {
@@ -95,12 +142,12 @@ public class ExpenseCategoryController implements Initializable {
         categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getName));
         categoryDescription.setRowCellFactory(
                 category -> new MFXTableRowCell<>(ExpenseCategory::getDescription));
-        categoryName.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
-        categoryDescription.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
+        categoryName.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
+        categoryDescription.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
         categoryName.setColumnResizable(false);
         categoryDescription.setColumnResizable(false);
-        categoryExpenseTable.getTableColumns().addAll(categoryName, categoryDescription);
-        categoryExpenseTable
+        tableView.getTableColumns().addAll(categoryName, categoryDescription);
+        tableView
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", ExpenseCategory::getName),
@@ -109,26 +156,26 @@ public class ExpenseCategoryController implements Initializable {
         if (ExpenseCategoryViewModel.getCategories().isEmpty()) {
             ExpenseCategoryViewModel.getCategories().addListener(
                     (ListChangeListener<ExpenseCategory>)
-                            c -> categoryExpenseTable.setItems(ExpenseCategoryViewModel.getCategories()));
+                            c -> tableView.setItems(ExpenseCategoryViewModel.getCategories()));
         } else {
-            categoryExpenseTable
+            tableView
                     .itemsProperty()
                     .bindBidirectional(ExpenseCategoryViewModel.categoriesProperty());
         }
     }
 
     private void styleExpenseCategoryTable() {
-        categoryExpenseTable.setPrefSize(1200, 1000);
-        categoryExpenseTable.features().enableBounceEffect();
-        categoryExpenseTable.features().enableSmoothScrolling(0.5);
-        categoryExpenseTable.setTableRowFactory(
+        tableView.setPrefSize(1200, 1000);
+        tableView.features().enableBounceEffect();
+        tableView.features().enableSmoothScrolling(0.5);
+        tableView.setTableRowFactory(
                 t -> {
-                    MFXTableRow<ExpenseCategory> row = new MFXTableRow<>(categoryExpenseTable, t);
+                    MFXTableRow<ExpenseCategory> row = new MFXTableRow<>(tableView, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<ExpenseCategory>) event.getSource())
                                         .show(
-                                                categoryExpenseTable.getScene().getWindow(),
+                                                tableView.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -139,7 +186,7 @@ public class ExpenseCategoryController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<ExpenseCategory> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(categoryExpenseTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(tableView);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         // Actions
@@ -147,7 +194,7 @@ public class ExpenseCategoryController implements Initializable {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             ExpenseCategoryViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), stage, categoryContentPane));
+        }, obj.getData().getName(), stage, this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -170,15 +217,15 @@ public class ExpenseCategoryController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(categoryContentPane)
+                        .setOwnerNode(this)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void createBtnClicked() {
-        dialog.showAndWait();
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> dialog.showAndWait());
     }
 
     private void onSuccess() {
