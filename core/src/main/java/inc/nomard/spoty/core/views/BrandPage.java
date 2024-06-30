@@ -32,7 +32,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
@@ -47,7 +46,7 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class BrandController extends OutlinePage {
+public class BrandPage extends OutlinePage {
     private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<Brand> masterTable;
@@ -55,7 +54,7 @@ public class BrandController extends OutlinePage {
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    private BrandController(Stage stage) {
+    private BrandPage(Stage stage) {
         this.stage = stage;
         Platform.runLater(
                 () -> {
