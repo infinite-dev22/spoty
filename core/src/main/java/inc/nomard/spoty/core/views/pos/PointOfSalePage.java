@@ -1,11 +1,11 @@
 package inc.nomard.spoty.core.views.pos;
 
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.pos.components.*;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.*;

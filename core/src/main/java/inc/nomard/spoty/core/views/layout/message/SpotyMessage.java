@@ -1,8 +1,8 @@
-package inc.nomard.spoty.core.components.message;
+package inc.nomard.spoty.core.views.layout.message;
 
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.animation.*;
 import javafx.geometry.*;

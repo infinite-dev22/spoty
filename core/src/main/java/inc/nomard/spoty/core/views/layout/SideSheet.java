@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.components;
+package inc.nomard.spoty.core.views.layout;
 
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;

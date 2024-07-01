@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.components.glass_morphism;
+package inc.nomard.spoty.core.views.layout;
 
 import javafx.geometry.*;
 import javafx.scene.*;

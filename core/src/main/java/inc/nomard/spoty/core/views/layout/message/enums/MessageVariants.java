@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.components.message.enums;
+package inc.nomard.spoty.core.views.layout.message.enums;
 
 public enum MessageVariants {
     ERROR("error"),

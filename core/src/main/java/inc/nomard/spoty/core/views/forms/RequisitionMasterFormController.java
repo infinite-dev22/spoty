@@ -2,14 +2,13 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
-import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.utils.*;

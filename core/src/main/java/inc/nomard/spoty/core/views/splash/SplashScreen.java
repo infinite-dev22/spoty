@@ -2,11 +2,11 @@ package inc.nomard.spoty.core.views.splash;
 
 import fr.brouillard.oss.cssfx.*;
 import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.navigation.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;

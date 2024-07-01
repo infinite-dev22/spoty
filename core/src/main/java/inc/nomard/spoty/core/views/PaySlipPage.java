@@ -1,20 +1,17 @@
 package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
 import javafx.fxml.*;
 import javafx.geometry.*;

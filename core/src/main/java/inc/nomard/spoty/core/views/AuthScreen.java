@@ -2,8 +2,6 @@ package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import static inc.nomard.spoty.core.values.strings.Values.*;
@@ -19,6 +17,8 @@ import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.enums.*;

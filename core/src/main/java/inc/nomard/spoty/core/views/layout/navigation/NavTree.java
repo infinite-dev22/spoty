@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.components.navigation;
+package inc.nomard.spoty.core.views.layout.navigation;
 
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;

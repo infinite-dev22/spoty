@@ -2,11 +2,11 @@ package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;

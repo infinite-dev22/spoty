@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.components.navigation;
+package inc.nomard.spoty.core.views.layout.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.views.forms.*;

@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.components.payment_plan_card;
+package inc.nomard.spoty.core.views.layout;
 
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
