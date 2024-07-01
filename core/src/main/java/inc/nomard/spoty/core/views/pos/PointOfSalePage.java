@@ -38,7 +38,6 @@ import lombok.extern.java.*;
 
 @Log
 public class PointOfSalePage extends OutlinePage {
-    private static volatile PointOfSalePage instance;
     private final ToggleGroup toggleGroup = new ToggleGroup();
     private final Stage stage;
     @FXML
@@ -54,7 +53,7 @@ public class PointOfSalePage extends OutlinePage {
     @FXML
     private MFXButton checkOutBtn, emptyCartBtn;
     @FXML
-    private HBox filterPane, leftHeaderPane;
+    private HBox filterPane;
     @FXML
     private MFXScrollPane productScrollPane;
     // @FXML
@@ -70,13 +69,7 @@ public class PointOfSalePage extends OutlinePage {
     @FXML
     private TableColumn<SaleDetail, SaleDetail> cartActions;
     @FXML
-    private MFXScrollPane scrollPane;
-    @FXML
-    private VBox cartItemHolder;
-    @FXML
     private MFXComboBox<Tax> tax;
-    @FXML
-    private BorderPane contentPane;
     @FXML
     private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
@@ -258,10 +251,10 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private MFXScrollPane buildCartScroll() {
-        cartItemHolder = new VBox();
+        var cartItemHolder = new VBox();
         cartItemHolder.setPrefHeight(200d);
         cartItemHolder.setPrefWidth(100d);
-        scrollPane = new MFXScrollPane(cartItemHolder);
+        var scrollPane = new MFXScrollPane(cartItemHolder);
         scrollPane.setManaged(false);
         scrollPane.setVisible(false);
         NodeUtils.setAnchors(scrollPane, new Insets(0d));
