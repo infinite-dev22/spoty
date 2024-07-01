@@ -84,6 +84,7 @@ public class ProductCategoryPage extends OutlinePage {
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
         progress.setVisible(false);
+        progress.setManaged(false);
         var hbox = new HBox(progress);
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
