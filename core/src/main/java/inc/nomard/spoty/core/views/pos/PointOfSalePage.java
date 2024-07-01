@@ -21,19 +21,22 @@ import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.pos.components.*;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.legacy.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
@@ -48,8 +51,8 @@ import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class PointOfSaleController implements Initializable {
-    private static volatile PointOfSaleController instance;
+public class PointOfSalePage extends OutlinePage {
+    private static volatile PointOfSalePage instance;
     private final ToggleGroup toggleGroup = new ToggleGroup();
     private final Stage stage;
     @FXML
@@ -92,22 +95,9 @@ public class PointOfSaleController implements Initializable {
     private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
 
-    private PointOfSaleController(Stage stage) {
+    public PointOfSalePage(Stage stage) {
         this.stage = stage;
-    }
-
-    public static PointOfSaleController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (PointOfSaleController.class) {
-                instance = new PointOfSaleController(stage);
-            }
-        }
-        return instance;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        checkOutBtn.setText("CheckOut $0.00");
+        addNode(init());
         configureProductScrollPane();
         setIcons();
         setSearchBar();
@@ -118,6 +108,265 @@ public class PointOfSaleController implements Initializable {
         bindTotalLabels();
         SaleMasterViewModel.setDefaultCustomer();
     }
+
+    // Top UI.
+    private HBox buildTop() {
+        var hbox = new HBox();
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        return hbox;
+    }
+
+    // Header UI.
+    private HBox buildLeftHeaderPane() {
+        progress = new MFXProgressSpinner();
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        progress.setManaged(false);
+        var hbox = new HBox(progress);
+        hbox.setSpacing(10d);
+        BorderPane.setAlignment(hbox, Pos.CENTER_LEFT);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        return hbox;
+    }
+
+    private HBox buildCenterHeaderPane() {
+        searchBar = new MFXTextField();
+        searchBar.setPromptText("Search products");
+        searchBar.setFloatMode(FloatMode.DISABLED);
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setSpacing(10d);
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        return hbox;
+    }
+
+    private HBox buildRightHeaderPane() {
+        var hbox = new HBox();
+        hbox.setSpacing(10d);
+        BorderPane.setAlignment(hbox, Pos.CENTER_RIGHT);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        return hbox;
+    }
+
+    private HBox buildHeaderUI() {
+        var hbox = new HBox();
+        hbox.setSpacing(10d);
+        hbox.getStyleClass().add("card-flat");
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftHeaderPane(),
+                buildCenterHeaderPane(),
+                buildRightHeaderPane());
+        return hbox;
+    }
+
+    // Filter UI.
+    private MFXScrollPane buildFilterUI() {
+        filterPane = new HBox();
+        filterPane.setAlignment(Pos.CENTER_LEFT);
+        filterPane.setSpacing(10d);
+        filterPane.setPadding(new Insets(5d));
+        var scroll = new MFXScrollPane(filterPane);
+        scroll.maxHeight(100d);
+        scroll.minHeight(60d);
+        scroll.prefHeight(80d);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        VBox.setVgrow(scroll, Priority.NEVER);
+        return scroll;
+    }
+
+    // Product Card Holder UI.
+    private MFXScrollPane buildProductCardHolderUI() {
+        productScrollPane = new MFXScrollPane();
+        productScrollPane.setFitToHeight(true);
+        productScrollPane.setFitToWidth(true);
+        productScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        productScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        return productScrollPane;
+    }
+
+    // Product UI.
+    private VBox buildProductUI() {
+        var vbox = new VBox();
+        vbox.getStyleClass().add("card-flat");
+        vbox.setPadding(new Insets(2.5d));
+        VBox.setVgrow(vbox, Priority.ALWAYS);
+        vbox.getChildren().addAll(buildFilterUI(), buildProductCardHolderUI());
+        return vbox;
+    }
+
+    // Center UI.
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(10d);
+        BorderPane.setAlignment(vbox, Pos.CENTER);
+        BorderPane.setMargin(vbox, new Insets(0d, 5d, 0d, 0d));
+        vbox.getChildren().addAll(buildHeaderUI(), buildProductUI());
+        return vbox;
+    }
+
+    // Customer UI.
+    private VBox buildCustomerUI() {
+        customer = new MFXFilterComboBox<>();
+        customer.setAllowEdit(true);
+        customer.setFloatMode(FloatMode.BORDER);
+        customer.setFloatingText("Customer");
+        customer.setPrefColumnCount(0);
+        customer.setPrefWidth(1000d);
+        customer.setSelectable(true);
+        HBox.setHgrow(customer, Priority.ALWAYS);
+        var vbox = new VBox(customer);
+        vbox.setPrefWidth(538d);
+        vbox.setSpacing(10d);
+        return vbox;
+    }
+
+    // Cart UI.
+    private MFXLegacyTableView<SaleDetail> buildCartTable() {
+        // Table columns.
+        cartName = new TableColumn<>("Name");
+        cartName.setEditable(false);
+        cartName.setSortable(false);
+        cartName.setPrefWidth(75d);
+        cartQuantity = new TableColumn<>("Qnty");
+        cartQuantity.setEditable(true);
+        cartQuantity.setSortable(false);
+        cartQuantity.setPrefWidth(50d);
+        productTax = new TableColumn<>("Tax(%)");
+        productTax.setEditable(false);
+        productTax.setSortable(false);
+        productTax.setPrefWidth(40d);
+        productDiscount = new TableColumn<>("Discount(%)");
+        productDiscount.setEditable(false);
+        productDiscount.setSortable(false);
+        productDiscount.setPrefWidth(60d);
+        cartSubTotal = new TableColumn<>("Sub Total");
+        cartSubTotal.setEditable(false);
+        cartSubTotal.setSortable(false);
+        cartSubTotal.setPrefWidth(75d);
+        cartActions = new TableColumn<>();
+        cartActions.setEditable(false);
+        cartActions.setSortable(false);
+        cartActions.setPrefWidth(20d);
+        var columnList = new LinkedList<>(Stream.of(cartName,
+                cartQuantity,
+                productTax,
+                productDiscount,
+                cartSubTotal,
+                cartActions).toList());
+        // Table.
+        cart = new MFXLegacyTableView<>();
+        NodeUtils.setAnchors(cart, new Insets(0d));
+        cart.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        cart.getColumns().addAll(columnList);
+        return cart;
+    }
+
+    private MFXScrollPane buildCartScroll() {
+        cartItemHolder = new VBox();
+        cartItemHolder.setPrefHeight(200d);
+        cartItemHolder.setPrefWidth(100d);
+        scrollPane = new MFXScrollPane(cartItemHolder);
+        scrollPane.setManaged(false);
+        scrollPane.setVisible(false);
+        NodeUtils.setAnchors(scrollPane, new Insets(0d));
+        return scrollPane;
+    }
+
+    private AnchorPane buildCartUI() {
+        var pane = new AnchorPane();
+        VBox.setVgrow(pane, Priority.ALWAYS);
+        pane.getChildren().addAll(buildCartTable(), buildCartScroll());
+        return pane;
+    }
+
+    // Deductions UI.
+    private HBox buildDeductions() {
+        discount = new MFXComboBox<>();
+        discount.setAllowEdit(false);
+        discount.setFloatMode(FloatMode.BORDER);
+        discount.setFloatingText("Discount(%)");
+        discount.setPrefColumnCount(0);
+        discount.setPrefWidth(500d);
+        discount.setSelectable(true);
+        tax = new MFXComboBox<>();
+        tax.setAllowEdit(false);
+        tax.setFloatMode(FloatMode.BORDER);
+        tax.setFloatingText("Tax(%)");
+        tax.setPrefColumnCount(0);
+        tax.setPrefWidth(500d);
+        tax.setSelectable(true);
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setSpacing(10d);
+        hbox.getChildren().addAll(discount, tax);
+        return hbox;
+    }
+
+    // Cart Buttons UI.
+    private HBox buildButtons() {
+        checkOutBtn = new MFXButton("CheckOut $0.00");
+        checkOutBtn.setOnAction(event -> savePOSSale());
+        checkOutBtn.setPrefWidth(650d);
+        checkOutBtn.getStyleClass().add("check-out-button");
+        checkOutBtn.setDisable(true);
+        emptyCartBtn = new MFXButton("Empty Cart");
+        emptyCartBtn.setOnAction(event -> clearCart());
+        emptyCartBtn.setPrefWidth(400d);
+        emptyCartBtn.getStyleClass().add("empty-cart-button");
+        emptyCartBtn.setDisable(true);
+        var region = new Region();
+        HBox.setHgrow(region, Priority.ALWAYS);
+        var hbox = new HBox();
+        hbox.setSpacing(5d);
+        hbox.getChildren().addAll(checkOutBtn, region, emptyCartBtn);
+        return hbox;
+    }
+
+    // Cart Bottom UI.
+    private VBox buildCartBottomUI() {
+        var vbox = new VBox();
+        vbox.setSpacing(20d);
+        vbox.setPadding(new Insets(5d, 10d, 10d, 10d));
+        vbox.getChildren().addAll(buildDeductions(), buildButtons());
+        return vbox;
+    }
+
+    // Right UI.
+    private VBox buildRight() {
+        var vbox = new VBox();
+        vbox.setPrefHeight(584d);
+        vbox.setMinWidth(338d);
+        vbox.setPrefWidth(538d);
+        vbox.setMinWidth(538d);
+        vbox.getStyleClass().add("card-flat");
+        vbox.setSpacing(10d);
+        vbox.setPadding(new Insets(10d, 5d, 5d, 5d));
+        BorderPane.setAlignment(vbox, Pos.CENTER);
+        BorderPane.setMargin(vbox, new Insets(0d, 0d, 0d, 5d));
+        vbox.getChildren().addAll(buildCustomerUI(), buildCartUI(), buildCartBottomUI());
+        return vbox;
+    }
+
+    // POS UI.
+    private BorderPane init() {
+        var pane = new BorderPane();
+        pane.setPadding(new Insets(5d, 5d, 5d, 0d));
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
+        pane.setRight(buildRight());
+        return pane;
+    }
+
 
     private void setPOSComboBoxes() {
         setupFilterComboBox(customer, CustomerViewModel.getCustomers(), SaleMasterViewModel.customerProperty(),
@@ -497,6 +746,7 @@ public class PointOfSaleController implements Initializable {
             if (oldValue.isBlank() && newValue.isBlank()) {
                 ProductViewModel.getAllProducts(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             ProductViewModel.searchItem(newValue, () -> progress.setVisible(false), this::displayErrorMessage);
         });

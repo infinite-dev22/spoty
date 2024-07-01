@@ -28,8 +28,6 @@ import lombok.extern.java.*;
 
 @Log
 public class Pages {
-    // Sale
-    private static final FXMLLoader posLoader = fxmlLoader("views/PointOfSale.fxml");
     // Reports
     private static final FXMLLoader stockReportLoader = fxmlLoader("views/report/StockReport.fxml");
     private static final FXMLLoader closingLoader = fxmlLoader("views/report/Closing.fxml");
@@ -59,9 +57,6 @@ public class Pages {
             fxmlLoader("views/forms/TransferMasterForm.fxml");
     private static final FXMLLoader adjustmentMasterFormLoader =
             fxmlLoader("views/forms/AdjustmentMasterForm.fxml");
-
-    @Getter
-    private static BorderPane posPane;
 
     // Reports
     @Getter
@@ -123,10 +118,6 @@ public class Pages {
     @Getter
     private static BorderPane transferMasterFormPane;
 
-    private static void setSales(Stage stage) {
-        posLoader.setControllerFactory(e -> PointOfSaleController.getInstance(stage));
-    }
-
     private static void setReports() {
         stockReportLoader.setControllerFactory(e -> new StockReportController());
         closingLoader.setControllerFactory(e -> new ClosingController());
@@ -163,8 +154,6 @@ public class Pages {
     }
 
     public static void setPanes() throws IOException {
-        // Sales
-        posPane = posLoader.load();
         // Reports
         stockReportPane = stockReportLoader.load();
         closingPane = closingLoader.load();
@@ -193,7 +182,6 @@ public class Pages {
     }
 
     public static void setControllers(Stage stage) {
-        setSales(stage);
         setReports();
         setHRM(stage);
         setMasterForms(stage);

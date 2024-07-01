@@ -16,6 +16,7 @@ package inc.nomard.spoty.core.components.navigation;
 
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.dashboard.*;
+import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.flavouring.*;
@@ -61,7 +62,7 @@ public class Navigation {
         map.put("TAXES", NavTree.NavTreeItem.page("Taxes", new TaxPage(stage)));
         map.put("DISCOUNTS", NavTree.NavTreeItem.page("Discounts", new DiscountPage(stage)));
         // Sales
-        map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", Pages.getPosPane()));
+        map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", new PointOfSalePage(stage)));
         map.put("ORDERS", NavTree.NavTreeItem.page("Orders", new OrderPage(stage)));
         map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", new SaleReturnPage(stage)));
         map.put("SALE_TERMS", NavTree.NavTreeItem.page("Sale Terms", new SaleTermPage()));
