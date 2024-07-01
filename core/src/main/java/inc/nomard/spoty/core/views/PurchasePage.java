@@ -357,6 +357,7 @@ public class PurchasePage extends OutlinePage {
             progress.setVisible(true);
             PurchaseMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

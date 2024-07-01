@@ -249,6 +249,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
             progress.setVisible(true);
             BeneficiaryBadgeViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

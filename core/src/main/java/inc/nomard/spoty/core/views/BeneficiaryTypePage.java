@@ -248,6 +248,7 @@ public class BeneficiaryTypePage extends OutlinePage {
             progress.setVisible(true);
             BeneficiaryTypeViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

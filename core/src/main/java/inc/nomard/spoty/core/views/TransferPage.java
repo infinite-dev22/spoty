@@ -320,6 +320,7 @@ public class TransferPage extends OutlinePage {
             progress.setVisible(true);
             TransferMasterViewModel.searchTransfer(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

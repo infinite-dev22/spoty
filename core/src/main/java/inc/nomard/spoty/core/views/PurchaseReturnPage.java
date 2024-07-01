@@ -369,6 +369,7 @@ public class PurchaseReturnPage extends OutlinePage {
             progress.setVisible(true);
             PurchaseReturnMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

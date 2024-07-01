@@ -244,6 +244,7 @@ public class DesignationPage extends OutlinePage {
             progress.setVisible(true);
             DesignationViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

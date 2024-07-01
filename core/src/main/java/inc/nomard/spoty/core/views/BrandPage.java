@@ -278,6 +278,7 @@ public class BrandPage extends OutlinePage {
             progress.setVisible(true);
             BrandViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

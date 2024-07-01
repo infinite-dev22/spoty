@@ -258,6 +258,7 @@ public class ExpensePage extends OutlinePage {
             progress.setVisible(true);
             ExpensesViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

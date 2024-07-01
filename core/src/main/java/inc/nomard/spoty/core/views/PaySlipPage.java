@@ -148,6 +148,7 @@ public class PaySlipPage extends OutlinePage {
             progress.setVisible(true);
             PaySlipViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

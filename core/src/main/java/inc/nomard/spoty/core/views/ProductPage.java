@@ -345,6 +345,7 @@ public class ProductPage extends OutlinePage {
             progress.setVisible(true);
             ProductViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

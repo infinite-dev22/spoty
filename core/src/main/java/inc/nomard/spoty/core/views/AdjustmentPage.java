@@ -276,6 +276,7 @@ public class AdjustmentPage extends OutlinePage {
             progress.setVisible(true);
             AdjustmentMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

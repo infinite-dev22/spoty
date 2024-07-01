@@ -299,6 +299,7 @@ public class CustomerPage extends OutlinePage {
             progress.setVisible(true);
             CustomerViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

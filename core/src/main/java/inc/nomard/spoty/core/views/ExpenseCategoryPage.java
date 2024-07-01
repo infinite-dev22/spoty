@@ -249,6 +249,7 @@ public class ExpenseCategoryPage extends OutlinePage {
             progress.setVisible(true);
             ExpenseCategoryViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

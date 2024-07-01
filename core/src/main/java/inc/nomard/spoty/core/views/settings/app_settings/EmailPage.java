@@ -275,6 +275,7 @@ public class EmailPage extends OutlinePage {
             progress.setVisible(true);
             CurrencyViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

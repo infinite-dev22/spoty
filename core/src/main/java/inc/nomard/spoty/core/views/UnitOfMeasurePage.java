@@ -298,6 +298,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             progress.setVisible(true);
             UOMViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

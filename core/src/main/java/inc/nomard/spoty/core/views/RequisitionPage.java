@@ -303,6 +303,7 @@ public class RequisitionPage extends OutlinePage {
             progress.setVisible(true);
             RequisitionMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

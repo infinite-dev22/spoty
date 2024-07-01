@@ -329,6 +329,7 @@ public class OrderPage extends OutlinePage {
             progress.setVisible(true);
             SaleMasterViewModel.searchSaleMaster(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

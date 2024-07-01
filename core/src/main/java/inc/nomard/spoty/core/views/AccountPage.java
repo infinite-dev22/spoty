@@ -262,6 +262,7 @@ public class AccountPage extends OutlinePage {
             progress.setVisible(true);
             AccountViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

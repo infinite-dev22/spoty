@@ -269,6 +269,7 @@ public class EmploymentStatusPage extends OutlinePage {
             progress.setVisible(true);
             EmploymentStatusViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

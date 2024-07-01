@@ -317,6 +317,8 @@ public class QuotationPage extends OutlinePage {
             progress.setVisible(true);
             QuotationMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

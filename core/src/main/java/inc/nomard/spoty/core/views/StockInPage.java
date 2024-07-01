@@ -308,6 +308,7 @@ public class StockInPage extends OutlinePage {
             progress.setVisible(true);
             StockInMasterViewModel.searchStockInMaster(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

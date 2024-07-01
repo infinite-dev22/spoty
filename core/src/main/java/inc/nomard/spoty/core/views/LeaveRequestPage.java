@@ -266,6 +266,7 @@ public class LeaveRequestPage extends OutlinePage {
             progress.setVisible(true);
             LeaveStatusViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

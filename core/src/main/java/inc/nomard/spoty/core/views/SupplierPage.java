@@ -312,6 +312,7 @@ public class SupplierPage extends OutlinePage {
             progress.setVisible(true);
             SupplierViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

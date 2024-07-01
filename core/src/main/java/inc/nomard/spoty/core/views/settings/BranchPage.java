@@ -298,6 +298,7 @@ public class BranchPage extends OutlinePage {
             progress.setVisible(true);
             BranchViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }

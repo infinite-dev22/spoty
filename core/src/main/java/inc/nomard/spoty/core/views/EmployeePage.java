@@ -265,6 +265,7 @@ public class EmployeePage extends OutlinePage {
             progress.setVisible(true);
             UserViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
+                progress.setManaged(false);
             }, this::errorMessage);
         });
     }
