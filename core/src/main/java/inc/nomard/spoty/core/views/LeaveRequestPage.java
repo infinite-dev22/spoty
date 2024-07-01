@@ -262,6 +262,7 @@ public class LeaveRequestPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 LeaveStatusViewModel.getAllLeaveStatuses(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             LeaveStatusViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

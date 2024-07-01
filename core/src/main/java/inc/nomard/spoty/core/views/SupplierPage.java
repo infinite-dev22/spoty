@@ -308,6 +308,7 @@ public class SupplierPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 SupplierViewModel.getAllSuppliers(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             SupplierViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

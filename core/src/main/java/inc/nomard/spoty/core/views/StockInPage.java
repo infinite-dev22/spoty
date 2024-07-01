@@ -304,6 +304,7 @@ public class StockInPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 StockInMasterViewModel.getAllStockInMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             StockInMasterViewModel.searchStockInMaster(nv, () -> {
                 progress.setVisible(false);

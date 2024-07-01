@@ -294,6 +294,7 @@ public class BranchPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 BranchViewModel.getAllBranches(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             BranchViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

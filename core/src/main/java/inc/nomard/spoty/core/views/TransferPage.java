@@ -316,6 +316,7 @@ public class TransferPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 TransferMasterViewModel.getAllTransferMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             TransferMasterViewModel.searchTransfer(nv, () -> {
                 progress.setVisible(false);

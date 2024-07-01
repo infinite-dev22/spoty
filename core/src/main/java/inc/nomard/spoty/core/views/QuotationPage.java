@@ -313,6 +313,7 @@ public class QuotationPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 QuotationMasterViewModel.getAllQuotationMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             QuotationMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

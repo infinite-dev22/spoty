@@ -245,6 +245,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             BeneficiaryBadgeViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

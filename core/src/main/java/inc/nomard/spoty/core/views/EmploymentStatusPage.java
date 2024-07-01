@@ -265,6 +265,7 @@ public class EmploymentStatusPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 EmploymentStatusViewModel.getAllEmploymentStatuses(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             EmploymentStatusViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

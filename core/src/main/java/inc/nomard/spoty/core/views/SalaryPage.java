@@ -336,6 +336,7 @@ public class SalaryPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 SalaryAdvanceViewModel.getAllSalaryAdvances(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             SalaryAdvanceViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

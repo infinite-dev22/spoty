@@ -295,6 +295,7 @@ public class CustomerPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 CustomerViewModel.getAllCustomers(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             CustomerViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

@@ -272,6 +272,7 @@ public class AdjustmentPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             AdjustmentMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

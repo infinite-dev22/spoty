@@ -294,6 +294,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 UOMViewModel.getAllUOMs(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             UOMViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

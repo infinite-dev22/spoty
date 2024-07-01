@@ -277,6 +277,7 @@ public class CurrencyPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 CurrencyViewModel.getAllCurrencies(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             CurrencyViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

@@ -325,6 +325,7 @@ public class OrderPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 SaleMasterViewModel.getAllSaleMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             SaleMasterViewModel.searchSaleMaster(nv, () -> {
                 progress.setVisible(false);

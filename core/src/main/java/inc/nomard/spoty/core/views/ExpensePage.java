@@ -254,6 +254,7 @@ public class ExpensePage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 ExpensesViewModel.getAllExpenses(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             ExpensesViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

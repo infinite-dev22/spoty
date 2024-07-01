@@ -274,6 +274,7 @@ public class BrandPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 BrandViewModel.getAllBrands(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             BrandViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

@@ -144,6 +144,7 @@ public class PaySlipPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 PaySlipViewModel.getAllPaySlips(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             PaySlipViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

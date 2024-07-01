@@ -277,6 +277,7 @@ public class ProductCategoryPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 ProductCategoryViewModel.getAllProductCategories(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             ProductCategoryViewModel.searchItem(nv, () -> progress.setVisible(false), this::errorMessage);
         });

@@ -341,6 +341,7 @@ public class ProductPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 ProductViewModel.getAllProducts(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             ProductViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

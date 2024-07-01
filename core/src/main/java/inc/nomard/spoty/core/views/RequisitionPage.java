@@ -299,6 +299,7 @@ public class RequisitionPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 RequisitionMasterViewModel.getAllRequisitionMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             RequisitionMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

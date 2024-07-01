@@ -261,6 +261,7 @@ public class EmployeePage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 UserViewModel.getAllUsers(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             UserViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

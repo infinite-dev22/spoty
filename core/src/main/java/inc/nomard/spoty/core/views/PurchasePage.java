@@ -353,6 +353,7 @@ public class PurchasePage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             PurchaseMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

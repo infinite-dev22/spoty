@@ -240,6 +240,7 @@ public class DesignationPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 DesignationViewModel.getAllDesignations(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             DesignationViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

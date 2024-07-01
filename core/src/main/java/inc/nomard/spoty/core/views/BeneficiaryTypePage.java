@@ -244,6 +244,7 @@ public class BeneficiaryTypePage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 BeneficiaryTypeViewModel.getAllBeneficiaryTypes(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             BeneficiaryTypeViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);

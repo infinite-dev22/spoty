@@ -365,6 +365,7 @@ public class PurchaseReturnPage extends OutlinePage {
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
                 PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
             }
+            progress.setManaged(true);
             progress.setVisible(true);
             PurchaseReturnMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
