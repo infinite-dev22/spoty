@@ -29,8 +29,6 @@ public abstract class Form extends StackPane implements Page {
 
     protected void createPageLayout() {
         StackPane.setMargin(userContent, new Insets(0, OUTLINE_WIDTH, 0, 0));
-        userContent.setMinWidth(Page.MAX_WIDTH - OUTLINE_WIDTH - 100);
-        userContent.setMaxWidth(Page.MAX_WIDTH - OUTLINE_WIDTH - 100);
 
         scrollPane.setContent(userContentArea);
         NodeUtils.setScrollConstraints(scrollPane, AS_NEEDED, true, NEVER, true);
@@ -51,11 +49,6 @@ public abstract class Form extends StackPane implements Page {
     @Override
     public Pane getView() {
         return this;
-    }
-
-    @Override
-    public Node getSnapshotTarget() {
-        return userContentArea;
     }
 
     @Override
