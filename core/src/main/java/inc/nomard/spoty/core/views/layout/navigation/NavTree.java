@@ -68,7 +68,7 @@ public class NavTree extends TreeView<Nav> {
                     }
                 };
 
-        getStyleClass().addAll(EDGE_TO_EDGE);
+        getStyleClass().addAll(EDGE_TO_EDGE, "nav-tree");
         setShowRoot(false);
         rootProperty().bind(navigation.navTreeProperty());
         setCellFactory(p -> new NavTreeCell());
