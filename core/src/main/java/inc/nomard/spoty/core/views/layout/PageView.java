@@ -7,6 +7,10 @@ import javafx.scene.*;
 import javafx.scene.layout.*;
 
 public class PageView extends StackPane {
+    public PageView() {
+        init();
+    }
+
     private void init() {
         this.setPrefHeight(604d);
         this.setPrefWidth(1053d);
