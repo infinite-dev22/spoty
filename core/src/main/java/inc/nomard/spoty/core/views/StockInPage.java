@@ -3,9 +3,9 @@ package inc.nomard.spoty.core.views;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.layout.navigation.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
@@ -33,7 +33,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class StockInPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<StockInMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -41,12 +40,11 @@ public class StockInPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public StockInPage(Stage stage) {
-        this.stage = stage;
+    public StockInPage() {
         Platform.runLater(() ->
         {
             try {
-                viewDialogPane(stage);
+                viewDialogPane();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -213,37 +211,25 @@ public class StockInPage extends OutlinePage {
     }
 
     private void createBtnAction() {
-        createBtn.setOnAction(event -> BaseController.navigation.navigate(Pages.getStockInMasterFormPane()));
+        createBtn.setOnAction(event -> {
+        });// BaseController.navigation.navigate(Pages.getStockInMasterFormPane()));
     }
 
     private void onSuccess() {
         StockInMasterViewModel.getAllStockInMasters(null, null);
     }
 
-    private void viewDialogPane(Stage stage) throws IOException {
+    private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/StockInPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new StockInPreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
+        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
 
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
-
-        viewDialog =
-                MFXGenericDialogBuilder.build(genericDialog)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+        dialogContent.setPrefHeight(screenHeight * .98);
+        dialogContent.setPrefWidth(700);
+        viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void viewShow(StockInMaster stockInMaster) {
@@ -271,10 +257,10 @@ public class StockInPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

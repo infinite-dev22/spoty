@@ -9,12 +9,10 @@ import javafx.fxml.*;
 import javafx.scene.image.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
-import javafx.stage.*;
 import lombok.extern.java.*;
 
 @Log
 public class UserPreviewController implements Initializable {
-    private static UserPreviewController instance;
     @FXML
     public Circle imageHolder;
     @FXML
@@ -27,14 +25,6 @@ public class UserPreviewController implements Initializable {
     public Label genderLbl;
     @FXML
     public Label dobLbl;
-
-    public UserPreviewController(Stage stage) {
-    }
-
-    public static UserPreviewController getInstance(Stage stage) {
-        if (instance == null) instance = new UserPreviewController(stage);
-        return instance;
-    }
 
     public void init(UserProfile supplier) {
         if (Objects.nonNull(supplier.getAvatar()) && !supplier.getAvatar().isEmpty() && !supplier.getAvatar().isBlank()) {

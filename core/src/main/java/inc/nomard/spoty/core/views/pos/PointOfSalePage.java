@@ -3,7 +3,7 @@ package inc.nomard.spoty.core.views.pos;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.pos.components.*;
@@ -32,14 +32,12 @@ import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class PointOfSalePage extends OutlinePage {
     private final ToggleGroup toggleGroup = new ToggleGroup();
-    private final Stage stage;
     @FXML
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
     @FXML
@@ -74,8 +72,7 @@ public class PointOfSalePage extends OutlinePage {
     private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
 
-    public PointOfSalePage(Stage stage) {
-        this.stage = stage;
+    public PointOfSalePage() {
         addNode(init());
         configureProductScrollPane();
         setIcons();
@@ -706,10 +703,10 @@ public class PointOfSalePage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

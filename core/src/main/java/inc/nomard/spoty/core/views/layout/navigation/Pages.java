@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.layout.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.report.*;
 import java.io.*;
@@ -121,22 +120,22 @@ public class Pages {
     }
 
     private static void setHRM(Stage stage) {
-        userProfileLoader.setControllerFactory(e -> UserPreviewController.getInstance(stage));
+        userProfileLoader.setControllerFactory(e -> new UserPreviewController());
     }
 
     private static void setMasterForms(Stage stage) {
         adjustmentMasterFormLoader.setControllerFactory(
-                c -> AdjustmentMasterFormController.getInstance(stage));
+                c -> new AdjustmentMasterFormController());
         quotationMasterFormLoader.setControllerFactory(
-                c -> QuotationMasterFormController.getInstance(stage));
+                c -> new QuotationMasterFormController());
         purchaseMasterFormLoader.setControllerFactory(
-                c -> PurchaseMasterFormController.getInstance(stage));
+                c -> new PurchaseMasterFormController());
         requisitionMasterFormLoader.setControllerFactory(
-                c -> RequisitionMasterFormController.getInstance(stage));
+                c -> new RequisitionMasterFormController());
         stockInMasterFormLoader.setControllerFactory(
-                c -> StockInMasterFormController.getInstance(stage));
+                c -> new StockInMasterFormController());
         transferMasterFormLoader.setControllerFactory(
-                c -> TransferMasterFormController.getInstance(stage));
+                c -> new TransferMasterFormController());
     }
 
     public static void setPanes() throws IOException {

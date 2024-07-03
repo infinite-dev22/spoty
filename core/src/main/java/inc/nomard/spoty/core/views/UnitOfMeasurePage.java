@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
@@ -33,19 +34,17 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class UnitOfMeasurePage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<UnitOfMeasure> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    public UnitOfMeasurePage(Stage stage) {
-        this.stage = stage;
+    public UnitOfMeasurePage() {
         Platform.runLater(
                 () -> {
                     try {
-                        uomFormDialogPane(stage);
+                        uomFormDialogPane();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -200,7 +199,7 @@ public class UnitOfMeasurePage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             UOMViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), stage, this));
+        }, obj.getData().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -211,9 +210,9 @@ public class UnitOfMeasurePage extends OutlinePage {
         return contextMenu;
     }
 
-    private void uomFormDialogPane(Stage stage) throws IOException {
+    private void uomFormDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/UOMForm.fxml");
-        fxmlLoader.setControllerFactory(c -> UOMFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new UOMFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -221,17 +220,7 @@ public class UnitOfMeasurePage extends OutlinePage {
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
 
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void createBtnAction() {
@@ -261,10 +250,10 @@ public class UnitOfMeasurePage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

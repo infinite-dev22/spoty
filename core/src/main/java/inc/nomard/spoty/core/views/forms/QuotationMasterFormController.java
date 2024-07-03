@@ -5,8 +5,8 @@ import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -15,14 +15,12 @@ import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
@@ -33,15 +31,12 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class QuotationMasterFormController implements Initializable {
-    private static QuotationMasterFormController instance;
-    private final Stage stage;
     @FXML
     public Label quotationFormTitle;
     @FXML
@@ -62,25 +57,8 @@ public class QuotationMasterFormController implements Initializable {
             cancelBtn;
     private MFXStageDialog dialog;
 
-    private QuotationMasterFormController(Stage stage) {
-        this.stage = stage;
-        Platform.runLater(
-                () -> {
-                    try {
-                        quotationProductDialogPane(stage);
-                    } catch (IOException e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                });
-    }
-
-    public static QuotationMasterFormController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (QuotationMasterFormController.class) {
-                instance = new QuotationMasterFormController(stage);
-            }
-        }
-        return instance;
+    public QuotationMasterFormController() {
+        Platform.runLater(this::quotationProductDialogPane);
     }
 
     @Override
@@ -203,7 +181,7 @@ public class QuotationMasterFormController implements Initializable {
                     obj.getData().getId(),
                     QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
             event.consume();
-        }, obj.getData().getProductName(), stage, quotationFormContentPane));
+        }, obj.getData().getProductName(), quotationFormContentPane));
         // Edit
         edit.setOnAction(
                 event -> {
@@ -217,22 +195,8 @@ public class QuotationMasterFormController implements Initializable {
         return contextMenu;
     }
 
-    private void quotationProductDialogPane(Stage stage) throws IOException {
-        try {
-            dialog =
-                    MFXGenericDialogBuilder.build(Dialogs.getQuotationDialogContent())
-                            .toStageDialogBuilder()
-                            .initOwner(stage)
-                            .initModality(Modality.WINDOW_MODAL)
-                            .setOwnerNode(quotationFormContentPane)
-                            .setScrimPriority(ScrimPriority.WINDOW)
-                            .setScrimOwner(true)
-                            .get();
-
-            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-        } catch (Exception e) {
-            SpotyLogger.writeToFile(e, QuotationMasterFormController.class);
-        }
+    private void quotationProductDialogPane() {
+        dialog = SpotyDialog.createDialog(Dialogs.getQuotationDialogContent(), quotationFormContentPane);
     }
 
     public void saveBtnClicked() {
@@ -266,7 +230,7 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(new QuotationPage(stage));
+        // BaseController.navigation.navigate(new QuotationPage(stage));
         QuotationMasterViewModel.resetProperties();
         customerValidationLabel.setVisible(false);
         statusValidationLabel.setVisible(false);
@@ -355,10 +319,10 @@ public class QuotationMasterFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

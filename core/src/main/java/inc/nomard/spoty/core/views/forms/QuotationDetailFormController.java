@@ -4,7 +4,7 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -25,14 +25,11 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class QuotationDetailFormController implements Initializable {
-    private static QuotationDetailFormController instance;
-    private final Stage stage;
     @FXML
     public MFXTextField quantity;
     @FXML
@@ -45,19 +42,6 @@ public class QuotationDetailFormController implements Initializable {
     public MFXComboBox<Discount> discount;
     @FXML
     public MFXComboBox<Tax> tax;
-
-    public QuotationDetailFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static synchronized QuotationDetailFormController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (QuotationDetailFormController.class) {
-                instance = new QuotationDetailFormController(stage);
-            }
-        }
-        return instance;
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -222,10 +206,10 @@ public class QuotationDetailFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

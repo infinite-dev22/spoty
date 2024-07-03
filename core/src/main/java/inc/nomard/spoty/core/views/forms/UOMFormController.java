@@ -4,6 +4,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -33,8 +34,6 @@ public class UOMFormController implements Initializable {
      * filled in its combo. =>The dialog should animate to expand and contract when a BaseUnit is
      * present i.e. not just have a scroll view.
      */
-    private static UOMFormController instance;
-    private final Stage stage;
     @FXML
     public MFXTextField name,
             shortName,
@@ -58,19 +57,6 @@ public class UOMFormController implements Initializable {
             operatorConstraints,
             operatorValueConstraints;
     private ActionEvent actionEvent = null;
-
-    public UOMFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static UOMFormController getInstance(Stage stage) {
-        if (Objects.equals(instance, null)) {
-            synchronized (UOMFormController.class) {
-                instance = new UOMFormController(stage);
-            }
-        }
-        return instance;
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -287,10 +273,10 @@ public class UOMFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

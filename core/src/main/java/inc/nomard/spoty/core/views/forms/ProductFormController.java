@@ -6,6 +6,7 @@ import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -36,10 +37,8 @@ import lombok.extern.java.*;
 
 @Log
 public class ProductFormController implements Initializable {
-    private static ProductFormController instance;
     private final String placeholderImage =
             SpotyCoreResourceLoader.load("images/upload_image_placeholder.png");
-    private final Stage stage;
     @FXML
     public MFXTextField name,
             serialNumber,
@@ -87,19 +86,6 @@ public class ProductFormController implements Initializable {
             unitOfMeasureConstraints,
             barcodeTypeConstraints;
     private ActionEvent actionEvent = null;
-
-    public ProductFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static ProductFormController getInstance(Stage stage) {
-        if (Objects.equals(instance, null)) {
-            synchronized (ProductFormController.class) {
-                instance = new ProductFormController(stage);
-            }
-        }
-        return instance;
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -530,10 +516,10 @@ public class ProductFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

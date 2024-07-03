@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
@@ -34,7 +35,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class CustomerPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<Customer> tableView;
     private MFXProgressSpinner progress;
@@ -43,14 +43,13 @@ public class CustomerPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public CustomerPage(Stage stage) {
+    public CustomerPage() {
         super();
-        this.stage = stage;
         Platform.runLater(
                 () -> {
                     try {
-                        customerFormDialogPane(stage);
-                        viewDialogPane(stage);
+                        customerFormDialogPane();
+                        viewDialogPane();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -193,7 +192,7 @@ public class CustomerPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             CustomerViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), stage, this));
+        }, obj.getData().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -212,23 +211,14 @@ public class CustomerPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void customerFormDialogPane(Stage stage) throws IOException {
+    private void customerFormDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/CustomerForm.fxml");
-        fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance());
         MFXGenericDialog dialogContent = fxmlLoader.load();
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void createBtnAction() {
@@ -243,28 +233,17 @@ public class CustomerPage extends OutlinePage {
         searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
-    private void viewDialogPane(Stage stage) throws IOException {
+    private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/CustomerPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new CustomerPreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
-        genericDialog.setHeaderText("Customer Details View");
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
-        viewDialog =
-                MFXGenericDialogBuilder.build(genericDialog)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+        dialogContent.setHeaderText("Customer Details View");
+        dialogContent.setPrefHeight(screenHeight * .98);
+        dialogContent.setPrefWidth(700);
+        viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void viewShow(Customer customer) {
@@ -309,10 +288,10 @@ public class CustomerPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

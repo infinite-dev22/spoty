@@ -4,7 +4,7 @@ import atlantafx.base.util.*;
 import com.dlsc.gemsfx.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
@@ -29,8 +29,6 @@ import lombok.extern.java.*;
 
 @Log
 public class LeaveRequestFormController implements Initializable {
-    private static LeaveRequestFormController instance;
-    private final Stage stage;
     @FXML
     public MFXButton saveBtn, cancelBtn;
     @FXML
@@ -62,19 +60,6 @@ public class LeaveRequestFormController implements Initializable {
             fromDateConstraints,
             toDateConstraints;
     private ActionEvent actionEvent = null;
-
-    public LeaveRequestFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static LeaveRequestFormController getInstance(Stage stage) {
-        if (Objects.equals(instance, null)) {
-            synchronized (LeaveRequestFormController.class) {
-                instance = new LeaveRequestFormController(stage);
-            }
-        }
-        return instance;
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -328,10 +313,10 @@ public class LeaveRequestFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

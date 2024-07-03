@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.views.layout.message;
 
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.animation.*;
@@ -52,13 +53,13 @@ public class SpotyMessage extends StackPane {
         StackPane.setMargin(this, new Insets(10, 10, 0, 0));
     }
 
-    public static void delay(SpotyMessage message, Stage stage) {
+    public static void delay(SpotyMessage message) {
         Duration delay = Duration.seconds(3);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             var out = Animations.slideOutUp(message, Duration.millis(250));
             out.playFromStart();
-            out.setOnFinished(actionEvent -> BaseController.getInstance(stage).morphPane.getChildren().remove(message));
+            out.setOnFinished(actionEvent -> AppManager.getMorphPane().getChildren().remove(message));
         });
 
         Timeline timeline = new Timeline(keyFrame);

@@ -4,7 +4,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.AccountViewModel.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -18,14 +18,11 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class AccountFormController implements Initializable {
-    private static AccountFormController instance;
-    private final Stage stage;
     @FXML
     public MFXTextField balance,
             accountName,
@@ -42,19 +39,6 @@ public class AccountFormController implements Initializable {
             accountNumberConstraints;
     private ActionEvent actionEvent = null;
 
-    private AccountFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static AccountFormController getInstance(Stage stage) {
-        if (Objects.equals(instance, null)) {
-            synchronized (AccountFormController.class) {
-                instance = new AccountFormController(stage);
-            }
-        }
-        return instance;
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
@@ -62,13 +46,7 @@ public class AccountFormController implements Initializable {
         accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
         accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
         description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
-        AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> {
-            if (Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0) {
-                balance.setDisable(true);
-            } else {
-                balance.setDisable(false);
-            }
-        });
+        AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> balance.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
         // Input listeners.
         requiredValidator();
         dialogOnActions();
@@ -185,10 +163,10 @@ public class AccountFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

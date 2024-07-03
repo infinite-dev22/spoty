@@ -6,6 +6,7 @@ import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -39,8 +40,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class TransferMasterFormController implements Initializable {
-    private static TransferMasterFormController instance;
-    private final Stage stage;
     @FXML
     public MFXFilterComboBox<Branch> fromBranch,
             toBranch;
@@ -63,8 +62,7 @@ public class TransferMasterFormController implements Initializable {
             fromBranchValidationLabel;
     private MFXStageDialog dialog;
 
-    private TransferMasterFormController(Stage stage) {
-        this.stage = stage;
+    public TransferMasterFormController() {
         Platform.runLater(
                 () -> {
                     try {
@@ -73,15 +71,6 @@ public class TransferMasterFormController implements Initializable {
                         throw new RuntimeException(ex);
                     }
                 });
-    }
-
-    public static TransferMasterFormController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (TransferMasterFormController.class) {
-                instance = new TransferMasterFormController(stage);
-            }
-        }
-        return instance;
     }
 
     @Override
@@ -198,7 +187,7 @@ public class TransferMasterFormController implements Initializable {
                                     obj.getData().getId(),
                                     TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
             event.consume();
-        }, obj.getData().getProductName(), stage, contentPane));
+        }, obj.getData().getProductName(), contentPane));
         // Edit
         edit.setOnAction(
                 event -> {
@@ -226,7 +215,7 @@ public class TransferMasterFormController implements Initializable {
 
     private void quotationProductDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/TransferDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> TransferDetailFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new TransferDetailFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -234,17 +223,7 @@ public class TransferMasterFormController implements Initializable {
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
 
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, contentPane);
     }
 
     public void saveBtnClicked() {
@@ -291,7 +270,7 @@ public class TransferMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(new TransferPage(stage));
+        // BaseController.navigation.navigate(new TransferPage(stage));
         TransferMasterViewModel.resetProperties();
         toBranchValidationLabel.setVisible(false);
         fromBranchValidationLabel.setVisible(false);
@@ -392,10 +371,10 @@ public class TransferMasterFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

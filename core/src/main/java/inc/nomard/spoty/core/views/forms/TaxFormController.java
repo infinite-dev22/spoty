@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.TaxViewModel.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -26,8 +27,6 @@ import lombok.extern.java.*;
 
 @Log
 public class TaxFormController implements Initializable {
-    private static TaxFormController instance;
-    private final Stage stage;
     @FXML
     public MFXTextField name,
             percentage;
@@ -40,19 +39,6 @@ public class TaxFormController implements Initializable {
     private List<Constraint> nameConstraints,
             percentageConstraints;
     private ActionEvent actionEvent = null;
-
-    public TaxFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static TaxFormController getInstance(Stage stage) {
-        if (Objects.equals(instance, null)) {
-            synchronized (TaxFormController.class) {
-                instance = new TaxFormController(stage);
-            }
-        }
-        return instance;
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -179,10 +165,10 @@ public class TaxFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

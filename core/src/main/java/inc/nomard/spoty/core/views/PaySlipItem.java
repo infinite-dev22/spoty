@@ -7,12 +7,10 @@ import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.geometry.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import lombok.extern.java.*;
 
 @Log
 public class PaySlipItem extends HBox {
-    private final Stage stage;
     public Label payRunPeriod,
             employeeCount,
             payRunGenerationDetails,
@@ -23,14 +21,10 @@ public class PaySlipItem extends HBox {
     public MFXButton viewSalariesBtn,
             exportBtn,
             sendBtn;
-    public MFXFontIcon calendarIcon,
-            userTickIcon,
-            redFlagIcon;
     public MFXIconButton editBtn,
             deleteBtn;
 
-    public PaySlipItem(Stage stage) {
-        this.stage = stage;
+    public PaySlipItem() {
         init();
     }
 
@@ -40,6 +34,7 @@ public class PaySlipItem extends HBox {
         this.getStyleClass().add("card-flat");
         this.setPadding(new Insets(8d));
         this.getChildren().addAll(buildLeft(), new Spacer(), buildCenter(), new Spacer(), buildRight());
+        this.setOnMouseClicked(event -> BaseController.navigation.navigate(SalaryPage.class));
         buildIcons();
     }
 
@@ -122,9 +117,5 @@ public class PaySlipItem extends HBox {
         deleteBtn.setIcon(deleteIcon);
         editBtn.setIcon(editIcon);
         exportBtn.setGraphic(downLoadIcon);
-    }
-
-    public void viewSalariesBtnClicked() {
-        BaseController.navigation.navigate(new SalaryPage(stage));
     }
 }

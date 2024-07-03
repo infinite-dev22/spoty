@@ -4,9 +4,9 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.layout.navigation.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
@@ -34,7 +34,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class TransferPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<TransferMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -42,12 +41,11 @@ public class TransferPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public TransferPage(Stage stage) {
-        this.stage = stage;
+    public TransferPage() {
         Platform.runLater(() ->
         {
             try {
-                viewDialogPane(stage);
+                viewDialogPane();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -205,7 +203,7 @@ public class TransferPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             TransferMasterViewModel.deleteTransfer(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getFromBranchName() + " - " + obj.getData().getToBranchName() + " transfer", stage, this));
+        }, obj.getData().getFromBranchName() + " - " + obj.getData().getToBranchName() + " transfer", this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -225,37 +223,25 @@ public class TransferPage extends OutlinePage {
     }
 
     private void createBtnAction() {
-        createBtn.setOnAction(event -> BaseController.navigation.navigate(Pages.getTransferMasterFormPane()));
+        createBtn.setOnAction(event -> {
+        });// BaseController.navigation.navigate(Pages.getTransferMasterFormPane()));
     }
 
     private void onSuccess() {
         TransferMasterViewModel.getAllTransferMasters(null, null);
     }
 
-    private void viewDialogPane(Stage stage) throws IOException {
+    private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/TransferPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new TransferPreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
+        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
 
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
-
-        viewDialog =
-                MFXGenericDialogBuilder.build(genericDialog)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+        dialogContent.setPrefHeight(screenHeight * .98);
+        dialogContent.setPrefWidth(700);
+        viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void viewShow(TransferMaster transferMaster) {
@@ -283,10 +269,10 @@ public class TransferPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

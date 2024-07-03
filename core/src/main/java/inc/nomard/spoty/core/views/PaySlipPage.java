@@ -2,12 +2,11 @@ package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
@@ -16,30 +15,24 @@ import java.util.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class PaySlipPage extends OutlinePage {
-    private final Stage stage;
     @FXML
     public VBox paySlipItemHolder;
     @FXML
     public MFXScrollPane scrollPane;
     private MFXTextField searchBar;
-    private MFXTableView<Account> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
-    private MFXStageDialog dialog;
 
-    public PaySlipPage(Stage stage) {
-        this.stage = stage;
+    public PaySlipPage() {
         addNode(init());
     }
 
     private void setPayslipItems() {
-        PaySlipItem paySlipItem = new PaySlipItem(stage);
+        PaySlipItem paySlipItem = new PaySlipItem();
         paySlipItemHolder.getChildren().addAll(paySlipItem);
     }
 
@@ -83,7 +76,7 @@ public class PaySlipPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
+        var createBtn = new MFXButton("Create");
         createBtn.setVariants(ButtonVariants.FILLED);
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
@@ -150,10 +143,6 @@ public class PaySlipPage extends OutlinePage {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
     }
@@ -169,10 +158,10 @@ public class PaySlipPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
@@ -25,24 +26,21 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryBadgePage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<BeneficiaryBadge> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    public BeneficiaryBadgePage(Stage stage) {
+    public BeneficiaryBadgePage() {
         super();
-        this.stage = stage;
         try {
-            formDialogPane(stage);
+            formDialogPane();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -116,9 +114,9 @@ public class BeneficiaryBadgePage extends OutlinePage {
         return new AnchorPane(masterTable);
     }
 
-    private void formDialogPane(Stage stage) throws IOException {
+    private void formDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/BeneficiaryBadgeForm.fxml");
-        fxmlLoader.setControllerFactory(c -> BeneficiaryBadgeFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new BeneficiaryBadgeFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -126,17 +124,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
 
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     private void setupTable() {
@@ -212,7 +200,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             BeneficiaryBadgeViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), stage, this));
+        }, obj.getData().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -273,10 +261,10 @@ public class BeneficiaryBadgePage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

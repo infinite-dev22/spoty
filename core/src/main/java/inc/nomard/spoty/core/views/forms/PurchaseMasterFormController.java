@@ -10,8 +10,8 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
@@ -20,7 +20,6 @@ import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
@@ -37,14 +36,11 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class PurchaseMasterFormController implements Initializable {
-    private static PurchaseMasterFormController instance;
-    private final Stage stage;
     @FXML
     private Label purchaseFormTitle, supplierValidationLabel, dateValidationLabel, statusValidationLabel;
     @FXML
@@ -63,18 +59,8 @@ public class PurchaseMasterFormController implements Initializable {
     private MFXButton saveBtn, cancelBtn;
     private MFXStageDialog dialog;
 
-    private PurchaseMasterFormController(Stage stage) {
-        this.stage = stage;
-        Platform.runLater(() -> initializePurchaseProductDialog(stage));
-    }
-
-    public static PurchaseMasterFormController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (PurchaseMasterFormController.class) {
-                instance = new PurchaseMasterFormController(stage);
-            }
-        }
-        return instance;
+    public PurchaseMasterFormController() {
+        Platform.runLater(() -> initializePurchaseProductDialog());
     }
 
     @Override
@@ -86,26 +72,17 @@ public class PurchaseMasterFormController implements Initializable {
         setupTable();
     }
 
-    private void initializePurchaseProductDialog(Stage stage) {
+    private void initializePurchaseProductDialog() {
         try {
             FXMLLoader fxmlLoader = fxmlLoader("views/forms/PurchaseDetailForm.fxml");
-            fxmlLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance(stage));
+            fxmlLoader.setControllerFactory(c -> new PurchaseDetailFormController());
             MFXGenericDialog dialogContent = fxmlLoader.load();
 
             dialogContent.setShowMinimize(false);
             dialogContent.setShowAlwaysOnTop(false);
             dialogContent.setShowClose(false);
 
-            dialog = MFXGenericDialogBuilder.build(dialogContent)
-                    .toStageDialogBuilder()
-                    .initOwner(stage)
-                    .initModality(Modality.WINDOW_MODAL)
-                    .setOwnerNode(purchaseFormContentPane)
-                    .setScrimPriority(ScrimPriority.WINDOW)
-                    .setScrimOwner(true)
-                    .get();
-
-            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+            dialog = SpotyDialog.createDialog(dialogContent, purchaseFormContentPane);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }
@@ -209,7 +186,7 @@ public class PurchaseMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<PurchaseDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
-        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getData().getProductName(), stage, purchaseFormContentPane)), createMenuItem("Edit", event -> handleEditAction(row)));
+        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getData().getProductName(), purchaseFormContentPane)), createMenuItem("Edit", event -> handleEditAction(row)));
         return contextMenu;
     }
 
@@ -237,7 +214,7 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(new PurchasePage(stage));
+        // BaseController.navigation.navigate(new PurchasePage(stage));
         resetForm();
     }
 
@@ -322,10 +299,10 @@ public class PurchaseMasterFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

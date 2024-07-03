@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.views.components;
 
 import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
@@ -15,9 +16,10 @@ import javafx.scene.shape.*;
 import javafx.stage.*;
 
 public class DeleteConfirmationDialog extends MFXStageDialog {
-    public DeleteConfirmationDialog(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, String itemName, Stage stage, Pane ownerNode) {
+
+    public DeleteConfirmationDialog(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, String itemName, Pane ownerNode) {
         this.setContent(buildDialogContent(parameterlessConsumer, itemName));
-        this.initOwner(stage);
+        this.initOwner(AppManager.getPrimaryStage());
         this.initModality(Modality.WINDOW_MODAL);
         this.setOwnerNode(ownerNode);
         this.setScrimPriority(ScrimPriority.WINDOW);

@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
@@ -26,23 +27,21 @@ import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class AccountPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<Account> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
     private MFXStageDialog dialog;
-    public AccountPage(Stage stage) {
+
+    public AccountPage() {
         super();
-        this.stage = stage;
         try {
-            customerFormDialogPane(stage);
+            customerFormDialogPane();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -196,7 +195,7 @@ public class AccountPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             AccountViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getAccountName(), stage, this));
+        }, obj.getData().getAccountName(), this));
         // Edit
         edit.setOnAction(
                 event -> {
@@ -216,26 +215,16 @@ public class AccountPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void customerFormDialogPane(Stage stage) throws IOException {
+    private void customerFormDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/AccountForm.fxml");
-        fxmlLoader.setControllerFactory(c -> AccountFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new AccountFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
-
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void createBtnAction() {
@@ -286,10 +275,10 @@ public class AccountPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

@@ -4,9 +4,9 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.layout.navigation.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
@@ -34,7 +34,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class QuotationPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<QuotationMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -42,12 +41,11 @@ public class QuotationPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public QuotationPage(Stage stage) {
-        this.stage = stage;
+    public QuotationPage() {
         Platform.runLater(() ->
         {
             try {
-                viewDialogPane(stage);
+                viewDialogPane();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -202,7 +200,7 @@ public class QuotationPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             QuotationMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getCustomerName() + "'s quotation", stage, this));
+        }, obj.getData().getCustomerName() + "'s quotation", this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -222,37 +220,25 @@ public class QuotationPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> BaseController.navigation.navigate(Pages.getQuotationMasterFormPane()));
+        createBtn.setOnAction(event -> {
+        });// BaseController.navigation.navigate(Pages.getQuotationMasterFormPane()));
     }
 
     private void onSuccess() {
         QuotationMasterViewModel.getAllQuotationMasters(null, null);
     }
 
-    private void viewDialogPane(Stage stage) throws IOException {
+    private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/QuotationPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new QuotationPreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
+        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
 
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
-
-        viewDialog =
-                MFXGenericDialogBuilder.build(genericDialog)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+        dialogContent.setPrefHeight(screenHeight * .98);
+        dialogContent.setPrefWidth(700);
+        viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void viewShow(QuotationMaster quotationMaster) {
@@ -280,10 +266,10 @@ public class QuotationPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

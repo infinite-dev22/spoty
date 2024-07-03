@@ -5,8 +5,8 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
@@ -15,7 +15,6 @@ import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
@@ -33,15 +32,12 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class RequisitionMasterFormController implements Initializable {
-    private static RequisitionMasterFormController instance;
-    private final Stage stage;
     @FXML
     public Label title,
             supplierValidationLabel,
@@ -61,25 +57,15 @@ public class RequisitionMasterFormController implements Initializable {
             cancelBtn;
     private MFXStageDialog dialog;
 
-    private RequisitionMasterFormController(Stage stage) {
-        this.stage = stage;
+    public RequisitionMasterFormController() {
         Platform.runLater(
                 () -> {
                     try {
-                        createRequisitionProductDialog(stage);
+                        createRequisitionProductDialog();
                     } catch (IOException e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
-    }
-
-    public static RequisitionMasterFormController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (RequisitionMasterFormController.class) {
-                instance = new RequisitionMasterFormController(stage);
-            }
-        }
-        return instance;
     }
 
     @Override
@@ -118,9 +104,9 @@ public class RequisitionMasterFormController implements Initializable {
         setupTable();
     }
 
-    private void createRequisitionProductDialog(Stage stage) throws IOException {
+    private void createRequisitionProductDialog() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/RequisitionDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new RequisitionDetailFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -128,17 +114,7 @@ public class RequisitionMasterFormController implements Initializable {
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
 
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, contentPane);
     }
 
     public void saveBtnClicked() {
@@ -248,7 +224,7 @@ public class RequisitionMasterFormController implements Initializable {
                     obj.getData().getId(),
                     RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
             event.consume();
-        }, obj.getData().getProductName(), stage, contentPane));
+        }, obj.getData().getProductName(), contentPane));
         // Edit
         edit.setOnAction(
                 event -> {
@@ -269,7 +245,7 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(new RequisitionPage(stage));
+        // BaseController.navigation.navigate(new RequisitionPage(stage));
         RequisitionMasterViewModel.resetProperties();
         supplierValidationLabel.setVisible(false);
         statusValidationLabel.setVisible(false);
@@ -354,10 +330,10 @@ public class RequisitionMasterFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

@@ -133,7 +133,7 @@ public class BaseController implements Initializable {
     }
 
     public void initializeLoader() {
-        navigation = Navigation.getInstance(primaryStage, contentPane);
+//        navigation = Navigation.getInstance(primaryStage, contentPane);
         navBar.getChildren().add(navigation.createNavigation());
     }
 
@@ -178,7 +178,7 @@ public class BaseController implements Initializable {
         userNameLbl.setWrapText(true);
         userNameLbl.setForceDisableTextEllipsis(true);
         clubBouncer();
-        viewProfile.setOnAction(actionEvent -> navigation.navigate(Pages.getUserProfilePane()));
+//        viewProfile.setOnAction(actionEvent -> navigation.navigate(Pages.getUserProfilePane()));
         logOut.setOnAction(actionEvent -> {
 //            morphPane.morph(true);
 //            // Base view parent.

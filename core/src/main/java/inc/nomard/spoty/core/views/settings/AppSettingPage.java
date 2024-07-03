@@ -5,14 +5,11 @@ import inc.nomard.spoty.core.views.util.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import lombok.extern.java.*;
 
 @Log
 public class AppSettingPage extends OutlinePage {
-    private final Stage stage;
-    public AppSettingPage(Stage stage) {
-        this.stage = stage;
+    public AppSettingPage() {
         addNode(init());
     }
 
@@ -46,7 +43,7 @@ public class AppSettingPage extends OutlinePage {
 
     private Tab buildEmailTab() {
         // Email Tab
-        EmailPage emailPage = new EmailPage(stage);
+        EmailPage emailPage = new EmailPage();
         AnchorPane tabContent = new AnchorPane();
         tabContent.getStyleClass().add("rounded");
         tabContent.getChildren().add(emailPage);

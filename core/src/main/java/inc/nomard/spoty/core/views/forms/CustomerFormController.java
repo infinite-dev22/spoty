@@ -4,7 +4,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.Validators.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -18,14 +18,12 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class CustomerFormController implements Initializable {
     private static CustomerFormController instance;
-    private final Stage stage;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
@@ -46,14 +44,10 @@ public class CustomerFormController implements Initializable {
             phoneConstraints;
     private ActionEvent actionEvent = null;
 
-    public CustomerFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static CustomerFormController getInstance(Stage stage) {
+    public static CustomerFormController getInstance() {
         if (Objects.equals(instance, null)) {
             synchronized (CustomerFormController.class) {
-                instance = new CustomerFormController(stage);
+                instance = new CustomerFormController();
             }
         }
         return instance;
@@ -243,10 +237,10 @@ public class CustomerFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

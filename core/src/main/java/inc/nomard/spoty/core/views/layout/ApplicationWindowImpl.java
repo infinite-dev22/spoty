@@ -10,8 +10,10 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
 
     protected ApplicationWindowImpl() {
         super();
-
+        this.setLightMode();
+        this.getStyleClass().add("body");
         createPageLayout();
+        AppManager.setMorphPane(window);
     }
 
     protected void createPageLayout() {
@@ -36,10 +38,7 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
 
     @Override
     public void setLightMode() {
-        if (getStyleClass().isEmpty()) {
-            getStyleClass().clear();
-        }
-        getStyleClass().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+        this.getStyleClass().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Buttons.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/Progress.css"),
@@ -50,10 +49,7 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
 
     @Override
     public void setDarkMode() {
-        if (getStyleClass().isEmpty()) {
-            getStyleClass().clear();
-        }
-        getStyleClass().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+        this.getStyleClass().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Buttons.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/Progress.css"),

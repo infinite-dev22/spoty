@@ -4,8 +4,8 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
@@ -13,7 +13,6 @@ import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.*;
@@ -26,15 +25,12 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class AdjustmentMasterFormController implements Initializable {
-    private static AdjustmentMasterFormController instance;
-    private final Stage stage;
     @FXML
     public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
     @FXML
@@ -47,24 +43,14 @@ public class AdjustmentMasterFormController implements Initializable {
     public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
     private MFXStageDialog dialog;
 
-    private AdjustmentMasterFormController(Stage stage) {
-        this.stage = stage;
+    public AdjustmentMasterFormController() {
         Platform.runLater(() -> {
             try {
-                initProductDialogPane(stage);
+                initProductDialogPane();
             } catch (IOException e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
         });
-    }
-
-    public static AdjustmentMasterFormController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (AdjustmentMasterFormController.class) {
-                instance = new AdjustmentMasterFormController(stage);
-            }
-        }
-        return instance;
     }
 
     @Override
@@ -130,7 +116,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
-        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getData().getProductName(), stage, adjustmentFormContentPane)));
+        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getData().getProductName(), adjustmentFormContentPane)));
         return contextMenu;
     }
 
@@ -149,25 +135,16 @@ public class AdjustmentMasterFormController implements Initializable {
         AdjustmentDetailViewModel.removeAdjustmentDetail(row.getData().getId(), AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(row.getData()));
     }
 
-    private void initProductDialogPane(Stage stage) throws IOException {
+    private void initProductDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/AdjustmentDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new AdjustmentDetailFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
 
-        dialog = MFXGenericDialogBuilder.build(dialogContent)
-                .toStageDialogBuilder()
-                .initOwner(stage)
-                .initModality(Modality.WINDOW_MODAL)
-                .setOwnerNode(adjustmentFormContentPane)
-                .setScrimPriority(ScrimPriority.WINDOW)
-                .setScrimOwner(true)
-                .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, adjustmentFormContentPane);
     }
 
     public void adjustmentSaveBtnClicked() {
@@ -184,7 +161,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     public void adjustmentCancelBtnClicked() {
-        BaseController.navigation.navigate(new AdjustmentPage(stage));
+        // BaseController.navigation.navigate(new AdjustmentPage(stage));
         AdjustmentMasterViewModel.resetProperties();
     }
 
@@ -225,10 +202,10 @@ public class AdjustmentMasterFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

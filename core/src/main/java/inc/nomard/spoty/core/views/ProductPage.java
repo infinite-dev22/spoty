@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
@@ -34,7 +35,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class ProductPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<Product> masterTable;
     private MFXProgressSpinner progress;
@@ -43,13 +43,12 @@ public class ProductPage extends OutlinePage {
     private MFXStageDialog viewDialog;
     private FXMLLoader viewFxmlLoader;
 
-    public ProductPage(Stage stage) {
-        this.stage = stage;
+    public ProductPage() {
         Platform.runLater(
                 () -> {
                     try {
-                        productFormDialogPane(stage);
-                        productViewDialogPane(stage);
+                        productFormDialogPane();
+                        productViewDialogPane();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -124,31 +123,18 @@ public class ProductPage extends OutlinePage {
         return new AnchorPane(masterTable);
     }
 
-    private void productViewDialogPane(Stage stage) throws IOException {
+    private void productViewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/ProductPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new ProductPreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
+        MFXGenericDialog dialogContent = viewFxmlLoader.load();
 
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
 
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
-
-        viewDialog =
-                MFXGenericDialogBuilder.build(genericDialog)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+        dialogContent.setPrefHeight(screenHeight * .98);
+        dialogContent.setPrefWidth(700);
+        viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     private void setupTable() {
@@ -242,7 +228,7 @@ public class ProductPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             ProductViewModel.deleteProduct(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), stage, this));
+        }, obj.getData().getName(), this));
         // Edit
         edit.setOnAction(
                 event -> {
@@ -253,24 +239,16 @@ public class ProductPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void productFormDialogPane(Stage stage) throws IOException {
+    private void productFormDialogPane() throws IOException {
         FXMLLoader formFxmlLoader = fxmlLoader("views/forms/ProductForm.fxml");
-        formFxmlLoader.setControllerFactory(c -> ProductFormController.getInstance(stage));
+        formFxmlLoader.setControllerFactory(c -> new ProductFormController());
 
         MFXGenericDialog dialogContent = formFxmlLoader.load();
 
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
 
-        formDialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
+        formDialog = SpotyDialog.createDialog(dialogContent, this);
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(formDialog.getScene());
     }
@@ -308,10 +286,10 @@ public class ProductPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

@@ -4,6 +4,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.layout.navigation.*;
@@ -34,7 +35,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class PurchasePage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<PurchaseMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -42,12 +42,11 @@ public class PurchasePage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public PurchasePage(Stage stage) {
-        this.stage = stage;
+    public PurchasePage() {
         Platform.runLater(() ->
         {
             try {
-                viewDialogPane(stage);
+                viewDialogPane();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -242,7 +241,7 @@ public class PurchasePage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             PurchaseMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getSupplierName() + "'s purchase", stage, this));
+        }, obj.getData().getSupplierName() + "'s purchase", this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -262,37 +261,24 @@ public class PurchasePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> BaseController.navigation.navigate(Pages.getPurchaseMasterFormPane()));
+        createBtn.setOnAction(event -> {});// BaseController.navigation.navigate(Pages.getPurchaseMasterFormPane()));
     }
 
     private void onSuccess() {
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
     }
 
-    private void viewDialogPane(Stage stage) throws IOException {
+    private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/PurchasePreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new PurchasePreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
+        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
 
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
-
-        viewDialog =
-                MFXGenericDialogBuilder.build(genericDialog)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+        dialogContent.setPrefHeight(screenHeight * .98);
+        dialogContent.setPrefWidth(700);
+        viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void viewShow(PurchaseMaster purchaseMaster) {
@@ -320,10 +306,10 @@ public class PurchasePage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

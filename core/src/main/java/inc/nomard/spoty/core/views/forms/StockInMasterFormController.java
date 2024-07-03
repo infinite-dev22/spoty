@@ -6,6 +6,7 @@ import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
@@ -33,8 +34,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class StockInMasterFormController implements Initializable {
-    private static StockInMasterFormController instance;
-    private final Stage stage;
     @FXML
     public MFXTableView<StockInDetail> stockInDetailTable;
     @FXML
@@ -48,8 +47,7 @@ public class StockInMasterFormController implements Initializable {
             cancelBtn;
     private MFXStageDialog dialog;
 
-    private StockInMasterFormController(Stage stage) {
-        this.stage = stage;
+    public StockInMasterFormController() {
         Platform.runLater(
                 () -> {
                     try {
@@ -58,15 +56,6 @@ public class StockInMasterFormController implements Initializable {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
-    }
-
-    public static StockInMasterFormController getInstance(Stage stage) {
-        if (instance == null) {
-            synchronized (StockInMasterFormController.class) {
-                instance = new StockInMasterFormController(stage);
-            }
-        }
-        return instance;
     }
 
     @Override
@@ -154,7 +143,7 @@ public class StockInMasterFormController implements Initializable {
                     obj.getData().getId(),
                     StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
             event.consume();
-        }, obj.getData().getProductName(), stage, contentPane));
+        }, obj.getData().getProductName(), contentPane));
 
         // Edit
         edit.setOnAction(
@@ -179,7 +168,7 @@ public class StockInMasterFormController implements Initializable {
 
     private void quotationProductDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/StockInDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> StockInDetailFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new StockInDetailFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -187,17 +176,7 @@ public class StockInMasterFormController implements Initializable {
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
 
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, contentPane);
     }
 
     public void stockInMasterSaveBtnClicked() {
@@ -214,7 +193,7 @@ public class StockInMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        BaseController.navigation.navigate(new StockInPage(stage));
+        // BaseController.navigation.navigate(new StockInPage(stage));
         StockInMasterViewModel.resetProperties();
     }
 
@@ -244,10 +223,10 @@ public class StockInMasterFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

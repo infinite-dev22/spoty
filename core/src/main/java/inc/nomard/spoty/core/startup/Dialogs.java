@@ -43,8 +43,8 @@ public class Dialogs {
     private static MFXGenericDialog printableDialogContent;
 
     public static void setControllers(Stage stage) {
-        quotationDetailFormLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance(stage));
-        purchaseDetailFormLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance(stage));
+        quotationDetailFormLoader.setControllerFactory(c -> new QuotationDetailFormController());
+        purchaseDetailFormLoader.setControllerFactory(c -> new PurchaseDetailFormController());
     }
 
     public static void setDialogContent() throws IOException {

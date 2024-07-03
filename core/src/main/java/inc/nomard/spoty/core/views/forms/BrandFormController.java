@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.BrandViewModel.*;
 import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -24,8 +25,6 @@ import lombok.extern.java.*;
 
 @Log
 public class BrandFormController implements Initializable {
-    private static BrandFormController instance;
-    private final Stage stage;
     @FXML
     public MFXTextField name;
     @FXML
@@ -37,19 +36,6 @@ public class BrandFormController implements Initializable {
     public Label nameValidationLabel;
     private List<Constraint> nameConstraints;
     private ActionEvent actionEvent = null;
-
-    private BrandFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static BrandFormController getInstance(Stage stage) {
-        if (Objects.equals(instance, null)) {
-            synchronized (BrandFormController.class) {
-                instance = new BrandFormController(stage);
-            }
-        }
-        return instance;
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -141,10 +127,10 @@ public class BrandFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

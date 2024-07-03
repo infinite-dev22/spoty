@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
@@ -15,19 +16,16 @@ import java.util.*;
 import javafx.collections.*;
 import javafx.geometry.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class AccountTransactionPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<AccountTransaction> masterTable;
 
-    public AccountTransactionPage(Stage stage) {
+    public AccountTransactionPage() {
         super();
-        this.stage = stage;
         addNode(init());
     }
 
@@ -179,10 +177,10 @@ public class AccountTransactionPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

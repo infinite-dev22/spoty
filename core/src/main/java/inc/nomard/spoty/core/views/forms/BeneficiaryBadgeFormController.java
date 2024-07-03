@@ -3,7 +3,7 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
@@ -22,14 +22,11 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryBadgeFormController implements Initializable {
-    private static BeneficiaryBadgeFormController instance;
-    private final Stage stage;
     @FXML
     public MFXButton saveBtn, cancelBtn;
     @FXML
@@ -48,19 +45,6 @@ public class BeneficiaryBadgeFormController implements Initializable {
             colorConstraints,
             beneficiaryTypeConstraints;
     private ActionEvent actionEvent = null;
-
-    private BeneficiaryBadgeFormController(Stage stage) {
-        this.stage = stage;
-    }
-
-    public static BeneficiaryBadgeFormController getInstance(Stage stage) {
-        if (Objects.equals(instance, null)) {
-            synchronized (BeneficiaryBadgeFormController.class) {
-                instance = new BeneficiaryBadgeFormController(stage);
-            }
-        }
-        return instance;
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -252,10 +236,10 @@ public class BeneficiaryBadgeFormController implements Initializable {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 }

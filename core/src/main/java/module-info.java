@@ -41,4 +41,5 @@ module spoty.core {
     exports inc.nomard.spoty.core;
     opens inc.nomard.spoty.core.views.util;
     opens inc.nomard.spoty.core.views.layout;
+    opens inc.nomard.spoty.core.views.layout.navigation.event;
 }

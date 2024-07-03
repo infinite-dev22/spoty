@@ -4,9 +4,9 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
@@ -34,7 +34,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class OrderPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<SaleMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -43,7 +42,6 @@ public class OrderPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
 
     public OrderPage(Stage stage) {
-        this.stage = stage;
         Platform.runLater(() ->
         {
             try {
@@ -220,7 +218,7 @@ public class OrderPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             SaleMasterViewModel.deleteSaleMaster(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getCustomerName() + "'s order", stage, this));
+        }, obj.getData().getCustomerName() + "'s order", this));
         // View
         view.setOnAction(
                 event -> {
@@ -234,7 +232,8 @@ public class OrderPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> BaseController.navigation.navigate(new PointOfSalePage(stage)));
+        createBtn.setOnAction(event -> {
+        });// BaseController.navigation.navigate(new PointOfSalePage(stage)));
     }
 
     private void onSuccess() {
@@ -245,15 +244,15 @@ public class OrderPage extends OutlinePage {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/OrderPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new SalePreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
+        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
 
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
+        dialogContent.setPrefHeight(screenHeight * .98);
+        dialogContent.setPrefWidth(700);
 
         dialog =
-                MFXGenericDialogBuilder.build(genericDialog)
+                MFXGenericDialogBuilder.build(dialogContent)
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
@@ -292,10 +291,10 @@ public class OrderPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

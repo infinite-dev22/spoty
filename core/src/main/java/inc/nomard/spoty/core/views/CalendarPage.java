@@ -1,8 +1,7 @@
 package inc.nomard.spoty.core.views;
 
-import com.calendarfx.model.Calendar;
-import com.calendarfx.model.Calendar.*;
 import com.calendarfx.model.*;
+import com.calendarfx.model.Calendar.*;
 import com.calendarfx.view.*;
 import inc.nomard.spoty.core.views.util.*;
 import java.time.*;
@@ -14,7 +13,6 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class CalendarPage extends OutlinePage {
-    private static CalendarPage instance;
     @FXML
     public BorderPane contentPane;
 
@@ -30,10 +28,10 @@ public class CalendarPage extends OutlinePage {
     }
 
     public CalendarView buildCenter() {
-        CalendarView calendarView = new CalendarView(); // (1)
+        var calendarView = new CalendarView(); // (1)
 
-        Calendar birthdays = new Calendar("Birthdays"); // (2)
-        Calendar holidays = new Calendar("Holidays");
+        var birthdays = new Calendar("Birthdays"); // (2)
+        var holidays = new Calendar("Holidays");
 
         birthdays.setStyle(Style.STYLE1); // (3)
         holidays.setStyle(Style.STYLE2);

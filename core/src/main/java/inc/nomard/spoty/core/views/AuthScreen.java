@@ -17,6 +17,7 @@ import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.utils.*;
@@ -28,14 +29,12 @@ import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 import javafx.animation.*;
 import javafx.application.*;
 import javafx.beans.binding.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -50,53 +49,40 @@ import lombok.extern.java.*;
 @Log
 public class AuthScreen extends BorderPane {
     private final Stage stage;
-    @FXML
     public MFXTextField email,
             signUpEmail,
             phoneNumber,
             otherName,
             lastName,
             firstName;
-    @FXML
     public MFXPasswordField password,
             confirmPassword,
             signUpPassword;
-    @FXML
     public Label forgotPassword,
             emailValidationLabel,
             passwordValidationLabel,
             loginAppNameLbl,
             loginPoweredByLbl,
-            kycAppNameLbl,
-            kycPoweredByLbl,
             signUpEmailValidationLabel,
             phoneNumberValidationLabel,
             lastNameValidationLabel,
             firstNameValidationLabel,
-            signUpPoweredByLbl,
-            signUpAppNameLbl,
             loginLink,
             confirmPasswordValidationLabel,
             signUpPasswordValidationLabel,
             signUpLink;
-    @FXML
     public MFXButton loginBtn,
             nextBtn,
             backBtn,
             registerBtn,
             signUpBack;
-    @FXML
     public MFXFontIcon closeLoginIcon,
             closeSignupIcon;
-    @FXML
     public Pane contentPane;
-    @FXML
     public AnchorPane actualContentPane;
-    @FXML
     public VBox loginScreen,
             kycScreen,
             authCreateScreen;
-    @FXML
     public HBox registerScreen;
 
     public AuthScreen(Stage primaryStage) {
@@ -720,36 +706,30 @@ public class AuthScreen extends BorderPane {
     }
 
     private void loadMainView() {
-        try {
-            stage.hide();
-            FXMLLoader loader = SpotyCoreResourceLoader.fxmlLoader("views/Base.fxml");
-            loader.setControllerFactory(c -> BaseController.getInstance(stage));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-            scene.setFill(null);
-            stage.setScene(scene);
-            stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
-            stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
-            stage.setTitle(Labels.APP_NAME);
-            stage.getIcons().addAll(
-                    PreloadedData.icon16,
-                    PreloadedData.icon32,
-                    PreloadedData.icon64,
-                    PreloadedData.icon128,
-                    PreloadedData.icon256,
-                    PreloadedData.icon512
-            );
-            stage.show();
-            stage.centerOnScreen();
+        stage.hide();
+        Parent root = new WindowRunner();
+        Scene scene = new Scene(root);
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+        scene.setFill(null);
+        stage.setScene(scene);
+        stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
+        stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
+        stage.setTitle(Labels.APP_NAME);
+        stage.getIcons().addAll(
+                PreloadedData.icon16,
+                PreloadedData.icon32,
+                PreloadedData.icon64,
+                PreloadedData.icon128,
+                PreloadedData.icon256,
+                PreloadedData.icon512
+        );
+        stage.show();
+        stage.centerOnScreen();
 
-            var service = OnlineQueryWorker.fetchDataTask();
-            service.start();
-            service.setPeriod(Duration.seconds(10));
-            service.setDelay(Duration.seconds(0));
-        } catch (IOException e) {
-            SpotyLogger.writeToFile(e, AuthScreen.class);
-        }
+        var service = OnlineQueryWorker.fetchDataTask();
+        service.start();
+        service.setPeriod(Duration.seconds(10));
+        service.setDelay(Duration.seconds(0));
     }
 
     public void onLoginSuccess() {

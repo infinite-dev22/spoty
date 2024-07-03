@@ -5,6 +5,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
@@ -33,19 +34,17 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class BrandPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
     private MFXTableView<Brand> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    public BrandPage(Stage stage) {
-        this.stage = stage;
+    public BrandPage() {
         Platform.runLater(
                 () -> {
                     try {
-                        brandFormDialogPane(stage);
+                        brandFormDialogPane();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -178,7 +177,7 @@ public class BrandPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             BrandViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), stage, this));
+        }, obj.getData().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
@@ -191,9 +190,9 @@ public class BrandPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void brandFormDialogPane(Stage stage) throws IOException {
+    private void brandFormDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/BrandForm.fxml");
-        fxmlLoader.setControllerFactory(c -> BrandFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new BrandFormController());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -201,17 +200,7 @@ public class BrandPage extends OutlinePage {
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
 
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void createBtnAction() {
@@ -241,10 +230,10 @@ public class BrandPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 

@@ -3,8 +3,8 @@ package inc.nomard.spoty.core.views.settings.app_settings;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
@@ -25,22 +25,23 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class EmailPage extends OutlinePage {
-    private final Stage stage;
     private MFXTextField searchBar;
-    private MFXTableView<Account> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
     private MFXStageDialog dialog;
 
-    public EmailPage(Stage stage) {
-        this.stage = stage;
+    public EmailPage() {
         addNode(init());
+        try {
+            customerFormDialogPane();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public BorderPane init() {
@@ -209,20 +210,11 @@ public class EmailPage extends OutlinePage {
 
     private void customerFormDialogPane() throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/EmailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> EmailFormController.getInstance(stage));
+        fxmlLoader.setControllerFactory(c -> new EmailFormController());
         MFXGenericDialog dialogContent = fxmlLoader.load();
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(this.getParent().getScene().getWindow())
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     public void createBtnAction() {
@@ -252,10 +244,10 @@ public class EmailPage extends OutlinePage {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
     }
 
