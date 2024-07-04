@@ -16,7 +16,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
@@ -115,16 +114,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
     }
 
     private void formDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/BeneficiaryBadgeForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new BeneficiaryBadgeFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, this);
+        dialog = SpotyDialog.createDialog(new BeneficiaryBadgeForm(), this);
     }
 
     private void setupTable() {

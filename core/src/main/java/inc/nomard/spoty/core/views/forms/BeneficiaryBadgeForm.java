@@ -9,24 +9,25 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class BeneficiaryBadgeFormController implements Initializable {
+public class BeneficiaryBadgeForm extends MFXGenericDialog {
     @FXML
     public MFXButton saveBtn, cancelBtn;
     @FXML
@@ -35,8 +36,7 @@ public class BeneficiaryBadgeFormController implements Initializable {
     public MFXTextField name;
     public TextArea description;
     @FXML
-    public Label descriptionValidationLabel,
-            colorPickerValidationLabel,
+    public Label colorPickerValidationLabel,
             nameValidationLabel,
             beneficiaryTypeValidationLabel;
     @FXML
@@ -46,27 +46,61 @@ public class BeneficiaryBadgeFormController implements Initializable {
             beneficiaryTypeConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        beneficiaryType.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.beneficiaryTypeProperty());
+    public BeneficiaryBadgeForm() {
+        init();
+    }
+
+    public void init() {
+        buildDialogContent();
+        requiredValidator();
+        dialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+
+    private VBox buildName() {
+        // Input.
+        name = new MFXTextField();
+        name.setFloatMode(FloatMode.BORDER);
+        name.setFloatingText("Name");
+        name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.nameProperty());
-        description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());
-        colorPicker.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.colorProperty());
+        // Validation.
+        nameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(name, nameValidationLabel);
+        return vbox;
+    }
 
-
-        // ComboBox Converters.
+    private VBox buildNumber() {
+        // Input.
+        beneficiaryType = new MFXFilterComboBox<>();
+        beneficiaryType.setFloatMode(FloatMode.BORDER);
+        beneficiaryType.setFloatingText("Beneficiary Type");
+        beneficiaryType.setPrefWidth(400d);
+        beneficiaryType.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.beneficiaryTypeProperty());
+        // Converter
         StringConverter<BeneficiaryType> beneficiaryTypeConverter =
                 FunctionalStringConverter.to(
                         beneficiaryType -> (beneficiaryType == null) ? "" : beneficiaryType.getName());
-
-        // ComboBox Filter Functions.
+        // Filter function
         Function<String, Predicate<BeneficiaryType>> beneficiaryTypeFilterFunction =
                 searchStr ->
                         beneficiaryType ->
                                 StringUtils.containsIgnoreCase(beneficiaryTypeConverter.toString(beneficiaryType), searchStr);
-
-        // ProductType combo box properties.
+        // Properties
         beneficiaryType.setConverter(beneficiaryTypeConverter);
         beneficiaryType.setFilterFunction(beneficiaryTypeFilterFunction);
         if (BeneficiaryTypeViewModel.getBeneficiaryTypes().isEmpty()) {
@@ -77,12 +111,77 @@ public class BeneficiaryBadgeFormController implements Initializable {
         } else {
             beneficiaryType.itemsProperty().bindBidirectional(BeneficiaryTypeViewModel.beneficiaryTypesProperty());
         }
+        // Validation.
+        beneficiaryTypeValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(beneficiaryType, beneficiaryTypeValidationLabel);
+        return vbox;
+    }
 
+    private VBox buildBalance() {
+        // Input.
+        colorPicker = new MFXFilterComboBox<>();
+        colorPicker.setFloatMode(FloatMode.BORDER);
+        colorPicker.setFloatingText("Appearance Color");
+        colorPicker.setPrefWidth(400d);
+        colorPicker.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.colorProperty());
         colorPicker.setItems(BeneficiaryBadgeViewModel.getColorsList());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(colorPicker);
+        return vbox;
+    }
 
-        // Input listeners.
-        requiredValidator();
-        dialogOnActions();
+    private VBox buildDescription() {
+        // Input.
+        description = new TextArea();
+        description.setPromptText("Description");
+        description.setPrefWidth(400d);
+        description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(description);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildName(), buildNumber(), buildBalance(), buildDescription());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
@@ -92,12 +191,10 @@ public class BeneficiaryBadgeFormController implements Initializable {
                     closeDialog(event);
 
                     nameValidationLabel.setVisible(false);
-                    descriptionValidationLabel.setVisible(false);
                     colorPickerValidationLabel.setVisible(false);
                     beneficiaryTypeValidationLabel.setVisible(false);
 
                     nameValidationLabel.setManaged(false);
-                    descriptionValidationLabel.setManaged(false);
                     colorPickerValidationLabel.setManaged(false);
                     beneficiaryTypeValidationLabel.setManaged(false);
 
