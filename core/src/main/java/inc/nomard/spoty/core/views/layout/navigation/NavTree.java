@@ -59,11 +59,13 @@ public class NavTree extends TreeView<Nav> {
                         for (TreeItem<Nav> item : getRoot().getChildren()) {
                             if (item != itemThatWasJustExpanded) {
                                 item.setExpanded(false);
-                                item.getChildren().forEach(child -> {
-                                    if (child.isExpanded()) {
-                                        child.setExpanded(false);
-                                    }
-                                });
+                                if (!item.getChildren().isEmpty()) {
+                                    item.getChildren().forEach(child -> {
+                                        if (Objects.nonNull(child) && child.isExpanded()) {
+                                            child.setExpanded(false);
+                                        }
+                                    });
+                                }
                             }
                         }
                     }

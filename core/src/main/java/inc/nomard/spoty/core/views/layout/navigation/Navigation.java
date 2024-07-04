@@ -277,6 +277,7 @@ public class Navigation {
                             dashboard,
                             people,
                             deductions,
+                            deductions,
                             inventory,
                             quotation,
                             sale,
@@ -287,6 +288,7 @@ public class Navigation {
                             dashboard,
                             humanResource,
                             people,
+                            deductions,
                             inventory,
                             quotation,
                             sale,
@@ -298,6 +300,7 @@ public class Navigation {
                     .addAll(dashboard,
                             humanResource,
                             people,
+                            deductions,
                             inventory,
                             quotation,
                             sale,
@@ -308,6 +311,7 @@ public class Navigation {
             root.getChildren()
                     .addAll(
                             people,
+                            deductions,
                             inventory,
                             quotation,
                             sale);
