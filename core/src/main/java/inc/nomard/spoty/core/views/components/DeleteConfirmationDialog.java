@@ -67,12 +67,12 @@ public class DeleteConfirmationDialog extends MFXStageDialog {
 
     private HBox buildBottom(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer) {
         var cancelBtn = new MFXButton();
-        cancelBtn.setVariants(ButtonVariants.FILLED);
+        cancelBtn.getStyleClass().add("filled");
         cancelBtn.setText("No, Cancel");
         cancelBtn.getStyleClass().add("dialog-cancel-btn");
         cancelBtn.setOnAction(GlobalActions::closeDialog);
         var deleteBtn = new MFXButton();
-        deleteBtn.setVariants(ButtonVariants.OUTLINED);
+        deleteBtn.getStyleClass().add("outlined");
         deleteBtn.setText("Yes, Delete");
         deleteBtn.getStyleClass().add("dialog-delete-btn");
         deleteBtn.setOnAction(event -> {

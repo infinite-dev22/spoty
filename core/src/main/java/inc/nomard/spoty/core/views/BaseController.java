@@ -334,7 +334,7 @@ public class BaseController implements Initializable {
             var closeIcon = new MFXFontIcon("fas-xmark");
             closeIcon.setColor(Color.RED);
             close.setGraphic(closeIcon);
-            close.setVariants(ButtonVariants.OUTLINED);
+            close.getStyleClass().add("outlined");
             close.setOnAction(actionEvent -> new InformativeDialog(() -> {
                 GlobalActions.closeDialog(actionEvent);
                 morphPane.morph(false);

@@ -9,47 +9,150 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class AccountFormController implements Initializable {
-    @FXML
+public class AccountForm extends MFXGenericDialog {
     public MFXTextField balance,
             accountName,
             accountNumber;
-    @FXML
     public TextArea description;
-    @FXML
     public Label accountNameValidationLabel,
             accountNumberValidationLabel;
-    @FXML
     public MFXButton saveBtn,
             cancelBtn;
     private List<Constraint> accountNameConstraints,
             accountNumberConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty());
-        accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
-        accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
-        description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
-        AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> balance.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
-        // Input listeners.
+    public AccountForm() {
+        init();
+    }
+
+    public void init() {
+        buildDialogContent();
         requiredValidator();
         dialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+
+    private VBox buildName() {
+        // Input.
+        accountName = new MFXTextField();
+        accountName.setFloatMode(FloatMode.BORDER);
+        accountName.setFloatingText("Account Name");
+        accountName.setPrefWidth(400d);
+        accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
+        // Validation.
+        accountNameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(accountName, accountNameValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildNumber() {
+        // Input.
+        accountNumber = new MFXTextField();
+        accountNumber.setFloatMode(FloatMode.BORDER);
+        accountNumber.setFloatingText("Account Number");
+        accountNumber.setPrefWidth(400d);
+        accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
+        // Validation.
+        accountNumberValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(accountNumber, accountNumberValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildBalance() {
+        // Input.
+        balance = new MFXTextField();
+        balance.setFloatMode(FloatMode.BORDER);
+        balance.setFloatingText("Balance");
+        balance.setPrefWidth(400d);
+        balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty());
+        AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> balance.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(balance);
+        return vbox;
+    }
+
+    private VBox buildDescription() {
+        // Input.
+        description = new TextArea();
+        description.setPromptText("Description");
+        description.setPrefWidth(400d);
+        description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(description);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildName(), buildNumber(), buildBalance(), buildDescription());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void dialogOnActions() {

@@ -62,12 +62,12 @@ public class InformativeDialog extends MFXStageDialog {
 
     private HBox buildBottom(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer) {
         var cancelBtn = new MFXButton();
-        cancelBtn.setVariants(ButtonVariants.FILLED);
+        cancelBtn.getStyleClass().add("filled");
         cancelBtn.setText("No, Cancel");
         cancelBtn.getStyleClass().add("primary-color");
         cancelBtn.setOnAction(GlobalActions::closeDialog);
         var deleteBtn = new MFXButton();
-        deleteBtn.setVariants(ButtonVariants.OUTLINED);
+        deleteBtn.getStyleClass().add("outlined");
         deleteBtn.setText("Yes, Proceed");
         deleteBtn.getStyleClass().add("secondary-color");
         deleteBtn.setOnAction(event -> {

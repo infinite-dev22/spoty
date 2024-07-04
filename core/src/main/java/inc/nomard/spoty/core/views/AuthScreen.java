@@ -179,7 +179,7 @@ public class AuthScreen extends BorderPane {
     private HBox buildLoginButton() {
         loginBtn = new MFXButton("Login");
         loginBtn.setPrefWidth(352d);
-        loginBtn.setVariants(ButtonVariants.FILLED);
+        loginBtn.getStyleClass().add("filled");
         loginBtn.setOnAction(actionEvent -> onLoginPressed());
         var hbox = new HBox(loginBtn);
         hbox.setAlignment(Pos.CENTER);
@@ -328,7 +328,7 @@ public class AuthScreen extends BorderPane {
     private HBox buildKYCBackButton() {
         backBtn = new MFXButton("Back to Login");
         backBtn.setPrefWidth(150d);
-        backBtn.setVariants(ButtonVariants.OUTLINED);
+        backBtn.getStyleClass().add("outlined");
         backBtn.setOnAction(event -> backToLogin());
         var hbox = new HBox(backBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -340,7 +340,7 @@ public class AuthScreen extends BorderPane {
     private HBox buildKYCNextButton() {
         nextBtn = new MFXButton("Proceed");
         nextBtn.setPrefWidth(120d);
-        nextBtn.setVariants(ButtonVariants.FILLED);
+        nextBtn.getStyleClass().add("filled");
         nextBtn.setOnAction(event -> goNext());
         var hbox = new HBox(nextBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -423,7 +423,7 @@ public class AuthScreen extends BorderPane {
     private HBox buildRegisterBackButton() {
         signUpBack = new MFXButton("Back");
         signUpBack.setPrefWidth(120d);
-        signUpBack.setVariants(ButtonVariants.OUTLINED);
+        signUpBack.getStyleClass().add("outlined");
         signUpBack.setOnAction(event -> signUpBack());
         var hbox = new HBox(signUpBack);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -435,7 +435,7 @@ public class AuthScreen extends BorderPane {
     private HBox buildRegisterButton() {
         registerBtn = new MFXButton("Register");
         registerBtn.setPrefWidth(150d);
-        registerBtn.setVariants(ButtonVariants.FILLED);
+        registerBtn.getStyleClass().add("filled");
         registerBtn.setOnAction(event -> registerUser());
         var hbox = new HBox(registerBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);

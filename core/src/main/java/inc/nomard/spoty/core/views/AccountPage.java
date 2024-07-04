@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -12,17 +11,13 @@ import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.input.*;
@@ -36,15 +31,9 @@ public class AccountPage extends OutlinePage {
     private MFXTableView<Account> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
 
     public AccountPage() {
         super();
-        try {
-            customerFormDialogPane();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
         addNode(init());
     }
 
@@ -89,7 +78,7 @@ public class AccountPage extends OutlinePage {
 
     private HBox buildRightTop() {
         createBtn = new MFXButton("Create");
-        createBtn.setVariants(ButtonVariants.FILLED);
+        createBtn.getStyleClass().add("filled");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -199,13 +188,13 @@ public class AccountPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 event -> {
-                    AccountViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    AccountViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
         // Deposit
         deposit.setOnAction(
                 event -> {
-                    AccountViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    AccountViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
 
@@ -215,20 +204,8 @@ public class AccountPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void customerFormDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/AccountForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new AccountFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
     public void createBtnAction() {
-        createBtn.setOnAction(event -> dialog.showAndWait());
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait());
     }
 
     private void onSuccess() {

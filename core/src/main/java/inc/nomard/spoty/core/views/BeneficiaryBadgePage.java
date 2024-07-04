@@ -88,7 +88,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
 
     private HBox buildRightTop() {
         createBtn = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Create");
-        createBtn.setVariants(ButtonVariants.FILLED);
+        createBtn.getStyleClass().add("filled");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));

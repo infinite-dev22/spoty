@@ -98,7 +98,7 @@ public class CustomerPage extends OutlinePage {
 
     private HBox buildRightTop() {
         createBtn = new MFXButton("Create");
-        createBtn.setVariants(ButtonVariants.FILLED);
+        createBtn.getStyleClass().add("filled");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));

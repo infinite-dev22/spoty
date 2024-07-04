@@ -173,7 +173,7 @@ public class PaymentPlanCard extends VBox {
 
     private MFXButton buildPlanProceedAction() {
         var button = new MFXButton(actionName);
-        button.setVariants(ButtonVariants.FILLED);
+        button.getStyleClass().add("filled");
         button.setStyle("-fx-background-color: rgb("
                 + planColor.getRed() * 255 + ", "
                 + planColor.getGreen() * 255 + ", "
@@ -186,7 +186,7 @@ public class PaymentPlanCard extends VBox {
             return button;
         } else {
             var disabledBtn = new MFXButton("Free trial no longer available");
-            disabledBtn.setVariants(ButtonVariants.FILLED);
+            disabledBtn.getStyleClass().add("filled");
             disabledBtn.setStyle("-fx-background-color: rgba("
                     + planColor.getRed() * 255 + ", "
                     + planColor.getGreen() * 255 + ", "

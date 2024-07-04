@@ -87,7 +87,7 @@ public class WindowRunner extends ApplicationWindowImpl {
             var closeIcon = new MFXFontIcon("fas-xmark");
             closeIcon.setColor(Color.RED);
             close.setGraphic(closeIcon);
-            close.setVariants(ButtonVariants.OUTLINED);
+            close.getStyleClass().add("outlined");
             close.setOnAction(actionEvent -> new InformativeDialog(() -> {
                 GlobalActions.closeDialog(actionEvent);
                 this.setMorph(false);

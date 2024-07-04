@@ -214,10 +214,10 @@ public class CompanyDetailPage extends OutlinePage {
     private HBox buildCompanyProfile() {
         // Cancel button.
         cancelBtn = new MFXButton("Cancel");
-        cancelBtn.setVariants(ButtonVariants.OUTLINED);
+        cancelBtn.getStyleClass().add("outlined");
         // Save button.
         saveBtn = new MFXButton("Save Changes");
-        saveBtn.setVariants(ButtonVariants.FILLED);
+        saveBtn.getStyleClass().add("filled");
         var hbox1 = new HBox();
         hbox1.setAlignment(Pos.CENTER_RIGHT);
         hbox1.setSpacing(16d);

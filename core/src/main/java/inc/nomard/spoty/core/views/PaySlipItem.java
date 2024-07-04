@@ -48,9 +48,9 @@ public class PaySlipItem extends HBox {
         hbox1.getChildren().addAll(payRunPeriod, employeeCount);
         payRunGenerationDetails = new Label();
         viewSalariesBtn = new MFXButton("View Salaries");
-        viewSalariesBtn.setVariants(ButtonVariants.OUTLINED);
+        viewSalariesBtn.getStyleClass().add("outlined");
         exportBtn = new MFXButton("Export");
-        exportBtn.setVariants(ButtonVariants.OUTLINED);
+        exportBtn.getStyleClass().add("outlined");
         var hbox2 = new HBox();
         hbox2.setAlignment(Pos.CENTER_LEFT);
         hbox2.setSpacing(10d);
@@ -92,7 +92,7 @@ public class PaySlipItem extends HBox {
         editBtn = new MFXIconButton();
         deleteBtn = new MFXIconButton();
         sendBtn = new MFXButton("Send PaySlips");
-        sendBtn.setVariants(ButtonVariants.FILLED);
+        sendBtn.getStyleClass().add("filled");
 
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
