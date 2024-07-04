@@ -1,11 +1,11 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
+import inc.nomard.spoty.core.views.util.*;
 import java.util.*;
 import javafx.scene.*;
-import javafx.scene.layout.*;
 
 record Nav(
-        String title, String tag, Node graphic, Pane view, List<String> searchKeywords) {
+        String title, String tag, Node graphic, Class<? extends Page> view, List<String> searchKeywords) {
 
     // Treeview parent not.
     public static final Nav ROOT = new Nav("ROOT", null, null, null, null);

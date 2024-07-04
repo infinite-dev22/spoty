@@ -159,7 +159,7 @@ public class CompanyDetailPage extends OutlinePage {
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setSpacing(16d);
-        hbox.setPadding(new Insets(0d, 0d, 0d,16d));
+        hbox.setPadding(new Insets(0d, 0d, 0d, 16d));
         UIUtils.anchor(hbox, null, 0d, 0d, 0d);
         hbox.getChildren().addAll(buildCompanyLogoHolder(), buildCompanyDetailsPreview());
         return hbox;

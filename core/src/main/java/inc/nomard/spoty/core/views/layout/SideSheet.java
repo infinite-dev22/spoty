@@ -25,7 +25,7 @@ public class SideSheet extends StackPane {
     @Setter
     private String title = "";
     @Getter
-    private VBox content = new VBox();
+    private final VBox content = new VBox();
 
     public SideSheet(Pane owner) {
         this.owner = owner;

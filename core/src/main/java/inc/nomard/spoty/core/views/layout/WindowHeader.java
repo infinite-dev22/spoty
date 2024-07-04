@@ -38,7 +38,7 @@ public class WindowHeader extends HBox {
         center = new HBox();
         center.setSpacing(10d);
         HBox.setHgrow(center, Priority.ALWAYS);
-        center.setAlignment(Pos.CENTER_LEFT);
+        center.setAlignment(Pos.CENTER);
         center.setPadding(new Insets(5d));
         return center;
     }
@@ -47,7 +47,7 @@ public class WindowHeader extends HBox {
         right = new HBox();
         right.setSpacing(10d);
         HBox.setHgrow(right, Priority.ALWAYS);
-        right.setAlignment(Pos.CENTER_LEFT);
+        right.setAlignment(Pos.CENTER_RIGHT);
         right.setPadding(new Insets(5d));
         return right;
     }

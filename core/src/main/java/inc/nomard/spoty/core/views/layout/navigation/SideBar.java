@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import inc.nomard.spoty.utils.navigation.*;
@@ -10,32 +11,51 @@ import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.image.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
+import org.kordamp.ikonli.javafx.*;
 
 public class SideBar extends VBox {
-    private final Stage stage;
+    final MFXContextMenuItem viewProfile = new MFXContextMenuItem("View profile");
+    final MFXContextMenuItem logOut = new MFXContextMenuItem("Log out");
+    private final Stage stage = AppManager.getPrimaryStage();
     private final NavTree navTree;
     private Circle circle;
     private Label username;
     private Label designation;
     private MFXFontIcon moreActions;
+    private MFXContextMenu contextMenu;
     private Boolean isMinimised = false;
 
-    public SideBar(Stage stage, Navigation navigation) {
-        this.stage = stage;
-        this.navTree = new NavTree(navigation);
-        init();
+    public SideBar(Navigation navigation) {
+        super();
+        navTree = new NavTree(navigation);
+        init(navigation);
+
+        navigation.selectedPageProperty().addListener((obs, old, val) -> {
+            if (val != null) {
+                navTree.getSelectionModel().select(navigation.getTreeItemForPage(val));
+            }
+        });
     }
 
-    private void init() {
+    private void init(Navigation navigation) {
+        var pane = new StackPane(navTree);
+        pane.getStyleClass().add("navbar");
+        // navTree.getStyleClass().add("navbar");
+        pane.setMaxHeight(1.7976931348623157E308);
+        pane.setMaxWidth(1.7976931348623157E308);
+        VBox.setVgrow(pane, Priority.ALWAYS);
         this.setPrefHeight(640);
         this.setPrefWidth(250);
         this.setPadding(new Insets(0d, 0d, 5d, 0d));
         this.setSpacing(10d);
-        this.getChildren().addAll(buildWindowAction(), buildUserProfile(), navTree);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.getChildren().addAll(buildWindowAction(), buildUserProfile(), pane);
+        this.getStyleClass().addAll("sidebar");
     }
 
     private MFXFontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
@@ -76,12 +96,14 @@ public class SideBar extends VBox {
 
     private Label buildUserName() {
         username = new Label();
+        username.setWrapText(true);
         username.getStyleClass().addAll("h4", "text-white");
         return username;
     }
 
     private Label buildDesignation() {
         designation = new Label();
+        designation.setWrapText(true);
         designation.getStyleClass().addAll("text", "disabled-text");
         return designation;
     }
@@ -98,7 +120,15 @@ public class SideBar extends VBox {
         moreActions = new MFXFontIcon("fas-ellipsis-vertical");
         moreActions.setSize(25d);
         moreActions.getStyleClass().add("side-bar-more-actions");
+        buildContextMenu();
+        moreActions.setOnMouseClicked(this::moreActions);
         return moreActions;
+    }
+
+    private void buildContextMenu() {
+        contextMenu = new MFXContextMenu(moreActions);
+        contextMenu.getItems().addAll(viewProfile, logOut);
+        moreActions.setCursor(Cursor.HAND);
     }
 
     private HBox buildProfileUIHolder() {
@@ -111,6 +141,9 @@ public class SideBar extends VBox {
 
     private MFXCircleToggleNode buildSidebarToggle() {
         var toggle = new MFXCircleToggleNode();
+        var arrowIcon = new FontIcon("fas-angle-left");
+        arrowIcon.getStyleClass().add("nav-toggle-arrow");
+        toggle.setGraphic(arrowIcon);
         toggle.getStyleClass().add("nav-toggle");
         toggle.setSize(15d);
         StackPane.setAlignment(toggle, Pos.CENTER_RIGHT);
@@ -154,8 +187,18 @@ public class SideBar extends VBox {
         this.designation.setText(designation);
     }
 
-    public void moreActions(SpotyGotFunctional.ParameterlessConsumer onAction) {
-        moreActions.setOnMouseClicked(event -> onAction.run());
+    private void moreActions(MouseEvent event) {
+        contextMenu.show(moreActions.getScene().getWindow(),
+                event.getScreenX(),
+                event.getScreenY());
+    }
+
+    public void setViewProfileOnAction(SpotyGotFunctional.ParameterlessConsumer action) {
+        viewProfile.setOnAction(event -> action.run());
+    }
+
+    public void setLogOutOnAction(SpotyGotFunctional.ParameterlessConsumer action) {
+        logOut.setOnAction(event -> action.run());
     }
 
     private void toggleSidebar() {

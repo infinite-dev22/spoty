@@ -4,7 +4,6 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.Validators.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -19,7 +18,6 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 

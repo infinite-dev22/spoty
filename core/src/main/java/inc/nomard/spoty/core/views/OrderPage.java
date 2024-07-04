@@ -80,7 +80,7 @@ public class OrderPage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new MFXTextField();
-        searchBar.setPromptText("Search accounts");
+        searchBar.setPromptText("Search orders");
         searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);

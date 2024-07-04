@@ -7,7 +7,6 @@ import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.layout.navigation.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
@@ -81,7 +80,7 @@ public class PurchasePage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new MFXTextField();
-        searchBar.setPromptText("Search accounts");
+        searchBar.setPromptText("Search purchases");
         searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
@@ -261,7 +260,8 @@ public class PurchasePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> {});// BaseController.navigation.navigate(Pages.getPurchaseMasterFormPane()));
+        createBtn.setOnAction(event -> {
+        });// BaseController.navigation.navigate(Pages.getPurchaseMasterFormPane()));
     }
 
     private void onSuccess() {

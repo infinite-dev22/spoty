@@ -7,7 +7,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.*;
 
 public class AutoUpdater {
 
@@ -60,7 +59,7 @@ public class AutoUpdater {
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, SpotyPaths.class);
         }
-        return flagFilePath.toString() + "update-available.flag";
+        return flagFilePath + "update-available.flag";
     }
 
     public static void checkForUpdates() {

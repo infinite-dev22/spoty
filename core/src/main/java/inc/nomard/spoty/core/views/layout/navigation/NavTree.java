@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.util.*;
@@ -225,7 +226,7 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static NavTreeItem mainPage(String title, String icon, Pane view) {
+        public static NavTreeItem mainPage(String title, String icon, Class<? extends Page> view) {
             MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
             return new NavTreeItem(new Nav(title, null, wrapper, view, null));
         }
@@ -237,7 +238,7 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static NavTreeItem page(String title, Pane view) {
+        public static NavTreeItem page(String title, Class<? extends Page> view) {
             return new NavTreeItem(new Nav(title, null, null, view, null));
         }
 
@@ -248,11 +249,11 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static NavTreeItem page(String title, Pane view, String... searchKeywords) {
+        public static NavTreeItem page(String title, Class<? extends Page> view, String... searchKeywords) {
             return new NavTreeItem(new Nav(title, null, null, view, List.of(searchKeywords)));
         }
 
-        public Pane view() {
+        public Class<? extends Page> view() {
             return nav.view();
         }
 

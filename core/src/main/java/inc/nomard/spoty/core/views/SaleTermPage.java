@@ -40,7 +40,7 @@ public class SaleTermPage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new MFXTextField();
-        searchBar.setPromptText("Search accounts");
+        searchBar.setPromptText("Search sale terms");
         searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);

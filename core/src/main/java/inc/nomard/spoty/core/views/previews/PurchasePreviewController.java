@@ -38,7 +38,7 @@ public class PurchasePreviewController implements Initializable {
     public Label tax;
     @FXML
     public Label netCost;
-//    @FXML
+    //    @FXML
 //    public Label paidAmount;
 //    @FXML
 //    public Label changeDue;

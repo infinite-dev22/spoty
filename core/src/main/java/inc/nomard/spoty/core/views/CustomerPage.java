@@ -84,7 +84,7 @@ public class CustomerPage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new MFXTextField();
-        searchBar.setPromptText("Search accounts");
+        searchBar.setPromptText("Search customers");
         searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);

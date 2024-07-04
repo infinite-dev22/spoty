@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.layout.message;
 
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
@@ -9,7 +8,6 @@ import javafx.animation.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.*;
 import lombok.extern.java.*;

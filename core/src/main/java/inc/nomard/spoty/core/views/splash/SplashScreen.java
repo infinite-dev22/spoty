@@ -1,4 +1,5 @@
 package inc.nomard.spoty.core.views.splash;
+
 import fr.brouillard.oss.cssfx.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.startup.*;
@@ -11,24 +12,16 @@ import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.theming.*;
-import javafx.animation.FadeTransition;
-import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import java.io.*;
+import java.time.*;
+import javafx.animation.*;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.Duration;
-
-import java.io.IOException;
-import java.time.Year;
 import lombok.extern.java.*;
 
 @Log

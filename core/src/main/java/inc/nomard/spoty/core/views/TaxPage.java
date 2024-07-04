@@ -27,7 +27,6 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
@@ -78,7 +77,7 @@ public class TaxPage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new MFXTextField();
-        searchBar.setPromptText("Search accounts");
+        searchBar.setPromptText("Search taxes");
         searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);

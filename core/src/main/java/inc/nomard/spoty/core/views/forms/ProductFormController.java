@@ -5,7 +5,6 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
