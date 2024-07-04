@@ -84,7 +84,7 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildNumber() {
+    private VBox buildBeneficiaryType() {
         // Input.
         beneficiaryType = new MFXFilterComboBox<>();
         beneficiaryType.setFloatMode(FloatMode.BORDER);
@@ -120,7 +120,7 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildBalance() {
+    private VBox buildColor() {
         // Input.
         colorPicker = new MFXFilterComboBox<>();
         colorPicker.setFloatMode(FloatMode.BORDER);
@@ -152,7 +152,7 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildName(), buildNumber(), buildBalance(), buildDescription());
+        vbox.getChildren().addAll(buildName(), buildBeneficiaryType(), buildColor(), buildDescription());
         return vbox;
     }
 

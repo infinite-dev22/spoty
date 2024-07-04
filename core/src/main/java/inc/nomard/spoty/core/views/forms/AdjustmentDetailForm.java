@@ -83,7 +83,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildNumber() {
+    private VBox buildQuantity() {
         // Input.
         quantity = new MFXTextField();
         quantity.setFloatMode(FloatMode.BORDER);
@@ -99,7 +99,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildBalance() {
+    private VBox buildAdjustmentType() {
         // Input.
         type = new MFXComboBox<>();
         type.setFloatMode(FloatMode.BORDER);
@@ -118,7 +118,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildName(), buildNumber(), buildBalance());
+        vbox.getChildren().addAll(buildName(), buildQuantity(), buildAdjustmentType());
         return vbox;
     }
 

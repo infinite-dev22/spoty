@@ -76,7 +76,7 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildNumber() {
+    private VBox buildColor() {
         // Input.
         colorPicker = new MFXComboBox<>();
         colorPicker.setFloatMode(FloatMode.BORDER);
@@ -110,7 +110,7 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildName(), buildNumber(), buildDescription());
+        vbox.getChildren().addAll(buildName(), buildColor(), buildDescription());
         return vbox;
     }
 
