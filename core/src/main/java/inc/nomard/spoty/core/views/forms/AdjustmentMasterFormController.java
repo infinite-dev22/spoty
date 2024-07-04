@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -12,10 +11,8 @@ import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
@@ -41,17 +38,6 @@ public class AdjustmentMasterFormController implements Initializable {
     public Label adjustmentFormTitle;
     @FXML
     public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
-    private MFXStageDialog dialog;
-
-    public AdjustmentMasterFormController() {
-        Platform.runLater(() -> {
-            try {
-                initProductDialogPane();
-            } catch (IOException e) {
-                SpotyLogger.writeToFile(e, this.getClass());
-            }
-        });
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -65,7 +51,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void setupAddProductButton() {
-        adjustmentProductAddBtn.setOnAction(e -> dialog.showAndWait());
+        adjustmentProductAddBtn.setOnAction(e -> SpotyDialog.createDialog(new AdjustmentDetailForm(), adjustmentFormContentPane).showAndWait());
     }
 
     private void setupTable() {
@@ -128,23 +114,11 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private void editRow(MFXTableRow<AdjustmentDetail> row) {
         SpotyThreader.spotyThreadPool(() -> AdjustmentDetailViewModel.getAdjustmentDetail(row.getData()));
-        dialog.showAndWait();
+        SpotyDialog.createDialog(new AdjustmentDetailForm(), adjustmentFormContentPane).showAndWait();
     }
 
     private void deleteRow(MFXTableRow<AdjustmentDetail> row) {
         AdjustmentDetailViewModel.removeAdjustmentDetail(row.getData().getId(), AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(row.getData()));
-    }
-
-    private void initProductDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/AdjustmentDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new AdjustmentDetailFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, adjustmentFormContentPane);
     }
 
     public void adjustmentSaveBtnClicked() {
