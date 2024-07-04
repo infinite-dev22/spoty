@@ -25,14 +25,10 @@ import lombok.extern.java.*;
 
 @Log
 public class BrandForm extends MFXGenericDialog {
-    @FXML
     public MFXTextField name;
-    @FXML
     public TextArea description;
-    @FXML
     public MFXButton saveBtn,
             cancelBtn;
-    @FXML
     public Label nameValidationLabel;
     private List<Constraint> nameConstraints;
     private ActionEvent actionEvent = null;

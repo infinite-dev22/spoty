@@ -28,15 +28,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class AdjustmentMasterFormController implements Initializable {
-    @FXML
     public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
-    @FXML
     public MFXTextField adjustmentNote;
-    @FXML
     public BorderPane adjustmentFormContentPane;
-    @FXML
     public Label adjustmentFormTitle;
-    @FXML
     public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
 
     @Override

@@ -33,15 +33,10 @@ import lombok.extern.java.*;
 
 @Log
 public class AdjustmentDetailForm extends MFXGenericDialog {
-    @FXML
     public MFXTextField quantity;
-    @FXML
     public MFXFilterComboBox<Product> product;
-    @FXML
     public MFXButton saveBtn, cancelBtn;
-    @FXML
     public MFXComboBox<String> type;
-    @FXML
     public Label productValidationLabel, quantityValidationLabel, typeValidationLabel;
 
     public AdjustmentDetailForm() {

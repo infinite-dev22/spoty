@@ -24,17 +24,13 @@ import lombok.extern.java.*;
 
 @Log
 public class BranchForm extends MFXGenericDialog {
-    @FXML
     public MFXButton saveBtn,
             cancelBtn;
-    @FXML
     public MFXTextField name,
             email,
             phone,
             town,
-            city,
-            zipCode;
-    @FXML
+            city;
     public Label emailValidationLabel,
             cityValidationLabel,
             townValidationLabel,

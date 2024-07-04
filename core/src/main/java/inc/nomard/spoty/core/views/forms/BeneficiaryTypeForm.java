@@ -23,16 +23,11 @@ import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryTypeForm extends MFXGenericDialog {
-    @FXML
     public MFXButton saveBtn, cancelBtn;
-    @FXML
     public Label nameValidationLabel,
             colorPickerValidationLabel;
-    @FXML
     public MFXTextField name;
-    @FXML
     public TextArea description;
-    @FXML
     public MFXComboBox<String> colorPicker;
     private List<Constraint> nameConstraints,
             colorConstraints;
