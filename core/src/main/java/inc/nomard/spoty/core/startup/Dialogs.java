@@ -11,14 +11,12 @@ import lombok.extern.java.*;
 @Log
 public class Dialogs {
     private static final FXMLLoader quotationDetailFormLoader = fxmlLoader("views/forms/QuotationDetailForm.fxml");
-    private static final FXMLLoader purchaseDetailFormLoader = fxmlLoader("views/forms/PurchaseDetailForm.fxml");
 
     private static MFXGenericDialog quotationDialogContent;
     private static MFXGenericDialog printableDialogContent;
 
     public static void setControllers(Stage stage) {
         quotationDetailFormLoader.setControllerFactory(c -> new QuotationDetailFormController());
-        purchaseDetailFormLoader.setControllerFactory(c -> new PurchaseDetailFormController());
     }
 
     public static void setDialogContent() throws IOException {

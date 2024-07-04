@@ -6,7 +6,6 @@
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
@@ -16,17 +15,14 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
@@ -57,11 +53,6 @@ public class PurchaseMasterFormController implements Initializable {
     private MFXFilterComboBox<String> purchaseStatus;
     @FXML
     private MFXButton saveBtn, cancelBtn;
-    private MFXStageDialog dialog;
-
-    public PurchaseMasterFormController() {
-        Platform.runLater(() -> initializePurchaseProductDialog());
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -70,22 +61,6 @@ public class PurchaseMasterFormController implements Initializable {
         purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
         requiredValidator();
         setupTable();
-    }
-
-    private void initializePurchaseProductDialog() {
-        try {
-            FXMLLoader fxmlLoader = fxmlLoader("views/forms/PurchaseDetailForm.fxml");
-            fxmlLoader.setControllerFactory(c -> new PurchaseDetailFormController());
-            MFXGenericDialog dialogContent = fxmlLoader.load();
-
-            dialogContent.setShowMinimize(false);
-            dialogContent.setShowAlwaysOnTop(false);
-            dialogContent.setShowClose(false);
-
-            dialog = SpotyDialog.createDialog(dialogContent, purchaseFormContentPane);
-        } catch (IOException e) {
-            SpotyLogger.writeToFile(e, this.getClass());
-        }
     }
 
     private void bindProperties() {
@@ -202,7 +177,7 @@ public class PurchaseMasterFormController implements Initializable {
 
     private void handleEditAction(MFXTableRow<PurchaseDetail> row) {
         Platform.runLater(() -> PurchaseDetailViewModel.getPurchaseDetail(row.getData()));
-        dialog.showAndWait();
+        SpotyDialog.createDialog(new PurchaseDetailForm(), purchaseFormContentPane).showAndWait();
     }
 
     private void bindTableItems() {
@@ -247,7 +222,7 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     public void addBtnClicked() {
-        dialog.showAndWait();
+        SpotyDialog.createDialog(new PurchaseDetailForm(), purchaseFormContentPane).showAndWait();
     }
 
     private void onSuccess() {

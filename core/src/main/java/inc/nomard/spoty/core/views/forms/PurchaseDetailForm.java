@@ -11,17 +11,17 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -29,27 +29,101 @@ import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class PurchaseDetailFormController implements Initializable {
-    @FXML
+public class PurchaseDetailForm extends MFXGenericDialog {
     public MFXTextField quantity;
-    @FXML
     public MFXFilterComboBox<Product> product;
-    @FXML
     public MFXButton saveBtn, cancelBtn;
-    @FXML
     public Label quantityValidationLabel, productValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        bindProperties();
-        setupProductComboBox();
-        addValidators();
-        setupDialogActions();
+    public PurchaseDetailForm() {
+        init();
     }
 
-    private void bindProperties() {
-        quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
+    public void init() {
+        buildDialogContent();
+        requiredValidator();
+        dialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+
+    private VBox buildProduct() {
+        // Input.
+        product = new MFXFilterComboBox<>();
+        product.setFloatMode(FloatMode.BORDER);
+        product.setFloatingText("Product");
+        product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
+        setupProductComboBox();
+        // Validation.
+        productValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(product, productValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildQuantity() {
+        // Input.
+        quantity = new MFXTextField();
+        quantity.setFloatMode(FloatMode.BORDER);
+        quantity.setFloatingText("Account Number");
+        quantity.setPrefWidth(400d);
+        quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
+        // Validation.
+        quantityValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildProduct(), buildQuantity());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void setupProductComboBox() {
@@ -71,7 +145,7 @@ public class PurchaseDetailFormController implements Initializable {
         }
     }
 
-    private void addValidators() {
+    private void requiredValidator() {
         addProductValidator();
         addQuantityValidator();
     }
@@ -114,7 +188,7 @@ public class PurchaseDetailFormController implements Initializable {
         );
     }
 
-    private void setupDialogActions() {
+    private void dialogOnActions() {
         cancelBtn.setOnAction(this::resetForm);
         saveBtn.setOnAction(this::saveForm);
     }
