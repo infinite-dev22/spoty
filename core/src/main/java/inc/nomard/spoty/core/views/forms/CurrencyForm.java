@@ -58,7 +58,7 @@ public class CurrencyForm extends MFXGenericDialog {
     }
 
 
-    private VBox buildName() {
+    private VBox buildCode() {
         // Input.
         code = new MFXTextField();
         code.setFloatMode(FloatMode.BORDER);
@@ -74,7 +74,7 @@ public class CurrencyForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildNumber() {
+    private VBox buildName() {
         // Input.
         name = new MFXTextField();
         name.setFloatMode(FloatMode.BORDER);
@@ -90,7 +90,7 @@ public class CurrencyForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildBalance() {
+    private VBox buildSymbol() {
         // Input.
         symbol = new MFXTextField();
         symbol.setFloatMode(FloatMode.BORDER);
@@ -109,7 +109,7 @@ public class CurrencyForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildName(), buildNumber(), buildBalance());
+        vbox.getChildren().addAll(buildCode(), buildName(), buildSymbol());
         return vbox;
     }
 
