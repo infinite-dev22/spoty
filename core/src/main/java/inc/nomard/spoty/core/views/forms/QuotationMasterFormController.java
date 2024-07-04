@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
@@ -14,7 +13,6 @@ import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
@@ -55,11 +53,6 @@ public class QuotationMasterFormController implements Initializable {
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
-    private MFXStageDialog dialog;
-
-    public QuotationMasterFormController() {
-        Platform.runLater(this::quotationProductDialogPane);
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -186,17 +179,13 @@ public class QuotationMasterFormController implements Initializable {
         edit.setOnAction(
                 event -> {
                     QuotationDetailViewModel.getQuotationDetail(obj.getData());
-                    dialog.showAndWait();
+                    SpotyDialog.createDialog(new QuotationDetailForm(), quotationFormContentPane).showAndWait();
                     event.consume();
                 });
 
         contextMenu.addItems(edit, delete);
 
         return contextMenu;
-    }
-
-    private void quotationProductDialogPane() {
-        dialog = SpotyDialog.createDialog(Dialogs.getQuotationDialogContent(), quotationFormContentPane);
     }
 
     public void saveBtnClicked() {
@@ -246,7 +235,7 @@ public class QuotationMasterFormController implements Initializable {
 
     public void addBtnClicked() {
         try {
-            dialog.showAndWait();
+            SpotyDialog.createDialog(new QuotationDetailForm(), quotationFormContentPane).showAndWait();
         } catch (Exception e) {
             SpotyLogger.writeToFile(e, QuotationMasterFormController.class);
         }

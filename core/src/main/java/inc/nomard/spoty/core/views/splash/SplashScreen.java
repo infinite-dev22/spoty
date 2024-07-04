@@ -80,8 +80,6 @@ public class SplashScreen extends BorderPane {
     private static void initializePrimaryStage(Stage primaryStage, Rectangle2D screenBounds) throws IOException {
         Pages.setControllers(primaryStage);
         Pages.setPanes();
-        Dialogs.setControllers(primaryStage);
-        Dialogs.setDialogContent();
 
         var root = new AuthScreen(primaryStage);
         var scene = new Scene(root);

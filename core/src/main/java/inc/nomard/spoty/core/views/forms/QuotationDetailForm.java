@@ -10,12 +10,12 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.beans.binding.*;
@@ -23,13 +23,14 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class QuotationDetailFormController implements Initializable {
+public class QuotationDetailForm extends MFXGenericDialog {
     @FXML
     public MFXTextField quantity;
     @FXML
@@ -43,19 +44,123 @@ public class QuotationDetailFormController implements Initializable {
     @FXML
     public MFXComboBox<Tax> tax;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        bindFormInputs();
+    public QuotationDetailForm() {
+        init();
+    }
+
+    public void init() {
+        buildDialogContent();
         setupComboBoxes();
         setupValidators();
         setupActions();
     }
 
-    private void bindFormInputs() {
-        quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+
+    private VBox buildProduct() {
+        // Input.
+        product = new MFXFilterComboBox<>();
+        product.setFloatMode(FloatMode.BORDER);
+        product.setFloatingText("Product");
+        product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
-        discount.valueProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
+        // Validation.
+        productValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(product, productValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildQuantity() {
+        // Input.
+        quantity = new MFXTextField();
+        quantity.setFloatMode(FloatMode.BORDER);
+        quantity.setFloatingText("Quantity");
+        quantity.setPrefWidth(400d);
+        quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
+        // Validation.
+        quantityValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildTax() {
+        // Input.
+        tax = new MFXFilterComboBox<>();
+        tax.setFloatMode(FloatMode.BORDER);
+        tax.setFloatingText("Tax");
+        tax.setPrefWidth(400d);
         tax.valueProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().add(tax);
+        return vbox;
+    }
+
+    private VBox buildDiscount() {
+        // Input.
+        discount = new MFXFilterComboBox<>();
+        discount.setFloatMode(FloatMode.BORDER);
+        discount.setFloatingText("Discount");
+        discount.setPrefWidth(400d);
+        discount.valueProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().add(discount);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildProduct(), buildQuantity(), buildTax(), buildDiscount());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void setupComboBoxes() {
