@@ -9,20 +9,21 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class BranchFormController implements Initializable {
+public class BranchForm extends MFXGenericDialog {
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
@@ -44,17 +45,138 @@ public class BranchFormController implements Initializable {
             cityConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        name.textProperty().bindBidirectional(BranchViewModel.nameProperty());
-        email.textProperty().bindBidirectional(BranchViewModel.emailProperty());
-        phone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
-        town.textProperty().bindBidirectional(BranchViewModel.townProperty());
-        city.textProperty().bindBidirectional(BranchViewModel.cityProperty());
-        // Input listeners.
+    public BranchForm() {
+        init();
+    }
+
+    public void init() {
+        buildDialogContent();
         requiredValidator();
         dialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+
+    private VBox buildName() {
+        // Input.
+        name = new MFXTextField();
+        name.setFloatMode(FloatMode.BORDER);
+        name.setFloatingText("Name");
+        name.setPrefWidth(400d);
+        name.textProperty().bindBidirectional(BranchViewModel.nameProperty());
+        // Validation.
+        nameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(name, nameValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildPhone() {
+        // Input.
+        phone = new MFXTextField();
+        phone.setFloatMode(FloatMode.BORDER);
+        phone.setFloatingText("Phone");
+        phone.setPrefWidth(400d);
+        phone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
+        // Validation.
+        phoneValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(phone, phoneValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildTown() {
+        // Input.
+        town = new MFXTextField();
+        town.setFloatMode(FloatMode.BORDER);
+        town.setFloatingText("Town");
+        town.setPrefWidth(400d);
+        town.textProperty().bindBidirectional(BranchViewModel.townProperty());
+        // Validation.
+        townValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(town);
+        return vbox;
+    }
+
+    private VBox buildCity() {
+        // Input.
+        city = new MFXTextField();
+        city.setFloatMode(FloatMode.BORDER);
+        city.setFloatingText("City");
+        city.setPrefWidth(400d);
+        city.textProperty().bindBidirectional(BranchViewModel.cityProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(city);
+        return vbox;
+    }
+
+    private VBox buildEmail() {
+        // Input.
+        email = new MFXTextField();
+        email.setFloatMode(FloatMode.BORDER);
+        email.setFloatingText("Email");
+        email.setPrefWidth(400d);
+        email.textProperty().bindBidirectional(BranchViewModel.emailProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(email);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildName(), buildPhone(), buildEmail(), buildCity(), buildTown());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void dialogOnActions() {

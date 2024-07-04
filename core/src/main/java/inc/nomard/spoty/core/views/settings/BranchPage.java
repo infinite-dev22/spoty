@@ -17,7 +17,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
@@ -38,17 +37,8 @@ public class BranchPage extends OutlinePage {
     private MFXTableView<Branch> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
 
     public BranchPage() {
-        Platform.runLater(
-                () -> {
-                    try {
-                        branchFormDialogPane();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
         addNode(init());
     }
 
@@ -212,18 +202,8 @@ public class BranchPage extends OutlinePage {
     private void createBtnAction() {
         createBtn.setOnAction(event -> {
             BranchViewModel.setTitle(Labels.CREATE);
-            dialog.showAndWait();
+            SpotyDialog.createDialog(new BranchForm(), this).showAndWait();
         });
-    }
-
-    private void branchFormDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/BranchForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new BranchFormController());
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     private void onSuccess() {
