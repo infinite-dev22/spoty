@@ -18,13 +18,13 @@ public class Expense implements Serializable {
     private Date date;
     private String ref;
     private String name;
-    private ExpenseCategory expenseCategory;
+    private Account account;
     private ArrayList<Branch> branches;
-    private String details;
+    private String note;
     private double amount;
 
     public String getExpenseCategoryName() {
-        return expenseCategory.getName();
+        return account.getAccountName();
     }
 
     public String getLocaleDate() {

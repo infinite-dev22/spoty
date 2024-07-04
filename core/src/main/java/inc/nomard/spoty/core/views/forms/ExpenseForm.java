@@ -9,37 +9,33 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
+import java.util.function.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class ExpenseFormController implements Initializable {
-    @FXML
+public class ExpenseForm extends MFXGenericDialog {
     public MFXTextField amount,
             name;
-    @FXML
-    public TextArea description;
-    @FXML
+    public TextArea note;
     public MFXButton saveBtn,
             cancelBtn;
-    @FXML
     public MFXDatePicker date;
-    @FXML
-    public MFXComboBox<ExpenseCategory> category;
-    @FXML
+    public MFXFilterComboBox<Account> account;
     public Label nameValidationLabel,
             dateValidationLabel,
-            categoryValidationLabel,
+            accountValidationLabel,
             amountValidationLabel;
     private List<Constraint> nameConstraints,
             dateConstraints,
@@ -47,28 +43,151 @@ public class ExpenseFormController implements Initializable {
             amountConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Form Bindings.
-        name.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
-        date.textProperty().bindBidirectional(ExpensesViewModel.dateProperty());
-        category.valueProperty().bindBidirectional(ExpensesViewModel.categoryProperty());
-        amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
-        description.textProperty().bindBidirectional(ExpensesViewModel.detailsProperty());
+    public ExpenseForm() {
+        init();
+    }
 
-        // ComboBox Converters.
-        StringConverter<ExpenseCategory> expenseCategoryConverter =
+    public void init() {
+        buildDialogContent();
+        requiredValidator();
+        dialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+    private VBox buildAccount() {
+        // Input.
+        account = new MFXFilterComboBox<>();
+        account.setFloatMode(FloatMode.BORDER);
+        account.setFloatingText("Account");
+        account.setPrefWidth(400d);
+        account.valueProperty().bindBidirectional(ExpensesViewModel.accountProperty());
+        // Converter
+        StringConverter<Account> accountConverter =
                 FunctionalStringConverter.to(
-                        expenseCategory -> (expenseCategory == null) ? "" : expenseCategory.getName());
+                        account -> (account == null) ? "" : account.getAccountName());
+        // Filter function
+        Function<String, Predicate<Account>> accountFilterFunction =
+                searchStr ->
+                        account ->
+                                StringUtils.containsIgnoreCase(accountConverter.toString(account), searchStr);
 
         // Combo box properties.
-        category.setItems(ExpenseCategoryViewModel.getCategories());
-        category.setConverter(expenseCategoryConverter);
+        account.setItems(AccountViewModel.getAccounts());
+        account.setConverter(accountConverter);
+        account.setFilterFunction(accountFilterFunction);
+        // Validation.
+        accountValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(account, accountValidationLabel);
+        return vbox;
+    }
 
-        // Input listeners.
-        requiredValidator();
+    private VBox buildName() {
+        // Input.
+        name = new MFXTextField();
+        name.setFloatMode(FloatMode.BORDER);
+        name.setFloatingText("Name");
+        name.setPrefWidth(400d);
+        name.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
+        // Validation.
+        nameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(name, nameValidationLabel);
+        return vbox;
+    }
 
-        dialogOnActions();
+    private VBox buildDate() {
+        // Input.
+        date = new MFXDatePicker();
+        date.setFloatMode(FloatMode.BORDER);
+        date.setFloatingText("Expense Date");
+        date.setPrefWidth(400d);
+        date.textProperty().bindBidirectional(ExpensesViewModel.dateProperty());
+        // Validation.
+        dateValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(date, dateValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildAmount() {
+        // Input.
+        amount = new MFXTextField();
+        amount.setFloatMode(FloatMode.BORDER);
+        amount.setFloatingText("Amount");
+        amount.setPrefWidth(400d);
+        amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
+        ExpensesViewModel.idProperty().addListener((observableValue, oV, nV) -> amount.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(amount);
+        return vbox;
+    }
+
+    private VBox buildNote() {
+        // Input.
+        note = new TextArea();
+        note.setPromptText("Note");
+        note.setPrefWidth(400d);
+        note.textProperty().bindBidirectional(ExpensesViewModel.noteProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(note);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildAccount(), buildName(), buildDate(), buildAmount(), buildNote());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
@@ -76,31 +195,31 @@ public class ExpenseFormController implements Initializable {
                 (event) -> {
                     closeDialog(event);
                     ExpensesViewModel.resetProperties();
-                    category.clearSelection();
+                    account.clearSelection();
 
                     nameValidationLabel.setVisible(false);
                     dateValidationLabel.setVisible(false);
-                    categoryValidationLabel.setVisible(false);
+                    accountValidationLabel.setVisible(false);
                     amountValidationLabel.setVisible(false);
 
                     nameValidationLabel.setManaged(false);
                     dateValidationLabel.setManaged(false);
-                    categoryValidationLabel.setManaged(false);
+                    accountValidationLabel.setManaged(false);
                     amountValidationLabel.setManaged(false);
 
                     date.setValue(null);
-                    category.clearSelection();
+                    account.clearSelection();
 
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    account.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     amount.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
                     dateConstraints = date.validate();
-                    categoryConstraints = category.validate();
+                    categoryConstraints = account.validate();
                     amountConstraints = amount.validate();
                     if (!nameConstraints.isEmpty()) {
                         nameValidationLabel.setManaged(true);
@@ -119,11 +238,11 @@ public class ExpenseFormController implements Initializable {
                         dialog.sizeToScene();
                     }
                     if (!categoryConstraints.isEmpty()) {
-                        categoryValidationLabel.setManaged(true);
-                        categoryValidationLabel.setVisible(true);
-                        categoryValidationLabel.setText(categoryConstraints.getFirst().getMessage());
-                        category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) category.getScene().getWindow();
+                        accountValidationLabel.setManaged(true);
+                        accountValidationLabel.setVisible(true);
+                        accountValidationLabel.setText(categoryConstraints.getFirst().getMessage());
+                        account.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) account.getScene().getWindow();
                         dialog.sizeToScene();
                     }
                     if (!amountConstraints.isEmpty()) {
@@ -151,8 +270,8 @@ public class ExpenseFormController implements Initializable {
 
     private void onSuccess() {
         date.setValue(null);
-        category.clearSelection();
-        category.clearSelection();
+        account.clearSelection();
+        account.clearSelection();
         closeDialog(actionEvent);
         ExpensesViewModel.resetProperties();
         ExpensesViewModel.getAllExpenses(null, null);
@@ -178,9 +297,9 @@ public class ExpenseFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Category is required")
-                        .setCondition(category.textProperty().length().greaterThan(0))
+                        .setCondition(account.textProperty().length().greaterThan(0))
                         .get();
-        category.getValidator().constraint(categoryConstraint);
+        account.getValidator().constraint(categoryConstraint);
         Constraint amountConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -211,15 +330,15 @@ public class ExpenseFormController implements Initializable {
                                 date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        category
+        account
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                categoryValidationLabel.setManaged(false);
-                                categoryValidationLabel.setVisible(false);
-                                category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                accountValidationLabel.setManaged(false);
+                                accountValidationLabel.setVisible(false);
+                                account.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
         amount

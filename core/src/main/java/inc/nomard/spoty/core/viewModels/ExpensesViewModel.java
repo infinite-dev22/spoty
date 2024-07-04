@@ -32,8 +32,8 @@ public class ExpensesViewModel {
     private static final StringProperty reference = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty amount = new SimpleStringProperty("");
-    private static final ObjectProperty<ExpenseCategory> category = new SimpleObjectProperty<>(null);
-    private static final StringProperty details = new SimpleStringProperty("");
+    private static final ObjectProperty<Account> account = new SimpleObjectProperty<>(null);
+    private static final StringProperty note = new SimpleStringProperty("");
     private static final ExpensesRepositoryImpl expensesRepository = new ExpensesRepositoryImpl();
 
     public static long getId() {
@@ -101,28 +101,28 @@ public class ExpensesViewModel {
         return amount;
     }
 
-    public static ExpenseCategory getCategory() {
-        return category.get();
+    public static Account getAccount() {
+        return account.get();
     }
 
-    public static void setCategory(ExpenseCategory category) {
-        ExpensesViewModel.category.set(category);
+    public static void setAccount(Account account) {
+        ExpensesViewModel.account.set(account);
     }
 
-    public static ObjectProperty<ExpenseCategory> categoryProperty() {
-        return category;
+    public static ObjectProperty<Account> accountProperty() {
+        return account;
     }
 
-    public static String getDetails() {
-        return details.get();
+    public static String getNote() {
+        return note.get();
     }
 
-    public static void setDetails(String details) {
-        ExpensesViewModel.details.set(details);
+    public static void setNote(String note) {
+        ExpensesViewModel.note.set(note);
     }
 
-    public static StringProperty detailsProperty() {
-        return details;
+    public static StringProperty noteProperty() {
+        return note;
     }
 
     public static ObservableList<Expense> getExpenses() {
@@ -143,8 +143,8 @@ public class ExpensesViewModel {
         setReference("");
         setName("");
         setAmount(0);
-        setCategory(null);
-        setDetails("");
+        setAccount(null);
+        setNote("");
     }
 
     public static void saveExpense(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -154,8 +154,8 @@ public class ExpensesViewModel {
                 .date(getDate())
                 .ref(getReference())
                 .name(getName())
-                .expenseCategory(getCategory())
-                .details(getDetails())
+                .account(getAccount())
+                .note(getNote())
                 .amount(getAmount())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.post(expense);
@@ -262,9 +262,9 @@ public class ExpensesViewModel {
                     setId(expense.getId());
                     setDate(expense.getLocaleDate());
                     setName(expense.getName());
-                    setCategory(expense.getExpenseCategory());
+                    setAccount(expense.getAccount());
                     setAmount(expense.getAmount());
-                    setDetails(expense.getDetails());
+                    setNote(expense.getNote());
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {
@@ -357,8 +357,8 @@ public class ExpensesViewModel {
                 .date(getDate())
                 .ref(getReference())
                 .name(getName())
-                .expenseCategory(getCategory())
-                .details(getDetails())
+                .account(getAccount())
+                .note(getNote())
                 .amount(getAmount())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.put(expense);
