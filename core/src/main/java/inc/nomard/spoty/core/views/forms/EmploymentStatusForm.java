@@ -9,20 +9,21 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class EmploymentStatusFormController implements Initializable {
+public class EmploymentStatusForm extends MFXGenericDialog {
     @FXML
     public MFXTextField name;
     @FXML
@@ -40,19 +41,110 @@ public class EmploymentStatusFormController implements Initializable {
             colorConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        name.textProperty().bindBidirectional(EmploymentStatusViewModel.nameProperty());
-        colorPicker.textProperty().bindBidirectional(EmploymentStatusViewModel.colorProperty());
-        description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());
-        // Input listeners.
+    public EmploymentStatusForm() {
+        init();
+    }
+
+    public void init() {
+        buildDialogContent();
         requiredValidator();
         dialogOnActions();
-        // Color Picker
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+
+    private VBox buildName() {
+        // Input.
+        name = new MFXTextField();
+        name.setFloatMode(FloatMode.BORDER);
+        name.setFloatingText("Name");
+        name.setPrefWidth(400d);
+        name.textProperty().bindBidirectional(EmploymentStatusViewModel.nameProperty());
+        // Validation.
+        nameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(name, nameValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildColor() {
+        // Input.
+        colorPicker = new MFXFilterComboBox<>();
+        colorPicker.setFloatMode(FloatMode.BORDER);
+        colorPicker.setFloatingText("Appearance Color");
+        colorPicker.setPrefWidth(400d);
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
         colorPicker.getStyleClass().add(Styles.BUTTON_OUTLINED);
         colorPicker.setItems(EmploymentStatusViewModel.getColorsList());
+        colorPicker.textProperty().bindBidirectional(EmploymentStatusViewModel.colorProperty());
+        // Validation.
+        colorPickerValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(colorPicker, colorPickerValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildDescription() {
+        // Input.
+        description = new TextArea();
+        description.setPromptText("Description");
+        description.setPrefWidth(400d);
+        description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(description);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildName(), buildColor(), buildDescription());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
