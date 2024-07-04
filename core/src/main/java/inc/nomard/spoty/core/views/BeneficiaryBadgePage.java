@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -12,16 +11,13 @@ import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -34,15 +30,9 @@ public class BeneficiaryBadgePage extends OutlinePage {
     private MFXTableView<BeneficiaryBadge> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
 
     public BeneficiaryBadgePage() {
         super();
-        try {
-            formDialogPane();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
         addNode(init());
     }
 
@@ -111,10 +101,6 @@ public class BeneficiaryBadgePage extends OutlinePage {
         AnchorPane.setRightAnchor(masterTable, 0d);
         AnchorPane.setTopAnchor(masterTable, 10d);
         return new AnchorPane(masterTable);
-    }
-
-    private void formDialogPane() throws IOException {
-        dialog = SpotyDialog.createDialog(new BeneficiaryBadgeForm(), this);
     }
 
     private void setupTable() {
@@ -194,7 +180,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    BeneficiaryBadgeViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    BeneficiaryBadgeViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new BeneficiaryBadgeForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -204,7 +190,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> dialog.showAndWait());
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new BeneficiaryBadgeForm(), this).showAndWait());
     }
 
     private void onSuccess() {
