@@ -38,8 +38,7 @@ public class RequisitionDetailForm extends ModalPage {
             cancelBtn;
     @FXML
     public Label quantityValidationLabel,
-            productValidationLabel,
-            costValidationLabel;
+            productValidationLabel;
     private List<Constraint> productConstraints,
             quantityConstraints;
 
@@ -164,7 +163,6 @@ public class RequisitionDetailForm extends ModalPage {
         this.saveBtn = null;
         this.quantityValidationLabel = null;
         this.productValidationLabel = null;
-        this.costValidationLabel = null;
         this.productConstraints = null;
         this.quantityConstraints = null;
     }
@@ -177,11 +175,9 @@ public class RequisitionDetailForm extends ModalPage {
                     product.clearSelection();
                     productValidationLabel.setVisible(false);
                     quantityValidationLabel.setVisible(false);
-                    costValidationLabel.setVisible(false);
 
                     productValidationLabel.setManaged(false);
                     quantityValidationLabel.setManaged(false);
-                    costValidationLabel.setManaged(false);
 
                     product.clearSelection();
 
