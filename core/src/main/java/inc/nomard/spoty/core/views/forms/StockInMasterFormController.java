@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -12,10 +11,8 @@ import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import javafx.application.*;
@@ -42,18 +39,6 @@ public class StockInMasterFormController implements Initializable {
     @FXML
     public MFXButton stockInMasterProductAddBtn, saveBtn,
             cancelBtn;
-    private MFXStageDialog dialog;
-
-    public StockInMasterFormController() {
-        Platform.runLater(
-                () -> {
-                    try {
-                        quotationProductDialogPane();
-                    } catch (IOException e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                });
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -147,7 +132,7 @@ public class StockInMasterFormController implements Initializable {
                 event -> {
                     try {
                         StockInDetailViewModel.getStockInDetail(obj.getData());
-                        dialog.showAndWait();
+                        SpotyDialog.createDialog(new StockInDetailForm(), contentPane).showAndWait();
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -160,20 +145,7 @@ public class StockInMasterFormController implements Initializable {
     }
 
     private void stockInMasterAddProductBtnClicked() {
-        stockInMasterProductAddBtn.setOnAction(e -> dialog.showAndWait());
-    }
-
-    private void quotationProductDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/StockInDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new StockInDetailFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, contentPane);
+        stockInMasterProductAddBtn.setOnAction(e -> SpotyDialog.createDialog(new StockInDetailForm(), contentPane).showAndWait());
     }
 
     public void stockInMasterSaveBtnClicked() {
