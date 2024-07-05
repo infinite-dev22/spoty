@@ -4,7 +4,6 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -71,7 +70,7 @@ public class RequisitionDetailForm extends ModalPage {
         product.setFloatMode(FloatMode.BORDER);
         product.setFloatingText("Product");
         product.setPrefWidth(400d);
-        product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
+        product.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
                 FunctionalStringConverter.to(
@@ -110,7 +109,7 @@ public class RequisitionDetailForm extends ModalPage {
         quantity.setFloatMode(FloatMode.BORDER);
         quantity.setFloatingText("Quantity");
         quantity.setPrefWidth(400d);
-        quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
+        quantity.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
         // Validation.
         quantityValidationLabel = buildValidationLabel();
         var vbox = new VBox();
