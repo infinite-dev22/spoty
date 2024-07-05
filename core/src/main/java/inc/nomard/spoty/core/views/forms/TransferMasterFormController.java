@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -13,14 +12,12 @@ import inc.nomard.spoty.network_bridge.dtos.transfers.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
@@ -57,18 +54,6 @@ public class TransferMasterFormController implements Initializable {
             dateValidationLabel,
             toBranchValidationLabel,
             fromBranchValidationLabel;
-    private MFXStageDialog dialog;
-
-    public TransferMasterFormController() {
-        Platform.runLater(
-                () -> {
-                    try {
-                        quotationProductDialogPane();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -197,7 +182,7 @@ public class TransferMasterFormController implements Initializable {
                                 }
                             });
 
-                    dialog.showAndWait();
+                    SpotyDialog.createDialog(new TransferDetailForm(), contentPane).showAndWait();
                     event.consume();
                 });
 
@@ -207,20 +192,7 @@ public class TransferMasterFormController implements Initializable {
     }
 
     private void transferMasterAddProductBtnClicked() {
-        addBtn.setOnAction(e -> dialog.showAndWait());
-    }
-
-    private void quotationProductDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/TransferDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new TransferDetailFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, contentPane);
+        addBtn.setOnAction(e -> SpotyDialog.createDialog(new TransferDetailForm(), contentPane).showAndWait());
     }
 
     public void saveBtnClicked() {

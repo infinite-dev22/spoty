@@ -11,70 +11,130 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
-import java.util.function.*;
 import javafx.collections.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class TransferDetailFormController implements Initializable {
-    @FXML
+public class TransferDetailForm extends ModalPage {
     public MFXTextField quantity;
-    @FXML
     public MFXFilterComboBox<Product> product;
-    @FXML
     public MFXButton saveBtn,
             cancelBtn;
-    @FXML
     public Label quantityValidationLabel,
             productValidationLabel;
     private List<Constraint> productConstraints,
             quantityConstraints;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Form input binding.
+    public TransferDetailForm() {
+        init();
+    }
+
+    public void init() {
+        buildDialogContent();
+        requiredValidator();
+        dialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+    private VBox buildProduct() {
+        // Input.
+        product = new MFXFilterComboBox<>();
+        product.setFloatMode(FloatMode.BORDER);
+        product.setFloatingText("Product");
+        product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
-        quantity.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
 
-        // Combo box Converter.
-        StringConverter<Product> productVariantConverter =
-                FunctionalStringConverter.to(
-                        productDetail -> (productDetail == null) ? "" : productDetail.getName());
+        StringConverter<Product> productConverter = FunctionalStringConverter.to(
+                productDetail -> productDetail == null ? "" : productDetail.getName());
+        product.setConverter(productConverter);
+        product.setFilterFunction(searchStr ->
+                productDetail -> StringUtils.containsIgnoreCase(productConverter.toString(productDetail), searchStr));
 
-        // Combo box Filter Function.
-        Function<String, Predicate<Product>> productVariantFilterFunction =
-                searchStr ->
-                        productDetail ->
-                                StringUtils.containsIgnoreCase(
-                                        productVariantConverter.toString(productDetail), searchStr);
-
-        // Combo box properties.
-        product.setConverter(productVariantConverter);
-        product.setFilterFunction(productVariantFilterFunction);
         if (ProductViewModel.getProducts().isEmpty()) {
-            ProductViewModel.getProducts()
-                    .addListener(
-                            (ListChangeListener<Product>)
-                                    c -> product.setItems(ProductViewModel.getProducts()));
+            ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> product.setItems(ProductViewModel.getProducts()));
         } else {
             product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
         }
+        // Validation.
+        productValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(product, productValidationLabel);
+        return vbox;
+    }
 
-        // Input validators.
-        requiredValidator();
+    private VBox buildQuantity() {
+        // Input.
+        quantity = new MFXTextField();
+        quantity.setFloatMode(FloatMode.BORDER);
+        quantity.setFloatingText("Quantity");
+        quantity.setPrefWidth(400d);
+        quantity.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
+        // Validation.
+        quantityValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        return vbox;
+    }
 
-        dialogOnActions();
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildProduct(), buildQuantity());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
@@ -191,5 +251,18 @@ public class TransferDetailFormController implements Initializable {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.product = null;
+        this.quantity = null;
+        this.cancelBtn = null;
+        this.saveBtn = null;
+        this.quantityValidationLabel = null;
+        this.productValidationLabel = null;
+        this.productConstraints = null;
+        this.quantityConstraints = null;
     }
 }
