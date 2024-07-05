@@ -158,6 +158,7 @@ public class StockInDetailForm extends ModalPage {
         StockInDetailViewModel.resetProperties();
         clearSelections();
         hideValidationLabels();
+        dispose();
     }
 
     private void clearSelections() {
@@ -261,5 +262,18 @@ public class StockInDetailForm extends ModalPage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.product = null;
+        this.quantity = null;
+        this.cancelBtn = null;
+        this.saveBtn = null;
+        this.quantityValidationLabel = null;
+        this.productValidationLabel = null;
+        this.productConstraints = null;
+        this.quantityConstraints = null;
     }
 }
