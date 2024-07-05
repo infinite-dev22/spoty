@@ -3,8 +3,9 @@ package inc.nomard.spoty.core.views.layout;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import javafx.scene.*;
 
-public abstract class ModalPage extends MFXStageDialog implements Page {
+public abstract class ModalPage extends MFXGenericDialog implements Modal {
     public ModalPage() {
         super();
         setLightMode();
@@ -18,8 +19,22 @@ public abstract class ModalPage extends MFXStageDialog implements Page {
     public void reset() {
     }
 
+    @Override
+    public Node getSnapshotTarget() {
+        return this;
+    }
+
+    @Override
+    public Parent getView() {
+        return this;
+    }
+
+    @Override
+    public void dispose() {
+    }
+
     public void setLightMode() {
-        this.getContent().getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+        this.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Buttons.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
@@ -27,7 +42,7 @@ public abstract class ModalPage extends MFXStageDialog implements Page {
     }
 
     public void setDarkMode() {
-        this.getContent().getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+        this.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Buttons.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),

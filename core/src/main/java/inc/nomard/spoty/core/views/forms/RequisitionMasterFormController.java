@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
@@ -14,18 +13,15 @@ import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -55,18 +51,6 @@ public class RequisitionMasterFormController implements Initializable {
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
-    private MFXStageDialog dialog;
-
-    public RequisitionMasterFormController() {
-        Platform.runLater(
-                () -> {
-                    try {
-                        createRequisitionProductDialog();
-                    } catch (IOException e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                });
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -102,19 +86,6 @@ public class RequisitionMasterFormController implements Initializable {
         requiredValidator();
 
         setupTable();
-    }
-
-    private void createRequisitionProductDialog() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/RequisitionDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new RequisitionDetailFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, contentPane);
     }
 
     public void saveBtnClicked() {
@@ -235,7 +206,7 @@ public class RequisitionMasterFormController implements Initializable {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });
-                    dialog.showAndWait();
+                    SpotyDialog.createDialog(new RequisitionDetailForm(), contentPane).showAndWait();
                     event.consume();
                 });
 
@@ -260,7 +231,7 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     public void addBtnClicked() {
-        dialog.showAndWait();
+        SpotyDialog.createDialog(new RequisitionDetailForm(), contentPane).showAndWait();
     }
 
     private void onSuccess() {

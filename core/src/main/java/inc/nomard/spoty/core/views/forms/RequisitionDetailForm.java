@@ -4,6 +4,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -11,23 +12,24 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class RequisitionDetailFormController implements Initializable {
+public class RequisitionDetailForm extends ModalPage {
     @FXML
     public MFXTextField quantity;
     @FXML
@@ -42,12 +44,34 @@ public class RequisitionDetailFormController implements Initializable {
     private List<Constraint> productConstraints,
             quantityConstraints;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        quantity.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
-        product.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
+    public RequisitionDetailForm() {
+        init();
+    }
 
+    public void init() {
+        buildDialogContent();
+        requiredValidator();
+        dialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+    private VBox buildProduct() {
+        // Input.
+        product = new MFXFilterComboBox<>();
+        product.setFloatMode(FloatMode.BORDER);
+        product.setFloatingText("Product");
+        product.setPrefWidth(400d);
+        product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
                 FunctionalStringConverter.to(
@@ -71,10 +95,79 @@ public class RequisitionDetailFormController implements Initializable {
         } else {
             product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
         }
+        // Validation.
+        productValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(product, productValidationLabel);
+        return vbox;
+    }
 
-        // Input validators.
-        requiredValidator();
-        dialogOnActions();
+    private VBox buildQuantity() {
+        // Input.
+        quantity = new MFXTextField();
+        quantity.setFloatMode(FloatMode.BORDER);
+        quantity.setFloatingText("Quantity");
+        quantity.setPrefWidth(400d);
+        quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
+        // Validation.
+        quantityValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildProduct(), buildQuantity());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.product = null;
+        this.quantity = null;
+        this.cancelBtn = null;
+        this.saveBtn = null;
+        this.quantityValidationLabel = null;
+        this.productValidationLabel = null;
+        this.costValidationLabel = null;
+        this.productConstraints = null;
+        this.quantityConstraints = null;
     }
 
     private void dialogOnActions() {
@@ -95,6 +188,7 @@ public class RequisitionDetailFormController implements Initializable {
 
                     product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    dispose();
                 });
         saveBtn.setOnAction(
                 (event) -> {
@@ -130,6 +224,7 @@ public class RequisitionDetailFormController implements Initializable {
                         product.clearSelection();
                         closeDialog(event);
                     }
+                    dispose();
                 });
     }
 
