@@ -9,62 +9,103 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class UOMFormController implements Initializable {
+public class UOMForm extends ModalPage {
     /**
      * =>When editing a row, the extra fields won't display even though the row clearly has a BaseUnit
      * filled in its combo. =>The dialog should animate to expand and contract when a BaseUnit is
      * present i.e. not just have a scroll view.
      */
-    @FXML
     public MFXTextField name,
             shortName,
             operatorValue;
-    @FXML
     public MFXButton saveBtn,
             cancelBtn;
-    @FXML
     public MFXFilterComboBox<UnitOfMeasure> baseUnit;
-    @FXML
     public MFXComboBox<String> operator;
-    @FXML
     public VBox formsHolder;
-    @FXML
     public Label nameValidationLabel,
             operatorValidationLabel,
             operatorValueValidationLabel;
-    @FXML
-    public VBox inputsHolder;
     private List<Constraint> nameConstraints,
             operatorConstraints,
             operatorValueConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Form input binding.
-        name.textProperty().bindBidirectional(UOMViewModel.nameProperty());
-        shortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
-        baseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
-        operator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
-        operatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
+    public UOMForm() {
+        init();
+    }
 
+    public void init() {
+        buildDialogContent();
+        requiredValidator();
+        setUomFormDialogOnActions();
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        label.setId("validationLabel");
+        return label;
+    }
+
+    private VBox buildName() {
+        // Input.
+        name = new MFXTextField();
+        name.setFloatMode(FloatMode.BORDER);
+        name.setFloatingText("Name");
+        name.setPrefWidth(400d);
+        name.textProperty().bindBidirectional(UOMViewModel.nameProperty());
+        // Validation.
+        nameValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(name, nameValidationLabel);
+        return vbox;
+    }
+
+    private VBox buildShortName() {
+        // Input.
+        shortName = new MFXTextField();
+        shortName.setFloatMode(FloatMode.BORDER);
+        shortName.setFloatingText("Short Name");
+        shortName.setPrefWidth(400d);
+        shortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().add(shortName);
+        return vbox;
+    }
+
+    private VBox buildBaseUnit() {
+        // Input.
+        baseUnit = new MFXFilterComboBox<>();
+        baseUnit.setFloatMode(FloatMode.BORDER);
+        baseUnit.setFloatingText("Base Unit");
+        baseUnit.setPrefWidth(400d);
+        baseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
         // Input listeners.
         baseUnit
                 .valueProperty()
@@ -82,7 +123,6 @@ public class UOMFormController implements Initializable {
                                 operatorValueValidationLabel.setVisible(false);
                             }
                         });
-
         // ComboBox Converters.
         StringConverter<UnitOfMeasure> uomConverter =
                 FunctionalStringConverter.to(
@@ -95,7 +135,6 @@ public class UOMFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
 
         // ComboBox properties.
-        operator.setItems(UOMViewModel.operatorList);
         baseUnit.setConverter(uomConverter);
         baseUnit.setFilterFunction(uomFilterFunction);
         if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
@@ -106,11 +145,87 @@ public class UOMFormController implements Initializable {
         } else {
             baseUnit.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
         }
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().add(baseUnit);
+        return vbox;
+    }
 
-        // Input validators.
-        requiredValidator();
+    private VBox buildOperator() {
+        // Input.
+        operator = new MFXComboBox<>();
+        operator.setFloatMode(FloatMode.BORDER);
+        operator.setFloatingText("Operator");
+        operator.setPrefWidth(400d);
+        operator.valueProperty().bindBidirectional(UOMViewModel.operatorProperty());
+        operator.setItems(UOMViewModel.operatorList);
+        // Validation.
+        operatorValidationLabel = buildValidationLabel();
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(operator, operatorValidationLabel);
+        return vbox;
+    }
 
-        setUomFormDialogOnActions();
+    private VBox buildOperatorValue() {
+        // Input.
+        operatorValue = new MFXTextField();
+        operatorValue.setFloatMode(FloatMode.BORDER);
+        operatorValue.setFloatingText("Operator Value");
+        operatorValue.setPrefWidth(400d);
+        operatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
+        var vbox = new VBox();
+        vbox.setSpacing(2d);
+        vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
+        vbox.getChildren().add(operatorValue);
+        return vbox;
+    }
+
+    private VBox buildFormsHolder() {
+        formsHolder = new VBox();
+        formsHolder.setVisible(false);
+        formsHolder.setManaged(false);
+        formsHolder.setSpacing(10d);
+        formsHolder.getChildren().addAll(buildOperator(), buildOperatorValue());
+        return formsHolder;
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(buildName(), buildShortName(), buildBaseUnit(), buildFormsHolder());
+        return vbox;
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        return cancelBtn;
+    }
+
+    private HBox buildBottom() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setSpacing(20d);
+        hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        return hbox;
+    }
+
+    private void buildDialogContent() {
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom());
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     private void setUomFormDialogOnActions() {
@@ -132,6 +247,7 @@ public class UOMFormController implements Initializable {
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     operator.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     operatorValue.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    this.dispose();
                 });
         saveBtn.setOnAction(
                 (event) -> {
@@ -253,6 +369,7 @@ public class UOMFormController implements Initializable {
     }
 
     private void successMessage(String message) {
+        this.dispose();
         displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
@@ -276,5 +393,25 @@ public class UOMFormController implements Initializable {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.name = null;
+        this.shortName = null;
+        this.baseUnit = null;
+        this.operator = null;
+        this.operatorValue = null;
+        this.saveBtn = null;
+        this.cancelBtn = null;
+        this.formsHolder = null;
+        this.nameValidationLabel = null;
+        this.operatorValidationLabel = null;
+        this.operatorValueValidationLabel = null;
+        this.nameConstraints = null;
+        this.operatorConstraints = null;
+        this.operatorValueConstraints = null;
+        this.actionEvent = null;
     }
 }
