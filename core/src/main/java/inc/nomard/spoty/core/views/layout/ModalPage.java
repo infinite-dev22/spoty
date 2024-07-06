@@ -1,13 +1,13 @@
 package inc.nomard.spoty.core.views.layout;
 
 import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import javafx.scene.*;
 
 public abstract class ModalPage extends MFXGenericDialog implements Modal {
     public ModalPage() {
         super();
+        setViewProperties();
         setLightMode();
     }
 
@@ -31,6 +31,12 @@ public abstract class ModalPage extends MFXGenericDialog implements Modal {
 
     @Override
     public void dispose() {
+    }
+
+    public void setViewProperties() {
+        this.setShowMinimize(false);
+        this.setShowAlwaysOnTop(false);
+        this.setShowClose(false);
     }
 
     public void setLightMode() {
