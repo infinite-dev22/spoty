@@ -17,11 +17,9 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -39,20 +37,15 @@ public class SupplierPage extends OutlinePage {
     private MFXTableView<Supplier> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
     public SupplierPage() {
-        Platform.runLater(
-                () -> {
-                    try {
-                        formDialogPane();
-                        viewDialogPane();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
+        try {
+            viewDialogPane();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
         addNode(init());
     }
 
@@ -202,7 +195,7 @@ public class SupplierPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    SupplierViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    SupplierViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new SupplierForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
         // View
@@ -217,21 +210,8 @@ public class SupplierPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void formDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/SupplierForm.fxml");
-        fxmlLoader.setControllerFactory(c -> SupplierFormController.getInstance());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
     public void createBtnAction() {
-        createBtn.setOnAction(event -> dialog.showAndWait());
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new SupplierForm(), this).showAndWait());
     }
 
     private void onSuccess() {
