@@ -17,11 +17,9 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -39,21 +37,16 @@ public class CustomerPage extends OutlinePage {
     private MFXTableView<Customer> tableView;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
     public CustomerPage() {
         super();
-        Platform.runLater(
-                () -> {
-                    try {
-                        customerFormDialogPane();
-                        viewDialogPane();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
+        try {
+            viewDialogPane();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
         addNode(init());
     }
 
@@ -196,8 +189,8 @@ public class CustomerPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    CustomerViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
-                    dialog.showAndWait();
+                    CustomerViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new CustomerForm(), this).showAndWait(), this::errorMessage);
+                    SpotyDialog.createDialog(new CustomerForm(), this).showAndWait();
                     e.consume();
                 });
         // View
@@ -211,18 +204,8 @@ public class CustomerPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void customerFormDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/CustomerForm.fxml");
-        fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance());
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
     public void createBtnAction() {
-        createBtn.setOnAction(event -> dialog.showAndWait());
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new CustomerForm(), this).showAndWait());
     }
 
     private void onSuccess() {
