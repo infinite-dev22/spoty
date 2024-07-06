@@ -33,15 +33,9 @@ public class EmailPage extends OutlinePage {
     private MFXTextField searchBar;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
 
     public EmailPage() {
         addNode(init());
-        try {
-            customerFormDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public BorderPane init() {
@@ -50,7 +44,6 @@ public class EmailPage extends OutlinePage {
         pane.setCenter(buildCenter());
         setIcons();
         setSearchBar();
-        createBtnAction();
         return pane;
     }
 
@@ -113,7 +106,6 @@ public class EmailPage extends OutlinePage {
         this.setPrefWidth(600.0);
         var pane = new BorderPane();
         pane.setCenter(anchorPane);
-        createBtnAction();
         return pane;
     }
 
@@ -167,66 +159,6 @@ public class EmailPage extends OutlinePage {
         dataTable.setPrefSize(1000, 1000);
         dataTable.features().enableBounceEffect();
         dataTable.features().enableSmoothScrolling(0.5);
-
-        dataTable.setTableRowFactory(
-                t -> {
-                    MFXTableRow<Email> row = new MFXTableRow<>(dataTable, t);
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu(dataTable, (MFXTableRow<Email>) event.getSource())
-                                        .show(
-                                                dataTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
-                });
-    }
-
-    private MFXContextMenu showContextMenu(MFXTableView<Email> dataTable, MFXTableRow<Email> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(dataTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-
-        // Actions
-        // Delete
-        delete.setOnAction(
-                e -> {
-                    EmailViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
-        // Edit
-        edit.setOnAction(
-                e -> {
-                    EmailViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
-                    e.consume();
-                });
-        contextMenu.addItems(edit, delete);
-        if (contextMenu.isShowing()) contextMenu.hide();
-        return contextMenu;
-    }
-
-    private void customerFormDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/EmailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new EmailFormController());
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
-    public void createBtnAction() {
-        createBtn.setOnAction(event -> dialog.showAndWait());
-    }
-
-    private void onSuccess() {
-        EmailViewModel.getAllEmails(null, null);
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
