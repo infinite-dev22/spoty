@@ -35,20 +35,15 @@ public class SalaryPage extends OutlinePage {
     private MFXTextField searchBar;
     private MFXTableView<SalaryAdvance> masterTable;
     private MFXProgressSpinner progress;
-    private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
     private FXMLLoader viewFxmlLoader;
 
     public SalaryPage() {
-        Platform.runLater(
-                () -> {
                     try {
-                        productFormDialogPane();
                         productViewDialogPane();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                });
         addNode(init());
     }
 
@@ -204,7 +199,6 @@ public class SalaryPage extends OutlinePage {
     private MFXContextMenu showContextMenu(MFXTableRow<SalaryAdvance> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem view = new MFXContextMenuItem("View");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
 
         // Actions
@@ -222,28 +216,10 @@ public class SalaryPage extends OutlinePage {
             SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getData().getEmployeeName() + "'s salary", this));
-        // Edit
-        edit.setOnAction(
-                event -> {
-                    SalaryAdvanceViewModel.getSalaryAdvance(obj.getData().getId(), () -> formDialog.showAndWait(), this::errorMessage);
-                    event.consume();
-                });
 
-        contextMenu.addItems(view, edit, delete);
+        contextMenu.addItems(view, delete);
 
         return contextMenu;
-    }
-
-    private void productFormDialogPane() throws IOException {
-        FXMLLoader formFxmlLoader = fxmlLoader("views/forms/SalaryAdvanceForm.fxml");
-        formFxmlLoader.setControllerFactory(c -> new SalaryAdvanceFormController());
-
-        MFXGenericDialog dialogContent = formFxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        formDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     private void onSuccess() {
