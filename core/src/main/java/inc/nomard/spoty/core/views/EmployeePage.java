@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -12,18 +11,13 @@ import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -36,18 +30,9 @@ public class EmployeePage extends OutlinePage {
     private MFXTableView<User> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
 
     public EmployeePage() {
         super();
-        Platform.runLater(
-                () -> {
-                    try {
-                        formDialogPane();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
         addNode(init());
     }
 
@@ -116,19 +101,6 @@ public class EmployeePage extends OutlinePage {
         AnchorPane.setRightAnchor(masterTable, 0d);
         AnchorPane.setTopAnchor(masterTable, 10d);
         return new AnchorPane(masterTable);
-    }
-
-    private void formDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/UserForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new UserFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
     private void setupTable() {
@@ -220,7 +192,7 @@ public class EmployeePage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    UserViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    UserViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new UserForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -230,7 +202,7 @@ public class EmployeePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> dialog.showAndWait());
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new UserForm(), this).showAndWait());
     }
 
     private void onSuccess() {
