@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -11,15 +12,14 @@ import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,18 +27,134 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class AdjustmentMasterFormController implements Initializable {
+public class AdjustmentMasterForm extends OutlineFormPage {
     public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
     public MFXTextField adjustmentNote;
-    public BorderPane adjustmentFormContentPane;
     public Label adjustmentFormTitle;
     public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public AdjustmentMasterForm() {
+        addNode(initialize());
         bindProperties();
         setupAddProductButton();
-        Platform.runLater(this::setupTable);
+        setupTable();
+    }
+
+    private BorderPane initialize() {
+        adjustmentFormTitle = new Label("Adjustment Form");
+        adjustmentFormTitle.setId("adjustmentFormTitle");
+
+        Separator separator = new Separator();
+        separator.setPrefWidth(200.0);
+
+        GridPane gridPane = createGridPane();
+
+        adjustmentProductAddBtn = new MFXButton("Add Product");
+        adjustmentProductAddBtn.getStyleClass().add("filled");
+
+        adjustmentDetailTable = new MFXTableView<>();
+
+        adjustmentNote = new MFXTextField();
+        adjustmentNote.setFloatMode(FloatMode.BORDER);
+        adjustmentNote.setFloatingText("Note");
+
+        HBox buttonBox = createButtonBox();
+
+        AnchorPane centerPane = new AnchorPane();
+        centerPane.getStyleClass().add("card-flat");
+        centerPane.setPadding(new Insets(5.0));
+
+        AnchorPane.setTopAnchor(adjustmentFormTitle, 0.0);
+        AnchorPane.setLeftAnchor(adjustmentFormTitle, 0.0);
+        AnchorPane.setRightAnchor(adjustmentFormTitle, 0.0);
+
+        AnchorPane.setTopAnchor(separator, 20.0);
+        AnchorPane.setLeftAnchor(separator, 0.0);
+        AnchorPane.setRightAnchor(separator, 0.0);
+
+        AnchorPane.setTopAnchor(gridPane, 40.0);
+        AnchorPane.setLeftAnchor(gridPane, 0.0);
+        AnchorPane.setRightAnchor(gridPane, 180.0);
+
+        AnchorPane.setTopAnchor(adjustmentNote, 40.0);
+        AnchorPane.setLeftAnchor(adjustmentNote, 0.0);
+        AnchorPane.setRightAnchor(adjustmentNote, 0.0);
+
+        AnchorPane.setTopAnchor(adjustmentProductAddBtn, 100.0);
+        AnchorPane.setLeftAnchor(adjustmentProductAddBtn, 0.0);
+        AnchorPane.setRightAnchor(adjustmentProductAddBtn, 0.0);
+
+        AnchorPane.setTopAnchor(adjustmentDetailTable, 160.0);
+        AnchorPane.setBottomAnchor(adjustmentDetailTable, 78.0);
+        AnchorPane.setLeftAnchor(adjustmentDetailTable, 5.0);
+        AnchorPane.setRightAnchor(adjustmentDetailTable, 5.0);
+
+        AnchorPane.setBottomAnchor(buttonBox, 10.0);
+        AnchorPane.setLeftAnchor(buttonBox, 0.0);
+        AnchorPane.setRightAnchor(buttonBox, 0.0);
+
+        centerPane.getChildren().addAll(adjustmentFormTitle, separator, gridPane, adjustmentNote, adjustmentProductAddBtn, adjustmentDetailTable, buttonBox);
+
+        var pane = new BorderPane();
+        pane.setCenter(centerPane);
+        return pane;
+    }
+
+    private GridPane createGridPane() {
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(20.0);
+        gridPane.setPadding(new Insets(40.0, 180.0, 0.0, 0.0));
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.SOMETIMES);
+        col1.setMinWidth(10.0);
+
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.SOMETIMES);
+        col2.setMinWidth(10.0);
+
+        RowConstraints row = new RowConstraints();
+        row.setVgrow(Priority.SOMETIMES);
+        row.setMinHeight(10.0);
+
+        gridPane.getColumnConstraints().addAll(col1, col2);
+        gridPane.getRowConstraints().add(row);
+
+        return gridPane;
+    }
+
+    private HBox createButtonBox() {
+        HBox buttonBox = new HBox(20.0);
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
+        buttonBox.setPadding(new Insets(10.0));
+
+        saveBtn = new MFXButton("Save");
+        saveBtn.setId("saveBtn");
+        saveBtn.getStyleClass().add("filled");
+        saveBtn.setOnAction(event -> {
+            if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
+                showErrorMessage("Table can't be Empty");
+                return;
+            }
+            if (AdjustmentMasterViewModel.getId() > 0) {
+                AdjustmentMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+            } else {
+                AdjustmentMasterViewModel.saveAdjustmentMaster(this::onSuccess, this::successMessage, this::errorMessage);
+            }
+            onRequiredFieldsMissing();
+        });
+
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.setId("cancelBtn");
+        cancelBtn.getStyleClass().add("outlined");
+        cancelBtn.setOnAction(event -> {
+            AppManager.getNavigation().navigate(AdjustmentPage.class);
+            AdjustmentMasterViewModel.resetProperties();
+            this.dispose();
+        });
+
+        buttonBox.getChildren().addAll(saveBtn, cancelBtn);
+        return buttonBox;
     }
 
     private void bindProperties() {
@@ -46,7 +162,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void setupAddProductButton() {
-        adjustmentProductAddBtn.setOnAction(e -> SpotyDialog.createDialog(new AdjustmentDetailForm(), adjustmentFormContentPane).showAndWait());
+        adjustmentProductAddBtn.setOnAction(e -> SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait());
     }
 
     private void setupTable() {
@@ -97,7 +213,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
-        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getData().getProductName(), adjustmentFormContentPane)));
+        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getData().getProductName(), this)));
         return contextMenu;
     }
 
@@ -109,36 +225,19 @@ public class AdjustmentMasterFormController implements Initializable {
 
     private void editRow(MFXTableRow<AdjustmentDetail> row) {
         SpotyThreader.spotyThreadPool(() -> AdjustmentDetailViewModel.getAdjustmentDetail(row.getData()));
-        SpotyDialog.createDialog(new AdjustmentDetailForm(), adjustmentFormContentPane).showAndWait();
+        SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait();
     }
 
     private void deleteRow(MFXTableRow<AdjustmentDetail> row) {
         AdjustmentDetailViewModel.removeAdjustmentDetail(row.getData().getId(), AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(row.getData()));
     }
 
-    public void adjustmentSaveBtnClicked() {
-        if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
-            showErrorMessage("Table can't be Empty");
-            return;
-        }
-        if (AdjustmentMasterViewModel.getId() > 0) {
-            AdjustmentMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-        } else {
-            AdjustmentMasterViewModel.saveAdjustmentMaster(this::onSuccess, this::successMessage, this::errorMessage);
-        }
-        onRequiredFieldsMissing();
-    }
-
-    public void adjustmentCancelBtnClicked() {
-        // BaseController.navigation.navigate(new AdjustmentPage(stage));
-        AdjustmentMasterViewModel.resetProperties();
-    }
-
     private void onSuccess() {
-        adjustmentCancelBtnClicked();
+        AppManager.getNavigation().navigate(AdjustmentPage.class);
         AdjustmentMasterViewModel.resetProperties();
         AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
+        this.dispose();
     }
 
     private void onRequiredFieldsMissing() {
@@ -176,5 +275,16 @@ public class AdjustmentMasterFormController implements Initializable {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        adjustmentDetailTable = null;
+        adjustmentNote = null;
+        adjustmentFormTitle = null;
+        adjustmentProductAddBtn = null;
+        saveBtn = null;
+        cancelBtn = null;
     }
 }

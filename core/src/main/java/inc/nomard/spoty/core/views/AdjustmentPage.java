@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -15,7 +16,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
@@ -190,8 +190,7 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> {
-        });// BaseController.navigation.navigate(Pages.getAdjustmentMasterFormPane()));
+        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(AdjustmentMasterForm.class));
     }
 
     private void viewDialogPane() throws IOException {
