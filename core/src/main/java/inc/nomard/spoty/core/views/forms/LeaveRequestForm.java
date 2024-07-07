@@ -3,43 +3,42 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.util.*;
 import com.dlsc.gemsfx.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.net.*;
 import java.util.*;
+import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
+import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class LeaveRequestFormController implements Initializable {
-    @FXML
-    public MFXButton saveBtn, cancelBtn;
-    @FXML
+public class LeaveRequestForm extends ModalPage {
+    public MFXButton saveButton, cancelButton;
     public MFXFilterComboBox<User> employee;
-    @FXML
-    public MFXFilterComboBox<LeaveType> leaveType;
-    @FXML
+    public MFXComboBox<String> leaveType;
     public MFXDatePicker fromDate, toDate;
-    @FXML
     public TimePicker fromTime, toTime;
-    @FXML
     public Label employeeValidationLabel,
             leaveTypeValidationLabel,
             fromDateValidationLabel,
@@ -48,11 +47,8 @@ public class LeaveRequestFormController implements Initializable {
             toTimeValidationLabel,
             reasonValidationLabel,
             fileLabel;
-    @FXML
     public TextArea reason;
-    @FXML
-    public VBox documentBtn;
-    @FXML
+    public VBox documentButton;
     public HBox uploadIcon;
     private FileChooser fileChooser;
     private List<Constraint> employeeConstraints,
@@ -61,55 +57,166 @@ public class LeaveRequestFormController implements Initializable {
             toDateConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        employee.valueProperty().bindBidirectional(LeaveStatusViewModel.employeeProperty());
-        leaveType.valueProperty().bindBidirectional(LeaveStatusViewModel.leaveTypeProperty());
-        fromDate.textProperty().bindBidirectional(LeaveStatusViewModel.startDateProperty());
-        fromTime.timeProperty().bindBidirectional(LeaveStatusViewModel.startTimeProperty());
-        toDate.textProperty().bindBidirectional(LeaveStatusViewModel.endDateProperty());
-        toTime.timeProperty().bindBidirectional(LeaveStatusViewModel.endTimeProperty());
-        reason.textProperty().bindBidirectional(LeaveStatusViewModel.descriptionProperty());
-        // Input listeners.
+    public LeaveRequestForm() {
+        init();
+        initializeComponentProperties();
         requiredValidator();
         dialogOnActions();
         addDocument();
     }
 
+    public void init() {
+        VBox root = new VBox(8.0);
+        root.setPadding(new Insets(10.0));
+
+        root.getChildren().addAll(
+                createValidationBox(employee = new MFXFilterComboBox<>(), "Employee", employeeValidationLabel = new Label()),
+                createValidationBox(leaveType = new MFXComboBox<>(), "Leave Type", leaveTypeValidationLabel = new Label()),
+                createDateTimeBox(fromDate = new MFXDatePicker(), "From Date", fromDateValidationLabel = new Label(),
+                        fromTime = new TimePicker(), "From Time", fromTimeValidationLabel = new Label(), 190d),
+                createDateTimeBox(toDate = new MFXDatePicker(), "To Date", toDateValidationLabel = new Label(),
+                        toTime = new TimePicker(), "To Time", toTimeValidationLabel = new Label(), 190d),
+                createValidationTextArea(reason = new TextArea(), "Reason", reasonValidationLabel = new Label(), 400d, 100d),
+                createDocumentButtonBox()
+        );
+
+        this.setBottom(createBottomButtons());
+        this.setCenter(root);
+    }
+
+    public void initializeComponentProperties() {
+        employee.valueProperty().bindBidirectional(LeaveStatusViewModel.employeeProperty());
+        leaveType.textProperty().bindBidirectional(LeaveStatusViewModel.leaveTypeProperty());
+        fromDate.textProperty().bindBidirectional(LeaveStatusViewModel.startDateProperty());
+        fromTime.timeProperty().bindBidirectional(LeaveStatusViewModel.startTimeProperty());
+        toDate.textProperty().bindBidirectional(LeaveStatusViewModel.endDateProperty());
+        toTime.timeProperty().bindBidirectional(LeaveStatusViewModel.endTimeProperty());
+        reason.textProperty().bindBidirectional(LeaveStatusViewModel.descriptionProperty());
+        // Combo box properties.
+
+        StringConverter<User> employeeConverter = FunctionalStringConverter.to(
+                employeeDetail -> employeeDetail == null ? "" : employeeDetail.getName());
+        employee.setConverter(employeeConverter);
+        employee.setFilterFunction(searchStr ->
+                employeeDetail -> StringUtils.containsIgnoreCase(employeeConverter.toString(employeeDetail), searchStr));
+
+        if (UserViewModel.getUsers().isEmpty()) {
+            UserViewModel.getUsers().addListener((ListChangeListener<User>) c -> employee.setItems(UserViewModel.getUsers()));
+        } else {
+            employee.itemsProperty().bindBidirectional(UserViewModel.usersProperty());
+        }
+        leaveType.setItems(LeaveStatusViewModel.getLeaveTypeList());
+    }
+
+    private <T> VBox createValidationBox(MFXFilterComboBox<T> comboBox, String promptText, Label validationLabel) {
+        comboBox.setFloatMode(FloatMode.BORDER);
+        comboBox.setFloatingText(promptText);
+        comboBox.setPrefWidth(400d);
+
+        return createValidationContainer(comboBox, validationLabel);
+    }
+
+    private <T> VBox createValidationBox(MFXComboBox<T> comboBox, String promptText, Label validationLabel) {
+        comboBox.setFloatMode(FloatMode.BORDER);
+        comboBox.setFloatingText(promptText);
+        comboBox.setPrefWidth(400d);
+
+        return createValidationContainer(comboBox, validationLabel);
+    }
+
+    private VBox createValidationBox(MFXDatePicker datePicker, String promptText, Label validationLabel, double width) {
+        datePicker.setFloatMode(FloatMode.BORDER);
+        datePicker.setFloatingText(promptText);
+        datePicker.setPrefWidth(width);
+
+        return createValidationContainer(datePicker, validationLabel);
+    }
+
+    private VBox createValidationBox(TimePicker timePicker, String promptText, Label validationLabel, double width) {
+        timePicker.setPromptText(promptText);
+        timePicker.setPrefWidth(width);
+
+        return createValidationContainer(timePicker, validationLabel);
+    }
+
+    private VBox createValidationTextArea(TextArea textArea, String promptText, Label validationLabel, double width, double height) {
+        textArea.setPromptText(promptText);
+        textArea.setPrefWidth(width);
+        textArea.setPrefHeight(height);
+
+        return createValidationContainer(textArea, validationLabel);
+    }
+
+    private VBox createValidationContainer(Node control, Label validationLabel) {
+        VBox box = new VBox(2.0);
+        box.setPadding(new Insets(2.5, 0, 5, 0));
+
+        validationLabel.setMaxWidth(Double.MAX_VALUE);
+        validationLabel.setStyle("-fx-text-fill: red;");
+        validationLabel.setVisible(false);
+        validationLabel.setManaged(false);
+        validationLabel.setWrapText(true);
+
+        box.getChildren().addAll(control, validationLabel);
+        return box;
+    }
+
+    private HBox createDateTimeBox(MFXDatePicker datePicker, String datePrompt, Label dateValidationLabel,
+                                   TimePicker timePicker, String timePrompt, Label timeValidationLabel, double width) {
+        HBox box = new HBox(10.0);
+        box.getChildren().addAll(
+                createValidationBox(datePicker, datePrompt, dateValidationLabel, width),
+                createValidationBox(timePicker, timePrompt, timeValidationLabel, width)
+        );
+        return box;
+    }
+
+    private HBox createDocumentButtonBox() {
+        documentButton = new VBox(8.0);
+        documentButton.setAlignment(Pos.CENTER);
+        documentButton.setPrefWidth(400.0);
+        documentButton.getStyleClass().add("card-flat");
+        documentButton.setCursor(Cursor.HAND);
+        documentButton.setPadding(new Insets(16.0));
+
+        uploadIcon = new HBox();
+        uploadIcon.setAlignment(Pos.CENTER);
+
+        fileLabel = new Label("Click to upload or Drag and drop pdf. (max. size 1MB)");
+        fileLabel.setTextAlignment(TextAlignment.CENTER);
+        fileLabel.setWrapText(true);
+
+        documentButton.getChildren().addAll(uploadIcon, fileLabel);
+
+        HBox box = new HBox(16.0);
+        box.setAlignment(Pos.CENTER);
+        box.getChildren().add(documentButton);
+        return box;
+    }
+
+    private HBox createBottomButtons() {
+        HBox box = new HBox(20.0);
+        box.setAlignment(Pos.CENTER_RIGHT);
+        box.setPadding(new Insets(10.0));
+
+        saveButton = new MFXButton("Save");
+        saveButton.getStyleClass().add("filled");
+
+        cancelButton = new MFXButton("Cancel");
+        cancelButton.getStyleClass().add("outlined");
+
+        box.getChildren().addAll(saveButton, cancelButton);
+        return box;
+    }
+
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
+        cancelButton.setOnAction(
                 (event) -> {
                     LeaveStatusViewModel.resetProperties();
                     closeDialog(event);
-
-                    employeeValidationLabel.setVisible(false);
-                    leaveTypeValidationLabel.setVisible(false);
-                    fromDateValidationLabel.setVisible(false);
-                    fromTimeValidationLabel.setVisible(false);
-                    toDateValidationLabel.setVisible(false);
-                    toTimeValidationLabel.setVisible(false);
-                    reasonValidationLabel.setVisible(false);
-
-                    employeeValidationLabel.setManaged(false);
-                    leaveTypeValidationLabel.setManaged(false);
-                    fromDateValidationLabel.setManaged(false);
-                    fromTimeValidationLabel.setManaged(false);
-                    toDateValidationLabel.setManaged(false);
-                    toTimeValidationLabel.setManaged(false);
-                    reasonValidationLabel.setManaged(false);
-
-                    employee.clearSelection();
-                    leaveType.clearSelection();
-                    fromDate.setValue(null);
-                    toDate.setValue(null);
-
-                    employee.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    leaveType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    fromDate.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    toDate.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    this.dispose();
                 });
-        saveBtn.setOnAction(
+        saveButton.setOnAction(
                 (event) -> {
                     employeeConstraints = employee.validate();
                     leaveTypeConstraints = leaveType.validate();
@@ -163,13 +270,10 @@ public class LeaveRequestFormController implements Initializable {
     }
 
     private void onSuccess() {
-        employee.clearSelection();
-        leaveType.clearSelection();
-        fromDate.setValue(null);
-        toDate.setValue(null);
         closeDialog(actionEvent);
         LeaveStatusViewModel.resetProperties();
         LeaveStatusViewModel.getAllLeaveStatuses(null, null);
+        this.dispose();
     }
 
     private void addDocument() {
@@ -185,7 +289,7 @@ public class LeaveRequestFormController implements Initializable {
             fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(extFilter);
         }
-        documentBtn.setOnMouseClicked(event -> {
+        documentButton.setOnMouseClicked(event -> {
             var file = fileChooser.showOpenDialog(new Stage());
             if (Objects.nonNull(file)) {
                 fileLabel.setText(file.getName());
@@ -193,8 +297,8 @@ public class LeaveRequestFormController implements Initializable {
         });
 
 
-        documentBtn.setOnDragOver(event -> {
-            if (event.getGestureSource() != documentBtn
+        documentButton.setOnDragOver(event -> {
+            if (event.getGestureSource() != documentButton
                     && event.getDragboard().hasFiles()) {
                 /* allow for both copying and moving, whatever user chooses */
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -202,7 +306,7 @@ public class LeaveRequestFormController implements Initializable {
             event.consume();
         });
 
-        documentBtn.setOnDragDropped(event -> {
+        documentButton.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasFiles()) {
@@ -318,5 +422,35 @@ public class LeaveRequestFormController implements Initializable {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        saveButton = null;
+        cancelButton = null;
+        employee = null;
+        leaveType = null;
+        fromDate = null;
+        toDate = null;
+        fromTime = null;
+        toTime = null;
+        employeeValidationLabel = null;
+        leaveTypeValidationLabel = null;
+        fromDateValidationLabel = null;
+        fromTimeValidationLabel = null;
+        toDateValidationLabel = null;
+        toTimeValidationLabel = null;
+        reasonValidationLabel = null;
+        fileLabel = null;
+        reason = null;
+        documentButton = null;
+        uploadIcon = null;
+        fileChooser = null;
+        employeeConstraints = null;
+        leaveTypeConstraints = null;
+        fromDateConstraints = null;
+        toDateConstraints = null;
+        actionEvent = null;
     }
 }

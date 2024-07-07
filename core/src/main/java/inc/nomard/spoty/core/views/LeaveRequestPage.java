@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -12,18 +11,13 @@ import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -36,17 +30,8 @@ public class LeaveRequestPage extends OutlinePage {
     private MFXTableView<LeaveStatus> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog dialog;
 
     public LeaveRequestPage() {
-        Platform.runLater(
-                () -> {
-                    try {
-                        formDialogPane();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
         addNode(init());
     }
 
@@ -117,19 +102,6 @@ public class LeaveRequestPage extends OutlinePage {
         return new AnchorPane(masterTable);
     }
 
-    private void formDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/LeaveRequestForm.fxml");
-        fxmlLoader.setControllerFactory(c -> new LeaveRequestFormController());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
     private void setupTable() {
         MFXTableColumn<LeaveStatus> employeeName =
                 new MFXTableColumn<>("Employee Name", false, Comparator.comparing(LeaveStatus::getEmployeeName));
@@ -141,7 +113,7 @@ public class LeaveRequestPage extends OutlinePage {
                 new MFXTableColumn<>("Duration", false, Comparator.comparing(LeaveStatus::getDuration));
         MFXTableColumn<LeaveStatus> leaveType =
                 new MFXTableColumn<>(
-                        "Leave Type", false, Comparator.comparing(LeaveStatus::getLeaveTypeName));
+                        "Leave Type", false, Comparator.comparing(LeaveStatus::getLeaveType));
         MFXTableColumn<LeaveStatus> attachment =
                 new MFXTableColumn<>("Attachment", false, Comparator.comparing(LeaveStatus::getAttachment));
         MFXTableColumn<LeaveStatus> status =
@@ -152,7 +124,7 @@ public class LeaveRequestPage extends OutlinePage {
         dateAndTime.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getStartDate));
         duration.setRowCellFactory(
                 employee -> new MFXTableRowCell<>(LeaveStatus::getLocaleDuration));
-        leaveType.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getLeaveTypeName));
+        leaveType.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getLeaveType));
         attachment.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getAttachment));
 
         employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
@@ -221,7 +193,7 @@ public class LeaveRequestPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    LeaveStatusViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
+                    LeaveStatusViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new LeaveRequestForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -231,7 +203,7 @@ public class LeaveRequestPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> dialog.showAndWait());
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new LeaveRequestForm(), this).showAndWait());
     }
 
     private void onSuccess() {

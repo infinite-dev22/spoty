@@ -21,6 +21,7 @@ import java.util.concurrent.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
+import lombok.*;
 import lombok.extern.java.*;
 
 @Log
@@ -43,10 +44,36 @@ public class LeaveStatusViewModel {
     private static final StringProperty endDate = new SimpleStringProperty("");
     private static final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<>();
     private static final StringProperty duration = new SimpleStringProperty("");
-    private static final ObjectProperty<LeaveType> leaveType = new SimpleObjectProperty<>();
+    private static final StringProperty leaveType = new SimpleStringProperty();
     private static final StringProperty attachment = new SimpleStringProperty("");
     private static final CharProperty status = new CharProperty();
     private static final LeaveStatusRepositoryImpl leaveStatusRepository = new LeaveStatusRepositoryImpl();
+    @Getter
+    private static final ObservableList<String> leaveTypeList = FXCollections.observableArrayList(
+            "Adoption Leave",
+            "Annual Leave",
+            "Bereavement Leave",
+            "Casual Leave",
+            "Compassionate Leave",
+            "Extended Leave",
+            "Family Leave",
+            "Maternal Leave",
+            "Military Leave",
+            "Paid Leave",
+            "Paternal Leave",
+            "Personal Leave",
+            "Sabbatical Leave",
+            "Sick Leave",
+            "Study Leave",
+            "Unpaid Leave",
+            "Vacation Leave",
+            "Volunteer Leave",
+            "Compensatory off",
+            "Extra time off",
+            "Jury duty",
+            "Public holiday",
+            "Religious holidays",
+            "Toil");
 
     public static long getId() {
         return id.get();
@@ -166,15 +193,15 @@ public class LeaveStatusViewModel {
         return duration;
     }
 
-    public static LeaveType getLeaveType() {
+    public static String getLeaveType() {
         return leaveType.get();
     }
 
-    public static void setLeaveType(LeaveType leaveType) {
+    public static void setLeaveType(String leaveType) {
         LeaveStatusViewModel.leaveType.set(leaveType);
     }
 
-    public static ObjectProperty<LeaveType> leaveTypeProperty() {
+    public static StringProperty leaveTypeProperty() {
         return leaveType;
     }
 
@@ -224,7 +251,7 @@ public class LeaveStatusViewModel {
         setStartTime(null);
         setEndTime(null);
         setDuration("");
-        setLeaveType(null);
+        setLeaveType("null");
         setAttachment("");
         setStatus('P');
     }

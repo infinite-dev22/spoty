@@ -24,7 +24,7 @@ public class LeaveStatus {
     private LocalTime startTime;
     private LocalTime endTime;
     private Duration duration;
-    private LeaveType leaveType;
+    private String leaveType;
     private String attachment;
     private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed
 
@@ -38,10 +38,6 @@ public class LeaveStatus {
 
     public String getLocaleDuration() {
         return duration.toString();
-    }
-
-    public String getLeaveTypeName() {
-        return leaveType.getName();
     }
 
     public String getEmployeeName() {
