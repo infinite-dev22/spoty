@@ -24,6 +24,7 @@ public class MainLayer extends BorderPane {
 
     public MainLayer() {
         navigation = new Navigation();
+        AppManager.setNavigation(navigation);
         sidebar = new SideBar(navigation);
         createView();
         initListeners();
