@@ -17,11 +17,9 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -39,20 +37,15 @@ public class ProductPage extends OutlinePage {
     private MFXTableView<Product> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
     private FXMLLoader viewFxmlLoader;
 
     public ProductPage() {
-        Platform.runLater(
-                () -> {
-                    try {
-                        productFormDialogPane();
-                        productViewDialogPane();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
+        try {
+            productViewDialogPane();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
         addNode(init());
     }
 
@@ -232,29 +225,15 @@ public class ProductPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 event -> {
-                    ProductViewModel.getProduct(obj.getData().getId(), this::createBtnAction, this::errorMessage);
+                    ProductViewModel.getProduct(obj.getData().getId(), () -> SpotyDialog.createDialog(new ProductForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
         contextMenu.addItems(view, edit, delete);
         return contextMenu;
     }
 
-    private void productFormDialogPane() throws IOException {
-        FXMLLoader formFxmlLoader = fxmlLoader("views/forms/ProductForm.fxml");
-        formFxmlLoader.setControllerFactory(c -> new ProductFormController());
-
-        MFXGenericDialog dialogContent = formFxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        formDialog = SpotyDialog.createDialog(dialogContent, this);
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(formDialog.getScene());
-    }
-
     public void createBtnAction() {
-        createBtn.setOnAction(event -> formDialog.showAndWait());
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new ProductForm(), this).showAndWait());
     }
 
     public void productViewShow(Product product) {

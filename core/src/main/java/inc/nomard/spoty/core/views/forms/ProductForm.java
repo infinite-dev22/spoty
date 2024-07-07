@@ -2,7 +2,7 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.layout.*;
@@ -11,6 +11,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
@@ -18,64 +19,49 @@ import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
+import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class ProductFormController implements Initializable {
-    private final String placeholderImage =
-            SpotyCoreResourceLoader.load("images/upload_image_placeholder.png");
-    @FXML
+public class ProductForm extends ModalPage {
     public MFXTextField name,
             serialNumber,
             salePrice,
             stockAlert;
-    @FXML
     public TextArea description;
-    @FXML
     public MFXFilterComboBox<Brand> brand;
-    @FXML
     public MFXFilterComboBox<ProductCategory> category;
-    @FXML
     public MFXFilterComboBox<UnitOfMeasure> unitOfMeasure;
-    @FXML
     public MFXComboBox<String> barcodeType;
-    @FXML
     public MFXTextField costPrice;
-    @FXML
     public MFXComboBox<Discount> discount;
-    @FXML
     public MFXComboBox<Tax> tax;
-    @FXML
     public Rectangle productImageView;
-    @FXML
-    public MFXButton saveBtn,
-            cancelBtn;
+    public MFXButton saveButton,
+            cancelButton;
     public Image productImage;
-    @FXML
     public Label barcodeTypeValidationLabel,
             unitOfMeasureValidationLabel,
             categoryValidationLabel,
             brandValidationLabel,
             priceValidationLabel,
             nameValidationLabel;
-    @FXML
     public HBox imageIcon;
-    @FXML
-    public VBox uploadImageBtn,
+    public VBox uploadImageButton,
             placeHolder;
     private FileChooser fileChooser;
     private List<Constraint> nameConstraints,
@@ -86,14 +72,181 @@ public class ProductFormController implements Initializable {
             barcodeTypeConstraints;
     private ActionEvent actionEvent = null;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public ProductForm() {
+        init();
+    }
+
+    public void init() {
+        createDialog();
         getFieldBindings();
         getComboBoxProperties();
         dialogOnActions();
         addImage();
         requiredValidator();
-        setProductImage(placeholderImage);
+        setProductImage(PreloadedData.noImagePlaceholderImage.getUrl());
+    }
+
+    public void createDialog() {
+        GridPane root = new GridPane();
+        root.setHgap(30.0);
+        root.setVgap(20.0);
+        root.setPadding(new Insets(5.0));
+
+        root.getColumnConstraints().addAll(
+                createColumnConstraints(300.0),
+                createColumnConstraints(300.0),
+                createColumnConstraints(220.0)
+        );
+
+        root.getRowConstraints().addAll(
+                createRowConstraints(),
+                createRowConstraints(),
+                createRowConstraints(),
+                createRowConstraints(),
+                createRowConstraints(),
+                createRowConstraints()
+        );
+
+        root.add(createValidationBox(name = new MFXTextField(), "Name", nameValidationLabel = new Label(), 400.0), 0, 0);
+        root.add(createValidationBox(category = new MFXFilterComboBox<>(), "Category", categoryValidationLabel = new Label(), 400.0), 1, 0);
+        root.add(createValidationBox(brand = new MFXFilterComboBox<>(), "Brand", brandValidationLabel = new Label(), 400.0), 0, 1);
+        root.add(createValidationBox(unitOfMeasure = new MFXFilterComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 400.0), 1, 1);
+        root.add(createSimpleBox(costPrice = new MFXTextField(), "Cost Price", 400.0), 0, 2);
+        root.add(createValidationBox(salePrice = new MFXTextField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
+        root.add(createSimpleBox(discount = new MFXComboBox<>(), "Discount", 400.0), 0, 3);
+        root.add(createSimpleBox(tax = new MFXComboBox<>(), "Tax", 400.0), 1, 3);
+        root.add(createValidationBox(barcodeType = new MFXFilterComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
+        root.add(createSimpleBox(serialNumber = new MFXTextField(), "Serial/Batch", 400.0), 1, 4);
+        root.add(createSimpleBox(stockAlert = new MFXTextField(), "Stock Alert", 400.0), 0, 5);
+        root.add(createSimpleTextArea(description = new TextArea(), "Description", 400.0, 100.0), 1, 5);
+
+        root.add(createUploadImageBox(), 2, 0, 1, 6);
+
+        this.setBottom(createBottomButtons());
+        this.setCenter(root);
+    }
+
+    private ColumnConstraints createColumnConstraints(double prefWidth) {
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setHgrow(Priority.SOMETIMES);
+        cc.setPrefWidth(prefWidth);
+        return cc;
+    }
+
+    private RowConstraints createRowConstraints() {
+        RowConstraints rc = new RowConstraints();
+        rc.setVgrow(Priority.NEVER);
+        return rc;
+    }
+
+    private VBox createValidationBox(MFXTextField textField, String promptText, Label validationLabel, double width) {
+        textField.setFloatMode(FloatMode.BORDER);
+        textField.setFloatingText(promptText);
+        textField.setPrefWidth(width);
+
+        return createValidationContainer(textField, validationLabel);
+    }
+
+    private VBox createValidationBox(MFXFilterComboBox<String> comboBox, String promptText, Label validationLabel, double width) {
+        comboBox.setFloatMode(FloatMode.BORDER);
+        comboBox.setFloatingText(promptText);
+        comboBox.setPrefWidth(width);
+
+        return createValidationContainer(comboBox, validationLabel);
+    }
+
+    private VBox createSimpleBox(MFXComboBox<String> comboBox, String promptText, double width) {
+        comboBox.setFloatMode(FloatMode.BORDER);
+        comboBox.setFloatingText(promptText);
+        comboBox.setPrefWidth(width);
+
+        VBox box = new VBox(2.0);
+        box.setPadding(new Insets(2.5, 0, 2.5, 0));
+        box.getChildren().add(comboBox);
+        return box;
+    }
+
+    private VBox createSimpleBox(MFXTextField textField, String promptText, double width) {
+        textField.setFloatMode(FloatMode.BORDER);
+        textField.setFloatingText(promptText);
+        textField.setPrefWidth(width);
+
+        VBox box = new VBox(2.0);
+        box.setPadding(new Insets(2.5, 0, 2.5, 0));
+        box.getChildren().add(textField);
+        return box;
+    }
+
+    private VBox createSimpleTextArea(TextArea textArea, String promptText, double width, double height) {
+        textArea.setPromptText(promptText);
+        textArea.setPrefWidth(width);
+        textArea.setPrefHeight(height);
+
+        VBox box = new VBox(2.0);
+        box.setPadding(new Insets(2.5, 0, 2.5, 0));
+        box.getChildren().add(textArea);
+        return box;
+    }
+
+    private VBox createValidationContainer(Node control, Label validationLabel) {
+        VBox box = new VBox(2.0);
+        box.setPadding(new Insets(2.5, 0, 2.5, 0));
+
+        validationLabel.setMaxWidth(Double.MAX_VALUE);
+        validationLabel.setStyle("-fx-text-fill: red;");
+        validationLabel.setVisible(false);
+        validationLabel.setManaged(false);
+        validationLabel.setWrapText(true);
+
+        box.getChildren().addAll(control, validationLabel);
+        return box;
+    }
+
+    private AnchorPane createUploadImageBox() {
+        uploadImageButton = new VBox(8.0);
+        uploadImageButton.setAlignment(Pos.CENTER);
+        uploadImageButton.getStyleClass().add("card-flat");
+        uploadImageButton.setCursor(Cursor.HAND);
+        uploadImageButton.setPadding(new Insets(16.0));
+
+        imageIcon = new HBox();
+        imageIcon.setAlignment(Pos.CENTER);
+
+        var uploadImageLabel = new Label("Click to upload or Drag and drop png or jpg. (max. size 800 x 400 px)");
+        uploadImageLabel.setTextAlignment(TextAlignment.CENTER);
+        uploadImageLabel.setWrapText(true);
+
+        productImageView = new Rectangle();
+        productImageView.setArcHeight(25.0);
+        productImageView.setArcWidth(25.0);
+        productImageView.setManaged(false);
+        productImageView.setVisible(false);
+
+        uploadImageButton.getChildren().addAll(imageIcon, uploadImageLabel, productImageView);
+
+        AnchorPane box = new AnchorPane();
+        box.setPadding(new Insets(5));
+        AnchorPane.setTopAnchor(uploadImageButton, 0.0);
+        AnchorPane.setBottomAnchor(uploadImageButton, 0.0);
+        AnchorPane.setLeftAnchor(uploadImageButton, 0.0);
+        AnchorPane.setRightAnchor(uploadImageButton, 0.0);
+        box.getChildren().add(uploadImageButton);
+        return box;
+    }
+
+    private HBox createBottomButtons() {
+        HBox box = new HBox(20.0);
+        box.setAlignment(Pos.CENTER_RIGHT);
+        box.setPadding(new Insets(10.0));
+
+        saveButton = new MFXButton("Create");
+        saveButton.getStyleClass().add("filled");
+
+        cancelButton = new MFXButton("Cancel");
+        cancelButton.getStyleClass().add("outlined");
+
+        box.getChildren().addAll(saveButton, cancelButton);
+        return box;
     }
 
     private void setProductImage(String image) {
@@ -206,44 +359,13 @@ public class ProductFormController implements Initializable {
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
+        cancelButton.setOnAction(
                 (event) -> {
-                    ProductViewModel.resetProperties();
-
                     closeDialog(event);
-
-                    brand.clearSelection();
-                    category.clearSelection();
-                    unitOfMeasure.clearSelection();
-                    barcodeType.clearSelection();
-
-                    barcodeTypeValidationLabel.setVisible(false);
-                    unitOfMeasureValidationLabel.setVisible(false);
-                    categoryValidationLabel.setVisible(false);
-                    brandValidationLabel.setVisible(false);
-                    priceValidationLabel.setVisible(false);
-                    nameValidationLabel.setVisible(false);
-
-                    barcodeTypeValidationLabel.setManaged(false);
-                    unitOfMeasureValidationLabel.setManaged(false);
-                    categoryValidationLabel.setManaged(false);
-                    brandValidationLabel.setManaged(false);
-                    priceValidationLabel.setManaged(false);
-                    nameValidationLabel.setManaged(false);
-
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    salePrice.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    brand.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-
-                    placeHolder.setVisible(true);
-                    placeHolder.setManaged(true);
-                    productImageView.setVisible(false);
-                    productImageView.setManaged(false);
+                    ProductViewModel.resetProperties();
+                    this.dispose();
                 });
-        saveBtn.setOnAction(
+        saveButton.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
                     priceConstraints = salePrice.validate();
@@ -328,7 +450,7 @@ public class ProductFormController implements Initializable {
             fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(extFilter);
         }
-        uploadImageBtn.setOnMouseClicked(event -> {
+        uploadImageButton.setOnMouseClicked(event -> {
             var file = fileChooser.showOpenDialog(new Stage());
             if (Objects.nonNull(file)) {
                 setProductImage(file.getPath());
@@ -341,8 +463,8 @@ public class ProductFormController implements Initializable {
         });
 
 
-        uploadImageBtn.setOnDragOver(event -> {
-            if (event.getGestureSource() != uploadImageBtn
+        uploadImageButton.setOnDragOver(event -> {
+            if (event.getGestureSource() != uploadImageButton
                     && event.getDragboard().hasFiles()) {
                 /* allow for both copying and moving, whatever user chooses */
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -350,7 +472,7 @@ public class ProductFormController implements Initializable {
             event.consume();
         });
 
-        uploadImageBtn.setOnDragDropped(event -> {
+        uploadImageButton.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasFiles()) {
@@ -370,17 +492,10 @@ public class ProductFormController implements Initializable {
     }
 
     private void onSuccess() {
-        brand.clearSelection();
-        category.clearSelection();
-        unitOfMeasure.clearSelection();
-        barcodeType.clearSelection();
-        placeHolder.setVisible(true);
-        placeHolder.setManaged(true);
-        productImageView.setVisible(false);
-        productImageView.setManaged(false);
         closeDialog(actionEvent);
         ProductViewModel.resetProperties();
         ProductViewModel.getAllProducts(null, null);
+        this.dispose();
     }
 
     public void requiredValidator() {
@@ -520,5 +635,43 @@ public class ProductFormController implements Initializable {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        name = null;
+        serialNumber = null;
+        salePrice = null;
+        stockAlert = null;
+        description = null;
+        brand = null;
+        category = null;
+        unitOfMeasure = null;
+        barcodeType = null;
+        costPrice = null;
+        discount = null;
+        tax = null;
+        productImageView = null;
+        saveButton = null;
+        cancelButton = null;
+        productImage = null;
+        barcodeTypeValidationLabel = null;
+        unitOfMeasureValidationLabel = null;
+        categoryValidationLabel = null;
+        brandValidationLabel = null;
+        priceValidationLabel = null;
+        nameValidationLabel = null;
+        imageIcon = null;
+        uploadImageButton = null;
+        placeHolder = null;
+        fileChooser = null;
+        nameConstraints = null;
+        priceConstraints = null;
+        brandConstraints = null;
+        categoryConstraints = null;
+        unitOfMeasureConstraints = null;
+        barcodeTypeConstraints = null;
+        actionEvent = null;
     }
 }

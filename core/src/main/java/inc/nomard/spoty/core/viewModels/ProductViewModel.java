@@ -302,6 +302,10 @@ public class ProductViewModel {
                 if (Objects.nonNull(errorMessage)) {
                     Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
                 }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage(response.body()));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
