@@ -40,8 +40,6 @@ public class Pages {
             fxmlLoader("views/forms/StockInMasterForm.fxml");
     private static final FXMLLoader transferMasterFormLoader =
             fxmlLoader("views/forms/TransferMasterForm.fxml");
-    private static final FXMLLoader adjustmentMasterFormLoader =
-            fxmlLoader("views/forms/AdjustmentMasterForm.fxml");
 
     // Reports
     @Getter
@@ -86,9 +84,6 @@ public class Pages {
     private static BorderPane userProfilePane;
 
     @Getter
-    private static BorderPane adjustmentMasterFormPane;
-
-    @Getter
     private static BorderPane quotationMasterFormPane;
 
     @Getter
@@ -124,8 +119,6 @@ public class Pages {
     }
 
     private static void setMasterForms(Stage stage) {
-        adjustmentMasterFormLoader.setControllerFactory(
-                c -> new AdjustmentMasterFormController());
         quotationMasterFormLoader.setControllerFactory(
                 c -> new QuotationMasterFormController());
         purchaseMasterFormLoader.setControllerFactory(
@@ -158,7 +151,6 @@ public class Pages {
         userProfilePane = userProfileLoader.load();
         // HUMAN RESOURCE
 
-        adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
         quotationMasterFormPane = quotationMasterFormLoader.load();
         purchaseMasterFormPane = purchaseMasterFormLoader.load();
         requisitionMasterFormPane = requisitionMasterFormLoader.load();
