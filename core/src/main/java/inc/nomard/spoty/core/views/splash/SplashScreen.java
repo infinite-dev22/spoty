@@ -78,9 +78,6 @@ public class SplashScreen extends BorderPane {
     }
 
     private static void initializePrimaryStage(Stage primaryStage, Rectangle2D screenBounds) throws IOException {
-        Pages.setControllers(primaryStage);
-        Pages.setPanes();
-
         var root = new AuthScreen(primaryStage);
         var scene = new Scene(root);
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
