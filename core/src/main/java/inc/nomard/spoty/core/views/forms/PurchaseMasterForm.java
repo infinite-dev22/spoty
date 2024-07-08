@@ -1,66 +1,209 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo.
- * All rights reserved. Unauthorized use of this code is prohibited.
- */
-
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class PurchaseMasterFormController implements Initializable {
-    @FXML
-    private Label purchaseFormTitle, supplierValidationLabel, dateValidationLabel, statusValidationLabel;
-    @FXML
+public class PurchaseMasterForm extends OutlineFormPage {
+    private Label supplierValidationLabel;
+    private Label dateValidationLabel;
+    private Label statusValidationLabel;
     private MFXDatePicker date;
-    @FXML
     private MFXFilterComboBox<Supplier> supplier;
-    @FXML
     private MFXTableView<PurchaseDetail> detailTable;
-    @FXML
     private MFXTextField note;
-    @FXML
-    private BorderPane purchaseFormContentPane;
-    @FXML
     private MFXFilterComboBox<String> purchaseStatus;
-    @FXML
-    private MFXButton saveBtn, cancelBtn;
+    private MFXButton saveBtn, cancelBtn, addBtn;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public PurchaseMasterForm() {
+        addNode(init());
+        initializeComponentProperties();
+    }
+
+    public void initializeComponentProperties() {
         bindProperties();
         configureSupplierComboBox();
         purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
         requiredValidator();
+    }
+
+    private BorderPane init() {
+        Label purchaseFormTitle = new Label("Purchase Form");
+        UIUtils.anchor(purchaseFormTitle, 0d, null, null, 0d);
+
+        var vbox = new VBox();
+        vbox.getStyleClass().add("card-flat");
+        vbox.setPadding(new Insets(10d));
+        vbox.setSpacing(10d);
+        HBox.setHgrow(vbox, Priority.ALWAYS);
+        vbox.getChildren().addAll(purchaseFormTitle, buildSeparator(), createCustomGrid(), buildAddButton(), buildTable(), createButtonBox());
+
+        return new BorderPane(vbox);
+    }
+
+    private Separator buildSeparator() {
+        var separator = new Separator();
+        separator.setPrefWidth(200.0);
+        HBox.setHgrow(separator, Priority.ALWAYS);
+        return separator;
+    }
+
+    private MFXButton buildAddButton() {
+        addBtn = new MFXButton("Add");
+        addBtn.getStyleClass().add("filled");
+        addBtn.setOnAction(event -> SpotyDialog.createDialog(new PurchaseDetailForm(), this).showAndWait());
+        addBtn.setPrefWidth(10000d);
+        HBox.setHgrow(addBtn, Priority.ALWAYS);
+        return addBtn;
+    }
+
+    private MFXTableView<PurchaseDetail> buildTable() {
+        detailTable = new MFXTableView<>();
+        HBox.setHgrow(detailTable, Priority.ALWAYS);
         setupTable();
+        return detailTable;
+    }
+
+    private VBox createCustomGrid() {
+        var hbox1 = new HBox();
+        hbox1.getChildren().addAll(buildSupplier(), createDatePicker());
+        hbox1.setSpacing(20d);
+        HBox.setHgrow(hbox1, Priority.ALWAYS);
+        var hbox2 = new HBox();
+        hbox2.getChildren().addAll(buildStatus(), buildNote());
+        hbox2.setSpacing(20d);
+        HBox.setHgrow(hbox2, Priority.ALWAYS);
+        var vbox = new VBox();
+        vbox.setSpacing(10d);
+        vbox.getChildren().addAll(hbox1, hbox2);
+        HBox.setHgrow(vbox, Priority.ALWAYS);
+        UIUtils.anchor(vbox, 40d, 0d, null, 0d);
+        return vbox;
+    }
+
+    // Validation label.
+    private Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().add("input-validation-error");
+        return label;
+    }
+
+    private VBox buildFieldHolder(Node... nodes) {
+        VBox vbox = new VBox();
+        vbox.setSpacing(5d);
+        vbox.setPadding(new Insets(5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(nodes);
+        HBox.setHgrow(vbox, Priority.ALWAYS);
+        return vbox;
+    }
+
+    private VBox buildSupplier() {
+        supplier = new MFXFilterComboBox<>();
+        supplier.setFloatMode(FloatMode.BORDER);
+        supplier.setFloatingText("Supplier");
+        supplier.setPrefWidth(10000d);
+        supplierValidationLabel = buildValidationLabel();
+        return buildFieldHolder(supplier, supplierValidationLabel);
+    }
+
+    private VBox buildStatus() {
+        purchaseStatus = new MFXFilterComboBox<>();
+        purchaseStatus.setFloatMode(FloatMode.BORDER);
+        purchaseStatus.setFloatingText("Purchase Status");
+        purchaseStatus.setPrefWidth(10000d);
+        statusValidationLabel = buildValidationLabel();
+        return buildFieldHolder(purchaseStatus, statusValidationLabel);
+    }
+
+    private VBox createDatePicker() {
+        date = new MFXDatePicker();
+        date.setFloatMode(FloatMode.BORDER);
+        date.setFloatingText("Date");
+        date.setPrefWidth(10000d);
+        dateValidationLabel = buildValidationLabel();
+        return buildFieldHolder(date, dateValidationLabel);
+    }
+
+    private VBox buildNote() {
+        note = new MFXTextField();
+        note.setFloatMode(FloatMode.BORDER);
+        note.setFloatingText("Note");
+        note.setPrefWidth(10000d);
+        return buildFieldHolder(note);
+    }
+
+    private MFXButton buildSaveButton() {
+        saveBtn = new MFXButton("Save");
+        saveBtn.getStyleClass().add("filled");
+        saveBtn.setOnAction(event -> {
+            if (!detailTable.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
+                errorMessage("Table can't be Empty");
+            }
+            validateFields();
+
+            if (isValidForm()) {
+                if (PurchaseMasterViewModel.getId() > 0) {
+                    PurchaseMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                } else {
+                    PurchaseMasterViewModel.savePurchaseMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                }
+            }
+        });
+        return saveBtn;
+    }
+
+    private MFXButton buildCancelButton() {
+        cancelBtn = new MFXButton("Cancel");
+        cancelBtn.getStyleClass().add("outlined");
+        cancelBtn.setOnAction(event -> {
+            AppManager.getNavigation().navigate(PurchasePage.class);
+            PurchaseMasterViewModel.resetProperties();
+            this.dispose();
+        });
+        return cancelBtn;
+    }
+
+    private HBox createButtonBox() {
+        var buttonBox = new HBox(20.0);
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
+        buttonBox.setPadding(new Insets(10.0));
+
+        buttonBox.getChildren().addAll(buildSaveButton(), buildCancelButton());
+        HBox.setHgrow(buttonBox, Priority.ALWAYS);
+        return buttonBox;
     }
 
     private void bindProperties() {
@@ -81,21 +224,6 @@ public class PurchaseMasterFormController implements Initializable {
             SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) c -> supplier.setItems(SupplierViewModel.getSuppliers()));
         } else {
             supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
-        }
-    }
-
-    public void saveBtnClicked() {
-        if (!detailTable.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
-            errorMessage("Table can't be Empty");
-        }
-        validateFields();
-
-        if (isValidForm()) {
-            if (PurchaseMasterViewModel.getId() > 0) {
-                PurchaseMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-            } else {
-                PurchaseMasterViewModel.savePurchaseMaster(this::onSuccess, this::successMessage, this::errorMessage);
-            }
         }
     }
 
@@ -148,7 +276,7 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     private void styleTable() {
-        detailTable.setPrefSize(1000, 1000);
+        detailTable.setPrefSize(10000, 10000);
         detailTable.features().enableBounceEffect();
         detailTable.features().enableSmoothScrolling(0.5);
 
@@ -161,7 +289,7 @@ public class PurchaseMasterFormController implements Initializable {
 
     private MFXContextMenu showContextMenu(MFXTableRow<PurchaseDetail> row) {
         MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
-        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getData().getProductName(), purchaseFormContentPane)), createMenuItem("Edit", event -> handleEditAction(row)));
+        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getData().getProductName(), this)), createMenuItem("Edit", event -> handleEditAction(row)));
         return contextMenu;
     }
 
@@ -177,7 +305,7 @@ public class PurchaseMasterFormController implements Initializable {
 
     private void handleEditAction(MFXTableRow<PurchaseDetail> row) {
         Platform.runLater(() -> PurchaseDetailViewModel.getPurchaseDetail(row.getData()));
-        SpotyDialog.createDialog(new PurchaseDetailForm(), purchaseFormContentPane).showAndWait();
+        SpotyDialog.createDialog(new PurchaseDetailForm(), this).showAndWait();
     }
 
     private void bindTableItems() {
@@ -188,46 +316,10 @@ public class PurchaseMasterFormController implements Initializable {
         }
     }
 
-    public void cancelBtnClicked() {
-        // BaseController.navigation.navigate(new PurchasePage(stage));
-        resetForm();
-    }
-
-    private void resetForm() {
-        PurchaseMasterViewModel.resetProperties();
-        resetValidationLabels();
-        clearFormFields();
-    }
-
-    private void resetValidationLabels() {
-        supplierValidationLabel.setVisible(false);
-        dateValidationLabel.setVisible(false);
-        statusValidationLabel.setVisible(false);
-        supplierValidationLabel.setManaged(false);
-        dateValidationLabel.setManaged(false);
-        statusValidationLabel.setManaged(false);
-    }
-
-    private void clearFormFields() {
-        supplier.clearSelection();
-        purchaseStatus.clearSelection();
-        date.setValue(null);
-        clearFieldPseudoClasses();
-    }
-
-    private void clearFieldPseudoClasses() {
-        supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        purchaseStatus.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-    }
-
-    public void addBtnClicked() {
-        SpotyDialog.createDialog(new PurchaseDetailForm(), purchaseFormContentPane).showAndWait();
-    }
-
     private void onSuccess() {
-        cancelBtnClicked();
-        clearFormFields();
+        this.dispose();
+        AppManager.getNavigation().navigate(PurchasePage.class);
+        PurchaseMasterViewModel.resetProperties();
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
     }
@@ -279,5 +371,21 @@ public class PurchaseMasterFormController implements Initializable {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        supplierValidationLabel = null;
+        dateValidationLabel = null;
+        statusValidationLabel = null;
+        date = null;
+        supplier = null;
+        detailTable = null;
+        note = null;
+        purchaseStatus = null;
+        saveBtn = null;
+        cancelBtn = null;
+        addBtn = null;
     }
 }
