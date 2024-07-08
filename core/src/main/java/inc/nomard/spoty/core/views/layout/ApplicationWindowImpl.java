@@ -12,6 +12,7 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
         super();
         this.setLightMode();
         this.getStyleClass().add("body");
+        AppManager.setParent(this);
         createPageLayout();
         AppManager.setMorphPane(window);
     }
