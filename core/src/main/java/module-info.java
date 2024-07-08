@@ -17,13 +17,11 @@ module spoty.core {
     requires spoty.network_bridge;
     requires spoty.utils;
     requires com.calendarfx.view;
-//    requires froxty;
     requires com.dlsc.gemsfx;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.components;
     opens inc.nomard.spoty.core.views.dashboard;
-    opens inc.nomard.spoty.core.views.report;
     opens inc.nomard.spoty.core.views.settings.app_settings;
     opens inc.nomard.spoty.core.views.settings;
     opens inc.nomard.spoty.core.views.forms;
