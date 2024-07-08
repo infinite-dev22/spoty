@@ -16,6 +16,8 @@ public class SideSheet extends StackPane {
     private final Pane owner;
     private final Pane dialog;
     private final StackPane overlay;
+    @Getter
+    private final VBox content;
     @Setter
     private Color backgroundColor = Color.WHITE;
     private CornerRadii cornerRadius = CornerRadii.EMPTY;
@@ -24,15 +26,15 @@ public class SideSheet extends StackPane {
     private int durationMillis = 300;
     @Setter
     private String title = "";
-    @Getter
-    private final VBox content = new VBox();
 
     public SideSheet(Pane owner) {
         this.owner = owner;
+        content = new VBox();
+        owner.getChildren().add(this);
         // Initialize dialog and overlay
         dialog = createModalSheet();
         overlay = createOverlay();
-        HBox.setHgrow(content, Priority.NEVER);
+        HBox.setHgrow(content, Priority.ALWAYS);
         VBox.setVgrow(content, Priority.ALWAYS);
 
         setWidth(owner.getWidth());
