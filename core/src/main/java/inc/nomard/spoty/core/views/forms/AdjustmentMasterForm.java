@@ -47,8 +47,6 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         Separator separator = new Separator();
         separator.setPrefWidth(200.0);
 
-        GridPane gridPane = createGridPane();
-
         adjustmentProductAddBtn = new MFXButton("Add Product");
         adjustmentProductAddBtn.getStyleClass().add("filled");
 
@@ -72,10 +70,6 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         AnchorPane.setLeftAnchor(separator, 0.0);
         AnchorPane.setRightAnchor(separator, 0.0);
 
-        AnchorPane.setTopAnchor(gridPane, 40.0);
-        AnchorPane.setLeftAnchor(gridPane, 0.0);
-        AnchorPane.setRightAnchor(gridPane, 180.0);
-
         AnchorPane.setTopAnchor(adjustmentNote, 40.0);
         AnchorPane.setLeftAnchor(adjustmentNote, 0.0);
         AnchorPane.setRightAnchor(adjustmentNote, 0.0);
@@ -93,34 +87,11 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         AnchorPane.setLeftAnchor(buttonBox, 0.0);
         AnchorPane.setRightAnchor(buttonBox, 0.0);
 
-        centerPane.getChildren().addAll(adjustmentFormTitle, separator, gridPane, adjustmentNote, adjustmentProductAddBtn, adjustmentDetailTable, buttonBox);
+        centerPane.getChildren().addAll(adjustmentFormTitle, separator, adjustmentNote, adjustmentProductAddBtn, adjustmentDetailTable, buttonBox);
 
         var pane = new BorderPane();
         pane.setCenter(centerPane);
         return pane;
-    }
-
-    private GridPane createGridPane() {
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(20.0);
-        gridPane.setPadding(new Insets(40.0, 180.0, 0.0, 0.0));
-
-        ColumnConstraints col1 = new ColumnConstraints();
-        col1.setHgrow(Priority.SOMETIMES);
-        col1.setMinWidth(10.0);
-
-        ColumnConstraints col2 = new ColumnConstraints();
-        col2.setHgrow(Priority.SOMETIMES);
-        col2.setMinWidth(10.0);
-
-        RowConstraints row = new RowConstraints();
-        row.setVgrow(Priority.SOMETIMES);
-        row.setMinHeight(10.0);
-
-        gridPane.getColumnConstraints().addAll(col1, col2);
-        gridPane.getRowConstraints().add(row);
-
-        return gridPane;
     }
 
     private HBox createButtonBox() {
