@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
+import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -15,7 +16,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
@@ -36,7 +36,6 @@ public class StockInPage extends OutlinePage {
     private MFXTextField searchBar;
     private MFXTableView<StockInMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
@@ -59,7 +58,6 @@ public class StockInPage extends OutlinePage {
         setIcons();
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -92,8 +90,9 @@ public class StockInPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
+        var createBtn = new MFXButton("Create");
         createBtn.getStyleClass().add("filled");
+        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(StockInMasterForm.class));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -181,23 +180,9 @@ public class StockInPage extends OutlinePage {
 
     private MFXContextMenu showContextMenu(MFXTableRow<StockInMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-//        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-//        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem view = new MFXContextMenuItem("View");
 
         // Actions
-        // Delete
-//        delete.setOnAction(
-//                e -> {
-//                    StockInMasterViewModel.deleteStockInMaster(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-//                    e.consume();
-//                });
-        // Edit
-//        edit.setOnAction(
-//                e -> {
-//                    StockInMasterViewModel.getStockInMaster(obj.getData().getId(), this::createBtnAction, this::errorMessage);
-//                    e.consume();
-//                });
         // View
         view.setOnAction(
                 event -> {
@@ -205,18 +190,9 @@ public class StockInPage extends OutlinePage {
                     event.consume();
                 });
 
-        contextMenu.addItems(view/*, edit, delete*/);
+        contextMenu.addItems(view);
 
         return contextMenu;
-    }
-
-    private void createBtnAction() {
-        createBtn.setOnAction(event -> {
-        });// BaseController.navigation.navigate(Pages.getStockInMasterFormPane()));
-    }
-
-    private void onSuccess() {
-        StockInMasterViewModel.getAllStockInMasters(null, null);
     }
 
     private void viewDialogPane() throws IOException {
@@ -236,10 +212,6 @@ public class StockInPage extends OutlinePage {
         StockInPreviewController controller = viewFxmlLoader.getController();
         controller.init(stockInMaster);
         viewDialog.showAndWait();
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
