@@ -4,6 +4,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -16,7 +17,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
@@ -37,7 +37,6 @@ public class TransferPage extends OutlinePage {
     private MFXTextField searchBar;
     private MFXTableView<TransferMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
@@ -60,7 +59,6 @@ public class TransferPage extends OutlinePage {
         setIcons();
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -93,8 +91,9 @@ public class TransferPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
+        var createBtn = new MFXButton("Create");
         createBtn.getStyleClass().add("filled");
+        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(TransferMasterForm.class));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -207,7 +206,7 @@ public class TransferPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    TransferMasterViewModel.getTransfer(obj.getData().getId(), this::createBtnAction, this::errorMessage);
+                    TransferMasterViewModel.getTransfer(obj.getData().getId(), () -> AppManager.getNavigation().navigate(TransferMasterForm.class), this::errorMessage);
                     e.consume();
                 });
         // View
@@ -220,11 +219,6 @@ public class TransferPage extends OutlinePage {
         contextMenu.addItems(view, edit, delete);
 
         return contextMenu;
-    }
-
-    private void createBtnAction() {
-        createBtn.setOnAction(event -> {
-        });// BaseController.navigation.navigate(Pages.getTransferMasterFormPane()));
     }
 
     private void onSuccess() {
