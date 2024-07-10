@@ -48,19 +48,6 @@ public class Navigation {
                 "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", ExpenseCategoryPage.class));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", ExpensePage.class));
         map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", AccountTransactionPage.class));
-        // Reports
-//        map.put("STOCK_REPORT", NavTree.NavTreeItem.page("Stock Report", Pages.getStockReportPane()));
-//        map.put("CLOSING", NavTree.NavTreeItem.page("Closing", Pages.getClosingPane()));
-//        map.put("CLOSING_REPORT", NavTree.NavTreeItem.page("Closing Report", Pages.getClosingReportPane()));
-//        map.put("DAILY_CUSTOMER_REPORT", NavTree.NavTreeItem.page("Daily Customer Report", Pages.getDailyCustomerReportPane()));
-//        map.put("DAILY_REPORT", NavTree.NavTreeItem.page("Daily Report", Pages.getDailyReportPane()));
-//        map.put("DUE_REPORT", NavTree.NavTreeItem.page("Due Report", Pages.getDueReportPane()));
-//        map.put("PROFIT_REPORT", NavTree.NavTreeItem.page("Profit Report", Pages.getProfitReportPane()));
-//        map.put("PURCHASE_REPORT", NavTree.NavTreeItem.page("Purchase Report", Pages.getPurchaseReportPane()));
-//        map.put("SALES_REPORT", NavTree.NavTreeItem.page("Sales Report", Pages.getSalesReportPane()));
-//        map.put("SHIPPING_COST_REPORT", NavTree.NavTreeItem.page("Shipping Cost Report", Pages.getShippingCostReportPane()));
-//        map.put("TAX_REPORT", NavTree.NavTreeItem.page("Tax Report", Pages.getTaxReportPane()));
-//        map.put("USER_SALES_REPORT", NavTree.NavTreeItem.page("User Sales Report", Pages.getUserSalesReportPane()));
         // HUMAN RESOURCE
         // HRM
         map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", DesignationPage.class));
@@ -180,24 +167,6 @@ public class Navigation {
                             NAV_TREE.get("ADJUSTMENTS"));
         }
 
-        var reports = NavTree.NavTreeItem.group("Reports", "fas-clipboard-list");
-        reports
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("STOCK_REPORT"),
-                        NAV_TREE.get("CLOSING"),
-                        NAV_TREE.get("CLOSING_REPORT"),
-                        NAV_TREE.get("DAILY_CUSTOMER_REPORT"),
-                        NAV_TREE.get("DAILY_REPORT"),
-                        NAV_TREE.get("DUE_REPORT"),
-                        NAV_TREE.get("PROFIT_REPORT"),
-                        NAV_TREE.get("PURCHASE_REPORT"),
-                        NAV_TREE.get("SALES_REPORT"),
-                        NAV_TREE.get("SALES_RETURN"),
-                        NAV_TREE.get("SHIPPING_COST_REPORT"),
-                        NAV_TREE.get("TAX_REPORT"),
-                        NAV_TREE.get("USER_SALES_REPORT"));
-
         var humanResourceManagement = NavTree.NavTreeItem.group("HRM");
         humanResourceManagement
                 .getChildren()
@@ -277,7 +246,6 @@ public class Navigation {
                             dashboard,
                             people,
                             deductions,
-                            deductions,
                             inventory,
                             quotation,
                             sale,
@@ -293,7 +261,6 @@ public class Navigation {
                             quotation,
                             sale,
                             accounts,
-                            reports,
                             settings);
         } else if (flavor == AppFlavor.TRACTION) {
             root.getChildren()
@@ -305,7 +272,6 @@ public class Navigation {
                             quotation,
                             sale,
                             accounts,
-                            reports,
                             settings);
         } else if (flavor == AppFlavor.MVP) {
             root.getChildren()
