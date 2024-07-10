@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.views.pages;
 
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.geometry.*;
@@ -11,13 +11,11 @@ import lombok.extern.java.*;
 
 @Log
 public class PaySlipItem extends HBox {
-    public Label payRunPeriod,
-            employeeCount,
-            payRunGenerationDetails,
-            payRunStatus,
-            payRunCreatedTime,
-            sentStatus,
-            issues;
+    public Label payRunPeriod;
+    public Label employeeCount;
+    public Label payRunGenerationDetails;
+    public Label payRunStatus;
+    public Label issues;
     public MFXButton viewSalariesBtn,
             exportBtn,
             sendBtn;
@@ -34,7 +32,7 @@ public class PaySlipItem extends HBox {
         this.getStyleClass().add("card-flat");
         this.setPadding(new Insets(8d));
         this.getChildren().addAll(buildLeft(), new Spacer(), buildCenter(), new Spacer(), buildRight());
-        this.setOnMouseClicked(event -> BaseController.navigation.navigate(SalaryPage.class));
+        this.setOnMouseClicked(event -> AppManager.getNavigation().navigate(SalaryPage.class));
         buildIcons();
     }
 
