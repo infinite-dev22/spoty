@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.title.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -16,6 +17,7 @@ import java.net.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -49,7 +51,6 @@ public class RoleFormController implements Initializable {
             productBarcodesCheckbox,
             productCategoriesCheckbox,
             productUnitsCheckbox,
-            productImportsCheckbox,
             productBrandsCheckbox,
             viewAdjustmentsCheckbox,
             editAdjustmentsCheckbox,
@@ -95,30 +96,10 @@ public class RoleFormController implements Initializable {
             editCustomersCheckbox,
             createCustomerCheckbox,
             deleteCustomerCheckbox,
-            importCustomersCheckbox,
             viewSuppliersCheckbox,
             editSuppliersCheckbox,
             createSupplierCheckbox,
             deleteSupplierCheckbox,
-            importSuppliersCheckbox,
-            paymentSalesCheckbox,
-            paymentPurchasesCheckbox,
-            saleReturnPaymentsCheckbox,
-            purchaseReturnPaymentsCheckbox,
-            saleReportCheckbox,
-            purchaseReportCheckbox,
-            customerReportCheckbox,
-            supplierReportCheckbox,
-            profitAndLossCheckbox,
-            productQuantityAlertsCheckbox,
-            branchStockChartCheckbox,
-            topSellingProductsCheckbox,
-            customerRankingCheckbox,
-            usersReportCheckbox,
-            stockReportCheckbox,
-            productReportCheckbox,
-            productSalesReportCheckbox,
-            productPurchasesReportCheckbox,
             accessSystemSettingCheckbox,
             AccessPOSSettingsCheckbox,
             accessCurrencyCheckbox,
@@ -139,8 +120,7 @@ public class RoleFormController implements Initializable {
             selectAllSettingsCheckbox,
             selectAllSuppliersCheckbox,
             selectAllCustomersCheckbox,
-            selectAllProductsCheckbox,
-            selectAllReportsCheckbox;
+            selectAllProductsCheckbox;
     private List<Constraint> constraints;
     @FXML
     private Label errorLabel;
@@ -164,7 +144,6 @@ public class RoleFormController implements Initializable {
         productBarcodesCheckbox.setSelected(false);
         productCategoriesCheckbox.setSelected(false);
         productUnitsCheckbox.setSelected(false);
-        productImportsCheckbox.setSelected(false);
         productBrandsCheckbox.setSelected(false);
         viewAdjustmentsCheckbox.setSelected(false);
         editAdjustmentsCheckbox.setSelected(false);
@@ -210,30 +189,10 @@ public class RoleFormController implements Initializable {
         editCustomersCheckbox.setSelected(false);
         createCustomerCheckbox.setSelected(false);
         deleteCustomerCheckbox.setSelected(false);
-        importCustomersCheckbox.setSelected(false);
         viewSuppliersCheckbox.setSelected(false);
         editSuppliersCheckbox.setSelected(false);
         createSupplierCheckbox.setSelected(false);
         deleteSupplierCheckbox.setSelected(false);
-        importSuppliersCheckbox.setSelected(false);
-        paymentSalesCheckbox.setSelected(false);
-        paymentPurchasesCheckbox.setSelected(false);
-        saleReturnPaymentsCheckbox.setSelected(false);
-        purchaseReturnPaymentsCheckbox.setSelected(false);
-        saleReportCheckbox.setSelected(false);
-        purchaseReportCheckbox.setSelected(false);
-        customerReportCheckbox.setSelected(false);
-        supplierReportCheckbox.setSelected(false);
-        profitAndLossCheckbox.setSelected(false);
-        productQuantityAlertsCheckbox.setSelected(false);
-        branchStockChartCheckbox.setSelected(false);
-        topSellingProductsCheckbox.setSelected(false);
-        customerRankingCheckbox.setSelected(false);
-        usersReportCheckbox.setSelected(false);
-        stockReportCheckbox.setSelected(false);
-        productReportCheckbox.setSelected(false);
-        productSalesReportCheckbox.setSelected(false);
-        productPurchasesReportCheckbox.setSelected(false);
         accessSystemSettingCheckbox.setSelected(false);
         AccessPOSSettingsCheckbox.setSelected(false);
         accessCurrencyCheckbox.setSelected(false);
@@ -255,7 +214,75 @@ public class RoleFormController implements Initializable {
         selectAllSuppliersCheckbox.setSelected(false);
         selectAllCustomersCheckbox.setSelected(false);
         selectAllProductsCheckbox.setSelected(false);
-        selectAllReportsCheckbox.setSelected(false);
+    }
+
+    private void initialiseCheckboxes() {
+        dashboardCheckbox = new MFXCheckbox("Access Dashboard");
+        accessPOSCheckbox = new MFXCheckbox("Access Point Of Sale");
+        viewUsersCheckbox = new MFXCheckbox("Allow View");
+        editUsersCheckbox = new MFXCheckbox("Allow Edit");
+        createUserCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteUserCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewRoleCheckbox = new MFXCheckbox("Allow View");
+        editRoleCheckbox = new MFXCheckbox("Allow Edit");
+        createRoleCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteRoleCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewProductsCheckbox = new MFXCheckbox("Allow View");
+        editProductsCheckbox = new MFXCheckbox("Allow Edit");
+        createProductCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteProductCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        productBarcodesCheckbox = new MFXCheckbox("Edit barcodes");
+        productCategoriesCheckbox = new MFXCheckbox("Access Product Categories");
+        productUnitsCheckbox = new MFXCheckbox("Access Product Units");
+        productBrandsCheckbox = new MFXCheckbox("Access Product Brands");
+        viewAdjustmentsCheckbox = new MFXCheckbox("Allow View");
+        editAdjustmentsCheckbox = new MFXCheckbox("Allow Edit");
+        createAdjustmentCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteAdjustmentCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewTransfersCheckbox = new MFXCheckbox("Allow View");
+        editTransfersCheckbox = new MFXCheckbox("Allow Edit");
+        createTransferCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteTransferCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewExpensesCheckbox = new MFXCheckbox("Allow View");
+        editExpensesCheckbox = new MFXCheckbox("Allow Edit");
+        createExpenseCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteExpenseCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewSalesCheckbox = new MFXCheckbox("Allow View");
+        editSalesCheckbox = new MFXCheckbox("Allow Edit");
+        createSaleCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteSaleCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewPurchasesCheckbox = new MFXCheckbox("Allow View");
+        editPurchasesCheckbox = new MFXCheckbox("Allow Edit");
+        createPurchaseCheckbox = new MFXCheckbox("Allow Create/Add");
+        deletePurchaseCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewRequisitionCheckbox = new MFXCheckbox("Allow View");
+        editRequisitionCheckbox = new MFXCheckbox("Allow Edit");
+        createRequisitionCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteRequisitionCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewStockInCheckbox = new MFXCheckbox("Allow View");
+        editStockInCheckbox = new MFXCheckbox("Allow Edit");
+        createStockInCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteStockInCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewQuotationsCheckbox = new MFXCheckbox("Allow View");
+        editQuotationsCheckbox = new MFXCheckbox("Allow Edit");
+        createQuotationCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteQuotationCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewSaleReturnsCheckbox = new MFXCheckbox("Allow View");
+        editSaleReturnsCheckbox = new MFXCheckbox("Allow Edit");
+        createSaleReturnCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteSaleReturnCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewPurchaseReturnsCheckbox = new MFXCheckbox("Allow View");
+        editPurchaseReturnsCheckbox = new MFXCheckbox("Allow Edit");
+        createPurchaseReturnCheckbox = new MFXCheckbox("Allow Create/Add");
+        deletePurchaseReturnCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewCustomersCheckbox = new MFXCheckbox("Allow View");
+        editCustomersCheckbox = new MFXCheckbox("Allow Edit");
+        createCustomerCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteCustomerCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        viewSuppliersCheckbox = new MFXCheckbox("Allow View");
+        editSuppliersCheckbox = new MFXCheckbox("Allow Edit");
+        createSupplierCheckbox = new MFXCheckbox("Allow Create/Add");
+        deleteSupplierCheckbox = new MFXCheckbox("Allow Delete/Remove");
     }
 
     @Override
@@ -279,10 +306,20 @@ public class RoleFormController implements Initializable {
         getSupplierSetting();
         getCustomerSetting();
         getProductsSetting();
-        getReportSetting();
         validationWrapper();
         dialogOnActions();
         requiredValidator();
+    }
+
+    private VBox createSectionVBox(Integer rowIndex, Integer columnIndex, Title title, Separator separator, GridPane gridPane) {
+        VBox vbox = new VBox();
+        vbox.setSpacing(5d);
+        vbox.getStyleClass().add("card-flat");
+        vbox.setPadding(new Insets(5d));
+        GridPane.setRowIndex(vbox, rowIndex);
+        GridPane.setColumnIndex(vbox, columnIndex);
+        vbox.getChildren().addAll(title, separator, gridPane);
+        return vbox;
     }
 
     private void dialogOnActions() {
@@ -487,7 +524,6 @@ public class RoleFormController implements Initializable {
                                 productUnitsCheckbox.setSelected(newVal);
                                 createProductCheckbox.setSelected(newVal);
                                 deleteProductCheckbox.setSelected(newVal);
-                                productImportsCheckbox.setSelected(newVal);
                                 productBrandsCheckbox.setSelected(newVal);
                             }
                         });
@@ -571,18 +607,6 @@ public class RoleFormController implements Initializable {
                                 PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteProducts());
                             } else {
                                 PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteProducts());
-                            }
-                        });
-        productImportsCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllProductsCheckbox.isSelected())
-                                    selectAllProductsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(PermissionsViewModel.getImportProducts());
-                            } else {
-                                PermissionsViewModel.addPermission(PermissionsViewModel.getImportProducts());
                             }
                         });
         productBrandsCheckbox
@@ -1237,7 +1261,6 @@ public class RoleFormController implements Initializable {
                             if (selectAllCustomersCheckbox.isFocused()) {
                                 viewCustomersCheckbox.setSelected(newVal);
                                 editCustomersCheckbox.setSelected(newVal);
-                                importCustomersCheckbox.setSelected(newVal);
                                 createCustomerCheckbox.setSelected(newVal);
                                 deleteCustomerCheckbox.setSelected(newVal);
                             }
@@ -1265,18 +1288,6 @@ public class RoleFormController implements Initializable {
                                 PermissionsViewModel.removePermission(PermissionsViewModel.getEditCustomers());
                             } else {
                                 PermissionsViewModel.addPermission(PermissionsViewModel.getEditCustomers());
-                            }
-                        });
-        importCustomersCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllCustomersCheckbox.isSelected())
-                                    selectAllCustomersCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(PermissionsViewModel.getImportCustomers());
-                            } else {
-                                PermissionsViewModel.addPermission(PermissionsViewModel.getImportCustomers());
                             }
                         });
         createCustomerCheckbox
@@ -1313,7 +1324,6 @@ public class RoleFormController implements Initializable {
                             if (selectAllSuppliersCheckbox.isFocused()) {
                                 viewSuppliersCheckbox.setSelected(newVal);
                                 editSuppliersCheckbox.setSelected(newVal);
-                                importSuppliersCheckbox.setSelected(newVal);
                                 createSupplierCheckbox.setSelected(newVal);
                                 deleteSupplierCheckbox.setSelected(newVal);
                             }
@@ -1343,18 +1353,6 @@ public class RoleFormController implements Initializable {
                                 PermissionsViewModel.addPermission(PermissionsViewModel.getEditSuppliers());
                             }
                         });
-        importSuppliersCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllSuppliersCheckbox.isSelected())
-                                    selectAllSuppliersCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(PermissionsViewModel.getImportSuppliers());
-                            } else {
-                                PermissionsViewModel.addPermission(PermissionsViewModel.getImportSuppliers());
-                            }
-                        });
         createSupplierCheckbox
                 .selectedProperty()
                 .addListener(
@@ -1377,281 +1375,6 @@ public class RoleFormController implements Initializable {
                                 PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteSuppliers());
                             } else {
                                 PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteSuppliers());
-                            }
-                        });
-    }
-
-    private void getReportSetting() {
-        selectAllReportsCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (selectAllReportsCheckbox.isFocused()) {
-                                paymentSalesCheckbox.setSelected(newVal);
-                                paymentPurchasesCheckbox.setSelected(newVal);
-                                saleReturnPaymentsCheckbox.setSelected(newVal);
-                                purchaseReturnPaymentsCheckbox.setSelected(newVal);
-                                saleReportCheckbox.setSelected(newVal);
-                                purchaseReportCheckbox.setSelected(newVal);
-                                customerReportCheckbox.setSelected(newVal);
-                                supplierReportCheckbox.setSelected(newVal);
-                                profitAndLossCheckbox.setSelected(newVal);
-                                productQuantityAlertsCheckbox.setSelected(newVal);
-                                branchStockChartCheckbox.setSelected(newVal);
-                                topSellingProductsCheckbox.setSelected(newVal);
-                                customerRankingCheckbox.setSelected(newVal);
-                                usersReportCheckbox.setSelected(newVal);
-                                stockReportCheckbox.setSelected(newVal);
-                                productReportCheckbox.setSelected(newVal);
-                                productSalesReportCheckbox.setSelected(newVal);
-                                productPurchasesReportCheckbox.setSelected(newVal);
-                            }
-                        });
-
-        paymentSalesCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessPaymentsSalesReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessPaymentsSalesReports());
-                            }
-                        });
-        paymentPurchasesCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessPaymentsPurchasesReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessPaymentsPurchasesReports());
-                            }
-                        });
-        saleReturnPaymentsCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessSalesReturnsPaymentsReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessSalesReturnsPaymentsReports());
-                            }
-                        });
-        purchaseReturnPaymentsCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessPurchasesReturnsPaymentsReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessPurchasesReturnsPaymentsReports());
-                            }
-                        });
-        saleReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(PermissionsViewModel.getAccessSalesReports());
-                            } else {
-                                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessSalesReports());
-                            }
-                        });
-        purchaseReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessPurchasesReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessPurchasesReports());
-                            }
-                        });
-        customerReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessCustomersReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessCustomersReports());
-                            }
-                        });
-        supplierReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessSuppliersReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessSuppliersReports());
-                            }
-                        });
-        profitAndLossCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessProfitsAndLossesReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessProfitsAndLossesReports());
-                            }
-                        });
-        productQuantityAlertsCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessProductQuantityReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessProductQuantityReports());
-                            }
-                        });
-        branchStockChartCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessBranchStockChartsReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessBranchStockChartsReports());
-                            }
-                        });
-        topSellingProductsCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessTopSellingProductsReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessTopSellingProductsReports());
-                            }
-                        });
-        customerRankingCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessCustomerRankingsReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessCustomerRankingsReports());
-                            }
-                        });
-        usersReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(PermissionsViewModel.getAccessUsersReports());
-                            } else {
-                                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessUsersReports());
-                            }
-                        });
-        stockReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessStocksReports());
-                            } else {
-                                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessStocksReports());
-                            }
-                        });
-        productReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessProductsReports());
-                            } else {
-                                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessProductsReports());
-                            }
-                        });
-        productSalesReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessProductSalesReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessProductSalesReports());
-                            }
-                        });
-        productPurchasesReportCheckbox
-                .selectedProperty()
-                .addListener(
-                        (observableVal, oldVal, newVal) -> {
-                            if (!newVal) {
-                                if (selectAllReportsCheckbox.isSelected())
-                                    selectAllReportsCheckbox.setSelected(false);
-                                PermissionsViewModel.removePermission(
-                                        PermissionsViewModel.getAccessProductPurchasesReports());
-                            } else {
-                                PermissionsViewModel.addPermission(
-                                        PermissionsViewModel.getAccessProductPurchasesReports());
                             }
                         });
     }
