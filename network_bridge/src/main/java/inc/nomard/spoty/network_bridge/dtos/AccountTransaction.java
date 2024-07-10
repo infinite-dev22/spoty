@@ -21,6 +21,6 @@ public class AccountTransaction {
     private String transactionType;
 
     public String getAccountName() {
-        return account.getAccountName();
+        return Objects.nonNull(account) ? account.getAccountName() : "Null";
     }
 }

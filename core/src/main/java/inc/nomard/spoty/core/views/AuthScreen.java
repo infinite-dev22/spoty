@@ -27,7 +27,6 @@ import static io.github.palexdev.materialfx.utils.StringUtils.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -648,6 +647,7 @@ public class AuthScreen extends BorderPane {
                 CompletableFuture.runAsync(() -> BranchViewModel.getAllBranches(null, null)),
                 CompletableFuture.runAsync(() -> BrandViewModel.getAllBrands(null, null)),
                 CompletableFuture.runAsync(() -> AccountViewModel.getAllAccounts(null, null)),
+                CompletableFuture.runAsync(() -> AccountTransactionViewModel.getAllTransactions(null, null)),
                 CompletableFuture.runAsync(() -> CurrencyViewModel.getAllCurrencies(null, null)),
                 CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null)),
                 CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null)),
