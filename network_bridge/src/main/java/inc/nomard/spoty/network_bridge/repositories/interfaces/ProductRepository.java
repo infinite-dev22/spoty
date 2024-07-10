@@ -15,9 +15,9 @@ public interface ProductRepository {
 
     CompletableFuture<HttpResponse<String>> stockAlert() throws IOException, InterruptedException;
 
-    CompletableFuture<HttpResponse<String>> post(Object object);
+    CompletableFuture<HttpResponse<String>> post(Object object, File imageFile);
 
-    CompletableFuture<HttpResponse<String>> put(Object object);
+    CompletableFuture<HttpResponse<String>> put(Object object, File imageFile);
 
     CompletableFuture<HttpResponse<String>> delete(FindModel findModel);
 

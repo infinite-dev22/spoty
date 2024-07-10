@@ -32,6 +32,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok"
     implementation "org.projectlombok:lombok:$lombok"
     implementation "com.google.code.gson:gson:$gson"
+    implementation "net.coobird:thumbnailator:$thumbnailator"
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")

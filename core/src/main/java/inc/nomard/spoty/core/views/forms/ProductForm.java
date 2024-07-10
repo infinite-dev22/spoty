@@ -2,13 +2,14 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.values.*;
+import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
@@ -19,6 +20,8 @@ import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -34,6 +37,7 @@ import javafx.scene.shape.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.*;
 import lombok.extern.java.*;
 
 @Log
@@ -76,6 +80,7 @@ public class ProductForm extends ModalPage {
         init();
     }
 
+    @SneakyThrows
     public void init() {
         createDialog();
         getFieldBindings();
@@ -83,7 +88,10 @@ public class ProductForm extends ModalPage {
         dialogOnActions();
         addImage();
         requiredValidator();
-        setProductImage(PreloadedData.noImagePlaceholderImage.getUrl());
+        ProductViewModel.setImageFile(
+                SpotyImageUtils.getFileFromResource(
+                        SpotyCoreResourceLoader.loadURL("images/product-image-placeholder.png")
+                ));
     }
 
     public void createDialog() {
@@ -216,13 +224,15 @@ public class ProductForm extends ModalPage {
         uploadImageLabel.setTextAlignment(TextAlignment.CENTER);
         uploadImageLabel.setWrapText(true);
 
+        placeHolder = new VBox(imageIcon, uploadImageLabel);
+
         productImageView = new Rectangle();
         productImageView.setArcHeight(25.0);
         productImageView.setArcWidth(25.0);
         productImageView.setManaged(false);
         productImageView.setVisible(false);
 
-        uploadImageButton.getChildren().addAll(imageIcon, uploadImageLabel, productImageView);
+        uploadImageButton.getChildren().addAll(placeHolder, productImageView);
 
         AnchorPane box = new AnchorPane();
         box.setPadding(new Insets(5));
@@ -250,12 +260,17 @@ public class ProductForm extends ModalPage {
     }
 
     private void setProductImage(String image) {
-        if (Objects.equals(productImage, null)) {
-            productImage = new Image(image, 200, 200, true, false);
+        productImage = new Image(image, 200, 200, true, false);
+        if (productImage.getWidth() >= uploadImageButton.getWidth()) {
+            productImageView.setWidth(uploadImageButton.getWidth() - 10);
+        } else {
+            productImageView.setWidth(productImage.getWidth());
         }
-
-        productImageView.setHeight(productImage.getHeight());
-        productImageView.setWidth(productImage.getWidth());
+        if (productImage.getHeight() >= uploadImageButton.getHeight()) {
+            productImageView.setHeight(uploadImageButton.getHeight() - 10);
+        } else {
+            productImageView.setHeight(productImage.getHeight());
+        }
         productImageView.setFill(new ImagePattern(productImage));
     }
 
@@ -272,6 +287,17 @@ public class ProductForm extends ModalPage {
         costPrice.textProperty().bindBidirectional(ProductViewModel.costProperty());
         discount.valueProperty().bindBidirectional(ProductViewModel.discountProperty());
         tax.valueProperty().bindBidirectional(ProductViewModel.taxProperty());
+        try {
+            ProductViewModel.setImageFile(
+                    SpotyImageUtils.compress(
+                            SpotyImageUtils.getFileFromResource(
+                                    SpotyCoreResourceLoader.loadURL("images/product-image-placeholder.png")
+                            )
+                    )
+            );
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void getComboBoxProperties() {
@@ -453,12 +479,16 @@ public class ProductForm extends ModalPage {
         uploadImageButton.setOnMouseClicked(event -> {
             var file = fileChooser.showOpenDialog(new Stage());
             if (Objects.nonNull(file)) {
-                setProductImage(file.getPath());
+                setProductImage(new File(file.getPath()).toURI().toString());
                 placeHolder.setVisible(false);
                 placeHolder.setManaged(false);
                 productImageView.setVisible(true);
                 productImageView.setManaged(true);
-                System.out.println("Added: " + file.getName());
+                try {
+                    ProductViewModel.setImageFile(SpotyImageUtils.compress(file));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
@@ -476,12 +506,16 @@ public class ProductForm extends ModalPage {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasFiles()) {
-                setProductImage(db.getFiles().getFirst().getPath());
+                setProductImage(new File(db.getFiles().getFirst().getPath()).toURI().toString());
                 placeHolder.setVisible(false);
                 placeHolder.setManaged(false);
                 productImageView.setVisible(true);
                 productImageView.setManaged(true);
-                System.out.println("Dropped: " + db.getString() + " " + db.getFiles().toString());
+                try {
+                    ProductViewModel.setImageFile(SpotyImageUtils.compress(db.getFiles().getFirst()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 success = true;
             }
             /* let the source know whether the string was successfully

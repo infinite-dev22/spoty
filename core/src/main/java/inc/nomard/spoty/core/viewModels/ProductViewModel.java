@@ -11,6 +11,7 @@ import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
+import java.io.*;
 import java.lang.reflect.*;
 import java.net.http.*;
 import java.util.*;
@@ -31,6 +32,7 @@ public class ProductViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<ProductCategory> category = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<File> imageFile = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty barcodeType = new SimpleStringProperty("");
@@ -236,6 +238,18 @@ public class ProductViewModel {
         return image;
     }
 
+    public static File getImageFile() {
+        return imageFile.get();
+    }
+
+    public static void setImageFile(File image) {
+        ProductViewModel.imageFile.set(image);
+    }
+
+    public static ObjectProperty<File> imageFileProperty() {
+        return imageFile;
+    }
+
     public static String getSerial() {
         return serial.get();
     }
@@ -278,7 +292,7 @@ public class ProductViewModel {
                 .serialNumber(getSerialNumber())
                 .image(getImage())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.post(product);
+        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.post(product, getImageFile());
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
@@ -523,7 +537,7 @@ public class ProductViewModel {
                 .serialNumber(getSerialNumber())
                 .image(getImage())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.put(product);
+        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.put(product, getImageFile());
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
