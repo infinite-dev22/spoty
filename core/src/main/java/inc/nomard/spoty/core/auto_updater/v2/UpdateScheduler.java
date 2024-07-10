@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.auto_updater.v2;
 
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.utils.*;
 import java.util.concurrent.*;
 import javafx.concurrent.*;

@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
-import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.dashboard.*;
 import static inc.nomard.spoty.core.views.layout.navigation.Navigation.SubLayer.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
 import inc.nomard.spoty.core.views.util.*;

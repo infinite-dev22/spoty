@@ -4,7 +4,7 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;

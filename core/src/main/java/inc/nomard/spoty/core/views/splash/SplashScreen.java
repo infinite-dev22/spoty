@@ -5,7 +5,7 @@ import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.navigation.*;
 import inc.nomard.spoty.core.views.util.*;

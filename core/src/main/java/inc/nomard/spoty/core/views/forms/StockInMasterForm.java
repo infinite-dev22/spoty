@@ -3,7 +3,7 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
