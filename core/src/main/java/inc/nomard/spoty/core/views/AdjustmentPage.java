@@ -36,16 +36,9 @@ public class AdjustmentPage extends OutlinePage {
     private MFXTableView<AdjustmentMaster> masterTable;
     private MFXProgressSpinner progress;
     private MFXButton createBtn;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
 
     public AdjustmentPage() {
         super();
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         addNode(init());
     }
 
@@ -180,7 +173,7 @@ public class AdjustmentPage extends OutlinePage {
         MFXContextMenuItem view = new MFXContextMenuItem("View");
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getData());
+                    SpotyDialog.createDialog(new AdjustmentPreview(obj.getData()), this).showAndWait();
                     event.consume();
                 });
 
@@ -191,24 +184,6 @@ public class AdjustmentPage extends OutlinePage {
 
     public void createBtnAction() {
         createBtn.setOnAction(event -> AppManager.getNavigation().navigate(AdjustmentMasterForm.class));
-    }
-
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/AdjustmentPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new AdjustmentPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
-    public void viewShow(AdjustmentMaster adjustmentMaster) {
-        AdjustmentPreviewController controller = viewFxmlLoader.getController();
-        controller.init(adjustmentMaster);
-        viewDialog.showAndWait();
     }
 
     private void errorMessage(String message) {
