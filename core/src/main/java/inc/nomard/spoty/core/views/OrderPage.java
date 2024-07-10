@@ -16,7 +16,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
@@ -41,11 +40,11 @@ public class OrderPage extends OutlinePage {
     private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
 
-    public OrderPage(Stage stage) {
+    public OrderPage() {
         Platform.runLater(() ->
         {
             try {
-                viewDialogPane(stage);
+                viewDialogPane();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -240,7 +239,7 @@ public class OrderPage extends OutlinePage {
         SaleMasterViewModel.getAllSaleMasters(null, null);
     }
 
-    private void viewDialogPane(Stage stage) throws IOException {
+    private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/OrderPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new SalePreviewController());
@@ -251,17 +250,7 @@ public class OrderPage extends OutlinePage {
         dialogContent.setPrefHeight(screenHeight * .98);
         dialogContent.setPrefWidth(700);
 
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
+        dialog = SpotyDialog.createDialog(dialogContent, this);
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
