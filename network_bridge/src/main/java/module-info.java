@@ -47,4 +47,8 @@ module spoty.network_bridge {
     exports inc.nomard.spoty.network_bridge.repositories.interfaces;
     exports inc.nomard.spoty.network_bridge.dtos.payments;
     exports inc.nomard.spoty.network_bridge.dtos.dashboard;
+    exports inc.nomard.spoty.network_bridge.dtos.accounting;
+    opens inc.nomard.spoty.network_bridge.dtos.accounting;
+    exports inc.nomard.spoty.network_bridge.repositories.implementations.accounting;
+    opens inc.nomard.spoty.network_bridge.repositories.implementations.accounting;
 }

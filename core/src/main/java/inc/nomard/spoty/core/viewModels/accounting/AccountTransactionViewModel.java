@@ -1,9 +1,9 @@
-package inc.nomard.spoty.core.viewModels;
+package inc.nomard.spoty.core.viewModels.accounting;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.network_bridge.dtos.accounting.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.accounting.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.connectivity.*;

@@ -2,8 +2,7 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.*;
-import static inc.nomard.spoty.core.viewModels.AccountViewModel.*;
+import inc.nomard.spoty.core.viewModels.accounting.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -156,7 +155,7 @@ public class AccountForm extends MFXGenericDialog {
     private void dialogOnActions() {
         cancelBtn.setOnAction(
                 (event) -> {
-                    clearBankData();
+                    AccountViewModel.clearAccountData();
                     closeDialog(event);
 
                     accountNameValidationLabel.setVisible(false);
@@ -194,14 +193,14 @@ public class AccountForm extends MFXGenericDialog {
                             AccountViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
                             return;
                         }
-                        AccountViewModel.saveBank(this::onSuccess, this::successMessage, this::errorMessage);
+                        AccountViewModel.saveAccount(this::onSuccess, this::successMessage, this::errorMessage);
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
-        AccountViewModel.clearBankData();
+        AccountViewModel.clearAccountData();
         AccountViewModel.getAllAccounts(null, null);
     }
 

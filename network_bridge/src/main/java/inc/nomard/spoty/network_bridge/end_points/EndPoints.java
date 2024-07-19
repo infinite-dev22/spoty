@@ -124,17 +124,6 @@ public class EndPoints {
         public static final String deleteExpenses = expenseUrl + "/delete/multiple";
     }
 
-    public static final class ExpenseCategories {
-        public static final String expenseCategoriesUrl = apiUrl + "/expense/categories";
-        public static final String allExpenseCategories = expenseCategoriesUrl + "/all";
-        public static final String designationById = expenseCategoriesUrl + "/single";
-        public static final String searchExpenseCategories = expenseCategoriesUrl + "/search";
-        public static final String addExpenseCategory = expenseCategoriesUrl + "/add";
-        public static final String updateExpenseCategory = expenseCategoriesUrl + "/update";
-        public static final String deleteExpenseCategory = expenseCategoriesUrl + "/delete/single";
-        public static final String deleteExpenseCategories = expenseCategoriesUrl + "/delete/multiple";
-    }
-
     public static final class Organisations {
         public static final String organisationsUrl = apiUrl + "/organisations";
         public static final String allOrganisations = organisationsUrl + "/all";

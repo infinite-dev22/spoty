@@ -1,5 +1,6 @@
-package inc.nomard.spoty.network_bridge.dtos;
+package inc.nomard.spoty.network_bridge.dtos.accounting;
 
+import inc.nomard.spoty.network_bridge.dtos.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -23,7 +24,7 @@ public class Expense implements Serializable {
     private String note;
     private double amount;
 
-    public String getExpenseCategoryName() {
+    public String getAccountName() {
         return account.getAccountName();
     }
 

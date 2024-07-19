@@ -1,14 +1,14 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.accounting.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.enums.*;
@@ -112,12 +112,12 @@ public class ExpensePage extends OutlinePage {
                 new MFXTableColumn<>("Amount", false, Comparator.comparing(Expense::getAmount));
         MFXTableColumn<Expense> expenseCategory =
                 new MFXTableColumn<>(
-                        "Category", false, Comparator.comparing(Expense::getExpenseCategoryName));
+                        "Category", false, Comparator.comparing(Expense::getAccountName));
         expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getLocaleDate));
         expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getName));
         expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getAmount));
         expenseCategory.setRowCellFactory(
-                expense -> new MFXTableRowCell<>(Expense::getExpenseCategoryName));
+                expense -> new MFXTableRowCell<>(Expense::getAccountName));
         expenseDate.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
         expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
         expenseAmount.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
@@ -131,7 +131,7 @@ public class ExpensePage extends OutlinePage {
                         new StringFilter<>("Reference No.", Expense::getRef),
                         new StringFilter<>("Name", Expense::getName),
                         new DoubleFilter<>("Amount", Expense::getAmount),
-                        new StringFilter<>("Category", Expense::getExpenseCategoryName));
+                        new StringFilter<>("Category", Expense::getAccountName));
         styleExpenseTable();
         if (ExpensesViewModel.getExpenses().isEmpty()) {
             ExpensesViewModel.getExpenses()

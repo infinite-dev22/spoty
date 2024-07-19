@@ -1,16 +1,17 @@
-package inc.nomard.spoty.core.viewModels;
+package inc.nomard.spoty.core.viewModels.accounting;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.accounting.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
+import java.text.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -19,139 +20,152 @@ import javafx.collections.*;
 import lombok.extern.java.*;
 
 @Log
-public class AccountViewModel {
+public class ExpensesViewModel {
+    public static final ObservableList<Expense> expensesList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
             .create();
+    private static final ListProperty<Expense> expenses = new SimpleListProperty<>(expensesList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty accountName = new SimpleStringProperty("");
-    private static final StringProperty accountNumber = new SimpleStringProperty("");
-    private static final StringProperty credit = new SimpleStringProperty("");
-    private static final StringProperty debit = new SimpleStringProperty("");
-    private static final StringProperty balance = new SimpleStringProperty("");
-    private static final StringProperty description = new SimpleStringProperty("");
-    private static final ObjectProperty<Account> account = new SimpleObjectProperty<>();
-    public static ObservableList<Account> accountsList = FXCollections.observableArrayList();
-    private static final ListProperty<Account> ACCOUNTS = new SimpleListProperty<>(accountsList);
-    public static AccountRepositoryImplAccount accountsRepository = new AccountRepositoryImplAccount();
+    private static final StringProperty date = new SimpleStringProperty("");
+    private static final StringProperty reference = new SimpleStringProperty("");
+    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty amount = new SimpleStringProperty("");
+    private static final ObjectProperty<Account> account = new SimpleObjectProperty<>(null);
+    private static final StringProperty note = new SimpleStringProperty("");
+    private static final ExpensesRepositoryImpl expensesRepository = new ExpensesRepositoryImpl();
 
-    public static Long getId() {
+    public static long getId() {
         return id.get();
     }
 
-    public static void setId(Long id) {
-        AccountViewModel.id.set(id);
+    public static void setId(long id) {
+        ExpensesViewModel.id.set(id);
     }
 
     public static LongProperty idProperty() {
         return id;
     }
 
-    public static String getAccountName() {
-        return accountName.get();
+    public static Date getDate() {
+        try {
+            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
+        } catch (ParseException e) {
+            SpotyLogger.writeToFile(e, ExpensesViewModel.class);
+        }
+        return null;
     }
 
-    public static void setAccountName(String accountName) {
-        AccountViewModel.accountName.set(accountName);
+    public static void setDate(String date) {
+        ExpensesViewModel.date.set(date);
     }
 
-    public static StringProperty accountNameProperty() {
-        return accountName;
+    public static StringProperty dateProperty() {
+        return date;
     }
 
-    public static String getAccountNumber() {
-        return accountNumber.get();
+    public static String getReference() {
+        return reference.get();
     }
 
-    public static void setAccountNumber(String accountNumber) {
-        AccountViewModel.accountNumber.set(accountNumber);
+    public static void setReference(String reference) {
+        ExpensesViewModel.reference.set(reference);
     }
 
-    public static StringProperty accountNumberProperty() {
-        return accountNumber;
+    public static StringProperty referenceProperty() {
+        return reference;
     }
 
-    public static String getCredit() {
-        return credit.get();
+    public static String getName() {
+        return name.get();
     }
 
-    public static void setCredit(String credit) {
-        AccountViewModel.credit.set(credit);
+    public static void setName(String name) {
+        ExpensesViewModel.name.set(name);
     }
 
-    public static StringProperty creditProperty() {
-        return credit;
+    public static StringProperty nameProperty() {
+        return name;
     }
 
-    public static String getDebit() {
-        return debit.get();
+    public static double getAmount() {
+        return Double.parseDouble(!amount.get().isEmpty() ? amount.get() : "0");
     }
 
-    public static void setDebit(String debit) {
-        AccountViewModel.debit.set(debit);
+    public static void setAmount(double amount) {
+        ExpensesViewModel.amount.set(amount > 0 ? Double.toString(amount) : "");
     }
 
-    public static StringProperty debitProperty() {
-        return debit;
+    public static StringProperty amountProperty() {
+        return amount;
     }
 
-    public static String getBalance() {
-        return balance.get();
+    public static Account getAccount() {
+        return account.get();
     }
 
-    public static void setBalance(String balance) {
-        AccountViewModel.balance.set(balance);
+    public static void setAccount(Account account) {
+        ExpensesViewModel.account.set(account);
     }
 
-    public static StringProperty balanceProperty() {
-        return balance;
+    public static ObjectProperty<Account> accountProperty() {
+        return account;
     }
 
-    public static String getDescription() {
-        return description.get();
+    public static String getNote() {
+        return note.get();
     }
 
-    public static void setDescription(String description) {
-        AccountViewModel.description.set(description);
+    public static void setNote(String note) {
+        ExpensesViewModel.note.set(note);
     }
 
-    public static StringProperty descriptionProperty() {
-        return description;
+    public static StringProperty noteProperty() {
+        return note;
     }
 
-    public static ObservableList<Account> getAccounts() {
-        return ACCOUNTS.get();
+    public static ObservableList<Expense> getExpenses() {
+        return expenses.get();
     }
 
-    public static void setAccounts(ObservableList<Account> accounts) {
-        AccountViewModel.ACCOUNTS.set(accounts);
+    public static void setExpenses(ObservableList<Expense> expenses) {
+        ExpensesViewModel.expenses.set(expenses);
     }
 
-    public static ListProperty<Account> accountsProperty() {
-        return ACCOUNTS;
+    public static ListProperty<Expense> expensesProperty() {
+        return expenses;
     }
 
-    public static void saveBank(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                SpotyGotFunctional.MessageConsumer successMessage,
-                                SpotyGotFunctional.MessageConsumer errorMessage) {
-        var account =
-                Account.builder()
-                        .accountName(getAccountName())
-                        .accountNumber(getAccountNumber())
-                        .credit(getCredit())
-                        .debit(getDebit())
-                        .balance(getBalance())
-                        .description(getDescription())
-                        .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.post(account);
+    public static void resetProperties() {
+        setId(0);
+        setDate("");
+        setReference("");
+        setName("");
+        setAmount(0);
+        setAccount(null);
+        setNote("");
+    }
+
+    public static void saveExpense(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                   SpotyGotFunctional.MessageConsumer successMessage,
+                                   SpotyGotFunctional.MessageConsumer errorMessage) {
+        var expense = Expense.builder()
+                .date(getDate())
+                .ref(getReference())
+                .name(getName())
+                .account(getAccount())
+                .note(getNote())
+                .amount(getAmount())
+                .build();
+        CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.post(expense);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
                 // Process the successful response
                 Platform.runLater(() -> {
                     onSuccess.run();
-                    successMessage.showMessage("Bank created successfully");
+                    successMessage.showMessage("Expense created successfully");
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
@@ -180,34 +194,24 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
+            SpotyLogger.writeToFile(throwable, ExpensesViewModel.class);
             return null;
         });
     }
 
-    public static void clearBankData() {
-        setId(0L);
-        setDescription("");
-        setAccountNumber("");
-        setAccountName("");
-        setBalance("");
-        setCredit("");
-        setDebit("");
-    }
-
-    public static void getAllAccounts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+    public static void getAllExpenses(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                       SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.fetchAll();
+        CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Account>>() {
+                    Type listType = new TypeToken<ArrayList<Expense>>() {
                     }.getType();
-                    ArrayList<Account> accountList = gson.fromJson(response.body(), listType);
-                    accountsList.clear();
-                    accountsList.addAll(accountList);
+                    ArrayList<Expense> expenseList = gson.fromJson(response.body(), listType);
+                    expensesList.clear();
+                    expensesList.addAll(expenseList);
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
@@ -239,7 +243,7 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
+            SpotyLogger.writeToFile(throwable, ExpensesViewModel.class);
             return null;
         });
     }
@@ -248,20 +252,19 @@ public class AccountViewModel {
             Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.fetch(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    var account = gson.fromJson(response.body(), Account.class);
-                    setId(account.getId());
-                    setAccountName(account.getAccountName());
-                    setAccountNumber(account.getAccountNumber());
-                    setDescription(account.getDescription());
-                    setCredit(account.getCredit());
-                    setDebit(account.getDebit());
-                    setBalance(account.getBalance());
+                    var expense = gson.fromJson(response.body(), Expense.class);
+                    setId(expense.getId());
+                    setDate(expense.getLocaleDate());
+                    setName(expense.getName());
+                    setAccount(expense.getAccount());
+                    setAmount(expense.getAmount());
+                    setNote(expense.getNote());
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {
@@ -291,7 +294,7 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
+            SpotyLogger.writeToFile(throwable, ExpensesViewModel.class);
             return null;
         });
     }
@@ -300,18 +303,18 @@ public class AccountViewModel {
             String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.search(searchModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.search(searchModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Account>>() {
+                    Type listType = new TypeToken<ArrayList<Expense>>() {
                     }.getType();
-                    ArrayList<Account> accountList = gson.fromJson(
+                    ArrayList<Expense> expenseList = gson.fromJson(
                             response.body(), listType);
-                    accountsList.clear();
-                    accountsList.addAll(accountList);
+                    expensesList.clear();
+                    expensesList.addAll(expenseList);
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {
@@ -341,7 +344,7 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
+            SpotyLogger.writeToFile(throwable, ExpensesViewModel.class);
             return null;
         });
     }
@@ -349,23 +352,23 @@ public class AccountViewModel {
     public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        var account = Account.builder()
+        var expense = Expense.builder()
                 .id(getId())
-                .accountName(getAccountName())
-                .accountNumber(getAccountNumber())
-                .credit(getCredit())
-                .debit(getDebit())
-                .balance(getBalance())
-                .description(getDescription())
+                .date(getDate())
+                .ref(getReference())
+                .name(getName())
+                .account(getAccount())
+                .note(getNote())
+                .amount(getAmount())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.put(account);
+        CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.put(expense);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
                 Platform.runLater(() -> {
                     onSuccess.run();
-                    successMessage.showMessage("Bank updated successfully");
+                    successMessage.showMessage("Expense updated successfully");
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
@@ -394,7 +397,7 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
+            SpotyLogger.writeToFile(throwable, ExpensesViewModel.class);
             return null;
         });
     }
@@ -404,14 +407,14 @@ public class AccountViewModel {
             SpotyGotFunctional.MessageConsumer successMessage,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.delete(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = expensesRepository.delete(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
                 Platform.runLater(() -> {
                     onSuccess.run();
-                    successMessage.showMessage("Bank deleted successfully");
+                    successMessage.showMessage("Expense deleted successfully");
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
@@ -440,7 +443,7 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
+            SpotyLogger.writeToFile(throwable, ExpensesViewModel.class);
             return null;
         });
     }

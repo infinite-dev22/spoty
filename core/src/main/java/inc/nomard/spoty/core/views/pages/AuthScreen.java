@@ -6,6 +6,7 @@ import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import static inc.nomard.spoty.core.values.strings.Values.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.accounting.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
@@ -653,7 +654,6 @@ public class AuthScreen extends BorderPane {
                 CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null)),
                 CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null)),
                 CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null)),
-                CompletableFuture.runAsync(() -> ExpenseCategoryViewModel.getAllCategories(null, null)),
                 CompletableFuture.runAsync(() -> ExpensesViewModel.getAllExpenses(null, null)),
                 CompletableFuture.runAsync(() -> PermissionsViewModel.getAllPermissions(null, null)),
                 CompletableFuture.runAsync(() -> ProductCategoryViewModel.getAllProductCategories(null, null)),

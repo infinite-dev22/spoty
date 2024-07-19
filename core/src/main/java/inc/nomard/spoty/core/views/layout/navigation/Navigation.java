@@ -44,8 +44,6 @@ public class Navigation {
         map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", AdjustmentPage.class));
         // Accounting
         map.put("ACCOUNTS", NavTree.NavTreeItem.page("Accounts", AccountPage.class));
-        map.put(
-                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", ExpenseCategoryPage.class));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", ExpensePage.class));
         map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", AccountTransactionPage.class));
         // HUMAN RESOURCE
@@ -209,7 +207,6 @@ public class Navigation {
         var accounts = NavTree.NavTreeItem.group("Accounting", "fas-coins");
         accounts.getChildren().setAll(
                 NAV_TREE.get("ACCOUNTS"),
-                NAV_TREE.get("EXPENSE_CATEGORY"),
                 NAV_TREE.get("EXPENSE"),
                 NAV_TREE.get("TRANSACTIONS"));
 

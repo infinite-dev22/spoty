@@ -1,4 +1,4 @@
-package inc.nomard.spoty.network_bridge.dtos;
+package inc.nomard.spoty.network_bridge.dtos.accounting;
 
 import java.util.*;
 import lombok.*;

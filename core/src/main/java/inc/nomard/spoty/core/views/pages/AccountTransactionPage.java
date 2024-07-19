@@ -1,12 +1,12 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.accounting.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.enums.*;
