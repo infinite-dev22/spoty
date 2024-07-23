@@ -18,7 +18,6 @@ module spoty.core {
     requires spoty.utils;
     requires com.calendarfx.view;
     requires com.dlsc.gemsfx;
-    requires com.jthemedetector;
 
     opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;

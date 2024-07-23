@@ -204,7 +204,7 @@ jlink {
 }
 
 dependencies {
-    implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.9.1'
+    // implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.9.1'
     implementation project(":network_bridge")
     implementation project(":utils")
     implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"

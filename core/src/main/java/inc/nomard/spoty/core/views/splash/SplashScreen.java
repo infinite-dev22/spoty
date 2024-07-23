@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.splash;
 
 import atlantafx.base.theme.*;
-import com.jthemedetecor.*;
 import fr.brouillard.oss.cssfx.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.startup.*;
@@ -120,35 +119,35 @@ public class SplashScreen extends BorderPane {
 
     private static void getSystemTheme(Scene scene) {
         // Apply platform color scheme preferences
-        // Preferences preferences = Platform.getPreferences();
-        // if (preferences == null) {
-        //     return;
-        // }
+         Platform.Preferences preferences = Platform.getPreferences();
+         if (preferences == null) {
+             return;
+         }
 
-        // ColorScheme colorScheme = preferences.getColorScheme();
-        // updateTheme(colorScheme, scene);
+         ColorScheme colorScheme = preferences.getColorScheme();
+         updateTheme(colorScheme, scene);
 
         // Add a listener to update on color scheme changes
-        // preferences.colorSchemeProperty().addListener((observable, oldValue, newValue) -> updateTheme(newValue, scene));
+         preferences.colorSchemeProperty().addListener((observable, oldValue, newValue) -> updateTheme(newValue, scene));
 
-        final OsThemeDetector detector = OsThemeDetector.getDetector();
-        final boolean isDarkThemeUsed = detector.isDark();
-        if (isDarkThemeUsed) {
-            //The OS uses a dark theme
-            updateTheme(ColorScheme.DARK, scene);
-        } else {
-            //The OS uses a light theme
-            updateTheme(ColorScheme.LIGHT, scene);
-        }
-        detector.registerListener(isDark -> Platform.runLater(() -> {
-            if (isDark) {
-                // The OS switched to a dark theme
-                updateTheme(ColorScheme.DARK, scene);
-            } else {
-                // The OS switched to a light theme
-                updateTheme(ColorScheme.LIGHT, scene);
-            }
-        }));
+        // final OsThemeDetector detector = OsThemeDetector.getDetector();
+        // final boolean isDarkThemeUsed = detector.isDark();
+        // if (isDarkThemeUsed) {
+        //     //The OS uses a dark theme
+        //     updateTheme(ColorScheme.DARK, scene);
+        // } else {
+        //     //The OS uses a light theme
+        //     updateTheme(ColorScheme.LIGHT, scene);
+        // }
+        // detector.registerListener(isDark -> Platform.runLater(() -> {
+        //     if (isDark) {
+        //         // The OS switched to a dark theme
+        //         updateTheme(ColorScheme.DARK, scene);
+        //     } else {
+        //         // The OS switched to a light theme
+        //         updateTheme(ColorScheme.LIGHT, scene);
+        //     }
+        // }));
     }
 
     // Instantiate the css files and hold them in a variable which you add to or remove from style sheets.
