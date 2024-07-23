@@ -1,16 +1,16 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.css.*;
 import javafx.event.*;
@@ -25,15 +25,15 @@ import lombok.extern.java.*;
 public class DesignationForm extends MFXGenericDialog {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     @FXML
-    public MFXTextField name;
+    public LabeledTextField name;
     @FXML
     public Label nameValidationLabel;
     @FXML
-    public TextArea description;
+    public LabeledTextArea description;
     @FXML
-    public MFXButton saveBtn;
+    public Button saveBtn;
     @FXML
-    public MFXButton cancelBtn;
+    public Button cancelBtn;
     @FXML
     public StackPane contentPane;
     private List<Constraint> constraints;
@@ -63,9 +63,8 @@ public class DesignationForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Name");
+        name = new LabeledTextField();
+        name.setLabel("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(DesignationViewModel.nameProperty());
         // Validation.
@@ -79,8 +78,8 @@ public class DesignationForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
-        description.setPromptText("Description");
+        description = new LabeledTextArea();
+        description.setLabel("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(DesignationViewModel.descriptionProperty());
         var vbox = new VBox();
@@ -98,15 +97,15 @@ public class DesignationForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 

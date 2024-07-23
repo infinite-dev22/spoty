@@ -3,11 +3,12 @@ package inc.nomard.spoty.core.views.layout;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.*;
+import io.github.palexdev.mfxcore.controls.Label;
 import java.util.*;
 import javafx.geometry.*;
 import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
@@ -17,7 +18,6 @@ import lombok.extern.java.*;
 @Setter
 @Getter
 @Builder
-
 @Log
 public class PaymentPlanCard extends VBox {
     private String imageUrl;
@@ -90,7 +90,6 @@ public class PaymentPlanCard extends VBox {
         getStyleClass().add("plan-card");
         getStylesheets().add(SpotyCoreResourceLoader.load("styles/base.css"));
         getStylesheets().add(SpotyCoreResourceLoader.load("styles/Common.css"));
-        getStylesheets().add(SpotyCoreResourceLoader.load("styles/theming/Default.css"));
     }
 
     private ImageView buildPlanImage() {
@@ -171,9 +170,9 @@ public class PaymentPlanCard extends VBox {
         return vBox;
     }
 
-    private MFXButton buildPlanProceedAction() {
-        var button = new MFXButton(actionName);
-        button.getStyleClass().add("filled");
+    private Button buildPlanProceedAction() {
+        var button = new Button(actionName);
+        button.setDefaultButton(true);
         button.setStyle("-fx-background-color: rgb("
                 + planColor.getRed() * 255 + ", "
                 + planColor.getGreen() * 255 + ", "
@@ -185,8 +184,8 @@ public class PaymentPlanCard extends VBox {
         if (canTry) {
             return button;
         } else {
-            var disabledBtn = new MFXButton("Free trial no longer available");
-            disabledBtn.getStyleClass().add("filled");
+            var disabledBtn = new Button("Free trial no longer available");
+            disabledBtn.setDefaultButton(true);
             disabledBtn.setStyle("-fx-background-color: rgba("
                     + planColor.getRed() * 255 + ", "
                     + planColor.getGreen() * 255 + ", "

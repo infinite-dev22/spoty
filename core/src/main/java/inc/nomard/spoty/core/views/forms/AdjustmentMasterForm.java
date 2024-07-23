@@ -1,22 +1,17 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.util.*;
-import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -28,10 +23,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class AdjustmentMasterForm extends OutlineFormPage {
-    public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
-    public MFXTextField adjustmentNote;
-    public Label adjustmentFormTitle;
-    public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
+    public TableView<AdjustmentDetail> tableView;
+    public LabeledTextField note;
+    public Label title;
+    public Button addBtn, saveBtn, cancelBtn;
 
     public AdjustmentMasterForm() {
         addNode(initialize());
@@ -41,20 +36,19 @@ public class AdjustmentMasterForm extends OutlineFormPage {
     }
 
     private BorderPane initialize() {
-        adjustmentFormTitle = new Label("Adjustment Form");
-        adjustmentFormTitle.setId("adjustmentFormTitle");
+        title = new Label("Adjustment Form");
+        title.setId("title");
 
         Separator separator = new Separator();
         separator.setPrefWidth(200.0);
 
-        adjustmentProductAddBtn = new MFXButton("Add Product");
-        adjustmentProductAddBtn.getStyleClass().add("filled");
+        addBtn = new Button("Add Product");
+        addBtn.setDefaultButton(true);
 
-        adjustmentDetailTable = new MFXTableView<>();
+        tableView = new TableView<>();
 
-        adjustmentNote = new MFXTextField();
-        adjustmentNote.setFloatMode(FloatMode.BORDER);
-        adjustmentNote.setFloatingText("Note");
+        note = new LabeledTextField();
+        note.setLabel("Note");
 
         HBox buttonBox = createButtonBox();
 
@@ -62,32 +56,32 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         centerPane.getStyleClass().add("card-flat");
         centerPane.setPadding(new Insets(5.0));
 
-        AnchorPane.setTopAnchor(adjustmentFormTitle, 0.0);
-        AnchorPane.setLeftAnchor(adjustmentFormTitle, 0.0);
-        AnchorPane.setRightAnchor(adjustmentFormTitle, 0.0);
+        AnchorPane.setTopAnchor(title, 0.0);
+        AnchorPane.setLeftAnchor(title, 0.0);
+        AnchorPane.setRightAnchor(title, 0.0);
 
         AnchorPane.setTopAnchor(separator, 20.0);
         AnchorPane.setLeftAnchor(separator, 0.0);
         AnchorPane.setRightAnchor(separator, 0.0);
 
-        AnchorPane.setTopAnchor(adjustmentNote, 40.0);
-        AnchorPane.setLeftAnchor(adjustmentNote, 0.0);
-        AnchorPane.setRightAnchor(adjustmentNote, 0.0);
+        AnchorPane.setTopAnchor(note, 40.0);
+        AnchorPane.setLeftAnchor(note, 0.0);
+        AnchorPane.setRightAnchor(note, 0.0);
 
-        AnchorPane.setTopAnchor(adjustmentProductAddBtn, 100.0);
-        AnchorPane.setLeftAnchor(adjustmentProductAddBtn, 0.0);
-        AnchorPane.setRightAnchor(adjustmentProductAddBtn, 0.0);
+        AnchorPane.setTopAnchor(addBtn, 100.0);
+        AnchorPane.setLeftAnchor(addBtn, 0.0);
+        AnchorPane.setRightAnchor(addBtn, 0.0);
 
-        AnchorPane.setTopAnchor(adjustmentDetailTable, 160.0);
-        AnchorPane.setBottomAnchor(adjustmentDetailTable, 78.0);
-        AnchorPane.setLeftAnchor(adjustmentDetailTable, 5.0);
-        AnchorPane.setRightAnchor(adjustmentDetailTable, 5.0);
+        AnchorPane.setTopAnchor(tableView, 160.0);
+        AnchorPane.setBottomAnchor(tableView, 78.0);
+        AnchorPane.setLeftAnchor(tableView, 5.0);
+        AnchorPane.setRightAnchor(tableView, 5.0);
 
         AnchorPane.setBottomAnchor(buttonBox, 10.0);
         AnchorPane.setLeftAnchor(buttonBox, 0.0);
         AnchorPane.setRightAnchor(buttonBox, 0.0);
 
-        centerPane.getChildren().addAll(adjustmentFormTitle, separator, adjustmentNote, adjustmentProductAddBtn, adjustmentDetailTable, buttonBox);
+        centerPane.getChildren().addAll(title, separator, note, addBtn, tableView, buttonBox);
 
         var pane = new BorderPane();
         pane.setCenter(centerPane);
@@ -99,9 +93,9 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10.0));
 
-        saveBtn = new MFXButton("Save");
+        saveBtn = new Button("Save");
         saveBtn.setId("saveBtn");
-        saveBtn.getStyleClass().add("filled");
+        saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
             if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
                 showErrorMessage("Table can't be Empty");
@@ -115,9 +109,9 @@ public class AdjustmentMasterForm extends OutlineFormPage {
             onRequiredFieldsMissing();
         });
 
-        cancelBtn = new MFXButton("Cancel");
+        cancelBtn = new Button("Cancel");
         cancelBtn.setId("cancelBtn");
-        cancelBtn.getStyleClass().add("outlined");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
             AppManager.getNavigation().navigate(AdjustmentPage.class);
             AdjustmentMasterViewModel.resetProperties();
@@ -129,78 +123,62 @@ public class AdjustmentMasterForm extends OutlineFormPage {
     }
 
     private void bindProperties() {
-        adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
+        note.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
     }
 
     private void setupAddProductButton() {
-        adjustmentProductAddBtn.setOnAction(e -> SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait());
+        addBtn.setOnAction(e -> SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait());
     }
 
     private void setupTable() {
-        MFXTableColumn<AdjustmentDetail> productName = createColumn("Product", AdjustmentDetail::getProductName, 0.5);
-        MFXTableColumn<AdjustmentDetail> productQuantity = createColumn("Quantity", AdjustmentDetail::getQuantity, 0.5);
-        MFXTableColumn<AdjustmentDetail> adjustmentType = createColumn("Adjustment Type", AdjustmentDetail::getAdjustmentType, 0.5);
+        TableColumn<AdjustmentDetail, String> productName = createColumn("Product", 0.5);
+        TableColumn<AdjustmentDetail, String> productQuantity = createColumn("Quantity", 0.5);
+        TableColumn<AdjustmentDetail, String> adjustmentType = createColumn("Adjustment Type", 0.5);
 
-        adjustmentDetailTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
-        addFilters();
+        tableView.getColumns().addAll(productName, productQuantity, adjustmentType);
         loadTableData();
         configureTableRow();
     }
 
-    private <U extends Comparable<? super U>> MFXTableColumn<AdjustmentDetail> createColumn(String title, Function<AdjustmentDetail, U> mapper, double widthFactor) {
-        MFXTableColumn<AdjustmentDetail> column = new MFXTableColumn<>(title, false, Comparator.comparing(mapper));
-        column.setRowCellFactory(data -> new MFXTableRowCell<>(mapper));
-        column.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(widthFactor));
+    private <U extends Comparable<? super U>> TableColumn<AdjustmentDetail, String> createColumn(String title, double widthFactor) {
+        TableColumn<AdjustmentDetail, String> column = new TableColumn<>(title);
+        column.prefWidthProperty().bind(tableView.widthProperty().multiply(widthFactor));
         return column;
     }
 
-    private void addFilters() {
-        adjustmentDetailTable.getFilters().addAll(
-                new StringFilter<>("Name", AdjustmentDetail::getProductName),
-                new LongFilter<>("Quantity", AdjustmentDetail::getQuantity),
-                new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType)
-        );
-    }
-
     private void loadTableData() {
-        if (AdjustmentDetailViewModel.getAdjustmentDetails().isEmpty()) {
-            AdjustmentDetailViewModel.getAdjustmentDetails().addListener((ListChangeListener<AdjustmentDetail>) change -> adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetails()));
-        } else {
-            adjustmentDetailTable.itemsProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentDetailsProperty());
-        }
+        tableView.setItems(AdjustmentDetailViewModel.getAdjustmentDetails());
     }
 
     private void configureTableRow() {
-        adjustmentDetailTable.setPrefSize(1000, 1000);
-        adjustmentDetailTable.features().enableBounceEffect();
-        adjustmentDetailTable.features().enableSmoothScrolling(0.5);
+        tableView.setPrefSize(1000, 1000);
 
-        adjustmentDetailTable.setTableRowFactory(adjustmentDetail -> {
-            MFXTableRow<AdjustmentDetail> row = new MFXTableRow<>(adjustmentDetailTable, adjustmentDetail);
-            row.setOnContextMenuRequested(event -> showContextMenu(row).show(adjustmentDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
+        tableView.setRowFactory(adjustmentDetail -> {
+            TableRow<AdjustmentDetail> row = new TableRow<>();
+            row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
             return row;
         });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> row) {
-        MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
-        contextMenu.addItems(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getData().getProductName(), this)));
+    private ContextMenu showContextMenu(TableRow<AdjustmentDetail> row) {
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getItems().addAll(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getItem().getProductName(), this)));
         return contextMenu;
     }
 
-    private MFXContextMenuItem createMenuItem(String text, EventHandler<ActionEvent> handler) {
-        MFXContextMenuItem item = new MFXContextMenuItem(text);
+    private MenuItem createMenuItem(String text, EventHandler<ActionEvent> handler) {
+        MenuItem item = new MenuItem(text);
         item.setOnAction(handler);
         return item;
     }
 
-    private void editRow(MFXTableRow<AdjustmentDetail> row) {
-        SpotyThreader.spotyThreadPool(() -> AdjustmentDetailViewModel.getAdjustmentDetail(row.getData()));
+    private void editRow(TableRow<AdjustmentDetail> row) {
+        SpotyThreader.spotyThreadPool(() -> AdjustmentDetailViewModel.getAdjustmentDetail(row.getItem()));
         SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait();
     }
 
-    private void deleteRow(MFXTableRow<AdjustmentDetail> row) {
-        AdjustmentDetailViewModel.removeAdjustmentDetail(row.getData().getId(), AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(row.getData()));
+    private void deleteRow(TableRow<AdjustmentDetail> row) {
+        AdjustmentDetailViewModel.removeAdjustmentDetail(row.getItem().getId(), AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(row.getItem()));
     }
 
     private void onSuccess() {
@@ -251,10 +229,10 @@ public class AdjustmentMasterForm extends OutlineFormPage {
     @Override
     public void dispose() {
         super.dispose();
-        adjustmentDetailTable = null;
-        adjustmentNote = null;
-        adjustmentFormTitle = null;
-        adjustmentProductAddBtn = null;
+        tableView = null;
+        note = null;
+        title = null;
+        addBtn = null;
         saveBtn = null;
         cancelBtn = null;
     }

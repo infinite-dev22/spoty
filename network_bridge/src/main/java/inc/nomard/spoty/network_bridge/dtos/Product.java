@@ -8,7 +8,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class Product {
     private long id;

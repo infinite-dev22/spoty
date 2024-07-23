@@ -1,6 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -10,7 +13,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class BeneficiaryType {
     private Long id;

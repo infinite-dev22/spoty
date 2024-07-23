@@ -2,6 +2,9 @@ package inc.nomard.spoty.network_bridge.dtos.purchases;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import java.text.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -11,12 +14,11 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class PurchaseMaster {
     private Long id;
     private String ref;
-    private Date date;
+    private LocalDate date;
     private Supplier supplier;
     private List<PurchaseDetail> purchaseDetails;
     private Tax tax;

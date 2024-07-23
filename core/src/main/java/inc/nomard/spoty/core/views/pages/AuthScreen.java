@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.*;
@@ -18,16 +19,14 @@ import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.enums.*;
 import static io.github.palexdev.materialfx.utils.StringUtils.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -49,13 +48,13 @@ import lombok.extern.java.*;
 @Log
 public class AuthScreen extends BorderPane {
     private final Stage stage;
-    public MFXTextField email,
+    public LabeledTextField email,
             signUpEmail,
             phoneNumber,
             otherName,
             lastName,
             firstName;
-    public MFXPasswordField password,
+    public LabeledPasswordField password,
             confirmPassword,
             signUpPassword;
     public Label forgotPassword,
@@ -71,7 +70,7 @@ public class AuthScreen extends BorderPane {
             confirmPasswordValidationLabel,
             signUpPasswordValidationLabel,
             signUpLink;
-    public MFXButton loginBtn,
+    public Button loginBtn,
             nextBtn,
             backBtn,
             registerBtn,
@@ -133,9 +132,8 @@ public class AuthScreen extends BorderPane {
     // Email Input.
     private VBox buildLoginEmail() {
         // Input.
-        email = new MFXTextField();
-        email.setFloatMode(FloatMode.BORDER);
-        email.setFloatingText("Email");
+        email = new LabeledTextField();
+        email.setLabel("Email");
         email.setPrefWidth(350d);
         email.textProperty().bindBidirectional(LoginViewModel.emailProperty());
         // Validation.
@@ -150,9 +148,8 @@ public class AuthScreen extends BorderPane {
     // Password input.
     private VBox buildPassword() {
         // Input.
-        password = new MFXPasswordField();
-        password.setFloatMode(FloatMode.BORDER);
-        password.setFloatingText("Password");
+        password = new LabeledPasswordField();
+        password.setLabel("Password");
         password.setPrefWidth(350d);
         password.textProperty().bindBidirectional(LoginViewModel.passwordProperty());
         // Validation.
@@ -167,7 +164,7 @@ public class AuthScreen extends BorderPane {
     // Forgot password.
     private HBox buildForgotPassword() {
         forgotPassword = new Label("Forgot Password?");
-        forgotPassword.getStyleClass().add("link");
+        forgotPassword.getStyleClass().add(Styles.ACCENT);
         forgotPassword.setUnderline(true);
         forgotPassword.setCursor(Cursor.HAND);
         var hbox = new HBox(forgotPassword);
@@ -177,9 +174,9 @@ public class AuthScreen extends BorderPane {
 
     // Login button.
     private HBox buildLoginButton() {
-        loginBtn = new MFXButton("Login");
+        loginBtn = new Button("Login");
         loginBtn.setPrefWidth(352d);
-        loginBtn.getStyleClass().add("filled");
+        loginBtn.setDefaultButton(true);
         loginBtn.setOnAction(actionEvent -> onLoginPressed());
         var hbox = new HBox(loginBtn);
         hbox.setAlignment(Pos.CENTER);
@@ -192,7 +189,7 @@ public class AuthScreen extends BorderPane {
         label.setAlignment(Pos.CENTER);
         label.setContentDisplay(ContentDisplay.CENTER);
         signUpLink = new Label("Create one");
-        signUpLink.getStyleClass().add("link");
+        signUpLink.getStyleClass().add(Styles.ACCENT);
         signUpLink.setUnderline(true);
         signUpLink.setCursor(Cursor.HAND);
         signUpLink.setOnMouseClicked(event -> signUpLinkAction());
@@ -213,8 +210,7 @@ public class AuthScreen extends BorderPane {
         loginScreen.setPrefHeight(500d);
         loginScreen.setPrefWidth(540d);
         loginScreen.setSpacing(20d);
-        loginScreen.getStyleClass().addAll("card-raised");
-        loginScreen.setStyle("-fx-background-color: white;");
+        loginScreen.getStyleClass().addAll("card-colored");
         UIUtils.anchor(loginScreen, 0d, 0d, 0d, 599d);
         loginScreen.setPadding(new Insets(16d));
         loginScreen.getChildren().addAll(region,
@@ -223,8 +219,8 @@ public class AuthScreen extends BorderPane {
                 buildPassword(),
                 buildForgotPassword(),
                 buildLoginButton(),
-                buildRegistrationLink(),
-                buildAppBranding());
+                buildRegistrationLink()/*,
+                buildAppBranding()*/);
         return loginScreen;
     }
 
@@ -238,9 +234,8 @@ public class AuthScreen extends BorderPane {
     // First name input.
     private VBox buildFirstName() {
         // Input.
-        firstName = new MFXTextField();
-        firstName.setFloatMode(FloatMode.BORDER);
-        firstName.setFloatingText("First name");
+        firstName = new LabeledTextField();
+        firstName.setLabel("First name");
         firstName.setPrefWidth(350d);
         firstName.textProperty().bindBidirectional(SignupViewModel.firstNameProperty());
         // Validation.
@@ -255,9 +250,8 @@ public class AuthScreen extends BorderPane {
     // Last name input.
     private VBox buildLastName() {
         // Input.
-        lastName = new MFXTextField();
-        lastName.setFloatMode(FloatMode.BORDER);
-        lastName.setFloatingText("Last name");
+        lastName = new LabeledTextField();
+        lastName.setLabel("Last name");
         lastName.setPrefWidth(350d);
         lastName.textProperty().bindBidirectional(SignupViewModel.lastNameProperty());
         // Validation.
@@ -279,9 +273,8 @@ public class AuthScreen extends BorderPane {
     // Other name input.
     private VBox buildOtherName() {
         // Input.
-        otherName = new MFXTextField();
-        otherName.setFloatMode(FloatMode.BORDER);
-        otherName.setFloatingText("Other name (Optional)");
+        otherName = new LabeledTextField();
+        otherName.setLabel("Other name (Optional)");
         otherName.setPrefWidth(350d);
         otherName.textProperty().bindBidirectional(SignupViewModel.otherNameProperty());
         var vbox = new VBox(otherName);
@@ -293,9 +286,8 @@ public class AuthScreen extends BorderPane {
     // Phone number input.
     private VBox buildPhoneName() {
         // Input.
-        phoneNumber = new MFXTextField();
-        phoneNumber.setFloatMode(FloatMode.BORDER);
-        phoneNumber.setFloatingText("Phone number");
+        phoneNumber = new LabeledTextField();
+        phoneNumber.setLabel("Phone number");
         phoneNumber.setPrefWidth(350d);
         phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
         // Validation.
@@ -310,9 +302,8 @@ public class AuthScreen extends BorderPane {
     // Email input.
     private VBox buildKYCEmail() {
         // Input.
-        signUpEmail = new MFXTextField();
-        signUpEmail.setFloatMode(FloatMode.BORDER);
-        signUpEmail.setFloatingText("Email");
+        signUpEmail = new LabeledTextField();
+        signUpEmail.setLabel("Email");
         signUpEmail.setPrefWidth(350d);
         signUpEmail.textProperty().bindBidirectional(SignupViewModel.emailProperty());
         // Validation.
@@ -326,9 +317,9 @@ public class AuthScreen extends BorderPane {
 
     // Back button.
     private HBox buildKYCBackButton() {
-        backBtn = new MFXButton("Back to Login");
+        backBtn = new Button("Back to Login");
         backBtn.setPrefWidth(150d);
-        backBtn.getStyleClass().add("outlined");
+        backBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         backBtn.setOnAction(event -> backToLogin());
         var hbox = new HBox(backBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -338,9 +329,9 @@ public class AuthScreen extends BorderPane {
 
     // Next button.
     private HBox buildKYCNextButton() {
-        nextBtn = new MFXButton("Proceed");
+        nextBtn = new Button("Proceed");
         nextBtn.setPrefWidth(120d);
-        nextBtn.getStyleClass().add("filled");
+        nextBtn.setDefaultButton(true);
         nextBtn.setOnAction(event -> goNext());
         var hbox = new HBox(nextBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -364,8 +355,7 @@ public class AuthScreen extends BorderPane {
         kycScreen.setAlignment(Pos.CENTER);
         kycScreen.setPrefWidth(390d);
         kycScreen.setSpacing(20d);
-        kycScreen.getStyleClass().addAll("card-raised");
-        kycScreen.setStyle("-fx-background-color: white;");
+        kycScreen.getStyleClass().addAll("card-colored");
         kycScreen.setPadding(new Insets(16d));
         kycScreen.getChildren().addAll(region,
                 buildKYCTitle(),
@@ -373,8 +363,8 @@ public class AuthScreen extends BorderPane {
                 buildOtherName(),
                 buildPhoneName(),
                 buildKYCEmail(),
-                buildKYCButtons(),
-                buildAppBranding());
+                buildKYCButtons()/*,
+                buildAppBranding()*/);
         return kycScreen;
     }
 
@@ -388,9 +378,8 @@ public class AuthScreen extends BorderPane {
     // Password input.
     private VBox buildRegisterPassword() {
         // Input.
-        signUpPassword = new MFXPasswordField();
-        signUpPassword.setFloatMode(FloatMode.BORDER);
-        signUpPassword.setFloatingText("Password");
+        signUpPassword = new LabeledPasswordField();
+        signUpPassword.setLabel("Password");
         signUpPassword.setPrefWidth(350d);
         signUpPassword.textProperty().bindBidirectional(SignupViewModel.passwordProperty());
         // Validation.
@@ -405,9 +394,8 @@ public class AuthScreen extends BorderPane {
     // Confirm password input.
     private VBox buildRegisterConfirmPassword() {
         // Input.
-        confirmPassword = new MFXPasswordField();
-        confirmPassword.setFloatMode(FloatMode.BORDER);
-        confirmPassword.setFloatingText("Confirm Password");
+        confirmPassword = new LabeledPasswordField();
+        confirmPassword.setLabel("Confirm Password");
         confirmPassword.setPrefWidth(350d);
         confirmPassword.textProperty().bindBidirectional(SignupViewModel.confirmPasswordProperty());
         // Validation.
@@ -421,9 +409,9 @@ public class AuthScreen extends BorderPane {
 
     // Back button.
     private HBox buildRegisterBackButton() {
-        signUpBack = new MFXButton("Back");
+        signUpBack = new Button("Back");
         signUpBack.setPrefWidth(120d);
-        signUpBack.getStyleClass().add("outlined");
+        signUpBack.getStyleClass().add(Styles.BUTTON_OUTLINED);
         signUpBack.setOnAction(event -> signUpBack());
         var hbox = new HBox(signUpBack);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -433,9 +421,9 @@ public class AuthScreen extends BorderPane {
 
     // Register button.
     private HBox buildRegisterButton() {
-        registerBtn = new MFXButton("Register");
+        registerBtn = new Button("Register");
         registerBtn.setPrefWidth(150d);
-        registerBtn.getStyleClass().add("filled");
+        registerBtn.setDefaultButton(true);
         registerBtn.setOnAction(event -> registerUser());
         var hbox = new HBox(registerBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -456,7 +444,7 @@ public class AuthScreen extends BorderPane {
         label.setAlignment(Pos.CENTER);
         label.setContentDisplay(ContentDisplay.CENTER);
         loginLink = new Label("Login");
-        loginLink.getStyleClass().add("link");
+        loginLink.getStyleClass().add(Styles.ACCENT);
         loginLink.setUnderline(true);
         loginLink.setCursor(Cursor.HAND);
         loginLink.setOnMouseClicked(event -> backToLogin());
@@ -478,16 +466,15 @@ public class AuthScreen extends BorderPane {
         authCreateScreen.setAlignment(Pos.CENTER);
         authCreateScreen.setPrefWidth(390d);
         authCreateScreen.setSpacing(20d);
-        authCreateScreen.getStyleClass().addAll("card-raised");
-        authCreateScreen.setStyle("-fx-background-color: white;");
+        authCreateScreen.getStyleClass().addAll("card-colored");
         authCreateScreen.setPadding(new Insets(16d));
         authCreateScreen.getChildren().addAll(region,
                 buildRegisterTitle(),
                 buildRegisterPassword(),
                 buildRegisterConfirmPassword(),
                 buildRegisterButtons(),
-                buildLoginLink(),
-                buildAppBranding());
+                buildLoginLink()/*,
+                buildAppBranding()*/);
         return authCreateScreen;
     }
 
@@ -633,7 +620,6 @@ public class AuthScreen extends BorderPane {
                 SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Splash.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
-                SpotyCoreResourceLoader.load("styles/theming/Default.css"),
                 SpotyCoreResourceLoader.load("styles/toolitip.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css")
         );
@@ -708,10 +694,7 @@ public class AuthScreen extends BorderPane {
     private void loadMainView() {
         stage.hide();
         Parent root = new WindowRunner();
-        Scene scene = new Scene(root);
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-        scene.setFill(null);
-        stage.setScene(scene);
+        this.getScene().setRoot(root);
         stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
         stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
         stage.setTitle(Labels.APP_NAME);

@@ -12,7 +12,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class UserModel implements Serializable {
     private Long id;

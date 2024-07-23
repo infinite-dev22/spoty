@@ -10,15 +10,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,10 +23,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class ExpensePage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<Expense> tableView;
+    private TextField searchBar;
+    private TableView<Expense> tableView;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public ExpensePage() {
         addNode(init());
@@ -40,7 +36,6 @@ public class ExpensePage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -62,9 +57,8 @@ public class ExpensePage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search expenses");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -76,8 +70,7 @@ public class ExpensePage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -87,7 +80,7 @@ public class ExpensePage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -95,64 +88,38 @@ public class ExpensePage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        tableView = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(tableView, 0d);
-        AnchorPane.setLeftAnchor(tableView, 0d);
-        AnchorPane.setRightAnchor(tableView, 0d);
-        AnchorPane.setTopAnchor(tableView, 10d);
+        tableView = new TableView<>();
+        NodeUtils.setAnchors(tableView, new Insets(0d));
         return new AnchorPane(tableView);
     }
 
     private void setupTable() {
-        MFXTableColumn<Expense> expenseDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(Expense::getDate));
-        MFXTableColumn<Expense> expenseName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Expense::getName));
-        MFXTableColumn<Expense> expenseAmount =
-                new MFXTableColumn<>("Amount", false, Comparator.comparing(Expense::getAmount));
-        MFXTableColumn<Expense> expenseCategory =
-                new MFXTableColumn<>(
-                        "Category", false, Comparator.comparing(Expense::getAccountName));
-        expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getLocaleDate));
-        expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getName));
-        expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getAmount));
-        expenseCategory.setRowCellFactory(
-                expense -> new MFXTableRowCell<>(Expense::getAccountName));
+        TableColumn<Expense, String> expenseDate = new TableColumn<>("Date");
+        TableColumn<Expense, String> expenseName = new TableColumn<>("Name");
+        TableColumn<Expense, Double> expenseAmount = new TableColumn<>("Amount");
+        TableColumn<Expense, String> expenseCategory = new TableColumn<>("Category");
+
         expenseDate.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
         expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
         expenseAmount.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
         expenseCategory.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
-        tableView
-                .getTableColumns()
-                .addAll(expenseName, expenseCategory, expenseDate, expenseAmount);
-        tableView
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Reference No.", Expense::getRef),
-                        new StringFilter<>("Name", Expense::getName),
-                        new DoubleFilter<>("Amount", Expense::getAmount),
-                        new StringFilter<>("Category", Expense::getAccountName));
+
+        var columnList = new LinkedList<>(Stream.of(expenseName, expenseCategory, expenseDate, expenseAmount).toList());
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        tableView.getColumns().addAll(columnList);
         styleExpenseTable();
-        if (ExpensesViewModel.getExpenses().isEmpty()) {
-            ExpensesViewModel.getExpenses()
-                    .addListener(
-                            (ListChangeListener<Expense>)
-                                    c -> tableView.setItems(ExpensesViewModel.getExpenses()));
-        } else {
-            tableView.itemsProperty().bindBidirectional(ExpensesViewModel.expensesProperty());
-        }
+
+        tableView.setItems(ExpensesViewModel.getExpenses());
     }
 
     private void styleExpenseTable() {
         tableView.setPrefSize(1200, 1000);
-        tableView.features().enableBounceEffect();
-        tableView.features().enableSmoothScrolling(0.5);
-        tableView.setTableRowFactory(
+        tableView.setRowFactory(
                 t -> {
-                    MFXTableRow<Expense> row = new MFXTableRow<>(tableView, t);
+                    TableRow<Expense> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<Expense>) event.getSource())
+                                showContextMenu((TableRow<Expense>) event.getSource())
                                         .show(
                                                 tableView.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -164,20 +131,20 @@ public class ExpensePage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Expense> obj) {
+    private MFXContextMenu showContextMenu(TableRow<Expense> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(tableView);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            ExpensesViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            ExpensesViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    ExpensesViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new ExpenseForm(), this).showAndWait(), this::errorMessage);
+                    ExpensesViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new ExpenseForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
         contextMenu.addItems(edit, delete);
@@ -190,10 +157,6 @@ public class ExpensePage extends OutlinePage {
 
     private void onSuccess() {
         ExpensesViewModel.getAllExpenses(null, null);
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
@@ -11,31 +10,23 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class AdjustmentPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<AdjustmentMaster> masterTable;
+    private TextField searchBar;
+    private TableView<AdjustmentMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public AdjustmentPage() {
         super();
@@ -46,7 +37,6 @@ public class AdjustmentPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -68,9 +58,8 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search adjustments");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -82,8 +71,7 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -93,7 +81,7 @@ public class AdjustmentPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -101,62 +89,36 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<AdjustmentMaster> adjustmentStatus =
-                new MFXTableColumn<>("Status", false, Comparator.comparing(AdjustmentMaster::getStatus));
-        MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
-                new MFXTableColumn<>(
-                        "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotal));
-        adjustmentStatus.setRowCellFactory(
-                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getStatus));
-        adjustmentTotalAmount.setRowCellFactory(
-                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getTotal));
+        TableColumn<AdjustmentMaster, String> adjustmentStatus = new TableColumn<>("Status");
+        TableColumn<AdjustmentMaster, Double> adjustmentTotalAmount = new TableColumn<>("Total Amount");
         adjustmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         adjustmentTotalAmount
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.5));
-        masterTable
-                .getTableColumns()
-                .addAll(adjustmentStatus, adjustmentTotalAmount);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Status", AdjustmentMaster::getStatus),
-                        new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotal));
+
+        var columnList = new LinkedList<>(Stream.of(adjustmentStatus, adjustmentTotalAmount).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
+
         getAdjustmentMasterTable();
-        if (AdjustmentMasterViewModel.getAdjustmentMasters().isEmpty()) {
-            AdjustmentMasterViewModel.getAdjustmentMasters()
-                    .addListener(
-                            (ListChangeListener<AdjustmentMaster>)
-                                    c ->
-                                            masterTable.setItems(
-                                                    AdjustmentMasterViewModel.getAdjustmentMasters()));
-        } else {
-            masterTable
-                    .itemsProperty()
-                    .bindBidirectional(AdjustmentMasterViewModel.adjustmentsProperty());
-        }
+        masterTable.setItems(AdjustmentMasterViewModel.getAdjustmentMasters());
     }
 
     private void getAdjustmentMasterTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<AdjustmentMaster> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<AdjustmentMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<AdjustmentMaster>) event.getSource())
+                                showContextMenu((TableRow<AdjustmentMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -168,12 +130,12 @@ public class AdjustmentPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentMaster> obj) {
+    private MFXContextMenu showContextMenu(TableRow<AdjustmentMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem view = new MFXContextMenuItem("View");
         view.setOnAction(
                 event -> {
-                    SpotyDialog.createDialog(new AdjustmentPreview(obj.getData()), this).showAndWait();
+                    SpotyDialog.createDialog(new AdjustmentPreview(obj.getItem()), this).showAndWait();
                     event.consume();
                 });
 
@@ -206,10 +168,6 @@ public class AdjustmentPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

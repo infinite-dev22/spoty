@@ -1,28 +1,22 @@
 package inc.nomard.spoty.core.views.settings.app_settings;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.accounting.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -30,9 +24,10 @@ import lombok.extern.java.*;
 
 @Log
 public class EmailPage extends OutlinePage {
-    private MFXTextField searchBar;
+    private CustomTextField searchBar;
+    private TableView<Account> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public EmailPage() {
         addNode(init());
@@ -42,8 +37,10 @@ public class EmailPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
+//        setIcons();
         setSearchBar();
+        setupTable();
+        createBtnAction();
         return pane;
     }
 
@@ -62,9 +59,8 @@ public class EmailPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new CustomTextField();
         searchBar.setPromptText("Search accounts");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -76,8 +72,7 @@ public class EmailPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -87,78 +82,138 @@ public class EmailPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
         return hbox;
     }
 
-    public BorderPane buildCenter() {
-        var anchorPane = new AnchorPane();
-        anchorPane.getChildren().addAll(
-                buildEmailsTable()
-        );
-
-        BorderPane.setAlignment(anchorPane, Pos.CENTER);
-
-        this.setPrefHeight(600.0);
-        this.setPrefWidth(600.0);
-        var pane = new BorderPane();
-        pane.setCenter(anchorPane);
-        return pane;
+    private AnchorPane buildCenter() {
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
+        return new AnchorPane(masterTable);
     }
 
-    private MFXTableView<Email> buildEmailsTable() {
-        var dataTable = new MFXTableView<Email>();
+    private void setupTable() {
+        TableColumn<Account, String> accountName = new TableColumn<>("Account Name");
+        TableColumn<Account, String> accountNumber = new TableColumn<>("Account Number");
+        TableColumn<Account, Double> credit = new TableColumn<>("Credit");
+        TableColumn<Account, Double> debit = new TableColumn<>("Debit");
+        TableColumn<Account, Double> balance = new TableColumn<>("Balance");
+        TableColumn<Account, String> description = new TableColumn<>("Description");
 
-        AnchorPane.setTopAnchor(dataTable, 50.0);
-        AnchorPane.setLeftAnchor(dataTable, 0.0);
-        AnchorPane.setRightAnchor(dataTable, 0.0);
-        AnchorPane.setBottomAnchor(dataTable, 0.0);
+        accountName.setEditable(false);
+        accountNumber.setEditable(false);
+        credit.setEditable(false);
+        debit.setEditable(false);
+        balance.setEditable(false);
+        description.setEditable(false);
 
-        styleEmailTable(dataTable);
+        accountName.setSortable(true);
+        accountNumber.setSortable(true);
+        credit.setSortable(true);
+        debit.setSortable(true);
+        balance.setSortable(true);
+        description.setSortable(true);
 
-        MFXTableColumn<Email> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Email::getName));
-        MFXTableColumn<Email> description =
-                new MFXTableColumn<>("Description", false, Comparator.comparing(Email::getDescription));
-        MFXTableColumn<Email> usage =
-                new MFXTableColumn<>("Template Usage", false, Comparator.comparing(Email::getUsage));
+        accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        credit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        debit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
 
-        name.setRowCellFactory(customer -> new MFXTableRowCell<>(Email::getName));
-        description.setRowCellFactory(customer -> new MFXTableRowCell<>(Email::getDescription));
-        usage.setRowCellFactory(customer -> new MFXTableRowCell<>(Email::getUsage));
+        var columnList = new LinkedList<>(Stream.of(accountName, accountNumber, credit, debit, balance, description).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
+        styleAccountTable();
 
-        name.prefWidthProperty().bind(dataTable.widthProperty().multiply(.1));
-        description.prefWidthProperty().bind(dataTable.widthProperty().multiply(.3));
-        usage.prefWidthProperty().bind(dataTable.widthProperty().multiply(.3));
-
-        dataTable
-                .getTableColumns()
-                .addAll(name, description, usage);
-        dataTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Email Name", Email::getName),
-                        new StringFilter<>("A/C Name", Email::getDescription),
-                        new StringFilter<>("A/C Number", Email::getUsage));
-
-        if (EmailViewModel.getEmails().isEmpty()) {
-            EmailViewModel.getEmails().addListener(
-                    (ListChangeListener<Email>)
-                            c -> dataTable.setItems(EmailViewModel.emailsList));
-        } else {
-            dataTable.itemsProperty().bindBidirectional(EmailViewModel.emailsProperty());
-        }
-
-        return dataTable;
+        masterTable.setItems(AccountViewModel.accountsList);
     }
 
-    private void styleEmailTable(MFXTableView<Email> dataTable) {
-        dataTable.setPrefSize(1000, 1000);
-        dataTable.features().enableBounceEffect();
-        dataTable.features().enableSmoothScrolling(0.5);
+    private void styleAccountTable() {
+        masterTable.setPrefSize(1000, 1000);
+
+        masterTable.setRowFactory(
+                t -> {
+                    TableRow<Account> row = new TableRow<>();
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((TableRow<Account>) event.getSource())
+                                        .show(
+                                                masterTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
+
+    private MFXContextMenu showContextMenu(TableRow<Account> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        MFXContextMenuItem deposit = new MFXContextMenuItem("Deposit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, obj.getItem().getAccountName(), this));
+        // Edit
+        edit.setOnAction(
+                event -> {
+                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
+                    event.consume();
+                });
+        // Deposit
+        deposit.setOnAction(
+                event -> {
+                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
+                    event.consume();
+                });
+
+        contextMenu.addItems(deposit, edit, delete);
+
+        if (contextMenu.isShowing()) contextMenu.hide();
+        return contextMenu;
+    }
+
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait());
+    }
+
+    private void onSuccess() {
+        AccountViewModel.getAllAccounts(null, null);
+    }
+
+//    private void setIcons() {
+//        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
+//    }
+
+    public void setSearchBar() {
+        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+            if (Objects.equals(ov, nv)) {
+                return;
+            }
+            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
+                AccountViewModel.getAllAccounts(null, null);
+            }
+            progress.setManaged(true);
+            progress.setVisible(true);
+            AccountViewModel.searchItem(nv, () -> {
+                progress.setVisible(false);
+                progress.setManaged(false);
+            }, this::errorMessage);
+        });
+    }
+
+    private void successMessage(String message) {
+        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
@@ -183,24 +238,8 @@ public class EmailPage extends OutlinePage {
         }
     }
 
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
-    }
-
-    public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
-            if (Objects.equals(ov, nv)) {
-                return;
-            }
-            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                CurrencyViewModel.getAllCurrencies(null, null);
-            }
-            progress.setManaged(true);
-            progress.setVisible(true);
-            CurrencyViewModel.searchItem(nv, () -> {
-                progress.setVisible(false);
-                progress.setManaged(false);
-            }, this::errorMessage);
-        });
+    @Override
+    public Node getStyleableNode() {
+        return super.getStyleableNode();
     }
 }

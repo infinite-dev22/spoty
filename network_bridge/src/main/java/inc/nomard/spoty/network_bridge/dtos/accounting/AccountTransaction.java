@@ -1,5 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.accounting;
 
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -13,7 +15,7 @@ import lombok.extern.java.*;
 public class AccountTransaction {
     private Long id;
     private Account account;
-    private Date transactionDate;
+    private LocalDateTime transactionDate;
     private Double credit;
     private Double debit;
     private Double amount;

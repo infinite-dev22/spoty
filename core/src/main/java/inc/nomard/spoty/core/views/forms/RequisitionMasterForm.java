@@ -1,25 +1,22 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -36,10 +33,10 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionMasterForm extends OutlineFormPage {
     public Label supplierValidationLabel;
-    public MFXFilterComboBox<Supplier> supplier;
-    public MFXTableView<RequisitionDetail> table;
-    public MFXTextField note;
-    public MFXButton saveBtn,
+    public LabeledComboBox<Supplier> supplier;
+    public TableView<RequisitionDetail> table;
+    public LabeledTextField note;
+    public Button saveBtn,
             cancelBtn,
             addBtn;
 
@@ -73,17 +70,17 @@ public class RequisitionMasterForm extends OutlineFormPage {
         return separator;
     }
 
-    private MFXButton buildAddButton() {
-        addBtn = new MFXButton("Add");
-        addBtn.getStyleClass().add("filled");
+    private Button buildAddButton() {
+        addBtn = new Button("Add");
+        addBtn.setDefaultButton(true);
         addBtn.setOnAction(event -> SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
     }
 
-    private MFXTableView<RequisitionDetail> buildTable() {
-        table = new MFXTableView<>();
+    private TableView<RequisitionDetail> buildTable() {
+        table = new TableView<>();
         HBox.setHgrow(table, Priority.ALWAYS);
         setupTable();
         return table;
@@ -122,9 +119,8 @@ public class RequisitionMasterForm extends OutlineFormPage {
     }
 
     private VBox buildSupplier() {
-        supplier = new MFXFilterComboBox<>();
-        supplier.setFloatMode(FloatMode.BORDER);
-        supplier.setFloatingText("Supplier");
+        supplier = new LabeledComboBox<>();
+        supplier.setLabel("Supplier");
         supplier.setPrefWidth(10000d);
         supplier
                 .valueProperty()
@@ -141,7 +137,6 @@ public class RequisitionMasterForm extends OutlineFormPage {
 
         // Combo box properties.
         supplier.setConverter(supplierConverter);
-        supplier.setFilterFunction(supplierFilterFunction);
         if (SupplierViewModel.getSuppliers().isEmpty()) {
             SupplierViewModel.getSuppliers()
                     .addListener(
@@ -155,17 +150,16 @@ public class RequisitionMasterForm extends OutlineFormPage {
     }
 
     private VBox buildNote() {
-        note = new MFXTextField();
-        note.setFloatMode(FloatMode.BORDER);
-        note.setFloatingText("Note");
+        note = new LabeledTextField();
+        note.setLabel("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
         return buildFieldHolder(note);
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
             if (!table.isDisabled() && RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
@@ -183,9 +177,9 @@ public class RequisitionMasterForm extends OutlineFormPage {
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
             AppManager.getNavigation().navigate(RequisitionPage.class);
             RequisitionMasterViewModel.resetProperties();
@@ -206,59 +200,28 @@ public class RequisitionMasterForm extends OutlineFormPage {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<RequisitionDetail> product =
-                new MFXTableColumn<>(
-                        "Product", false, Comparator.comparing(RequisitionDetail::getProductName));
-        MFXTableColumn<RequisitionDetail> quantity =
-                new MFXTableColumn<>("Quantity", false, Comparator.comparing(RequisitionDetail::getQuantity));
-
-        // Set table column data.
-        product.setRowCellFactory(
-                requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getProductName));
-        quantity.setRowCellFactory(
-                requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getQuantity));
+        TableColumn<RequisitionDetail, String> product = new TableColumn<>("Product");
+        TableColumn<RequisitionDetail, String> quantity = new TableColumn<>("Quantity");
 
         // Set table column width.
         product.prefWidthProperty().bind(table.widthProperty().multiply(.25));
         quantity.prefWidthProperty().bind(table.widthProperty().multiply(.25));
 
-        // Set table filter.
-        table
-                .getTableColumns()
-                .addAll(product, quantity);
-
-        table
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Product", RequisitionDetail::getProductName),
-                        new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity));
-
         styleTable();
 
         // Populate table.
-        if (RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
-            RequisitionDetailViewModel.getRequisitionDetails()
-                    .addListener(
-                            (ListChangeListener<RequisitionDetail>)
-                                    change -> table.setItems(RequisitionDetailViewModel.getRequisitionDetails()));
-        } else {
-            table
-                    .itemsProperty()
-                    .bindBidirectional(RequisitionDetailViewModel.requisitionDetailsProperty());
-        }
+        table.setItems(RequisitionDetailViewModel.getRequisitionDetails());
     }
 
     private void styleTable() {
         table.setPrefSize(10000d, 10000d);
-        table.features().enableBounceEffect();
-        table.features().enableSmoothScrolling(0.5);
 
-        table.setTableRowFactory(
+        table.setRowFactory(
                 t -> {
-                    MFXTableRow<RequisitionDetail> row = new MFXTableRow<>(table, t);
+                    TableRow<RequisitionDetail> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<RequisitionDetail>) event.getSource())
+                                showContextMenu((TableRow<RequisitionDetail>) event.getSource())
                                         .show(
                                                 table.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -270,25 +233,25 @@ public class RequisitionMasterForm extends OutlineFormPage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<RequisitionDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(table);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<RequisitionDetail> obj) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem delete = new MenuItem("Delete");
+        MenuItem edit = new MenuItem("Edit");
 
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             RequisitionDetailViewModel.removeRequisitionDetail(
-                    obj.getData().getId(),
-                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
+                    obj.getItem().getId(),
+                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getItem()));
             event.consume();
-        }, obj.getData().getProductName(), this));
+        }, obj.getItem().getProductName(), this));
         // Edit
         edit.setOnAction(
                 event -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            RequisitionDetailViewModel.getRequisitionDetail(obj.getData().getId());
+                            RequisitionDetailViewModel.getRequisitionDetail(obj.getItem().getId());
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -297,20 +260,16 @@ public class RequisitionMasterForm extends OutlineFormPage {
                     event.consume();
                 });
 
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
 
         return contextMenu;
-    }
-
-    public void addBtnClicked() {
-        SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait();
     }
 
     private void validateFields() {
         validateField(supplier, supplierValidationLabel);
     }
 
-    private void validateField(MFXTextField field, Label validationLabel) {
+    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -338,7 +297,7 @@ public class RequisitionMasterForm extends OutlineFormPage {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Supplier is required")
-                        .setCondition(supplier.textProperty().length().greaterThan(0))
+                        .setCondition(supplier.valueProperty().isNotNull())
                         .get();
         supplier.getValidator().constraint(supplierConstraint);
         // Display error.

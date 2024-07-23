@@ -4,6 +4,7 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import javafx.css.*;
 import lombok.extern.java.*;
 
+import javafx.util.Duration;
 @Log
 public class ProtectedGlobals {
     public static String authToken = "";

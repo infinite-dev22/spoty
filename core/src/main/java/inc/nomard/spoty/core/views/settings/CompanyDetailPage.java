@@ -1,20 +1,19 @@
 package inc.nomard.spoty.core.views.settings;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.settings.system_settings.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Currency;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
@@ -35,7 +34,7 @@ import lombok.extern.java.*;
 
 @Log
 public class CompanyDetailPage extends OutlinePage {
-    public MFXButton cancelBtn,
+    public Button cancelBtn,
             saveBtn;
     public Circle companyLogo;
     public Label companyName,
@@ -44,7 +43,7 @@ public class CompanyDetailPage extends OutlinePage {
     public HBox linkIcon,
             uploadIcon,
             heroImage;
-    public MFXTextField companyNameTxt,
+    public LabeledTextField companyNameTxt,
             companyWebLinkTxt,
             companyPhoneTxt,
             companyEmailTxt,
@@ -53,13 +52,13 @@ public class CompanyDetailPage extends OutlinePage {
             companyTwitter,
             companyFacebook,
             companyLinkedin;
-    public TextArea companyTagLine;
+    public LabeledTextArea companyTagLine;
     public VBox content;
-    public MFXCheckbox reportsCheck,
+    public CheckBox reportsCheck,
             emailsCheck,
             receiptsCheck;
-    public MFXScrollPane scrollPane;
-    public MFXFilterComboBox<Currency> defaultCurrencyPicker;
+    public ScrollPane scrollPane;
+    public LabeledComboBox<Currency> defaultCurrencyPicker;
     private Circle currentCompanyLogo;
     private VBox companyLogoBtn;
     private FileChooser fileChooser;
@@ -82,8 +81,8 @@ public class CompanyDetailPage extends OutlinePage {
         return pane;
     }
 
-    private MFXScrollPane buildScrollPane() {
-        scrollPane = new MFXScrollPane(buildContent());
+    private ScrollPane buildScrollPane() {
+        scrollPane = new ScrollPane(buildContent());
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         componentSizing();
         NodeUtils.setAnchors(scrollPane, new Insets(0d));
@@ -115,7 +114,7 @@ public class CompanyDetailPage extends OutlinePage {
         heroImage.setMaxHeight(140d);
         heroImage.setMinHeight(140d);
         heroImage.setPrefHeight(140d);
-        heroImage.getStyleClass().add("hero-image");
+        heroImage.getStyleClass().add(Styles.ACCENT);
         UIUtils.anchor(heroImage, 0d, 0d, null, 0d);
         return heroImage;
     }
@@ -213,11 +212,12 @@ public class CompanyDetailPage extends OutlinePage {
 
     private HBox buildCompanyProfile() {
         // Cancel button.
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         // Save button.
-        saveBtn = new MFXButton("Save Changes");
-        saveBtn.getStyleClass().add("filled");
+        saveBtn = new Button("_Save Changes");
+        saveBtn.setDefaultButton(true);
+        saveBtn.setMnemonicParsing(true);
         var hbox1 = new HBox();
         hbox1.setAlignment(Pos.CENTER_RIGHT);
         hbox1.setSpacing(16d);
@@ -235,37 +235,30 @@ public class CompanyDetailPage extends OutlinePage {
 
     private HBox buildCompanyPublicProfiles() {
         // Company name text box.
-        companyNameTxt = new MFXTextField();
-        companyNameTxt.setFloatMode(FloatMode.BORDER);
-        companyNameTxt.setFloatingText("Company name");
+        companyNameTxt = new LabeledTextField();
+        companyNameTxt.setLabel("Company name");
         companyNameTxt.setPrefWidth(400d);
         // Website link text box.
-        companyWebLinkTxt = new MFXTextField();
-        companyWebLinkTxt.setFloatMode(FloatMode.BORDER);
-        companyWebLinkTxt.setFloatingText("Website link");
+        companyWebLinkTxt = new LabeledTextField();
+        companyWebLinkTxt.setLabel("Website link");
         companyWebLinkTxt.setPrefWidth(400d);
         // Phone text box.
-        companyPhoneTxt = new MFXTextField();
-        companyPhoneTxt.setFloatMode(FloatMode.BORDER);
-        companyPhoneTxt.setFloatingText("Phone");
+        companyPhoneTxt = new LabeledTextField();
+        companyPhoneTxt.setLabel("Phone");
         companyPhoneTxt.setPrefWidth(400d);
         // Email text box.
-        companyEmailTxt = new MFXTextField();
-        companyEmailTxt.setFloatMode(FloatMode.BORDER);
-        companyEmailTxt.setFloatingText("Email");
+        companyEmailTxt = new LabeledTextField();
+        companyEmailTxt.setLabel("Email");
         companyEmailTxt.setPrefWidth(400d);
         // Postal Address text box.
-        companyPostalAddressTxt = new MFXTextField();
-        companyPostalAddressTxt.setFloatMode(FloatMode.BORDER);
-        companyPostalAddressTxt.setFloatingText("Postal Address (P.O.Box)");
+        companyPostalAddressTxt = new LabeledTextField();
+        companyPostalAddressTxt.setLabel("Postal Address (P.O.Box)");
         companyPostalAddressTxt.setPrefWidth(400d);
         // Company Address text box.
-        companyAddressTxt = new MFXTextField();
-        companyAddressTxt.setFloatMode(FloatMode.BORDER);
-        companyAddressTxt.setFloatingText("Physical address");
+        companyAddressTxt = new LabeledTextField();
+        companyAddressTxt.setLabel("Physical address");
         companyAddressTxt.setPrefWidth(400d);
         var vbox = new VBox();
-        HBox.setHgrow(vbox, Priority.ALWAYS);
         vbox.setSpacing(16d);
         vbox.getChildren().addAll(companyNameTxt,
                 companyWebLinkTxt,
@@ -274,6 +267,7 @@ public class CompanyDetailPage extends OutlinePage {
                 companyPostalAddressTxt,
                 companyAddressTxt);
         var hbox = buildSection();
+        hbox.setPrefWidth(400d);
         hbox.getChildren().addAll(
                 buildSectionTitle("Social profiles",
                         "Add your company's social profiles."),
@@ -283,11 +277,12 @@ public class CompanyDetailPage extends OutlinePage {
     }
 
     private HBox buildCompanyTagLine() {
-        companyTagLine = new TextArea();
+        companyTagLine = new LabeledTextArea();
         companyTagLine.setPrefWidth(400d);
         companyTagLine.setPrefHeight(100d);
         companyTagLine.setMinHeight(100d);
-        companyTagLine.setPromptText("Your company's tagline e.g. Just Do It, Think Different, Quality never goes out of style, etc.");
+        companyTagLine.setLabel("Tag line");
+//        companyTagLine.setPrompt("Your company's tagline e.g. Just Do It, Think Different, Quality never goes out of style, etc.");
         var hbox = buildSection();
         hbox.getChildren().addAll(
                 buildSectionTitle("Tag line",
@@ -301,9 +296,7 @@ public class CompanyDetailPage extends OutlinePage {
         currentCompanyLogo = new Circle();
         currentCompanyLogo.setCache(true);
         currentCompanyLogo.setCacheHint(CacheHint.SPEED);
-        currentCompanyLogo.setFill(Color.web("#4e4f5400"));
         currentCompanyLogo.setRadius(50d);
-        currentCompanyLogo.setStroke(Color.web("#ffffff00"));
         currentCompanyLogo.setStrokeType(StrokeType.INSIDE);
         currentCompanyLogo.setStrokeWidth(0d);
         return currentCompanyLogo;
@@ -352,9 +345,9 @@ public class CompanyDetailPage extends OutlinePage {
     }
 
     private VBox buildCheckBoxes() {
-        reportsCheck = new MFXCheckbox("Add logo on reports.");
-        emailsCheck = new MFXCheckbox("Add logo to emails.");
-        receiptsCheck = new MFXCheckbox("Add logo on receipts.");
+        reportsCheck = new CheckBox("Add logo on reports.");
+        emailsCheck = new CheckBox("Add logo to emails.");
+        receiptsCheck = new CheckBox("Add logo on receipts.");
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.getChildren().addAll(reportsCheck, emailsCheck, receiptsCheck);
@@ -383,34 +376,31 @@ public class CompanyDetailPage extends OutlinePage {
         var twitterIcon = new MFXFontIcon();
         twitterIcon.setIconsProvider(IconsProviders.FONTAWESOME_BRANDS);
         twitterIcon.setDescription("fab-twitter");
-        companyTwitter = new MFXTextField();
-        companyTwitter.setFloatMode(FloatMode.BORDER);
-        companyTwitter.setFloatingText("Twitter(X)");
+        companyTwitter = new LabeledTextField();
         companyTwitter.setPrefWidth(400d);
-        companyTwitter.setTrailingIcon(twitterIcon);
+        companyTwitter.setLabel("Twitter(X)");
+        companyTwitter.setRight(twitterIcon);
         // Facebook text box.
         var facebookIcon = new MFXFontIcon();
         facebookIcon.setIconsProvider(IconsProviders.FONTAWESOME_BRANDS);
         facebookIcon.setDescription("fab-facebook");
-        companyFacebook = new MFXTextField();
-        companyFacebook.setFloatMode(FloatMode.BORDER);
-        companyFacebook.setFloatingText("Facebook");
+        companyFacebook = new LabeledTextField();
         companyFacebook.setPrefWidth(400d);
-        companyFacebook.setTrailingIcon(facebookIcon);
+        companyFacebook.setLabel("Facebook");
+        companyFacebook.setRight(facebookIcon);
         // LinkedIn text box.
         var linkedinIcon = new MFXFontIcon();
         linkedinIcon.setIconsProvider(IconsProviders.FONTAWESOME_BRANDS);
         linkedinIcon.setDescription("fab-linkedin");
-        companyLinkedin = new MFXTextField();
-        companyLinkedin.setFloatMode(FloatMode.BORDER);
-        companyLinkedin.setFloatingText("LinkedIn");
+        companyLinkedin = new LabeledTextField();
         companyLinkedin.setPrefWidth(400d);
-        companyLinkedin.setTrailingIcon(linkedinIcon);
+        companyLinkedin.setLabel("LinkedIn");
+        companyLinkedin.setRight(linkedinIcon);
         var vbox = new VBox();
-        HBox.setHgrow(vbox, Priority.ALWAYS);
         vbox.setSpacing(16d);
         vbox.getChildren().addAll(companyTwitter, companyFacebook, companyLinkedin);
         var hbox = buildSection();
+        hbox.setPrefWidth(400d);
         hbox.getChildren().addAll(
                 buildSectionTitle("Social profiles",
                         "Add your company's social profiles."),
@@ -420,9 +410,8 @@ public class CompanyDetailPage extends OutlinePage {
     }
 
     private HBox buildCompanyDefaults() {
-        defaultCurrencyPicker = new MFXFilterComboBox<Currency>();
-        defaultCurrencyPicker.setFloatMode(FloatMode.BORDER);
-        defaultCurrencyPicker.setFloatingText("Default Currency");
+        defaultCurrencyPicker = new LabeledComboBox<Currency>();
+        defaultCurrencyPicker.setLabel("Default Currency");
         defaultCurrencyPicker.setPrefWidth(400d);
         var hbox = new HBox();
         hbox.setPrefHeight(200d);
@@ -510,7 +499,6 @@ public class CompanyDetailPage extends OutlinePage {
 
         // Combo box properties.
         defaultCurrencyPicker.setConverter(currencyConverter);
-        defaultCurrencyPicker.setFilterFunction(currencyFilterFunction);
         if (CurrencyViewModel.getCurrencies().isEmpty()) {
             CurrencyViewModel.getCurrencies()
                     .addListener(

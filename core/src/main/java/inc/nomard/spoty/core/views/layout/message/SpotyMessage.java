@@ -14,7 +14,6 @@ import lombok.extern.java.*;
 
 @Setter
 @Getter
-
 @Log
 public class SpotyMessage extends StackPane {
     @Getter

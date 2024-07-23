@@ -1,26 +1,26 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -28,9 +28,9 @@ import lombok.extern.java.*;
 
 @Log
 public class StockInDetailForm extends ModalPage {
-    private MFXTextField quantity;
-    private MFXFilterComboBox<Product> product;
-    private MFXButton saveBtn, cancelBtn;
+    private LabeledTextField quantity;
+    private LabeledComboBox<Product> product;
+    private Button saveBtn, cancelBtn;
     private Label productValidationLabel, quantityValidationLabel;
     private List<Constraint> productConstraints, quantityConstraints;
 
@@ -57,17 +57,14 @@ public class StockInDetailForm extends ModalPage {
 
     private VBox buildProduct() {
         // Input.
-        product = new MFXFilterComboBox<>();
-        product.setFloatMode(FloatMode.BORDER);
-        product.setFloatingText("Product");
+        product = new LabeledComboBox<>();
+        product.setLabel("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
 
         StringConverter<Product> productConverter = FunctionalStringConverter.to(
                 productDetail -> productDetail == null ? "" : productDetail.getName());
         product.setConverter(productConverter);
-        product.setFilterFunction(searchStr ->
-                productDetail -> StringUtils.containsIgnoreCase(productConverter.toString(productDetail), searchStr));
 
         if (ProductViewModel.getProducts().isEmpty()) {
             ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> product.setItems(ProductViewModel.getProducts()));
@@ -85,9 +82,8 @@ public class StockInDetailForm extends ModalPage {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new MFXTextField();
-        quantity.setFloatMode(FloatMode.BORDER);
-        quantity.setFloatingText("Quantity");
+        quantity = new LabeledTextField();
+        quantity.setLabel("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
         // Validation.
@@ -101,8 +97,8 @@ public class StockInDetailForm extends ModalPage {
 
     private VBox buildDescription() {
         // Input.
-        var description = new TextArea();
-        description.setPromptText("Description");
+        var description = new LabeledTextArea();
+        description.setLabel("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());
         var vbox = new VBox();
@@ -120,15 +116,15 @@ public class StockInDetailForm extends ModalPage {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -162,7 +158,6 @@ public class StockInDetailForm extends ModalPage {
     }
 
     private void clearSelections() {
-        product.clearSelection();
         product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
     }
@@ -202,7 +197,16 @@ public class StockInDetailForm extends ModalPage {
         }
     }
 
-    private void showValidationLabel(Label label, String message, Control control) {
+    private void showValidationLabel(Label label, String message, LabeledTextField control) {
+        label.setManaged(true);
+        label.setVisible(true);
+        label.setText(message);
+        control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        MFXStageDialog dialog = (MFXStageDialog) control.getScene().getWindow();
+        dialog.sizeToScene();
+    }
+
+    private <T> void showValidationLabel(Label label, String message, LabeledComboBox<T> control) {
         label.setManaged(true);
         label.setVisible(true);
         label.setText(message);
@@ -216,7 +220,7 @@ public class StockInDetailForm extends ModalPage {
         setupValidator(quantity, "Quantity is required");
     }
 
-    private void setupValidator(MFXTextField control, String message) {
+    private void setupValidator(LabeledTextField control, String message) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
@@ -231,7 +235,22 @@ public class StockInDetailForm extends ModalPage {
         });
     }
 
-    private void hideValidationLabel(Control control) {
+    private void setupValidator(LabeledComboBox control, String message) {
+        Constraint constraint = Constraint.Builder.build()
+                .setSeverity(Severity.ERROR)
+                .setMessage(message)
+                .setCondition(control.valueProperty().isNotNull())
+                .get();
+        control.getValidator().constraint(constraint);
+
+        control.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                hideValidationLabel(control);
+            }
+        });
+    }
+
+    private void hideValidationLabel(Node control) {
         if (control.equals(product)) {
             productValidationLabel.setManaged(false);
             productValidationLabel.setVisible(false);

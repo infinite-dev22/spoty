@@ -3,9 +3,9 @@
 <?import inc.nomard.spoty.core.components.title.*?>
 <?import inc.nomard.spoty.utils.navigation.*?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
-<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.controls.LabeledTextField?>
 <?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.Button?>
 <?import io.github.palexdev.mfxcomponents.controls.checkbox.*?>
 <?import io.github.palexdev.mfxcore.controls.Label?>
 <?import javafx.geometry.*?>
@@ -42,12 +42,12 @@
                         <Insets topRightBottomLeft="10"/>
                     </padding>
                     <VBox spacing="2.0" styleClass="spoty-role-form-header" BorderPane.alignment="CENTER">
-                        <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Role name" prefWidth="1000"/>
+                        <LabeledTextField fx:id="name" floatMode="BORDER" floatingText="Role name" prefWidth="1000"/>
                         <Label id="validationLabel" fx:id="errorLabel" managed="false" maxWidth="1.7976931348623157E308"
                                minHeight="-Infinity" styleClass="input-validation-error" visible="false"
                                wrapText="true"/>
                     </VBox>
-                    <TextArea fx:id="roleDescriptionInputField" prefHeight="70.0" prefWidth="1000"
+                    <LabeledTextArea fx:id="roleDescriptionInputField" prefHeight="70.0" prefWidth="1000"
                               promptText="Role description"/>
                 </VBox>
                 <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" styleClass="card-flat" GridPane.rowIndex="1">
@@ -610,14 +610,13 @@
             <padding>
                 <Insets topRightBottomLeft="10"/>
             </padding>
-            <MFXButton fx:id="saveBtn" styleClass="filled" text="Save"/>
-            <MFXButton fx:id="cancelBtn" styleClass="outlined" text="Cancel"/>
+            <Button fx:id="saveBtn" styleClass="filled" text="Save"/>
+            <Button fx:id="cancelBtn" styleClass=Styles.BUTTON_OUTLINED text="Cancel"/>
         </HBox>
     </bottom>
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>
         <URL value="@../../styles/base.css"/>
-        <URL value="@../../styles/theming/Default.css"/>
     </stylesheets>
 </MFXGenericDialog>

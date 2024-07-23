@@ -13,7 +13,6 @@ import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
 import java.time.*;
-import java.time.format.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -41,7 +40,7 @@ public class UserViewModel {
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final BooleanProperty active = new SimpleBooleanProperty(true);
     private static final StringProperty avatar = new SimpleStringProperty("");
-    private static final StringProperty dateOfBirth = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalDate> dateOfBirth = new SimpleObjectProperty<LocalDate>();
     private static final ObjectProperty<Department> department = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<EmploymentStatus> employmentStatus = new SimpleObjectProperty<>(null);
@@ -169,16 +168,14 @@ public class UserViewModel {
     }
 
     public static LocalDate getDateOfBirth() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, d MMM yyyy", Locale.ENGLISH);
-        LocalDate dateTime = LocalDate.parse(dateOfBirth.get(), formatter);
-        return dateTime;
+        return dateOfBirth.get();
     }
 
-    public static void setDateOfBirth(String dateOfBirth) {
+    public static void setDateOfBirth(LocalDate dateOfBirth) {
         UserViewModel.dateOfBirth.set(dateOfBirth);
     }
 
-    public static StringProperty dateOfBirthProperty() {
+    public static ObjectProperty<LocalDate> dateOfBirthProperty() {
         return dateOfBirth;
     }
 
@@ -238,7 +235,7 @@ public class UserViewModel {
         setEmail("");
         setPhone("");
         setActive(true);
-        setDateOfBirth("");
+        setDateOfBirth(null);
         setRole(null);
         setDepartment(null);
         setDesignation(null);

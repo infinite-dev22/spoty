@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.layout.navigation.event;
 
+
 import java.util.*;
 
 public abstract class Event {

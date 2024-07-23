@@ -1,39 +1,43 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcore.controls.*;
+import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
+import org.kordamp.ikonli.fontawesome5.*;
 import org.kordamp.ikonli.javafx.*;
 
 public class SideBar extends VBox {
-    final MFXContextMenuItem viewProfile = new MFXContextMenuItem("View profile");
-    final MFXContextMenuItem logOut = new MFXContextMenuItem("Log out");
+    final MenuItem viewProfile = new MenuItem("View profile");
+    final MenuItem logOut = new MenuItem("Log out");
     private final Stage stage = AppManager.getPrimaryStage();
     private final NavTree navTree;
     private Circle circle;
     private Label username;
     private Label designation;
-    private MFXFontIcon moreActions;
-    private MFXContextMenu contextMenu;
+    private FontIcon moreActions;
+    private ContextMenu contextMenu;
     private Boolean isMinimised = false;
 
     public SideBar(Navigation navigation) {
         super();
         navTree = new NavTree(navigation);
-        init(navigation);
+        init();
 
         navigation.selectedPageProperty().addListener((obs, old, val) -> {
             if (val != null) {
@@ -42,10 +46,9 @@ public class SideBar extends VBox {
         });
     }
 
-    private void init(Navigation navigation) {
+    private void init() {
         var pane = new StackPane(navTree);
         pane.getStyleClass().add("navbar");
-        // navTree.getStyleClass().add("navbar");
         pane.setMaxHeight(1.7976931348623157E308);
         pane.setMaxWidth(1.7976931348623157E308);
         VBox.setVgrow(pane, Priority.ALWAYS);
@@ -54,7 +57,7 @@ public class SideBar extends VBox {
         this.setPadding(new Insets(0d, 0d, 5d, 0d));
         this.setSpacing(10d);
         VBox.setVgrow(this, Priority.ALWAYS);
-        this.getChildren().addAll(buildWindowAction(), buildUserProfile(), pane);
+        this.getChildren().addAll(buildWindowAction(), buildUserProfile(), pane, buildFooter());
         this.getStyleClass().addAll("sidebar");
     }
 
@@ -97,14 +100,14 @@ public class SideBar extends VBox {
     private Label buildUserName() {
         username = new Label();
         username.setWrapText(true);
-        username.getStyleClass().addAll("h4", "text-white");
+        username.getStyleClass().add(Styles.TITLE_4);
         return username;
     }
 
     private Label buildDesignation() {
         designation = new Label();
         designation.setWrapText(true);
-        designation.getStyleClass().addAll("text", "disabled-text");
+        designation.getStyleClass().add(Styles.TEXT_SUBTLE);
         return designation;
     }
 
@@ -116,9 +119,8 @@ public class SideBar extends VBox {
         return vbox;
     }
 
-    private MFXFontIcon buildProfileActionsMenu() {
-        moreActions = new MFXFontIcon("fas-ellipsis-vertical");
-        moreActions.setSize(25d);
+    private FontIcon buildProfileActionsMenu() {
+        moreActions = new FontIcon(FontAwesomeSolid.ELLIPSIS_V);
         moreActions.getStyleClass().add("side-bar-more-actions");
         buildContextMenu();
         moreActions.setOnMouseClicked(this::moreActions);
@@ -126,7 +128,7 @@ public class SideBar extends VBox {
     }
 
     private void buildContextMenu() {
-        contextMenu = new MFXContextMenu(moreActions);
+        contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(viewProfile, logOut);
         moreActions.setCursor(Cursor.HAND);
     }
@@ -169,6 +171,16 @@ public class SideBar extends VBox {
         stage.close();
         SpotyThreader.disposeSpotyThreadPool();
         Platform.exit();
+    }
+
+    private HBox buildFooter() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setSpacing(10d);
+        var versionText = new Label("v1.21.3");
+        versionText.getStyleClass().add("text");
+        hbox.getChildren().add(versionText);
+        return hbox;
     }
 
     private void minimizeWindow() {

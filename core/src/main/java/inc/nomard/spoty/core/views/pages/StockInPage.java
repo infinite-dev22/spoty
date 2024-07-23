@@ -11,19 +11,15 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -33,8 +29,8 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class StockInPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<StockInMaster> masterTable;
+    private TextField searchBar;
+    private TableView<StockInMaster> masterTable;
     private MFXProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
@@ -55,7 +51,6 @@ public class StockInPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         return pane;
@@ -76,9 +71,8 @@ public class StockInPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search stock ins");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -90,8 +84,7 @@ public class StockInPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        var createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        var createBtn = new Button("Create");
         createBtn.setOnAction(event -> AppManager.getNavigation().navigate(StockInMasterForm.class));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
@@ -102,7 +95,7 @@ public class StockInPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -110,63 +103,35 @@ public class StockInPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<StockInMaster> note =
-                new MFXTableColumn<>("Note", false, Comparator.comparing(StockInMaster::getNotes));
-//        MFXTableColumn<StockInMaster> stockInDate =
-//                new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getCreatedAt));
-        MFXTableColumn<StockInMaster> stockInTotalCost =
-                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(StockInMaster::getTotal));
-
-        note.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getNotes));
-        stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
-//        stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
+        TableColumn<StockInMaster, String> note = new TableColumn<>("Note");
+        TableColumn<StockInMaster, String> stockInTotalCost = new TableColumn<>("Total Amount");
 
         note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
         stockInTotalCost.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
-//        stockInDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
 
-        masterTable
-                .getTableColumns()
-                .addAll(note, stockInTotalCost);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Reference", StockInMaster::getRef),
-                        new DoubleFilter<>("Total Amount", StockInMaster::getTotal));
+        var columnList = new LinkedList<>(Stream.of(note, stockInTotalCost).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getStockInMasterTable();
 
-        if (StockInMasterViewModel.getStockIns().isEmpty()) {
-            StockInMasterViewModel.getStockIns()
-                    .addListener(
-                            (ListChangeListener<StockInMaster>)
-                                    c -> masterTable.setItems(StockInMasterViewModel.getStockIns()));
-        } else {
-            masterTable
-                    .itemsProperty()
-                    .bindBidirectional(StockInMasterViewModel.stockInsProperty());
-        }
+        masterTable.setItems(StockInMasterViewModel.getStockIns());
     }
 
     private void getStockInMasterTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<StockInMaster> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<StockInMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<StockInMaster>) event.getSource())
+                                showContextMenu((TableRow<StockInMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -178,7 +143,7 @@ public class StockInPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<StockInMaster> obj) {
+    private MFXContextMenu showContextMenu(TableRow<StockInMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem view = new MFXContextMenuItem("View");
 
@@ -186,7 +151,7 @@ public class StockInPage extends OutlinePage {
         // View
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getData());
+                    viewShow(obj.getItem());
                     event.consume();
                 });
 
@@ -234,10 +199,6 @@ public class StockInPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

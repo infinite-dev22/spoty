@@ -2,6 +2,7 @@ package inc.nomard.spoty.network_bridge.end_points;
 
 import lombok.extern.java.*;
 
+import javafx.util.Duration;
 @Log
 public class EndPoints {
     public static final String appDNS = "http://localhost:8080";

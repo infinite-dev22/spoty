@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.layout;
 import inc.nomard.spoty.utils.*;
 import java.util.*;
 import java.util.function.*;
+import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 
@@ -14,7 +15,9 @@ public class PageView extends StackPane {
     private void init() {
         this.setPrefHeight(604d);
         this.setPrefWidth(1053d);
-        UIUtils.anchor(this, 55d, 5d, 5d, 5d);
+        this.getStyleClass().addAll("content-view");
+        this.setPadding(new Insets(5d));
+        UIUtils.anchor(this, 45d, 0d, 0d, 0d);
     }
 
     protected void add(Node node) {

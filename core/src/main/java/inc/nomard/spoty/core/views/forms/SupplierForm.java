@@ -1,22 +1,23 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -25,10 +26,10 @@ import lombok.extern.java.*;
 @Log
 public class SupplierForm extends ModalPage {
     @FXML
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
     @FXML
-    public MFXTextField name,
+    public LabeledTextField name,
             email,
             phone,
             city,
@@ -63,11 +64,11 @@ public class SupplierForm extends ModalPage {
         address = createTextField("Address");
         taxNumber = createTextField("Tax No.");
 
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
 
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
     }
 
     private void initializeComponentProperties() {
@@ -98,10 +99,9 @@ public class SupplierForm extends ModalPage {
         return label;
     }
 
-    private MFXTextField createTextField(String floatingText) {
-        MFXTextField textField = new MFXTextField();
-        textField.setFloatingText(floatingText);
-        textField.setFloatMode(FloatMode.BORDER);
+    private LabeledTextField createTextField(String floatingText) {
+        LabeledTextField textField = new LabeledTextField();
+        textField.setLabel(floatingText);
         textField.setPrefWidth(300);
         return textField;
     }
@@ -135,12 +135,12 @@ public class SupplierForm extends ModalPage {
         addFormRow(gridPane, 3, taxNumber, null, null, null);
     }
 
-    private void addFormRow(GridPane gridPane, int rowIndex, Control leftControl, Label leftLabel, Control rightControl, Label rightLabel) {
+    private void addFormRow(GridPane gridPane, int rowIndex, Node leftControl, Label leftLabel, Node rightControl, Label rightLabel) {
         addControlToGrid(gridPane, 0, rowIndex, leftControl, leftLabel);
         addControlToGrid(gridPane, 1, rowIndex, rightControl, rightLabel);
     }
 
-    private void addControlToGrid(GridPane gridPane, int colIndex, int rowIndex, Control control, Label validationLabel) {
+    private void addControlToGrid(GridPane gridPane, int colIndex, int rowIndex, Node control, Label validationLabel) {
         if (control != null) {
             VBox vbox = new VBox(5, control);
             if (validationLabel != null) {
@@ -156,7 +156,7 @@ public class SupplierForm extends ModalPage {
             if (!newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
         });
         phone.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) phone.setLeadingIcon(new Label("+"));
+            if (newValue != oldValue) phone.setLeft(new Label("+"));
         });
     }
 
@@ -170,7 +170,7 @@ public class SupplierForm extends ModalPage {
         bindTextField(taxNumber, SupplierViewModel.taxNumberProperty());
     }
 
-    private void bindTextField(MFXTextField textField, Property<String> property) {
+    private void bindTextField(LabeledTextField textField, Property<String> property) {
         textField.textProperty().bindBidirectional(property);
     }
 
@@ -180,7 +180,7 @@ public class SupplierForm extends ModalPage {
         requiredValidator(phone, phoneValidationLabel, "Phone is required");
     }
 
-    private void requiredValidator(MFXTextField control, Label validationLabel, String message) {
+    private void requiredValidator(LabeledTextField control, Label validationLabel, String message) {
         // Name input validation.
         Constraint firstName =
                 Constraint.Builder.build()

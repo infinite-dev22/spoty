@@ -7,6 +7,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import lombok.extern.java.Log;
 
+import javafx.util.Duration;
 @Log
 public class Spacer extends Region {
 

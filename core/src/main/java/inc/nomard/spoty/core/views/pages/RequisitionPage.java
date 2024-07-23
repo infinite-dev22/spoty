@@ -12,19 +12,15 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -34,10 +30,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class RequisitionPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<RequisitionMaster> masterTable;
+    private TextField searchBar;
+    private TableView<RequisitionMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
@@ -57,7 +53,6 @@ public class RequisitionPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -79,9 +74,8 @@ public class RequisitionPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search requisitions");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -93,8 +87,7 @@ public class RequisitionPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -104,7 +97,7 @@ public class RequisitionPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -112,58 +105,35 @@ public class RequisitionPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<RequisitionMaster> masterSupplier =
-                new MFXTableColumn<>(
-                        "Supplier", false, Comparator.comparing(RequisitionMaster::getSupplierName));
-
-        masterSupplier.setRowCellFactory(
-                master -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
+        TableColumn<RequisitionMaster, String> masterSupplier = new TableColumn<>("Supplier");
 
         masterSupplier
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
 
-        masterTable
-                .getTableColumns()
-                .addAll(masterSupplier);
-        masterTable
-                .getFilters()
-                .addAll(new StringFilter<>("Reference", RequisitionMaster::getRef),
-                        new StringFilter<>("Supplier", RequisitionMaster::getSupplierName));
+        var columnList = new LinkedList<>(Stream.of(masterSupplier).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getTable();
 
-        if (RequisitionMasterViewModel.getRequisitions().isEmpty()) {
-            RequisitionMasterViewModel.getRequisitions()
-                    .addListener(
-                            (ListChangeListener<RequisitionMaster>)
-                                    c -> masterTable.setItems(RequisitionMasterViewModel.getRequisitions()));
-        } else {
-            masterTable
-                    .itemsProperty()
-                    .bindBidirectional(RequisitionMasterViewModel.requisitionsProperty());
-        }
+        masterTable.setItems(RequisitionMasterViewModel.getRequisitions());
     }
 
     private void getTable() {
         masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<RequisitionMaster> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<RequisitionMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<RequisitionMaster>) event.getSource())
+                                showContextMenu((TableRow<RequisitionMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -175,7 +145,7 @@ public class RequisitionPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<RequisitionMaster> obj) {
+    private MFXContextMenu showContextMenu(TableRow<RequisitionMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -184,19 +154,19 @@ public class RequisitionPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            RequisitionMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            RequisitionMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getSupplierName() + "'s requisition", this));
+        }, obj.getItem().getSupplierName() + "'s requisition", this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    RequisitionMasterViewModel.getRequisitionMaster(obj.getData().getId(), this::createBtnAction, this::errorMessage);
+                    RequisitionMasterViewModel.getRequisitionMaster(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getData());
+                    viewShow(obj.getItem());
                     event.consume();
                 });
 
@@ -256,10 +226,6 @@ public class RequisitionPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

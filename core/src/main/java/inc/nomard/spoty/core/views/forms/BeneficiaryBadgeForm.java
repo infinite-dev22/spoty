@@ -1,25 +1,24 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -28,14 +27,14 @@ import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryBadgeForm extends MFXGenericDialog {
-    public MFXButton saveBtn, cancelBtn;
-    public MFXFilterComboBox<BeneficiaryType> beneficiaryType;
-    public MFXTextField name;
-    public TextArea description;
+    public Button saveBtn, cancelBtn;
+    public LabeledComboBox<BeneficiaryType> beneficiaryType;
+    public LabeledTextField name;
+    public LabeledTextArea description;
     public Label colorPickerValidationLabel,
             nameValidationLabel,
             beneficiaryTypeValidationLabel;
-    public MFXComboBox<String> colorPicker;
+    public LabeledComboBox<String> colorPicker;
     private List<Constraint> nameConstraints,
             colorConstraints,
             beneficiaryTypeConstraints;
@@ -65,9 +64,8 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Name");
+        name = new LabeledTextField();
+        name.setLabel("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.nameProperty());
         // Validation.
@@ -81,9 +79,8 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
 
     private VBox buildBeneficiaryType() {
         // Input.
-        beneficiaryType = new MFXFilterComboBox<>();
-        beneficiaryType.setFloatMode(FloatMode.BORDER);
-        beneficiaryType.setFloatingText("Beneficiary Type");
+        beneficiaryType = new LabeledComboBox<>();
+        beneficiaryType.setLabel("Beneficiary Type");
         beneficiaryType.setPrefWidth(400d);
         beneficiaryType.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.beneficiaryTypeProperty());
         // Converter
@@ -97,7 +94,6 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
                                 StringUtils.containsIgnoreCase(beneficiaryTypeConverter.toString(beneficiaryType), searchStr);
         // Properties
         beneficiaryType.setConverter(beneficiaryTypeConverter);
-        beneficiaryType.setFilterFunction(beneficiaryTypeFilterFunction);
         if (BeneficiaryTypeViewModel.getBeneficiaryTypes().isEmpty()) {
             BeneficiaryTypeViewModel.getBeneficiaryTypes()
                     .addListener(
@@ -117,9 +113,8 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
 
     private VBox buildColor() {
         // Input.
-        colorPicker = new MFXFilterComboBox<>();
-        colorPicker.setFloatMode(FloatMode.BORDER);
-        colorPicker.setFloatingText("Appearance Color");
+        colorPicker = new LabeledComboBox<>();
+        colorPicker.setLabel("Appearance Color");
         colorPicker.setPrefWidth(400d);
         colorPicker.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.colorProperty());
         colorPicker.setItems(BeneficiaryBadgeViewModel.getColorsList());
@@ -132,8 +127,8 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
-        description.setPromptText("Description");
+        description = new LabeledTextArea();
+        description.setLabel("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());
         var vbox = new VBox();
@@ -151,15 +146,15 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -192,9 +187,6 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
                     nameValidationLabel.setManaged(false);
                     colorPickerValidationLabel.setManaged(false);
                     beneficiaryTypeValidationLabel.setManaged(false);
-
-                    beneficiaryType.clearSelection();
-                    colorPicker.clearSelection();
 
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -243,8 +235,6 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
     }
 
     private void onSuccess() {
-        beneficiaryType.clearSelection();
-        colorPicker.clearSelection();
         closeDialog(actionEvent);
         BeneficiaryBadgeViewModel.resetProperties();
         BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null);
@@ -263,14 +253,14 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Beneficiary Type is required")
-                        .setCondition(beneficiaryType.textProperty().length().greaterThan(0))
+                        .setCondition(beneficiaryType.valueProperty().isNotNull())
                         .get();
         beneficiaryType.getValidator().constraint(beneficiaryTypeConstraint);
         Constraint colorPickerConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Color is required")
-                        .setCondition(colorPicker.textProperty().length().greaterThan(0))
+                        .setCondition(colorPicker.valueProperty().isNotNull())
                         .get();
         colorPicker.getValidator().constraint(colorPickerConstraint);
         // Display error.

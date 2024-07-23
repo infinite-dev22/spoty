@@ -1,23 +1,24 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
+import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
@@ -42,20 +43,20 @@ import lombok.extern.java.*;
 
 @Log
 public class ProductForm extends ModalPage {
-    public MFXTextField name,
+    public LabeledTextField name,
             serialNumber,
             salePrice,
             stockAlert;
-    public TextArea description;
-    public MFXFilterComboBox<Brand> brand;
-    public MFXFilterComboBox<ProductCategory> category;
-    public MFXFilterComboBox<UnitOfMeasure> unitOfMeasure;
-    public MFXComboBox<String> barcodeType;
-    public MFXTextField costPrice;
-    public MFXComboBox<Discount> discount;
-    public MFXComboBox<Tax> tax;
+    public LabeledTextArea description;
+    public LabeledComboBox<Brand> brand;
+    public LabeledComboBox<ProductCategory> category;
+    public LabeledComboBox<UnitOfMeasure> unitOfMeasure;
+    public LabeledComboBox<String> barcodeType;
+    public LabeledTextField costPrice;
+    public LabeledComboBox<Discount> discount;
+    public LabeledComboBox<Tax> tax;
     public Rectangle productImageView;
-    public MFXButton saveButton,
+    public Button saveButton,
             cancelButton;
     public Image productImage;
     public Label barcodeTypeValidationLabel,
@@ -115,18 +116,18 @@ public class ProductForm extends ModalPage {
                 createRowConstraints()
         );
 
-        root.add(createValidationBox(name = new MFXTextField(), "Name", nameValidationLabel = new Label(), 400.0), 0, 0);
-        root.add(createValidationBox(category = new MFXFilterComboBox<>(), "Category", categoryValidationLabel = new Label(), 400.0), 1, 0);
-        root.add(createValidationBox(brand = new MFXFilterComboBox<>(), "Brand", brandValidationLabel = new Label(), 400.0), 0, 1);
-        root.add(createValidationBox(unitOfMeasure = new MFXFilterComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 400.0), 1, 1);
-        root.add(createSimpleBox(costPrice = new MFXTextField(), "Cost Price", 400.0), 0, 2);
-        root.add(createValidationBox(salePrice = new MFXTextField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
-        root.add(createSimpleBox(discount = new MFXComboBox<>(), "Discount", 400.0), 0, 3);
-        root.add(createSimpleBox(tax = new MFXComboBox<>(), "Tax", 400.0), 1, 3);
-        root.add(createValidationBox(barcodeType = new MFXFilterComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
-        root.add(createSimpleBox(serialNumber = new MFXTextField(), "Serial/Batch", 400.0), 1, 4);
-        root.add(createSimpleBox(stockAlert = new MFXTextField(), "Stock Alert", 400.0), 0, 5);
-        root.add(createSimpleTextArea(description = new TextArea(), "Description", 400.0, 100.0), 1, 5);
+        root.add(createValidationBox(name = new LabeledTextField(), "Name", nameValidationLabel = new Label(), 400.0), 0, 0);
+        root.add(createValidationBox(category = new LabeledComboBox<>(), "Category", categoryValidationLabel = new Label(), 400.0), 1, 0);
+        root.add(createValidationBox(brand = new LabeledComboBox<>(), "Brand", brandValidationLabel = new Label(), 400.0), 0, 1);
+        root.add(createValidationBox(unitOfMeasure = new LabeledComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 400.0), 1, 1);
+        root.add(createSimpleBox(costPrice = new LabeledTextField(), "Cost Price", 400.0), 0, 2);
+        root.add(createValidationBox(salePrice = new LabeledTextField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
+        root.add(createSimpleBox(discount = new LabeledComboBox<>(), "Discount", 400.0), 0, 3);
+        root.add(createSimpleBox(tax = new LabeledComboBox<>(), "Tax", 400.0), 1, 3);
+        root.add(createValidationBox(barcodeType = new LabeledComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
+        root.add(createSimpleBox(serialNumber = new LabeledTextField(), "Serial/Batch", 400.0), 1, 4);
+        root.add(createSimpleBox(stockAlert = new LabeledTextField(), "Stock Alert", 400.0), 0, 5);
+        root.add(createSimpleTextArea(description = new LabeledTextArea(), "Description", 400.0, 100.0), 1, 5);
 
         root.add(createUploadImageBox(), 2, 0, 1, 6);
 
@@ -147,25 +148,22 @@ public class ProductForm extends ModalPage {
         return rc;
     }
 
-    private VBox createValidationBox(MFXTextField textField, String promptText, Label validationLabel, double width) {
-        textField.setFloatMode(FloatMode.BORDER);
-        textField.setFloatingText(promptText);
+    private VBox createValidationBox(LabeledTextField textField, String promptText, Label validationLabel, double width) {
+        textField.setLabel(promptText);
         textField.setPrefWidth(width);
 
         return createValidationContainer(textField, validationLabel);
     }
 
-    private VBox createValidationBox(MFXFilterComboBox<String> comboBox, String promptText, Label validationLabel, double width) {
-        comboBox.setFloatMode(FloatMode.BORDER);
-        comboBox.setFloatingText(promptText);
+    private <T> VBox createValidationBox(LabeledComboBox<T> comboBox, String promptText, Label validationLabel, double width) {
+        comboBox.setLabel(promptText);
         comboBox.setPrefWidth(width);
 
         return createValidationContainer(comboBox, validationLabel);
     }
 
-    private VBox createSimpleBox(MFXComboBox<String> comboBox, String promptText, double width) {
-        comboBox.setFloatMode(FloatMode.BORDER);
-        comboBox.setFloatingText(promptText);
+    private <T> VBox createSimpleBox(LabeledComboBox<T> comboBox, String promptText, double width) {
+        comboBox.setLabel(promptText);
         comboBox.setPrefWidth(width);
 
         VBox box = new VBox(2.0);
@@ -174,9 +172,8 @@ public class ProductForm extends ModalPage {
         return box;
     }
 
-    private VBox createSimpleBox(MFXTextField textField, String promptText, double width) {
-        textField.setFloatMode(FloatMode.BORDER);
-        textField.setFloatingText(promptText);
+    private VBox createSimpleBox(LabeledTextField textField, String promptText, double width) {
+        textField.setLabel(promptText);
         textField.setPrefWidth(width);
 
         VBox box = new VBox(2.0);
@@ -185,8 +182,8 @@ public class ProductForm extends ModalPage {
         return box;
     }
 
-    private VBox createSimpleTextArea(TextArea textArea, String promptText, double width, double height) {
-        textArea.setPromptText(promptText);
+    private VBox createSimpleTextArea(LabeledTextArea textArea, String promptText, double width, double height) {
+        textArea.setLabel(promptText);
         textArea.setPrefWidth(width);
         textArea.setPrefHeight(height);
 
@@ -249,11 +246,11 @@ public class ProductForm extends ModalPage {
         box.setAlignment(Pos.CENTER_RIGHT);
         box.setPadding(new Insets(10.0));
 
-        saveButton = new MFXButton("Create");
-        saveButton.getStyleClass().add("filled");
+        saveButton = new Button("Create");
+        saveButton.setDefaultButton(true);
 
-        cancelButton = new MFXButton("Cancel");
-        cancelButton.getStyleClass().add("outlined");
+        cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         box.getChildren().addAll(saveButton, cancelButton);
         return box;
@@ -329,7 +326,6 @@ public class ProductForm extends ModalPage {
                         brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
         // Unit of measure combo box
         unitOfMeasure.setConverter(uomConverter);
-        unitOfMeasure.setFilterFunction(uomFilterFunction);
         if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
             UOMViewModel.getUnitsOfMeasure()
                     .addListener(
@@ -340,7 +336,6 @@ public class ProductForm extends ModalPage {
         }
         // Product category combo box
         category.setConverter(productCategoryConverter);
-        category.setFilterFunction(productCategoryFilterFunction);
         if (ProductCategoryViewModel.getCategories().isEmpty()) {
             ProductCategoryViewModel.getCategories()
                     .addListener(
@@ -351,7 +346,6 @@ public class ProductForm extends ModalPage {
         }
         // Brand combo box
         brand.setConverter(brandConverter);
-        brand.setFilterFunction(brandFilterFunction);
         if (BrandViewModel.getBrands().isEmpty()) {
             BrandViewModel.getBrands()
                     .addListener(
@@ -552,28 +546,28 @@ public class ProductForm extends ModalPage {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Brand is required")
-                        .setCondition(brand.textProperty().length().greaterThan(0))
+                        .setCondition(brand.valueProperty().isNotNull())
                         .get();
         brand.getValidator().constraint(brandConstraint);
         Constraint categoryConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Category is required")
-                        .setCondition(category.textProperty().length().greaterThan(0))
+                        .setCondition(category.valueProperty().isNotNull())
                         .get();
         category.getValidator().constraint(categoryConstraint);
         Constraint unitOfMeasureConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Unit of measure is required")
-                        .setCondition(unitOfMeasure.textProperty().length().greaterThan(0))
+                        .setCondition(unitOfMeasure.valueProperty().isNotNull())
                         .get();
         unitOfMeasure.getValidator().constraint(unitOfMeasureConstraint);
         Constraint barcodeTypeConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Barcode type is required")
-                        .setCondition(barcodeType.textProperty().length().greaterThan(0))
+                        .setCondition(barcodeType.valueProperty().isNotNull())
                         .get();
         barcodeType.getValidator().constraint(barcodeTypeConstraint);
         // Display error.

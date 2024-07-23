@@ -7,13 +7,10 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.extern.java.*;
@@ -23,8 +20,8 @@ public class PaySlipPage extends OutlinePage {
     @FXML
     public VBox paySlipItemHolder;
     @FXML
-    public MFXScrollPane scrollPane;
-    private MFXTextField searchBar;
+    public ScrollPane scrollPane;
+    private TextField searchBar;
     private MFXProgressSpinner progress;
 
     public PaySlipPage() {
@@ -40,7 +37,6 @@ public class PaySlipPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setPayslipItems();
         createBtnAction();
@@ -62,9 +58,8 @@ public class PaySlipPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search payslips");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -76,8 +71,8 @@ public class PaySlipPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        var createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        var createBtn = new Button("Create");
+        createBtn.setDefaultButton(true);
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -87,7 +82,7 @@ public class PaySlipPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -107,8 +102,8 @@ public class PaySlipPage extends OutlinePage {
         return paySlipItemHolder;
     }
 
-    private MFXScrollPane buildScrollPane() {
-        scrollPane = new MFXScrollPane(buildPaySlipItemHolder());
+    private ScrollPane buildScrollPane() {
+        scrollPane = new ScrollPane(buildPaySlipItemHolder());
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.getStyleClass().add("card-flat");
@@ -120,10 +115,6 @@ public class PaySlipPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

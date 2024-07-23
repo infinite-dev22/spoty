@@ -12,19 +12,15 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -34,10 +30,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class QuotationPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<QuotationMaster> masterTable;
+    private TextField searchBar;
+    private TableView<QuotationMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
@@ -57,7 +53,6 @@ public class QuotationPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -79,9 +74,8 @@ public class QuotationPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search quotations");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -93,8 +87,7 @@ public class QuotationPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -104,7 +97,7 @@ public class QuotationPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -112,72 +105,35 @@ public class QuotationPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<QuotationMaster> quotationCustomer =
-                new MFXTableColumn<>(
-                        "Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
-//        MFXTableColumn<QuotationMaster> quotationDate =
-//                new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getCreatedAt));
-        MFXTableColumn<QuotationMaster> quotationTotalAmount =
-                new MFXTableColumn<>(
-                        "Total Amount", false, Comparator.comparing(QuotationMaster::getTotal));
-
-        quotationCustomer.setRowCellFactory(
-                quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
-//        quotationDate.setRowCellFactory(
-//                quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
-        quotationTotalAmount.setRowCellFactory(
-                quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
+        TableColumn<QuotationMaster, String> quotationCustomer = new TableColumn<>("Customer");
+        TableColumn<QuotationMaster, String> quotationTotalAmount = new TableColumn<>("Total Amount");
 
         quotationCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-//        quotationDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         quotationTotalAmount.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
-        masterTable
-                .getTableColumns()
-                .addAll(
-                        quotationCustomer,
-//                        quotationDate,
-                        quotationTotalAmount);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Reference", QuotationMaster::getRef),
-                        new StringFilter<>("Customer", QuotationMaster::getCustomerName),
-                        new DoubleFilter<>("Grand Total", QuotationMaster::getTotal));
+        var columnList = new LinkedList<>(Stream.of(quotationCustomer, quotationTotalAmount).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getQuotationMasterTable();
 
-        if (QuotationMasterViewModel.getQuotations().isEmpty()) {
-            QuotationMasterViewModel.getQuotations()
-                    .addListener(
-                            (ListChangeListener<QuotationMaster>)
-                                    c -> masterTable.setItems(QuotationMasterViewModel.getQuotations()));
-        } else {
-            masterTable
-                    .itemsProperty()
-                    .bindBidirectional(QuotationMasterViewModel.quotationsProperty());
-        }
+        masterTable.setItems(QuotationMasterViewModel.getQuotations());
     }
 
     private void getQuotationMasterTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<QuotationMaster> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<QuotationMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<QuotationMaster>) event.getSource())
+                                showContextMenu((TableRow<QuotationMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -189,7 +145,7 @@ public class QuotationPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<QuotationMaster> obj) {
+    private MFXContextMenu showContextMenu(TableRow<QuotationMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem view = new MFXContextMenuItem("View");
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
@@ -198,19 +154,19 @@ public class QuotationPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            QuotationMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            QuotationMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getCustomerName() + "'s quotation", this));
+        }, obj.getItem().getCustomerName() + "'s quotation", this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    QuotationMasterViewModel.getQuotationMaster(obj.getData().getId(), () -> AppManager.getNavigation().navigate(QuotationMasterForm.class), this::errorMessage);
+                    QuotationMasterViewModel.getQuotationMaster(obj.getItem().getId(), () -> AppManager.getNavigation().navigate(QuotationMasterForm.class), this::errorMessage);
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getData());
+                    viewShow(obj.getItem());
                     event.consume();
                 });
 
@@ -270,10 +226,6 @@ public class QuotationPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

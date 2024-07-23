@@ -1,22 +1,20 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.BrandViewModel.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -25,9 +23,9 @@ import lombok.extern.java.*;
 
 @Log
 public class BrandForm extends MFXGenericDialog {
-    public MFXTextField name;
-    public TextArea description;
-    public MFXButton saveBtn,
+    public LabeledTextField name;
+    public LabeledTextArea description;
+    public Button saveBtn,
             cancelBtn;
     public Label nameValidationLabel;
     private List<Constraint> nameConstraints;
@@ -57,9 +55,8 @@ public class BrandForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Name");
+        name = new LabeledTextField();
+        name.setLabel("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BrandViewModel.nameProperty());
         // Validation.
@@ -73,8 +70,8 @@ public class BrandForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
-        description.setPromptText("Description");
+        description = new LabeledTextArea();
+        description.setLabel("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
         var vbox = new VBox();
@@ -92,15 +89,15 @@ public class BrandForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 

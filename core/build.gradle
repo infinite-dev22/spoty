@@ -5,6 +5,7 @@ plugins {
     id "org.openjfx.javafxplugin" version "$jfx_plugin"
     id "org.beryx.jlink" version "$jlink_plugin"
     id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
+//    maven { url "https://jitpack.io" }
     id "io.freefair.lombok" version "$lombok_plugin"
     id "com.github.mrcjkb.module-finder" version "$module_finder_plugin"
 }
@@ -20,10 +21,10 @@ repositories {
     mavenLocal()
     mavenCentral()
     gradlePluginPortal()
-    maven { url "https://jitpack.io" }
     maven {
         url "https://sandec.jfrog.io/artifactory/repo"
     }
+    maven { url 'https://jitpack.io' }
 }
 
 //graalvmNative {
@@ -203,6 +204,7 @@ jlink {
 }
 
 dependencies {
+    implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.9.1'
     implementation project(":network_bridge")
     implementation project(":utils")
     implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"

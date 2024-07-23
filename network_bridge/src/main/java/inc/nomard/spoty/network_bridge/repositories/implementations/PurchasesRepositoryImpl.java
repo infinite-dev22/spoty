@@ -8,10 +8,14 @@ import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
 import inc.nomard.spoty.utils.adapters.*;
 import java.net.*;
 import java.net.http.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import lombok.extern.java.*;
 
+import javafx.util.Duration;
 @Log
 public class PurchasesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     private static final Gson gson = new GsonBuilder()

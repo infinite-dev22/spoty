@@ -11,6 +11,7 @@ import java.util.*;
 import javafx.beans.property.*;
 import javafx.scene.control.*;
 import lombok.extern.java.*;
+import org.kordamp.ikonli.fontawesome5.*;
 
 @Log
 public class Navigation {
@@ -33,7 +34,6 @@ public class Navigation {
         map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", PointOfSalePage.class));
         map.put("ORDERS", NavTree.NavTreeItem.page("Orders", OrderPage.class));
         map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", SaleReturnPage.class));
-        map.put("SALE_TERMS", NavTree.NavTreeItem.page("Sale Terms", SaleTermPage.class));       // Inventory
         map.put("CATEGORY", NavTree.NavTreeItem.page("Category", ProductCategoryPage.class));
         map.put("BRAND", NavTree.NavTreeItem.page("Brand", BrandPage.class));
         map.put("UNIT", NavTree.NavTreeItem.page("Unit", UnitOfMeasurePage.class));
@@ -98,20 +98,19 @@ public class Navigation {
 
     private NavTree.NavTreeItem createTree() {
         var dashboard =
-                NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", DashboardPage.class);
+                NavTree.NavTreeItem.mainPage("Dashboard", FontAwesomeSolid.CHART_BAR, DashboardPage.class);
 
         NavTree.NavTreeItem sale;
         if (flavor == AppFlavor.TRACTION) {
-            sale = NavTree.NavTreeItem.group("Sale", "fas-scale-balanced");
+            sale = NavTree.NavTreeItem.group("Sale", FontAwesomeSolid.BALANCE_SCALE);
             sale
                     .getChildren()
                     .setAll(
                             NAV_TREE.get("POINT_OF_SALE"),
                             NAV_TREE.get("ORDERS"),
-                            NAV_TREE.get("SALE_RETURN"),
-                            NAV_TREE.get("SALE_TERMS"));
+                            NAV_TREE.get("SALE_RETURN"));
         } else {
-            sale = NavTree.NavTreeItem.group("Sale", "fas-scale-balanced");
+            sale = NavTree.NavTreeItem.group("Sale", FontAwesomeSolid.BALANCE_SCALE);
             sale
                     .getChildren()
                     .setAll(
@@ -119,7 +118,7 @@ public class Navigation {
                             NAV_TREE.get("ORDERS"));
         }
 
-        var people = NavTree.NavTreeItem.group("People", "fas-users");
+        var people = NavTree.NavTreeItem.group("People", FontAwesomeSolid.USERS);
         people
                 .getChildren()
                 .setAll(
@@ -138,7 +137,7 @@ public class Navigation {
             purchase = NavTree.NavTreeItem.page("Purchases", PurchasePage.class);
         }
 
-        var inventory = NavTree.NavTreeItem.group("Inventory", "fas-cubes");
+        var inventory = NavTree.NavTreeItem.group("Inventory", FontAwesomeSolid.CUBES);
         if (flavor == AppFlavor.TRACTION) {
             inventory
                     .getChildren()
@@ -188,7 +187,7 @@ public class Navigation {
                         NAV_TREE.get("BENEFICIARY_TYPE"),
                         NAV_TREE.get("BENEFICIARY_BADGE"));
 
-        var humanResource = NavTree.NavTreeItem.group("Human Resource", "fas-user-tie");
+        var humanResource = NavTree.NavTreeItem.group("Human Resource", FontAwesomeSolid.USER_TIE);
         if (flavor == AppFlavor.TRACTION) {
             humanResource
                     .getChildren()
@@ -204,20 +203,20 @@ public class Navigation {
                             NAV_TREE.get("EMPLOYEES"));
         }
 
-        var accounts = NavTree.NavTreeItem.group("Accounting", "fas-coins");
+        var accounts = NavTree.NavTreeItem.group("Accounting", FontAwesomeSolid.COINS);
         accounts.getChildren().setAll(
                 NAV_TREE.get("ACCOUNTS"),
                 NAV_TREE.get("EXPENSE"),
                 NAV_TREE.get("TRANSACTIONS"));
 
-        var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", QuotationPage.class);
+        var quotation = NavTree.NavTreeItem.mainPage("Quotations", FontAwesomeSolid.RECEIPT, QuotationPage.class);
 
-        var deductions = NavTree.NavTreeItem.group("Deductions", "fas-coins");
+        var deductions = NavTree.NavTreeItem.group("Deductions", FontAwesomeSolid.MONEY_BILL);
         deductions.getChildren().setAll(
                 NAV_TREE.get("TAXES"),
                 NAV_TREE.get("DISCOUNTS"));
 
-        var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");
+        var settings = NavTree.NavTreeItem.group("Settings", FontAwesomeSolid.COGS);
 
         if (flavor == AppFlavor.TRACTION) {
             settings

@@ -11,7 +11,7 @@ import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
-import java.text.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -28,7 +28,7 @@ public class ExpensesViewModel {
             .create();
     private static final ListProperty<Expense> expenses = new SimpleListProperty<>(expensesList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalDate> date = new SimpleObjectProperty("");
     private static final StringProperty reference = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty amount = new SimpleStringProperty("");
@@ -48,20 +48,15 @@ public class ExpensesViewModel {
         return id;
     }
 
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, ExpensesViewModel.class);
-        }
-        return null;
+    public static LocalDate getDate() {
+        return date.get();
     }
 
-    public static void setDate(String date) {
+    public static void setDate(LocalDate date) {
         ExpensesViewModel.date.set(date);
     }
 
-    public static StringProperty dateProperty() {
+    public static ObjectProperty<LocalDate> dateProperty() {
         return date;
     }
 
@@ -139,7 +134,7 @@ public class ExpensesViewModel {
 
     public static void resetProperties() {
         setId(0);
-        setDate("");
+        setDate(null);
         setReference("");
         setName("");
         setAmount(0);
@@ -260,7 +255,7 @@ public class ExpensesViewModel {
                 Platform.runLater(() -> {
                     var expense = gson.fromJson(response.body(), Expense.class);
                     setId(expense.getId());
-                    setDate(expense.getLocaleDate());
+                    setDate(expense.getDate());
                     setName(expense.getName());
                     setAccount(expense.getAccount());
                     setAmount(expense.getAmount());

@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.values.*;
@@ -7,23 +8,18 @@ import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.util.*;
-import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -33,10 +29,10 @@ import lombok.extern.java.*;
 
 @Log
 public class AdjustmentDetailForm extends MFXGenericDialog {
-    public MFXTextField quantity;
-    public MFXFilterComboBox<Product> product;
-    public MFXButton saveBtn, cancelBtn;
-    public MFXComboBox<String> type;
+    public LabeledTextField quantity;
+    public LabeledComboBox<Product> product;
+    public Button saveBtn, cancelBtn;
+    public LabeledComboBox<String> type;
     public Label productValidationLabel, quantityValidationLabel, typeValidationLabel;
 
     public AdjustmentDetailForm() {
@@ -63,9 +59,8 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        product = new MFXFilterComboBox<>();
-        product.setFloatMode(FloatMode.BORDER);
-        product.setFloatingText("Product");
+        product = new LabeledComboBox<>();
+        product.setLabel("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
         setupProductComboBox();
@@ -80,9 +75,8 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new MFXTextField();
-        quantity.setFloatMode(FloatMode.BORDER);
-        quantity.setFloatingText("Quantity");
+        quantity = new LabeledTextField();
+        quantity.setLabel("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
         // Validation.
@@ -96,9 +90,8 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
 
     private VBox buildAdjustmentType() {
         // Input.
-        type = new MFXComboBox<>();
-        type.setFloatMode(FloatMode.BORDER);
-        type.setFloatingText("Adjustment Type");
+        type = new LabeledComboBox<>();
+        type.setLabel("Adjustment Type");
         type.setPrefWidth(400d);
         type.valueProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
         setupTypeComboBox();
@@ -117,15 +110,15 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -149,12 +142,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         StringConverter<Product> productConverter = FunctionalStringConverter.to(
                 productDetail -> (productDetail == null) ? "" : productDetail.getName() + " - (" + productDetail.getQuantity() + " Pcs)");
 
-        Function<String, Predicate<Product>> productFilterFunction = searchStr ->
-                productDetail -> StringUtils.containsIgnoreCase(
-                        productConverter.toString(productDetail), searchStr);
-
         product.setConverter(productConverter);
-        product.setFilterFunction(productFilterFunction);
 
         ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c ->
                 product.setItems(ProductViewModel.getProducts())
@@ -178,7 +166,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         Constraint productConstraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage("Product is required")
-                .setCondition(product.textProperty().length().greaterThan(0))
+                .setCondition(product.valueProperty().isNotNull())
                 .get();
         product.getValidator().constraint(productConstraint);
 
@@ -197,7 +185,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         Constraint typeConstraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage("Adjustment Type is required")
-                .setCondition(type.textProperty().length().greaterThan(0))
+                .setCondition(type.valueProperty().isNotNull())
                 .get();
         type.getValidator().constraint(typeConstraint);
 
@@ -239,8 +227,6 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
     private void resetForm(ActionEvent event) {
         closeDialog(event);
         AdjustmentDetailViewModel.resetProperties();
-        product.clearSelection();
-        type.clearSelection();
         hideValidationLabels();
     }
 
@@ -294,8 +280,6 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         }
         displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
 
-        product.clearSelection();
-        type.clearSelection();
         AdjustmentDetailViewModel.resetProperties();
         closeDialog(event);
     }

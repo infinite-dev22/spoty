@@ -1,22 +1,17 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.util.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.*;
@@ -29,10 +24,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class StockInMasterForm extends OutlineFormPage {
-    public MFXTableView<StockInDetail> table;
-    public MFXTextField note;
+    public TableView<StockInDetail> table;
+    public LabeledTextField note;
     public Label title;
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn,
             addBtn;
 
@@ -61,17 +56,17 @@ public class StockInMasterForm extends OutlineFormPage {
         return separator;
     }
 
-    private MFXButton buildAddButton() {
-        addBtn = new MFXButton("Add");
-        addBtn.getStyleClass().add("filled");
+    private Button buildAddButton() {
+        addBtn = new Button("Add");
+        addBtn.setDefaultButton(true);
         addBtn.setOnAction(event -> SpotyDialog.createDialog(new StockInDetailForm(), this).showAndWait());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
     }
 
-    private MFXTableView<StockInDetail> buildTable() {
-        table = new MFXTableView<>();
+    private TableView<StockInDetail> buildTable() {
+        table = new TableView<>();
         HBox.setHgrow(table, Priority.ALWAYS);
         setupTable();
         return table;
@@ -96,17 +91,16 @@ public class StockInMasterForm extends OutlineFormPage {
     }
 
     private VBox buildNote() {
-        note = new MFXTextField();
-        note.setFloatMode(FloatMode.BORDER);
-        note.setFloatingText("Note");
+        note = new LabeledTextField();
+        note.setLabel("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
         return buildFieldHolder(note);
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
             if (!table.isDisabled() && StockInDetailViewModel.getStockInDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
@@ -123,9 +117,9 @@ public class StockInMasterForm extends OutlineFormPage {
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
             AppManager.getNavigation().navigate(StockInPage.class);
             StockInMasterViewModel.resetProperties();
@@ -145,57 +139,28 @@ public class StockInMasterForm extends OutlineFormPage {
     }
 
     private void setupTable() {
-        MFXTableColumn<StockInDetail> productName =
-                new MFXTableColumn<>("Product", false, Comparator.comparing(StockInDetail::getProductName));
-        MFXTableColumn<StockInDetail> productQuantity =
-                new MFXTableColumn<>("Quantity", false, Comparator.comparing(StockInDetail::getQuantity));
-        MFXTableColumn<StockInDetail> productDescription =
-                new MFXTableColumn<>(
-                        "Description", false, Comparator.comparing(StockInDetail::getDescription));
-
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getProductName));
-        productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getQuantity));
-        productDescription.setRowCellFactory(
-                product -> new MFXTableRowCell<>(StockInDetail::getDescription));
+        TableColumn<StockInDetail, String> productName = new TableColumn<>("Product");
+        TableColumn<StockInDetail, String> productQuantity = new TableColumn<>("Quantity");
+        TableColumn<StockInDetail, String> productDescription = new TableColumn<>("Description");
 
         productName.prefWidthProperty().bind(table.widthProperty().multiply(.5));
         productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.5));
         productDescription.prefWidthProperty().bind(table.widthProperty().multiply(.5));
 
-        table.getTableColumns().addAll(productName, productQuantity, productDescription);
-
-        table
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", StockInDetail::getProductName),
-                        new IntegerFilter<>("Quantity", StockInDetail::getQuantity),
-                        new StringFilter<>("Description", StockInDetail::getDescription));
-
         getStockInDetailTable();
 
-        if (StockInDetailViewModel.getStockInDetails().isEmpty()) {
-            StockInDetailViewModel.getStockInDetails()
-                    .addListener(
-                            (ListChangeListener<StockInDetail>)
-                                    change -> table.setItems(StockInDetailViewModel.getStockInDetails()));
-        } else {
-            table
-                    .itemsProperty()
-                    .bindBidirectional(StockInDetailViewModel.stockInDetailsProperty());
-        }
+        table.setItems(StockInDetailViewModel.getStockInDetails());
     }
 
     private void getStockInDetailTable() {
         table.setPrefSize(10000d, 10000d);
-        table.features().enableBounceEffect();
-        table.features().enableSmoothScrolling(0.5);
 
-        table.setTableRowFactory(
+        table.setRowFactory(
                 stockInDetail -> {
-                    MFXTableRow<StockInDetail> row = new MFXTableRow<>(table, stockInDetail);
+                    TableRow<StockInDetail> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<StockInDetail>) event.getSource())
+                                showContextMenu((TableRow<StockInDetail>) event.getSource())
                                         .show(
                                                 table.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -207,25 +172,25 @@ public class StockInMasterForm extends OutlineFormPage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<StockInDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(table);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<StockInDetail> obj) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem delete = new MenuItem("Delete");
+        MenuItem edit = new MenuItem("Edit");
 
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             StockInDetailViewModel.removeStockInDetail(
-                    obj.getData().getId(),
-                    StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+                    obj.getItem().getId(),
+                    StockInDetailViewModel.stockInDetailsList.indexOf(obj.getItem()));
             event.consume();
-        }, obj.getData().getProductName(), this));
+        }, obj.getItem().getProductName(), this));
 
         // Edit
         edit.setOnAction(
                 event -> {
                     try {
-                        StockInDetailViewModel.getStockInDetail(obj.getData());
+                        StockInDetailViewModel.getStockInDetail(obj.getItem());
                         SpotyDialog.createDialog(new StockInDetailForm(), this).showAndWait();
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
@@ -233,7 +198,7 @@ public class StockInMasterForm extends OutlineFormPage {
                     event.consume();
                 });
 
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
 
         return contextMenu;
     }

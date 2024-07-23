@@ -1,21 +1,21 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.beans.binding.*;
@@ -32,17 +32,17 @@ import lombok.extern.java.*;
 @Log
 public class QuotationDetailForm extends MFXGenericDialog {
     @FXML
-    public MFXTextField quantity;
+    public LabeledTextField quantity;
     @FXML
-    public MFXFilterComboBox<Product> product;
+    public LabeledComboBox<Product> product;
     @FXML
-    public MFXButton saveBtn, cancelBtn;
+    public Button saveBtn, cancelBtn;
     @FXML
     public Label productValidationLabel, quantityValidationLabel;
     @FXML
-    public MFXComboBox<Discount> discount;
+    public LabeledComboBox<Discount> discount;
     @FXML
-    public MFXComboBox<Tax> tax;
+    public LabeledComboBox<Tax> tax;
 
     public QuotationDetailForm() {
         init();
@@ -69,9 +69,8 @@ public class QuotationDetailForm extends MFXGenericDialog {
 
     private VBox buildProduct() {
         // Input.
-        product = new MFXFilterComboBox<>();
-        product.setFloatMode(FloatMode.BORDER);
-        product.setFloatingText("Product");
+        product = new LabeledComboBox<>();
+        product.setLabel("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         // Validation.
@@ -85,9 +84,8 @@ public class QuotationDetailForm extends MFXGenericDialog {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new MFXTextField();
-        quantity.setFloatMode(FloatMode.BORDER);
-        quantity.setFloatingText("Quantity");
+        quantity = new LabeledTextField();
+        quantity.setLabel("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
         // Validation.
@@ -101,9 +99,8 @@ public class QuotationDetailForm extends MFXGenericDialog {
 
     private VBox buildTax() {
         // Input.
-        tax = new MFXFilterComboBox<>();
-        tax.setFloatMode(FloatMode.BORDER);
-        tax.setFloatingText("Tax");
+        tax = new LabeledComboBox<>();
+        tax.setLabel("Tax");
         tax.setPrefWidth(400d);
         tax.valueProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
         var vbox = new VBox();
@@ -115,9 +112,8 @@ public class QuotationDetailForm extends MFXGenericDialog {
 
     private VBox buildDiscount() {
         // Input.
-        discount = new MFXFilterComboBox<>();
-        discount.setFloatMode(FloatMode.BORDER);
-        discount.setFloatingText("Discount");
+        discount = new LabeledComboBox<>();
+        discount.setLabel("Discount");
         discount.setPrefWidth(400d);
         discount.valueProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
         var vbox = new VBox();
@@ -135,15 +131,15 @@ public class QuotationDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -165,25 +161,24 @@ public class QuotationDetailForm extends MFXGenericDialog {
 
     private void setupComboBoxes() {
         product.setConverter(createStringConverter(Product::getName));
-        product.setFilterFunction(createFilterFunction(Product::getName));
-        product.selectedItemProperty().addListener((obs, o, n) -> {
-            if (Objects.nonNull(n) && !Objects.equals(n, o)) {
-                var salePrice = n.getSalePrice();
-                if (Objects.nonNull(n.getTax())) {
-                    QuotationDetailViewModel.setTax(n.getTax());
-                    salePrice += salePrice * (n.getTax().getPercentage() / 100);
-                } else {
-                    QuotationDetailViewModel.setTax(null);
-                }
-                if (Objects.nonNull(n.getDiscount())) {
-                    QuotationDetailViewModel.setDiscount(n.getDiscount());
-                    salePrice += salePrice * (n.getDiscount().getPercentage() / 100);
-                } else {
-                    QuotationDetailViewModel.setDiscount(null);
-                }
-                QuotationDetailViewModel.setSubTotal(salePrice);
-            }
-        });
+//        product.selectedItemProperty().addListener((obs, o, n) -> {
+//            if (Objects.nonNull(n) && !Objects.equals(n, o)) {
+//                var salePrice = n.getSalePrice();
+//                if (Objects.nonNull(n.getTax())) {
+//                    QuotationDetailViewModel.setTax(n.getTax());
+//                    salePrice += salePrice * (n.getTax().getPercentage() / 100);
+//                } else {
+//                    QuotationDetailViewModel.setTax(null);
+//                }
+//                if (Objects.nonNull(n.getDiscount())) {
+//                    QuotationDetailViewModel.setDiscount(n.getDiscount());
+//                    salePrice += salePrice * (n.getDiscount().getPercentage() / 100);
+//                } else {
+//                    QuotationDetailViewModel.setDiscount(null);
+//                }
+//                QuotationDetailViewModel.setSubTotal(salePrice);
+//            }
+//        });
         bindComboBoxItems(product, ProductViewModel.getProducts(), ProductViewModel.productsProperty());
 
         discount.setConverter(createStringConverter(d -> d.getName() + "(" + d.getPercentage() + ")"));
@@ -201,7 +196,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         return searchStr -> obj -> StringUtils.containsIgnoreCase(toStringFunction.apply(obj), searchStr);
     }
 
-    private <T> void bindComboBoxItems(MFXComboBox<T> comboBox, ObservableList<T> items, ListProperty<T> itemsProperty) {
+    private <T> void bindComboBoxItems(LabeledComboBox<T> comboBox, ObservableList<T> items, ListProperty<T> itemsProperty) {
         if (items.isEmpty()) {
             items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
         } else {
@@ -210,14 +205,14 @@ public class QuotationDetailForm extends MFXGenericDialog {
     }
 
     private void setupValidators() {
-        createAndAddConstraint(product, "Product is required", product.textProperty().length().greaterThan(0));
+        createAndAddConstraint(product, "Product is required", product.valueProperty().isNotNull());
         createAndAddConstraint(quantity, "Quantity is required", quantity.textProperty().length().greaterThan(0));
 
         product.getValidator().validProperty().addListener((obs, oldVal, newVal) -> updateValidationState(newVal, productValidationLabel, product));
         quantity.getValidator().validProperty().addListener((obs, oldVal, newVal) -> updateValidationState(newVal, quantityValidationLabel, quantity));
     }
 
-    private void createAndAddConstraint(MFXTextField control, String message, BooleanExpression condition) {
+    private void createAndAddConstraint(LabeledTextField control, String message, BooleanExpression condition) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
@@ -226,7 +221,22 @@ public class QuotationDetailForm extends MFXGenericDialog {
         control.getValidator().constraint(constraint);
     }
 
-    private void updateValidationState(boolean isValid, Label validationLabel, MFXTextField control) {
+    private <T> void createAndAddConstraint(LabeledComboBox<T> control, String message, BooleanExpression condition) {
+        Constraint constraint = Constraint.Builder.build()
+                .setSeverity(Severity.ERROR)
+                .setMessage(message)
+                .setCondition(condition)
+                .get();
+        control.getValidator().constraint(constraint);
+    }
+
+    private void updateValidationState(boolean isValid, Label validationLabel, LabeledTextField control) {
+        validationLabel.setManaged(!isValid);
+        validationLabel.setVisible(!isValid);
+        control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !isValid);
+    }
+
+    private <T> void updateValidationState(boolean isValid, Label validationLabel, LabeledComboBox<T> control) {
         validationLabel.setManaged(!isValid);
         validationLabel.setVisible(!isValid);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !isValid);
@@ -240,14 +250,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
     private void resetForm(ActionEvent event) {
         GlobalActions.closeDialog(event);
         QuotationDetailViewModel.resetProperties();
-        clearSelections();
         hideValidationLabels();
-    }
-
-    private void clearSelections() {
-        product.clearSelection();
-        tax.clearSelection();
-        discount.clearSelection();
     }
 
     private void hideValidationLabels() {
@@ -279,7 +282,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         }
     }
 
-    private boolean validateConstraints(List<Constraint> constraints, Label validationLabel, MFXTextField control) {
+    private boolean validateConstraints(List<Constraint> constraints, Label validationLabel, LabeledTextField control) {
         if (!constraints.isEmpty()) {
             validationLabel.setText(constraints.getFirst().getMessage());
             validationLabel.setManaged(true);
@@ -291,7 +294,19 @@ public class QuotationDetailForm extends MFXGenericDialog {
         return true;
     }
 
-    private void resizeDialog(MFXTextField control) {
+    private <T> boolean validateConstraints(List<Constraint> constraints, Label validationLabel, LabeledComboBox<T> control) {
+        if (!constraints.isEmpty()) {
+            validationLabel.setText(constraints.getFirst().getMessage());
+            validationLabel.setManaged(true);
+            validationLabel.setVisible(true);
+            control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+            resizeDialog(control);
+            return false;
+        }
+        return true;
+    }
+
+    private <T> void resizeDialog(Control control) {
         MFXStageDialog dialog = (MFXStageDialog) control.getScene().getWindow();
         dialog.sizeToScene();
     }

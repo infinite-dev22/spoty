@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -11,38 +13,39 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.utils.*;
 import io.github.palexdev.mfxcore.utils.converters.*;
+import java.time.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
 public class UserForm extends ModalPage {
-    private MFXButton saveBtn, cancelBtn;
-    private MFXTextField email, phone, firstname, lastname, username;
-    private MFXFilterComboBox<Role> role;
+    private Button saveBtn, cancelBtn;
+    private LabeledTextField email, phone, firstname, lastname, username;
+    private LabeledComboBox<Role> role;
     private MFXToggleButton status;
     private Label firstNameValidationLabel, emailValidationLabel, phoneValidationLabel,
             lastNameValidationLabel, userNameValidationLabel, roleValidationLabel,
             departmentValidationLabel, designationValidationLabel,
             employmentStatusValidationLabel, workShiftValidationLabel;
-    private MFXDatePicker dateOfBirth;
-    private MFXFilterComboBox<Department> department;
-    private MFXFilterComboBox<Designation> designation;
-    private MFXFilterComboBox<EmploymentStatus> employmentStatus;
-    private MFXComboBox<String> workShift;
+    private LabeledDatePicker dateOfBirth;
+    private LabeledComboBox<Department> department;
+    private LabeledComboBox<Designation> designation;
+    private LabeledComboBox<EmploymentStatus> employmentStatus;
+    private LabeledComboBox<String> workShift;
     private List<Constraint> firstNameConstraints, lastNameConstraints,
             userNameConstraints, userRoleConstraints;
     private ActionEvent actionEvent = null;
@@ -81,11 +84,11 @@ public class UserForm extends ModalPage {
         status = new MFXToggleButton();
         status.setText("Active");
 
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
 
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
     }
 
     private void initializeComponentProperties() {
@@ -117,35 +120,31 @@ public class UserForm extends ModalPage {
         return label;
     }
 
-    private MFXTextField createTextField(String floatingText) {
-        MFXTextField textField = new MFXTextField();
-        textField.setFloatingText(floatingText);
-        textField.setFloatMode(FloatMode.BORDER);
+    private LabeledTextField createTextField(String floatingText) {
+        LabeledTextField textField = new LabeledTextField();
+        textField.setLabel(floatingText);
         textField.setPrefWidth(300);
         return textField;
     }
 
-    private MFXDatePicker createDatePicker() {
-        MFXDatePicker datePicker = new MFXDatePicker();
-        datePicker.setFloatingText("Date of Birth");
-        datePicker.setFloatMode(FloatMode.BORDER);
+    private LabeledDatePicker createDatePicker() {
+        LabeledDatePicker datePicker = new LabeledDatePicker();
+        datePicker.setLabel("Date of Birth");
         datePicker.setPrefWidth(300);
         return datePicker;
     }
 
-    private <T> MFXFilterComboBox<T> createFilterComboBox(String floatingText, ObservableList<T> items) {
-        MFXFilterComboBox<T> comboBox = new MFXFilterComboBox<>();
-        comboBox.setFloatingText(floatingText);
-        comboBox.setFloatMode(FloatMode.BORDER);
+    private <T> LabeledComboBox<T> createFilterComboBox(String floatingText, ObservableList<T> items) {
+        LabeledComboBox<T> comboBox = new LabeledComboBox<>();
+        comboBox.setLabel(floatingText);
         comboBox.setPrefWidth(300);
         comboBox.setItems(items);
         return comboBox;
     }
 
-    private MFXComboBox<String> createComboBox() {
-        MFXComboBox<String> comboBox = new MFXComboBox<>();
-        comboBox.setFloatingText("Work Shift");
-        comboBox.setFloatMode(FloatMode.BORDER);
+    private LabeledComboBox<String> createComboBox() {
+        LabeledComboBox<String> comboBox = new LabeledComboBox<>();
+        comboBox.setLabel("Work Shift");
         comboBox.setPrefWidth(300);
         comboBox.setItems(UserViewModel.getWorkShiftsList());
         return comboBox;
@@ -182,12 +181,12 @@ public class UserForm extends ModalPage {
         addFormRow(gridPane, 5, role, roleValidationLabel, status, null);
     }
 
-    private void addFormRow(GridPane gridPane, int rowIndex, Control leftControl, Label leftLabel, Control rightControl, Label rightLabel) {
+    private void addFormRow(GridPane gridPane, int rowIndex, Node leftControl, Label leftLabel, Node rightControl, Label rightLabel) {
         addControlToGrid(gridPane, 0, rowIndex, leftControl, leftLabel);
         addControlToGrid(gridPane, 1, rowIndex, rightControl, rightLabel);
     }
 
-    private void addControlToGrid(GridPane gridPane, int colIndex, int rowIndex, Control control, Label validationLabel) {
+    private void addControlToGrid(GridPane gridPane, int colIndex, int rowIndex, Node control, Label validationLabel) {
         VBox vbox = new VBox(5, control);
         if (validationLabel != null) {
             vbox.getChildren().add(validationLabel);
@@ -201,7 +200,7 @@ public class UserForm extends ModalPage {
             if (!newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
         });
         phone.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) phone.setLeadingIcon(new Label("+"));
+            if (newValue != oldValue) phone.setLeft(new Label("+"));
         });
     }
 
@@ -220,15 +219,15 @@ public class UserForm extends ModalPage {
         bindDatePicker(dateOfBirth, UserViewModel.dateOfBirthProperty());
     }
 
-    private void bindTextField(MFXTextField textField, Property<String> property) {
+    private void bindTextField(LabeledTextField textField, Property<String> property) {
         textField.textProperty().bindBidirectional(property);
     }
 
-    private <T> void bindFilterComboBox(MFXFilterComboBox<T> comboBox, Property<T> property) {
+    private <T> void bindFilterComboBox(LabeledComboBox<T> comboBox, Property<T> property) {
         comboBox.valueProperty().bindBidirectional(property);
     }
 
-    private <T> void bindComboBox(MFXComboBox<T> comboBox, Property<T> property) {
+    private <T> void bindComboBox(LabeledComboBox<T> comboBox, Property<T> property) {
         comboBox.valueProperty().bindBidirectional(property);
     }
 
@@ -236,8 +235,8 @@ public class UserForm extends ModalPage {
         toggleButton.selectedProperty().bindBidirectional(property);
     }
 
-    private void bindDatePicker(MFXDatePicker datePicker, Property<String> property) {
-        datePicker.textProperty().bindBidirectional(property);
+    private void bindDatePicker(LabeledDatePicker datePicker, Property<LocalDate> property) {
+        datePicker.valueProperty().bindBidirectional(property);
     }
 
     private void setupValidators() {
@@ -247,13 +246,35 @@ public class UserForm extends ModalPage {
         requiredValidator(role, roleValidationLabel, "Role is required");
     }
 
-    private void requiredValidator(MFXTextField control, Label validationLabel, String message) {
+    private void requiredValidator(LabeledTextField control, Label validationLabel, String message) {
         // Name input validation.
         Constraint firstName =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage(message)
                         .setCondition(control.textProperty().length().greaterThan(0))
+                        .get();
+        control.getValidator().constraint(firstName);
+        control
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                validationLabel.setManaged(false);
+                                validationLabel.setVisible(false);
+                                control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+    }
+
+    private <T> void requiredValidator(LabeledComboBox<T> control, Label validationLabel, String message) {
+        // Name input validation.
+        Constraint firstName =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage(message)
+                        .setCondition(control.valueProperty().isNotNull())
                         .get();
         control.getValidator().constraint(firstName);
         control
@@ -335,8 +356,6 @@ public class UserForm extends ModalPage {
         closeDialog(event);
         UserViewModel.resetProperties();
 
-        role.clearSelection();
-
         firstNameValidationLabel.setVisible(false);
         lastNameValidationLabel.setVisible(false);
         userNameValidationLabel.setVisible(false);
@@ -351,8 +370,6 @@ public class UserForm extends ModalPage {
         emailValidationLabel.setManaged(false);
         phoneValidationLabel.setManaged(false);
 
-        role.clearSelection();
-
         firstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         lastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         username.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -362,7 +379,6 @@ public class UserForm extends ModalPage {
     }
 
     private void onSuccess() {
-        role.clearSelection();
         closeDialog(actionEvent);
         UserViewModel.resetProperties();
         UserViewModel.getAllUsers(null, null);
@@ -423,7 +439,6 @@ public class UserForm extends ModalPage {
         // Combo box properties.
         workShift.setItems(UserViewModel.getWorkShiftsList());
         role.setConverter(roleConverter);
-        role.setFilterFunction(roleFilterFunction);
         if (RoleViewModel.getRoles().isEmpty()) {
             RoleViewModel.getRoles()
                     .addListener(
@@ -433,7 +448,6 @@ public class UserForm extends ModalPage {
             role.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
         }
         department.setConverter(departmentConverter);
-        department.setFilterFunction(departmentFilterFunction);
         if (DepartmentViewModel.getDepartments().isEmpty()) {
             DepartmentViewModel.getDepartments()
                     .addListener(
@@ -443,7 +457,6 @@ public class UserForm extends ModalPage {
             department.itemsProperty().bindBidirectional(DepartmentViewModel.departmentsProperty());
         }
         designation.setConverter(designationConverter);
-        designation.setFilterFunction(designationFilterFunction);
         if (DesignationViewModel.getDesignations().isEmpty()) {
             DesignationViewModel.getDesignations()
                     .addListener(
@@ -453,7 +466,6 @@ public class UserForm extends ModalPage {
             designation.itemsProperty().bindBidirectional(DesignationViewModel.designationsProperty());
         }
         employmentStatus.setConverter(employmentStatusConverter);
-        employmentStatus.setFilterFunction(employmentStatusFilterFunction);
         if (EmploymentStatusViewModel.getEmploymentStatuses().isEmpty()) {
             EmploymentStatusViewModel.getEmploymentStatuses()
                     .addListener(

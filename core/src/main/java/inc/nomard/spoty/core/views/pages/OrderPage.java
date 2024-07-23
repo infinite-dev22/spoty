@@ -11,19 +11,15 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -33,10 +29,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class OrderPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<SaleMaster> masterTable;
+    private TextField searchBar;
+    private TableView<SaleMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
     private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
 
@@ -56,7 +52,6 @@ public class OrderPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -78,9 +73,8 @@ public class OrderPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search orders");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -92,8 +86,7 @@ public class OrderPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -103,7 +96,7 @@ public class OrderPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -111,39 +104,19 @@ public class OrderPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<SaleMaster> saleCustomer =
-                new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleMaster::getCustomerName));
-        MFXTableColumn<SaleMaster> saleStatus =
-                new MFXTableColumn<>("Order Status", false, Comparator.comparing(SaleMaster::getSaleStatus));
-        MFXTableColumn<SaleMaster> salePaymentStatus =
-                new MFXTableColumn<>(
-                        "Pay Status", false, Comparator.comparing(SaleMaster::getPaymentStatus));
-        MFXTableColumn<SaleMaster> saleDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(SaleMaster::getCreatedAt));
-        MFXTableColumn<SaleMaster> saleGrandTotal =
-                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(SaleMaster::getTotal));
-        MFXTableColumn<SaleMaster> saleAmountPaid =
-                new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(SaleMaster::getAmountPaid));
-        MFXTableColumn<SaleMaster> saleAmountDue =
-                new MFXTableColumn<>("Amount Due", false, Comparator.comparing(SaleMaster::getAmountDue));
-
-        saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
-        saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getSaleStatus));
-        salePaymentStatus.setRowCellFactory(
-                sale -> new MFXTableRowCell<>(SaleMaster::getPaymentStatus));
-        saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getLocaleDate));
-        saleGrandTotal.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getTotal));
-        saleAmountPaid.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAmountPaid));
-        saleAmountDue.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAmountDue));
+        TableColumn<SaleMaster, String> saleCustomer = new TableColumn<>("Customer");
+        TableColumn<SaleMaster, String> saleStatus = new TableColumn<>("Order Status");
+        TableColumn<SaleMaster, String> salePaymentStatus = new TableColumn<>("Pay Status");
+        TableColumn<SaleMaster, String> saleDate = new TableColumn<>("Date");
+        TableColumn<SaleMaster, String> saleGrandTotal = new TableColumn<>("Total Amount");
+        TableColumn<SaleMaster, String> saleAmountPaid = new TableColumn<>("Paid Amount");
+        TableColumn<SaleMaster, String> saleAmountDue = new TableColumn<>("Amount Due");
 
         saleCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         saleStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
@@ -153,49 +126,29 @@ public class OrderPage extends OutlinePage {
         saleAmountPaid.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         saleAmountDue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
-        masterTable
-                .getTableColumns()
-                .addAll(
-                        saleCustomer,
-                        saleStatus,
-                        salePaymentStatus,
-                        saleDate,
-                        saleGrandTotal,
-                        saleAmountPaid,
-                        saleAmountDue);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Ref No.", SaleMaster::getRef),
-                        new StringFilter<>("Customer", SaleMaster::getCustomerName),
-                        new StringFilter<>("Order Status", SaleMaster::getSaleStatus),
-                        new StringFilter<>("Payment Status", SaleMaster::getPaymentStatus),
-                        new DoubleFilter<>("Grand Total", SaleMaster::getTotal),
-                        new DoubleFilter<>("Amount Paid", SaleMaster::getAmountPaid),
-                        new DoubleFilter<>("Amount Due", SaleMaster::getAmountDue));
+        var columnList = new LinkedList<>(Stream.of(saleCustomer,
+                saleStatus,
+                salePaymentStatus,
+                saleDate,
+                saleGrandTotal,
+                saleAmountPaid,
+                saleAmountDue).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         styleSaleMasterTable();
 
-        if (SaleMasterViewModel.getSales().isEmpty()) {
-            SaleMasterViewModel.getSales()
-                    .addListener(
-                            (ListChangeListener<SaleMaster>)
-                                    c -> masterTable.setItems(SaleMasterViewModel.getSales()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(SaleMasterViewModel.salesProperty());
-        }
+        masterTable.setItems(SaleMasterViewModel.getSales());
     }
 
     private void styleSaleMasterTable() {
         masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<SaleMaster> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<SaleMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<SaleMaster>) event.getSource())
+                                showContextMenu((TableRow<SaleMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -207,7 +160,7 @@ public class OrderPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<SaleMaster> obj) {
+    private MFXContextMenu showContextMenu(TableRow<SaleMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem view = new MFXContextMenuItem("View");
@@ -215,13 +168,13 @@ public class OrderPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            SaleMasterViewModel.deleteSaleMaster(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            SaleMasterViewModel.deleteSaleMaster(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getCustomerName() + "'s order", this));
+        }, obj.getItem().getCustomerName() + "'s order", this));
         // View
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getData());
+                    viewShow(obj.getItem());
                     event.consume();
                 });
 
@@ -285,10 +238,6 @@ public class OrderPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

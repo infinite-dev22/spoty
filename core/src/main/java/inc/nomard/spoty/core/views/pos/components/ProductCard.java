@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pos.components;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.mfxcore.controls.*;
@@ -80,7 +81,7 @@ public class ProductCard extends VBox {
 
         productNameLbl.getStyleClass().add("pos-product-card-name");
         productPriceLbl.getStyleClass().add("pos-product-card-price");
-        productQuantityLbl.getStyleClass().add("pos-product-card-quantity");
+        productQuantityLbl.getStyleClass().add(Styles.TEXT_MUTED);
 
         setAlignment(Pos.CENTER);
         setSpacing(SPACING);
@@ -181,7 +182,7 @@ public class ProductCard extends VBox {
 //import inc.nomard.spoty.core.values.*;
 //import inc.nomard.spoty.network_bridge.dtos.*;
 //import io.github.palexdev.mfxcore.controls.*;
-//import java.util.*;
+//
 //import javafx.application.*;
 //import javafx.concurrent.*;
 //import javafx.geometry.*;
@@ -193,6 +194,7 @@ public class ProductCard extends VBox {
 //import lombok.*;
 //import lombok.extern.java.*;
 //
+//import javafx.util.Duration;
 //@Log
 //public class ProductCard extends VBox {
 //    private static final double IMAGE_SIZE = 160;

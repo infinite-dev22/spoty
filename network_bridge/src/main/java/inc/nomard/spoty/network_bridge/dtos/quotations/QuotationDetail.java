@@ -9,7 +9,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class QuotationDetail {
     private Long id;

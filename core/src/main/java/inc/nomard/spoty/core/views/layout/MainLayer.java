@@ -1,19 +1,21 @@
 package inc.nomard.spoty.core.views.layout;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.views.layout.navigation.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.auth.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import javafx.animation.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.*;
 import javafx.util.*;
+import org.kordamp.ikonli.fontawesome5.*;
+import org.kordamp.ikonli.javafx.*;
 
 public class MainLayer extends BorderPane {
     static final int PAGE_TRANSITION_DURATION = 500;
@@ -33,33 +35,20 @@ public class MainLayer extends BorderPane {
 
     private AnchorPane buildCenter() {
         var pane = new AnchorPane();
-        pane.getStyleClass().add("card");
-        BorderPane.setMargin(pane, new Insets(5d, 5d, 5d, 10d));
+        BorderPane.setMargin(pane, new Insets(0d, 0d, 0d, 5d));
         pane.getChildren().addAll(windowHeader, subLayerPane);
         return pane;
     }
 
     private void initAppBar() {
-        var notificationIcon = new MFXFontIcon();
-        var feedbackIcon = new MFXFontIcon();
-        var helpIcon = new MFXFontIcon();
+        var notificationsBtn = new Button(null, new FontIcon(FontAwesomeRegular.BELL));
+        var feedbackBtn = new Button(null, new FontIcon(FontAwesomeRegular.COMMENT));
+        var helpBtn = new Button(null, new FontIcon(FontAwesomeRegular.QUESTION_CIRCLE));
 
-        notificationIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-        feedbackIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-        helpIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
+        notificationsBtn.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT);
+        feedbackBtn.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT);
+        helpBtn.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT);
 
-        notificationIcon.setDescription("far-bell");
-        feedbackIcon.setDescription("far-comment");
-        helpIcon.setDescription("far-circle-question");
-
-        MFXButton notificationsBtn = new MFXButton();
-        MFXButton feedbackBtn = new MFXButton("Feedback");
-        MFXButton helpBtn = new MFXButton("Help");
-
-        notificationsBtn.setText("");
-        notificationsBtn.setGraphic(notificationIcon);
-        feedbackBtn.setGraphic(feedbackIcon);
-        helpBtn.setGraphic(helpIcon);
         notificationsBtn.setTooltip(new Tooltip("Notification"));
         feedbackBtn.setTooltip(new Tooltip("Feedback"));
         helpBtn.setTooltip(new Tooltip("Help"));
@@ -105,7 +94,7 @@ public class MainLayer extends BorderPane {
     }
 
     private void createView() {
-        NodeUtils.setAnchors(this, new Insets(2d));
+        NodeUtils.setAnchors(this, new Insets(0d));
         this.setLeft(sidebar);
         this.setCenter(buildCenter());
         initAppBar();

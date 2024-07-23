@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pos;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
@@ -7,25 +8,18 @@ import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.pos.components.*;
-import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.legacy.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
@@ -38,44 +32,28 @@ import lombok.extern.java.*;
 @Log
 public class PointOfSalePage extends OutlinePage {
     private final ToggleGroup toggleGroup = new ToggleGroup();
-    @FXML
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
-    @FXML
-    private MFXFilterComboBox<Customer> customer;
-    @FXML
-    private MFXLegacyTableView<SaleDetail> cart;
-    @FXML
-    private MFXTextField searchBar;
-    @FXML
-    private MFXComboBox<Discount> discount;
-    @FXML
-    private MFXButton checkOutBtn, emptyCartBtn;
-    @FXML
+    private ComboBox<Customer> customer;
+    private TableView<SaleDetail> cart;
+    private TextField searchBar;
+    private ComboBox<Discount> discount;
+    private Button checkOutBtn, emptyCartBtn;
     private HBox filterPane;
-    @FXML
-    private MFXScrollPane productScrollPane;
+    private ScrollPane productScrollPane;
     // @FXML
     // private BootstrapPane productHolder;
-    @FXML
     private TableColumn<SaleDetail, SaleDetail> cartName;
-    @FXML
     private TableColumn<SaleDetail, Long> cartQuantity;
-    @FXML
     private TableColumn<SaleDetail, SaleDetail> productTax;
-    @FXML
     private TableColumn<SaleDetail, Double> cartSubTotal;
-    @FXML
     private TableColumn<SaleDetail, SaleDetail> cartActions;
-    @FXML
-    private MFXComboBox<Tax> tax;
-    @FXML
+    private ComboBox<Tax> tax;
     private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
 
     public PointOfSalePage() {
         addNode(init());
         configureProductScrollPane();
-        setIcons();
         setSearchBar();
         setPOSComboBoxes();
         initializeCategoryFilters();
@@ -95,7 +73,6 @@ public class PointOfSalePage extends OutlinePage {
     // Header UI.
     private HBox buildLeftHeaderPane() {
         progress = new MFXProgressSpinner();
-        progress = new MFXProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -110,9 +87,8 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private HBox buildCenterHeaderPane() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search products");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -136,7 +112,7 @@ public class PointOfSalePage extends OutlinePage {
     private HBox buildHeaderUI() {
         var hbox = new HBox();
         hbox.setSpacing(10d);
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftHeaderPane(),
                 buildCenterHeaderPane(),
@@ -145,12 +121,12 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     // Filter UI.
-    private MFXScrollPane buildFilterUI() {
+    private ScrollPane buildFilterUI() {
         filterPane = new HBox();
         filterPane.setAlignment(Pos.CENTER_LEFT);
         filterPane.setSpacing(10d);
         filterPane.setPadding(new Insets(5d));
-        var scroll = new MFXScrollPane(filterPane);
+        var scroll = new ScrollPane(filterPane);
         scroll.maxHeight(100d);
         scroll.minHeight(60d);
         scroll.prefHeight(80d);
@@ -161,8 +137,8 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     // Product Card Holder UI.
-    private MFXScrollPane buildProductCardHolderUI() {
-        productScrollPane = new MFXScrollPane();
+    private ScrollPane buildProductCardHolderUI() {
+        productScrollPane = new ScrollPane();
         productScrollPane.setFitToHeight(true);
         productScrollPane.setFitToWidth(true);
         productScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -192,13 +168,10 @@ public class PointOfSalePage extends OutlinePage {
 
     // Customer UI.
     private VBox buildCustomerUI() {
-        customer = new MFXFilterComboBox<>();
-        customer.setAllowEdit(true);
-        customer.setFloatMode(FloatMode.BORDER);
-        customer.setFloatingText("Customer");
-        customer.setPrefColumnCount(0);
+        customer = new ComboBox<>();
+        customer.setEditable(true);
+        customer.setPromptText("Customer");
         customer.setPrefWidth(1000d);
-        customer.setSelectable(true);
         HBox.setHgrow(customer, Priority.ALWAYS);
         var vbox = new VBox(customer);
         vbox.setPrefWidth(538d);
@@ -207,7 +180,7 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     // Cart UI.
-    private MFXLegacyTableView<SaleDetail> buildCartTable() {
+    private TableView<SaleDetail> buildCartTable() {
         // Table columns.
         cartName = new TableColumn<>("Name");
         cartName.setEditable(false);
@@ -240,18 +213,18 @@ public class PointOfSalePage extends OutlinePage {
                 cartSubTotal,
                 cartActions).toList());
         // Table.
-        cart = new MFXLegacyTableView<>();
+        cart = new TableView<>();
         NodeUtils.setAnchors(cart, new Insets(0d));
-        cart.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        cart.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         cart.getColumns().addAll(columnList);
         return cart;
     }
 
-    private MFXScrollPane buildCartScroll() {
+    private ScrollPane buildCartScroll() {
         var cartItemHolder = new VBox();
         cartItemHolder.setPrefHeight(200d);
         cartItemHolder.setPrefWidth(100d);
-        var scrollPane = new MFXScrollPane(cartItemHolder);
+        var scrollPane = new ScrollPane(cartItemHolder);
         scrollPane.setManaged(false);
         scrollPane.setVisible(false);
         NodeUtils.setAnchors(scrollPane, new Insets(0d));
@@ -267,20 +240,12 @@ public class PointOfSalePage extends OutlinePage {
 
     // Deductions UI.
     private HBox buildDeductions() {
-        discount = new MFXComboBox<>();
-        discount.setAllowEdit(false);
-        discount.setFloatMode(FloatMode.BORDER);
-        discount.setFloatingText("Discount(%)");
-        discount.setPrefColumnCount(0);
+        discount = new ComboBox<>();
+        discount.setPromptText("Discount(%)");
         discount.setPrefWidth(500d);
-        discount.setSelectable(true);
-        tax = new MFXComboBox<>();
-        tax.setAllowEdit(false);
-        tax.setFloatMode(FloatMode.BORDER);
-        tax.setFloatingText("Tax(%)");
-        tax.setPrefColumnCount(0);
+        tax = new ComboBox<>();
+        tax.setPromptText("Tax(%)");
         tax.setPrefWidth(500d);
-        tax.setSelectable(true);
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER);
         hbox.setSpacing(10d);
@@ -290,15 +255,15 @@ public class PointOfSalePage extends OutlinePage {
 
     // Cart Buttons UI.
     private HBox buildButtons() {
-        checkOutBtn = new MFXButton("CheckOut $0.00");
+        checkOutBtn = new Button("CheckOut $0.00");
         checkOutBtn.setOnAction(event -> savePOSSale());
         checkOutBtn.setPrefWidth(650d);
-        checkOutBtn.getStyleClass().add("check-out-button");
+        checkOutBtn.getStyleClass().add(Styles.SUCCESS);
         checkOutBtn.setDisable(true);
-        emptyCartBtn = new MFXButton("Empty Cart");
+        emptyCartBtn = new Button("Empty Cart");
         emptyCartBtn.setOnAction(event -> clearCart());
         emptyCartBtn.setPrefWidth(400d);
-        emptyCartBtn.getStyleClass().add("empty-cart-button");
+        emptyCartBtn.getStyleClass().add(Styles.DANGER);
         emptyCartBtn.setDisable(true);
         var region = new Region();
         HBox.setHgrow(region, Priority.ALWAYS);
@@ -351,17 +316,14 @@ public class PointOfSalePage extends OutlinePage {
         setupComboBox(tax, TaxViewModel.getTaxes(), SaleMasterViewModel.netTaxProperty(), tax -> (tax == null) ? "" : tax.getName() + " (" + tax.getPercentage() + "%)");
     }
 
-    private <T> void setupFilterComboBox(MFXFilterComboBox<T> comboBox, ObservableList<T> items,
+    private <T> void setupFilterComboBox(ComboBox<T> comboBox, ObservableList<T> items,
                                          Property<T> property, Function<T, String> converter) {
         if (property != null) {
             comboBox.valueProperty().bindBidirectional(property);
         }
         if (converter != null) {
             StringConverter<T> itemConverter = FunctionalStringConverter.to(converter);
-            Function<String, Predicate<T>> filterFunction = searchStr -> item ->
-                    StringUtils.containsIgnoreCase(itemConverter.toString(item), searchStr);
             comboBox.setConverter(itemConverter);
-            comboBox.setFilterFunction(filterFunction);
         }
         if (items.isEmpty()) {
             items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
@@ -370,7 +332,7 @@ public class PointOfSalePage extends OutlinePage {
         }
     }
 
-    private <T> void setupComboBox(MFXComboBox<T> comboBox, ObservableList<T> items,
+    private <T> void setupComboBox(ComboBox<T> comboBox, ObservableList<T> items,
                                    Property<T> property, Function<T, String> converter) {
         if (property != null) {
             comboBox.valueProperty().bindBidirectional(property);
@@ -545,7 +507,7 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private ToggleButton createToggle(String text, ToggleGroup toggleGroup) {
-        MFXRectangleToggleNode toggleNode = new MFXRectangleToggleNode(text);
+        ToggleButton toggleNode = new ToggleButton(text);
         toggleNode.setAlignment(Pos.CENTER_LEFT);
         toggleNode.setMaxWidth(Double.MAX_VALUE);
         toggleNode.setToggleGroup(toggleGroup);
@@ -708,10 +670,6 @@ public class PointOfSalePage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

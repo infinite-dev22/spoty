@@ -18,6 +18,7 @@ module spoty.core {
     requires spoty.utils;
     requires com.calendarfx.view;
     requires com.dlsc.gemsfx;
+    requires com.jthemedetector;
 
     opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;
@@ -29,7 +30,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.layout.navigation;
     opens inc.nomard.spoty.core.views.layout.message;
     opens inc.nomard.spoty.core.components.animations;
-    opens inc.nomard.spoty.core.components;
     opens inc.nomard.spoty.core;
     opens inc.nomard.spoty.core.views.layout.message.enums;
     opens inc.nomard.spoty.core.components.title;
@@ -40,4 +40,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.util;
     opens inc.nomard.spoty.core.views.layout;
     opens inc.nomard.spoty.core.views.layout.navigation.event;
+    opens inc.nomard.spoty.core.views.components.label_components.skins;
+    opens inc.nomard.spoty.core.views.components.label_components.controls;
 }

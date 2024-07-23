@@ -8,6 +8,7 @@ import lombok.extern.java.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.util.Duration;
 @Log
 public class BootstrapPane extends GridPane {
 

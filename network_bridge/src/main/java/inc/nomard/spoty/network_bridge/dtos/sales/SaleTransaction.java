@@ -1,6 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.sales;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -10,13 +13,12 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class SaleTransaction {
     private Long id;
     private ArrayList<Branch> branches;
     private Product product;
     private SaleDetail saleDetail;
-    private Date date;
+    private LocalDateTime date;
     private long saleQuantity;
 }

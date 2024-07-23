@@ -5,6 +5,7 @@ import lombok.extern.java.Log;
 import java.io.IOException;
 import java.util.Properties;
 
+import javafx.util.Duration;
 @Log
 public class AppConfig {
 

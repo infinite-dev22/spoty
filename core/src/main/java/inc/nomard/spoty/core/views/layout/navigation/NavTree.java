@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import lombok.extern.java.*;
+import org.kordamp.ikonli.*;
 import org.kordamp.ikonli.javafx.*;
 
 @Log
@@ -205,9 +206,9 @@ public class NavTree extends TreeView<Nav> {
          * @param icon  display icon on treeview item.
          * @return NavTreeItem
          */
-        public static NavTreeItem group(String title, String icon) {
-            MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-            return new NavTreeItem(new Nav(title, null, wrapper, null, null));
+        public static NavTreeItem group(String title, Ikon icon) {
+            FontIcon node = new FontIcon(icon);
+            return new NavTreeItem(new Nav(title, null, node, null, null));
         }
 
         /**
@@ -228,9 +229,9 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static NavTreeItem mainPage(String title, String icon, Class<? extends Page> view) {
-            MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-            return new NavTreeItem(new Nav(title, null, wrapper, view, null));
+        public static NavTreeItem mainPage(String title, Ikon icon, Class<? extends Page> view) {
+            FontIcon node = new FontIcon(icon);
+            return new NavTreeItem(new Nav(title, null,node, view, null));
         }
 
         /**

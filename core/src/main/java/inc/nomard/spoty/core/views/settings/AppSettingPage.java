@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.settings;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.views.settings.app_settings.*;
 import inc.nomard.spoty.core.views.util.*;
 import javafx.geometry.*;
@@ -29,13 +30,14 @@ public class AppSettingPage extends OutlinePage {
     }
 
     private TabPane buildTabPane() {
+
         TabPane tabbedPane = new TabPane();
-        tabbedPane.setPrefSize(200, 200);
         tabbedPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+//        tabbedPane.getStyleClass().add(Styles.TABS_FLOATING);
+//        tabbedPane.getStyleClass().add(Styles.TABS_CLASSIC);
+        tabbedPane.setMinWidth(450);
         // Add tabs to tab pane
         tabbedPane.getTabs().addAll(buildEmailTab(), buildAppearanceTab(), buildPrintingTab(), buildReceiptsTab());
-        // Add custom styles
-        tabbedPane.getStyleClass().addAll("card-flat", "tabbed-pane");
         // Add tab pane to center pane
         NodeUtils.setAnchors(tabbedPane, new Insets(0d));
         return tabbedPane;

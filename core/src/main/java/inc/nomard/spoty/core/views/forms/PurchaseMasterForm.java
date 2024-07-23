@@ -1,33 +1,31 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
-import javafx.scene.*;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -38,12 +36,12 @@ public class PurchaseMasterForm extends OutlineFormPage {
     private Label supplierValidationLabel;
     private Label dateValidationLabel;
     private Label statusValidationLabel;
-    private MFXDatePicker date;
-    private MFXFilterComboBox<Supplier> supplier;
-    private MFXTableView<PurchaseDetail> detailTable;
-    private MFXTextField note;
-    private MFXFilterComboBox<String> purchaseStatus;
-    private MFXButton saveBtn, cancelBtn, addBtn;
+    private LabeledDatePicker date;
+    private LabeledComboBox<Supplier> supplier;
+    private TableView<PurchaseDetail> tableView;
+    private LabeledTextField note;
+    private LabeledComboBox<String> status;
+    private Button saveBtn, cancelBtn, addBtn;
 
     public PurchaseMasterForm() {
         addNode(init());
@@ -53,7 +51,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
     public void initializeComponentProperties() {
         bindProperties();
         configureSupplierComboBox();
-        purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
+        status.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
         requiredValidator();
     }
 
@@ -78,20 +76,20 @@ public class PurchaseMasterForm extends OutlineFormPage {
         return separator;
     }
 
-    private MFXButton buildAddButton() {
-        addBtn = new MFXButton("Add");
-        addBtn.getStyleClass().add("filled");
+    private Button buildAddButton() {
+        addBtn = new Button("Add");
+        addBtn.setDefaultButton(true);
         addBtn.setOnAction(event -> SpotyDialog.createDialog(new PurchaseDetailForm(), this).showAndWait());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
     }
 
-    private MFXTableView<PurchaseDetail> buildTable() {
-        detailTable = new MFXTableView<>();
-        HBox.setHgrow(detailTable, Priority.ALWAYS);
+    private TableView<PurchaseDetail> buildTable() {
+        tableView = new TableView<>();
+        HBox.setHgrow(tableView, Priority.ALWAYS);
         setupTable();
-        return detailTable;
+        return tableView;
     }
 
     private VBox createCustomGrid() {
@@ -131,45 +129,41 @@ public class PurchaseMasterForm extends OutlineFormPage {
     }
 
     private VBox buildSupplier() {
-        supplier = new MFXFilterComboBox<>();
-        supplier.setFloatMode(FloatMode.BORDER);
-        supplier.setFloatingText("Supplier");
+        supplier = new LabeledComboBox<>();
+        supplier.setLabel("Supplier");
         supplier.setPrefWidth(10000d);
         supplierValidationLabel = buildValidationLabel();
         return buildFieldHolder(supplier, supplierValidationLabel);
     }
 
     private VBox buildStatus() {
-        purchaseStatus = new MFXFilterComboBox<>();
-        purchaseStatus.setFloatMode(FloatMode.BORDER);
-        purchaseStatus.setFloatingText("Purchase Status");
-        purchaseStatus.setPrefWidth(10000d);
+        status = new LabeledComboBox<>();
+        status.setLabel("Purchase Status");
+        status.setPrefWidth(10000d);
         statusValidationLabel = buildValidationLabel();
-        return buildFieldHolder(purchaseStatus, statusValidationLabel);
+        return buildFieldHolder(status, statusValidationLabel);
     }
 
     private VBox createDatePicker() {
-        date = new MFXDatePicker();
-        date.setFloatMode(FloatMode.BORDER);
-        date.setFloatingText("Date");
+        date = new LabeledDatePicker();
+        date.setLabel("Date");
         date.setPrefWidth(10000d);
         dateValidationLabel = buildValidationLabel();
         return buildFieldHolder(date, dateValidationLabel);
     }
 
     private VBox buildNote() {
-        note = new MFXTextField();
-        note.setFloatMode(FloatMode.BORDER);
-        note.setFloatingText("Note");
+        note = new LabeledTextField();
+        note.setLabel("Note");
         note.setPrefWidth(10000d);
         return buildFieldHolder(note);
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
-            if (!detailTable.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
+            if (!tableView.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
             }
             validateFields();
@@ -185,9 +179,9 @@ public class PurchaseMasterForm extends OutlineFormPage {
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
             AppManager.getNavigation().navigate(PurchasePage.class);
             PurchaseMasterViewModel.resetProperties();
@@ -207,9 +201,9 @@ public class PurchaseMasterForm extends OutlineFormPage {
     }
 
     private void bindProperties() {
-        date.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
+        date.valueProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
         supplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
-        purchaseStatus.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
+        status.valueProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
         note.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
     }
 
@@ -218,7 +212,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
         Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr -> supplier -> StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
         supplier.setConverter(supplierConverter);
-        supplier.setFilterFunction(supplierFilterFunction);
 
         if (SupplierViewModel.getSuppliers().isEmpty()) {
             SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) c -> supplier.setItems(SupplierViewModel.getSuppliers()));
@@ -230,10 +223,20 @@ public class PurchaseMasterForm extends OutlineFormPage {
     private void validateFields() {
         validateField(supplier, supplierValidationLabel);
         validateField(date, dateValidationLabel);
-        validateField(purchaseStatus, statusValidationLabel);
+        validateField(status, statusValidationLabel);
     }
 
-    private void validateField(MFXTextField field, Label validationLabel) {
+    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
+        List<Constraint> constraints = field.validate();
+        if (!constraints.isEmpty()) {
+            validationLabel.setManaged(true);
+            validationLabel.setVisible(true);
+            validationLabel.setText(constraints.getFirst().getMessage());
+            field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+    }
+
+    private void validateField(LabeledDatePicker field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -244,76 +247,63 @@ public class PurchaseMasterForm extends OutlineFormPage {
     }
 
     private boolean isValidForm() {
-        return supplier.validate().isEmpty() && date.validate().isEmpty() && purchaseStatus.validate().isEmpty() && !detailTable.isDisabled() && !PurchaseDetailViewModel.getPurchaseDetails().isEmpty();
+        return supplier.validate().isEmpty() && date.validate().isEmpty() && status.validate().isEmpty() && !tableView.isDisabled() && !PurchaseDetailViewModel.getPurchaseDetails().isEmpty();
     }
 
     private void setupTable() {
         setupTableColumns();
-        setupTableFilters();
         styleTable();
         bindTableItems();
     }
 
     private void setupTableColumns() {
-        MFXTableColumn<PurchaseDetail> product = createTableColumn("Product", PurchaseDetail::getProductName, 1);
-        MFXTableColumn<PurchaseDetail> quantity = createTableColumn("Quantity", PurchaseDetail::getQuantity, 1);
+        TableColumn<PurchaseDetail, String> product = createTableColumn("Product", 1);
+        TableColumn<PurchaseDetail, String> quantity = createTableColumn("Quantity", 1);
 
-        detailTable.getTableColumns().addAll(product, quantity);
+        var columnList = new LinkedList<>(Stream.of(product, quantity).toList());
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        tableView.getColumns().addAll(columnList);
     }
 
-    private <U extends Comparable<? super U>> MFXTableColumn<PurchaseDetail> createTableColumn(String title, Function<PurchaseDetail, U> mapper, double widthPercentage) {
-        MFXTableColumn<PurchaseDetail> column = new MFXTableColumn<>(title, false, Comparator.comparing(mapper));
-        column.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(mapper));
-        column.prefWidthProperty().bind(detailTable.widthProperty().multiply(widthPercentage));
+    private <U extends Comparable<? super U>> TableColumn<PurchaseDetail, String> createTableColumn(String title, double widthPercentage) {
+        TableColumn<PurchaseDetail, String> column = new TableColumn<>(title);
+        column.prefWidthProperty().bind(tableView.widthProperty().multiply(widthPercentage));
         return column;
     }
 
-    private void setupTableFilters() {
-        detailTable.getFilters().addAll(
-                new StringFilter<>("Product", PurchaseDetail::getProductName),
-                new IntegerFilter<>("Quantity", PurchaseDetail::getQuantity)
-        );
-    }
-
     private void styleTable() {
-        detailTable.setPrefSize(10000, 10000);
-        detailTable.features().enableBounceEffect();
-        detailTable.features().enableSmoothScrolling(0.5);
+        tableView.setPrefSize(10000, 10000);
 
-        detailTable.setTableRowFactory(t -> {
-            MFXTableRow<PurchaseDetail> row = new MFXTableRow<>(detailTable, t);
-            row.setOnContextMenuRequested(event -> showContextMenu(row).show(detailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
+        tableView.setRowFactory(t -> {
+            TableRow<PurchaseDetail> row = new TableRow<>();
+            row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
             return row;
         });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<PurchaseDetail> row) {
-        MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
-        contextMenu.addItems(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getData().getProductName(), this)), createMenuItem("Edit", event -> handleEditAction(row)));
+    private ContextMenu showContextMenu(TableRow<PurchaseDetail> row) {
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getItems().addAll(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getItem().getProductName(), this)), createMenuItem("Edit", event -> handleEditAction(row)));
         return contextMenu;
     }
 
-    private MFXContextMenuItem createMenuItem(String text, EventHandler<ActionEvent> action) {
-        MFXContextMenuItem menuItem = new MFXContextMenuItem(text);
+    private MenuItem createMenuItem(String text, EventHandler<ActionEvent> action) {
+        MenuItem menuItem = new MenuItem(text);
         menuItem.setOnAction(action);
         return menuItem;
     }
 
-    private void handleDeleteAction(MFXTableRow<PurchaseDetail> row) {
-        PurchaseDetailViewModel.removePurchaseDetail(row.getData().getId(), PurchaseDetailViewModel.getPurchaseDetails().indexOf(row.getData()));
+    private void handleDeleteAction(TableRow<PurchaseDetail> row) {
+        PurchaseDetailViewModel.removePurchaseDetail(row.getItem().getId(), PurchaseDetailViewModel.getPurchaseDetails().indexOf(row.getItem()));
     }
 
-    private void handleEditAction(MFXTableRow<PurchaseDetail> row) {
-        Platform.runLater(() -> PurchaseDetailViewModel.getPurchaseDetail(row.getData()));
+    private void handleEditAction(TableRow<PurchaseDetail> row) {
+        Platform.runLater(() -> PurchaseDetailViewModel.getPurchaseDetail(row.getItem()));
         SpotyDialog.createDialog(new PurchaseDetailForm(), this).showAndWait();
     }
 
     private void bindTableItems() {
-        if (PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
-            PurchaseDetailViewModel.getPurchaseDetails().addListener((ListChangeListener<PurchaseDetail>) change -> detailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails()));
-        } else {
-            detailTable.itemsProperty().bindBidirectional(PurchaseDetailViewModel.purchaseDetailsProperty());
-        }
+        tableView.setItems(PurchaseDetailViewModel.getPurchaseDetails());
     }
 
     private void onSuccess() {
@@ -326,15 +316,32 @@ public class PurchaseMasterForm extends OutlineFormPage {
 
     private void requiredValidator() {
         setupValidation(supplier, "Supplier is required", supplierValidationLabel);
-        setupValidation(purchaseStatus, "Beneficiary Type is required", statusValidationLabel);
+        setupValidation(status, "Beneficiary Type is required", statusValidationLabel);
         setupValidation(date, "Date is required", dateValidationLabel);
     }
 
-    private void setupValidation(MFXTextField field, String message, Label validationLabel) {
+    private <T> void setupValidation(LabeledComboBox<T> field, String message, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
-                .setCondition(field.textProperty().length().greaterThan(0))
+                .setCondition(field.valueProperty().isNotNull())
+                .get();
+
+        field.getValidator().constraint(constraint);
+        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                validationLabel.setManaged(false);
+                validationLabel.setVisible(false);
+                field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+            }
+        });
+    }
+
+    private void setupValidation(LabeledDatePicker field, String message, Label validationLabel) {
+        Constraint constraint = Constraint.Builder.build()
+                .setSeverity(Severity.ERROR)
+                .setMessage(message)
+                .setCondition(field.valueProperty().isNotNull())
                 .get();
 
         field.getValidator().constraint(constraint);
@@ -381,9 +388,9 @@ public class PurchaseMasterForm extends OutlineFormPage {
         statusValidationLabel = null;
         date = null;
         supplier = null;
-        detailTable = null;
+        tableView = null;
         note = null;
-        purchaseStatus = null;
+        status = null;
         saveBtn = null;
         cancelBtn = null;
         addBtn = null;

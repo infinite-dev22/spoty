@@ -10,13 +10,8 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -28,10 +23,10 @@ import lombok.extern.java.*;
 
 @Log
 public class EmploymentStatusPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<EmploymentStatus> masterTable;
+    private TextField searchBar;
+    private TableView<EmploymentStatus> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public EmploymentStatusPage() {
         addNode(init());
@@ -41,7 +36,6 @@ public class EmploymentStatusPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -63,9 +57,8 @@ public class EmploymentStatusPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search employment statuses");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -77,8 +70,8 @@ public class EmploymentStatusPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
+        createBtn.setDefaultButton(true);
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -88,7 +81,7 @@ public class EmploymentStatusPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -96,80 +89,65 @@ public class EmploymentStatusPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<EmploymentStatus> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(EmploymentStatus::getName));
-        MFXTableColumn<EmploymentStatus> appearance =
-                new MFXTableColumn<>("Appearance", false, Comparator.comparing(EmploymentStatus::getName));
-        MFXTableColumn<EmploymentStatus> description =
-                new MFXTableColumn<>("Description", false, Comparator.comparing(EmploymentStatus::getDescription));
+        TableColumn<EmploymentStatus, String> name = new TableColumn<>("Name");
+        TableColumn<EmploymentStatus, EmploymentStatus> appearance = new TableColumn<>("Appearance");
+        TableColumn<EmploymentStatus, String> description = new TableColumn<>("Description");
 
-        name.setRowCellFactory(employmentStatus -> new MFXTableRowCell<>(EmploymentStatus::getName));
-        appearance.setRowCellFactory(employmentStatus -> {
-            var col = Color.valueOf(employmentStatus.getColor());
-            var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
+        appearance.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<EmploymentStatus, EmploymentStatus> call(TableColumn<EmploymentStatus, EmploymentStatus> btnCol) {
+                return new TableCell<>() {
+                    @Override
+                    public void updateItem(final EmploymentStatus employmentStatus, boolean empty) {
+                        super.updateItem(employmentStatus, empty);
+                        if (employmentStatus != null) {
+                            var col = Color.valueOf(employmentStatus.getColor());
+                            var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
 
-            var cell = new MFXTableRowCell<>(EmploymentStatus::getName);
+                            var label = new Label(employmentStatus.getName());
+                            label.setTextFill(Color.valueOf(employmentStatus.getColor()).darker());
+                            label.setPadding(new Insets(5, 10, 5, 10));
+                            label.setBorder(new Border(new BorderStroke(Color.valueOf(employmentStatus.getColor()).darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
+                            label.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
+                            var hBox = new VBox(label);
+                            hBox.setAlignment(Pos.CENTER);
 
-            var label = new Label(employmentStatus.getName());
-            label.setTextFill(Color.valueOf(employmentStatus.getColor()).darker());
-            label.setPadding(new Insets(5, 10, 5, 10));
-            label.setBorder(new Border(new BorderStroke(Color.valueOf(employmentStatus.getColor()).darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
-            label.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
-
-            var hBox = new VBox(label);
-            hBox.setAlignment(Pos.CENTER);
-
-            cell.setGraphic(hBox);
-            cell.setAlignment(Pos.CENTER);
-            cell.setText(null);
-            return cell;
+                            setGraphic(hBox);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                };
+            }
         });
-        appearance.setAlignment(Pos.CENTER);
-        description.setRowCellFactory(employmentStatus -> new MFXTableRowCell<>(EmploymentStatus::getDescription));
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        masterTable
-                .getTableColumns()
-                .addAll(name, appearance, description);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", EmploymentStatus::getName));
+        var columnList = new LinkedList<>(Stream.of(name, appearance, description).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         styleEmploymentStatusTable();
 
-        if (EmploymentStatusViewModel.getEmploymentStatuses().isEmpty()) {
-            EmploymentStatusViewModel.getEmploymentStatuses()
-                    .addListener(
-                            (ListChangeListener<EmploymentStatus>)
-                                    c -> masterTable.setItems(EmploymentStatusViewModel.getEmploymentStatuses()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(EmploymentStatusViewModel.employmentStatusesProperty());
-        }
+        masterTable.setItems(EmploymentStatusViewModel.getEmploymentStatuses());
     }
 
     private void styleEmploymentStatusTable() {
         masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<EmploymentStatus> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<EmploymentStatus> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<EmploymentStatus>) event.getSource())
+                                showContextMenu((TableRow<EmploymentStatus>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -182,7 +160,7 @@ public class EmploymentStatusPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<EmploymentStatus> obj) {
+    private MFXContextMenu showContextMenu(TableRow<EmploymentStatus> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -190,13 +168,13 @@ public class EmploymentStatusPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            EmploymentStatusViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            EmploymentStatusViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    EmploymentStatusViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new EmploymentStatusForm(), this).showAndWait(), this::errorMessage);
+                    EmploymentStatusViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new EmploymentStatusForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -211,10 +189,6 @@ public class EmploymentStatusPage extends OutlinePage {
 
     private void onSuccess() {
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null);
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

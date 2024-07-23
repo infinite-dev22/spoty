@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.layout;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -7,11 +8,11 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.*;
@@ -31,7 +32,7 @@ public class WindowRunner extends ApplicationWindowImpl {
         if (!ProtectedGlobals.activeTenancy) {
             var hBox1 = new HBox();
             var hBox2 = new HBox();
-            var close = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Close");
+            var close = new Button("Close");
             var trialPlanDetails = new ArrayList<String>();
             var regularPlanDetails = new ArrayList<String>();
             var goldenPlanDetails = new ArrayList<String>();
@@ -87,7 +88,7 @@ public class WindowRunner extends ApplicationWindowImpl {
             var closeIcon = new MFXFontIcon("fas-xmark");
             closeIcon.setColor(Color.RED);
             close.setGraphic(closeIcon);
-            close.getStyleClass().add("outlined");
+            close.getStyleClass().add(Styles.BUTTON_OUTLINED);
             close.setOnAction(actionEvent -> new InformativeDialog(() -> {
                 GlobalActions.closeDialog(actionEvent);
                 this.setMorph(false);

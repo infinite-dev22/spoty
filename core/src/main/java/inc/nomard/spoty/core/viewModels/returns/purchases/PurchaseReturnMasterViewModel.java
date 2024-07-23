@@ -4,10 +4,9 @@ import com.google.gson.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.text.*;
+import java.time.*;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
@@ -24,7 +23,7 @@ public class PurchaseReturnMasterViewModel {
     private static final ListProperty<PurchaseReturnMaster> purchaseReturns =
             new SimpleListProperty<>(purchaseReturnMasterList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalDateTime> date = new SimpleObjectProperty<>();
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty totalCost = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
@@ -43,20 +42,15 @@ public class PurchaseReturnMasterViewModel {
         return id;
     }
 
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, PurchaseReturnMasterViewModel.class);
-        }
-        return null;
+    public static LocalDateTime getDate() {
+        return date.get();
     }
 
-    public static void setDate(String date) {
+    public static void setDate(LocalDateTime date) {
         PurchaseReturnMasterViewModel.date.set(date);
     }
 
-    public static StringProperty dateProperty() {
+    public static ObjectProperty<LocalDateTime> dateProperty() {
         return date;
     }
 
@@ -122,7 +116,7 @@ public class PurchaseReturnMasterViewModel {
 
     public static void resetProperties() {
         setId(0);
-        setDate("");
+        setDate(null);
         setBranch(null);
         setNote("");
         setStatus("");

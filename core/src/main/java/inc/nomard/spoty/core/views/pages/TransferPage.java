@@ -12,19 +12,15 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -34,8 +30,8 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class TransferPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<TransferMaster> masterTable;
+    private TextField searchBar;
+    private TableView<TransferMaster> masterTable;
     private MFXProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
@@ -56,7 +52,6 @@ public class TransferPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         return pane;
@@ -77,9 +72,8 @@ public class TransferPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search transfers");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -91,8 +85,7 @@ public class TransferPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        var createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        var createBtn = new Button("Create");
         createBtn.setOnAction(event -> AppManager.getNavigation().navigate(TransferMasterForm.class));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
@@ -103,7 +96,7 @@ public class TransferPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -111,75 +104,39 @@ public class TransferPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<TransferMaster> transferFromBranch =
-                new MFXTableColumn<>(
-                        "Branch(From)", false, Comparator.comparing(TransferMaster::getFromBranchName));
-        MFXTableColumn<TransferMaster> transferToBranch =
-                new MFXTableColumn<>(
-                        "Branch(To)", false, Comparator.comparing(TransferMaster::getToBranchName));
-        MFXTableColumn<TransferMaster> transferDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(TransferMaster::getDate));
-        MFXTableColumn<TransferMaster> note =
-                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(TransferMaster::getNotes));
-
-        transferFromBranch.setRowCellFactory(
-                transfer -> new MFXTableRowCell<>(TransferMaster::getFromBranchName));
-        transferToBranch.setRowCellFactory(
-                transfer -> new MFXTableRowCell<>(TransferMaster::getToBranchName));
-        transferDate.setRowCellFactory(
-                transfer -> new MFXTableRowCell<>(TransferMaster::getLocaleDate));
-        note.setRowCellFactory(
-                transfer -> new MFXTableRowCell<>(TransferMaster::getNotes));
+        TableColumn<TransferMaster, String> transferFromBranch = new TableColumn<>("Branch(From)");
+        TableColumn<TransferMaster, String> transferToBranch = new TableColumn<>("Branch(To)");
+        TableColumn<TransferMaster, String> transferDate = new TableColumn<>("Date");
+        TableColumn<TransferMaster, String> note = new TableColumn<>("Total Amount");
 
         transferFromBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         transferToBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         transferDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
-        masterTable
-                .getTableColumns()
-                .addAll(
-                        transferFromBranch, transferToBranch, transferDate, note);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Reference", TransferMaster::getRef),
-                        new StringFilter<>("Branch(From)", TransferMaster::getFromBranchName),
-                        new StringFilter<>("Branch(To)", TransferMaster::getToBranchName));
+        var columnList = new LinkedList<>(Stream.of(transferFromBranch, transferToBranch, transferDate, note).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getTransferMasterTable();
 
-        if (TransferMasterViewModel.getTransfers().isEmpty()) {
-            TransferMasterViewModel.getTransfers()
-                    .addListener(
-                            (ListChangeListener<TransferMaster>)
-                                    c -> masterTable.setItems(TransferMasterViewModel.getTransfers()));
-        } else {
-            masterTable
-                    .itemsProperty()
-                    .bindBidirectional(TransferMasterViewModel.transfersProperty());
-        }
+        masterTable.setItems(TransferMasterViewModel.getTransfers());
     }
 
     private void getTransferMasterTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<TransferMaster> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<TransferMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<TransferMaster>) event.getSource())
+                                showContextMenu((TableRow<TransferMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -191,7 +148,7 @@ public class TransferPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<TransferMaster> obj) {
+    private MFXContextMenu showContextMenu(TableRow<TransferMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -200,19 +157,19 @@ public class TransferPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            TransferMasterViewModel.deleteTransfer(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            TransferMasterViewModel.deleteTransfer(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getFromBranchName() + " - " + obj.getData().getToBranchName() + " transfer", this));
+        }, obj.getItem().getFromBranchName() + " - " + obj.getItem().getToBranchName() + " transfer", this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    TransferMasterViewModel.getTransfer(obj.getData().getId(), () -> AppManager.getNavigation().navigate(TransferMasterForm.class), this::errorMessage);
+                    TransferMasterViewModel.getTransfer(obj.getItem().getId(), () -> AppManager.getNavigation().navigate(TransferMasterForm.class), this::errorMessage);
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getData());
+                    viewShow(obj.getItem());
                     event.consume();
                 });
 
@@ -268,10 +225,6 @@ public class TransferPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

@@ -1,11 +1,12 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import lombok.extern.java.*;
 
@@ -16,7 +17,7 @@ public class PaySlipItem extends HBox {
     public Label payRunGenerationDetails;
     public Label payRunStatus;
     public Label issues;
-    public MFXButton viewSalariesBtn,
+    public Button viewSalariesBtn,
             exportBtn,
             sendBtn;
     public MFXIconButton editBtn,
@@ -45,10 +46,10 @@ public class PaySlipItem extends HBox {
         hbox1.setSpacing(10d);
         hbox1.getChildren().addAll(payRunPeriod, employeeCount);
         payRunGenerationDetails = new Label();
-        viewSalariesBtn = new MFXButton("View Salaries");
-        viewSalariesBtn.getStyleClass().add("outlined");
-        exportBtn = new MFXButton("Export");
-        exportBtn.getStyleClass().add("outlined");
+        viewSalariesBtn = new Button("View Salaries");
+        viewSalariesBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
+        exportBtn = new Button("Export");
+        exportBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         var hbox2 = new HBox();
         hbox2.setAlignment(Pos.CENTER_LEFT);
         hbox2.setSpacing(10d);
@@ -89,8 +90,8 @@ public class PaySlipItem extends HBox {
     private HBox buildRight() {
         editBtn = new MFXIconButton();
         deleteBtn = new MFXIconButton();
-        sendBtn = new MFXButton("Send PaySlips");
-        sendBtn.getStyleClass().add("filled");
+        sendBtn = new Button("Send PaySlips");
+        sendBtn.setDefaultButton(true);
 
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);

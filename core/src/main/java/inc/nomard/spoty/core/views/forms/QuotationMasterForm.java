@@ -1,26 +1,23 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -38,18 +35,18 @@ import lombok.extern.java.*;
 @Log
 public class QuotationMasterForm extends OutlineFormPage {
     @FXML
-    public MFXFilterComboBox<Customer> customer;
+    public LabeledComboBox<Customer> customer;
     @FXML
-    public MFXTableView<QuotationDetail> table;
+    public TableView<QuotationDetail> table;
     @FXML
-    public MFXTextField note;
+    public LabeledTextField note;
     @FXML
-    public MFXFilterComboBox<String> status;
+    public LabeledComboBox<String> status;
     @FXML
     public Label customerValidationLabel,
             statusValidationLabel;
     @FXML
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn,
             addBtn;
 
@@ -83,17 +80,17 @@ public class QuotationMasterForm extends OutlineFormPage {
         return separator;
     }
 
-    private MFXButton buildAddButton() {
-        addBtn = new MFXButton("Add");
-        addBtn.getStyleClass().add("filled");
+    private Button buildAddButton() {
+        addBtn = new Button("Add");
+        addBtn.setDefaultButton(true);
         addBtn.setOnAction(event -> SpotyDialog.createDialog(new QuotationDetailForm(), this).showAndWait());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
     }
 
-    private MFXTableView<QuotationDetail> buildTable() {
-        table = new MFXTableView<>();
+    private TableView<QuotationDetail> buildTable() {
+        table = new TableView<>();
         HBox.setHgrow(table, Priority.ALWAYS);
         setupTable();
         return table;
@@ -136,9 +133,8 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private VBox buildCustomer() {
-        customer = new MFXFilterComboBox<>();
-        customer.setFloatMode(FloatMode.BORDER);
-        customer.setFloatingText("Supplier");
+        customer = new LabeledComboBox<>();
+        customer.setLabel("Supplier");
         customer.setPrefWidth(10000d);
         customer
                 .valueProperty()
@@ -155,7 +151,6 @@ public class QuotationMasterForm extends OutlineFormPage {
 
         // Combo box properties.
         customer.setConverter(customerConverter);
-        customer.setFilterFunction(customerFilterFunction);
         if (CustomerViewModel.getCustomers().isEmpty()) {
             CustomerViewModel.getCustomers()
                     .addListener(
@@ -169,9 +164,8 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private VBox buildStatus() {
-        status = new MFXFilterComboBox<>();
-        status.setFloatMode(FloatMode.BORDER);
-        status.setFloatingText("Quotation Status");
+        status = new LabeledComboBox<>();
+        status.setLabel("Quotation Status");
         status.setPrefWidth(10000d);
         status
                 .valueProperty()
@@ -182,17 +176,16 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private VBox buildNote() {
-        note = new MFXTextField();
-        note.setFloatMode(FloatMode.BORDER);
-        note.setFloatingText("Note");
+        note = new LabeledTextField();
+        note.setLabel("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
         return buildFieldHolder(note);
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
             if (!table.isDisabled() && QuotationDetailViewModel.getQuotationDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
@@ -210,9 +203,9 @@ public class QuotationMasterForm extends OutlineFormPage {
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
             AppManager.getNavigation().navigate(QuotationPage.class);
             QuotationMasterViewModel.resetProperties();
@@ -232,62 +225,28 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private void setupTable() {
-        MFXTableColumn<QuotationDetail> productName =
-                new MFXTableColumn<>(
-                        "Product", false, Comparator.comparing(QuotationDetail::getProductName));
-        MFXTableColumn<QuotationDetail> productPrice =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getProductPrice));
-        MFXTableColumn<QuotationDetail> productQuantity =
-                new MFXTableColumn<>("Quantity", false, Comparator.comparing(QuotationDetail::getQuantity));
-
-        productName.setRowCellFactory(
-                product -> new MFXTableRowCell<>(QuotationDetail::getProductName));
-        productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getProductPrice));
-        productQuantity.setRowCellFactory(
-                product -> new MFXTableRowCell<>(QuotationDetail::getQuantity));
+        TableColumn<QuotationDetail, String> productName = new TableColumn<>("Product");
+        TableColumn<QuotationDetail, String> productPrice = new TableColumn<>("Price");
+        TableColumn<QuotationDetail, String> productQuantity = new TableColumn<>("Quantity");
 
         productName.prefWidthProperty().bind(table.widthProperty().multiply(.25));
         productPrice.prefWidthProperty().bind(table.widthProperty().multiply(.25));
         productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.25));
 
-        table
-                .getTableColumns()
-                .addAll(productName, productPrice, productQuantity);
-
-        table
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Product", QuotationDetail::getProductName),
-                        new IntegerFilter<>("Quantity", QuotationDetail::getQuantity),
-                        new DoubleFilter<>("Price", QuotationDetail::getProductPrice));
-
+        table.getColumns().addAll(productName, productPrice, productQuantity);
         getQuotationDetailTable();
-
-        if (QuotationDetailViewModel.getQuotationDetails().isEmpty()) {
-            QuotationDetailViewModel.getQuotationDetails()
-                    .addListener(
-                            (ListChangeListener<QuotationDetail>)
-                                    change ->
-                                            table.setItems(
-                                                    QuotationDetailViewModel.getQuotationDetails()));
-        } else {
-            table
-                    .itemsProperty()
-                    .bindBidirectional(QuotationDetailViewModel.quotationDetailsProperty());
-        }
+        table.setItems(QuotationDetailViewModel.getQuotationDetails());
     }
 
     private void getQuotationDetailTable() {
         table.setPrefSize(10000, 10000);
-        table.features().enableBounceEffect();
-        table.features().enableSmoothScrolling(0.5);
 
-        table.setTableRowFactory(
+        table.setRowFactory(
                 quotationDetail -> {
-                    MFXTableRow<QuotationDetail> row = new MFXTableRow<>(table, quotationDetail);
+                    TableRow<QuotationDetail> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<QuotationDetail>) event.getSource())
+                                showContextMenu((TableRow<QuotationDetail>) event.getSource())
                                         .show(
                                                 table.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -299,28 +258,28 @@ public class QuotationMasterForm extends OutlineFormPage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<QuotationDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(table);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<QuotationDetail> obj) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem delete = new MenuItem("Delete");
+        MenuItem edit = new MenuItem("Edit");
 
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             QuotationDetailViewModel.removeQuotationDetail(
-                    obj.getData().getId(),
-                    QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
+                    obj.getItem().getId(),
+                    QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getItem()));
             event.consume();
-        }, obj.getData().getProductName(), this));
+        }, obj.getItem().getProductName(), this));
         // Edit
         edit.setOnAction(
                 event -> {
-                    QuotationDetailViewModel.getQuotationDetail(obj.getData());
+                    QuotationDetailViewModel.getQuotationDetail(obj.getItem());
                     SpotyDialog.createDialog(new QuotationDetailForm(), this).showAndWait();
                     event.consume();
                 });
 
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
 
         return contextMenu;
     }
@@ -330,7 +289,7 @@ public class QuotationMasterForm extends OutlineFormPage {
         validateField(status, statusValidationLabel);
     }
 
-    private void validateField(MFXTextField field, Label validationLabel) {
+    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -358,14 +317,14 @@ public class QuotationMasterForm extends OutlineFormPage {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Customer is required")
-                        .setCondition(customer.textProperty().length().greaterThan(0))
+                        .setCondition(customer.valueProperty().isNotNull())
                         .get();
         customer.getValidator().constraint(customerConstraint);
         Constraint statusConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Color is required")
-                        .setCondition(status.textProperty().length().greaterThan(0))
+                        .setCondition(status.valueProperty().isNotNull())
                         .get();
         status.getValidator().constraint(statusConstraint);
         // Display error.

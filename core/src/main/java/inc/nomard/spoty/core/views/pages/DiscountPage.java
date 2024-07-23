@@ -10,15 +10,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -26,10 +22,9 @@ import lombok.extern.java.*;
 
 @Log
 public class DiscountPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<Discount> masterTable;
-    private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private TextField searchBar;
+    private TableView<Discount> masterTable;
+    private Button createBtn;
 
     public DiscountPage() {
         super();
@@ -40,7 +35,6 @@ public class DiscountPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -48,7 +42,7 @@ public class DiscountPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        MFXProgressSpinner progress = new MFXProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -62,9 +56,8 @@ public class DiscountPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search discounts");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -76,8 +69,7 @@ public class DiscountPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -87,7 +79,7 @@ public class DiscountPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -95,11 +87,8 @@ public class DiscountPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
@@ -108,48 +97,29 @@ public class DiscountPage extends OutlinePage {
     }
 
     private void setupTable() {
-        MFXTableColumn<Discount> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Discount::getName));
-        MFXTableColumn<Discount> percentage =
-                new MFXTableColumn<>("Percentage", false, Comparator.comparing(Discount::getPercentage));
-
-        name.setRowCellFactory(product -> new MFXTableRowCell<>(Discount::getName));
-        percentage.setRowCellFactory(product -> new MFXTableRowCell<>(Discount::getPercentage));
+        TableColumn<Discount, String> name = new TableColumn<>("Name");
+        TableColumn<Discount, String> percentage = new TableColumn<>("Percentage");
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         percentage.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        masterTable
-                .getTableColumns()
-                .addAll(name, percentage);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", Discount::getName),
-                        new DoubleFilter<>("Percentage", Discount::getPercentage));
+        var columnList = new LinkedList<>(Stream.of(name, percentage).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         styleTable();
 
-        if (DiscountViewModel.getDiscounts().isEmpty()) {
-            DiscountViewModel.getDiscounts()
-                    .addListener(
-                            (ListChangeListener<Discount>)
-                                    c -> masterTable.setItems(DiscountViewModel.getDiscounts()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
-        }
+        masterTable.setItems(DiscountViewModel.getDiscounts());
     }
 
     private void styleTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<Discount> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<Discount> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<Discount>) event.getSource())
+                                showContextMenu((TableRow<Discount>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -161,25 +131,25 @@ public class DiscountPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Discount> obj) {
+    private MFXContextMenu showContextMenu(TableRow<Discount> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem delete = getDeleteContextMenuItem(obj);
         edit.setOnAction(
                 event -> {
-                    DiscountViewModel.getDiscount(obj.getData().getId(), () -> SpotyDialog.createDialog(new DiscountForm(), this).showAndWait(), this::errorMessage);
+                    DiscountViewModel.getDiscount(obj.getItem().getId(), () -> SpotyDialog.createDialog(new DiscountForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
         contextMenu.addItems(edit, delete);
         return contextMenu;
     }
 
-    private MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Discount> obj) {
+    private MFXContextMenuItem getDeleteContextMenuItem(TableRow<Discount> obj) {
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            DiscountViewModel.deleteDiscount(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            DiscountViewModel.deleteDiscount(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         return delete;
     }
 
@@ -187,24 +157,8 @@ public class DiscountPage extends OutlinePage {
         DiscountViewModel.getDiscounts(null, null);
     }
 
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
-    }
-
     public void setSearchBar() {
         searchBar.setDisable(true);
-//        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
-//            if (Objects.equals(ov, nv)) {
-//                return;
-//            }
-//            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-//                DiscountViewModel.getDiscounts(null, null);
-//            }
-//            progress.setVisible(true);
-//            DiscountViewModel.searchItem(nv, () -> {
-//                progress.setVisible(false);
-//            }, this::errorMessage);
-//        });
     }
 
     private void successMessage(String message) {

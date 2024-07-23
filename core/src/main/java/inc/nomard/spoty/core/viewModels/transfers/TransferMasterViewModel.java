@@ -13,7 +13,7 @@ import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
-import java.text.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -34,7 +34,7 @@ public class TransferMasterViewModel {
     private static final ListProperty<TransferMaster> transfers =
             new SimpleListProperty<>(transfersList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalDate> date = new SimpleObjectProperty<>();
     private static final ObjectProperty<Branch> fromBranch = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> toBranch = new SimpleObjectProperty<>(null);
     private static final StringProperty note = new SimpleStringProperty("");
@@ -52,20 +52,15 @@ public class TransferMasterViewModel {
         return id;
     }
 
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
-        }
-        return null;
+    public static LocalDate getDate() {
+        return date.get();
     }
 
-    public static void setDate(String date) {
+    public static void setDate(LocalDate date) {
         TransferMasterViewModel.date.set(date);
     }
 
-    public static StringProperty dateProperty() {
+    public static ObjectProperty<LocalDate> dateProperty() {
         return date;
     }
 
@@ -118,15 +113,12 @@ public class TransferMasterViewModel {
     }
 
     public static void resetProperties() {
-        Platform.runLater(
-                () -> {
-                    setId(0L);
-                    setDate("");
-                    setFromBranch(null);
-                    setToBranch(null);
-                    setNote("");
-                    PENDING_DELETES.clear();
-                });
+        setId(0L);
+        setDate(null);
+        setFromBranch(null);
+        setToBranch(null);
+        setNote("");
+        PENDING_DELETES.clear();
     }
 
     public static void saveTransferMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -243,7 +235,7 @@ public class TransferMasterViewModel {
                 Platform.runLater(() -> {
                     var transferMaster = gson.fromJson(response.body(), TransferMaster.class);
                     setId(transferMaster.getId());
-                    setDate(transferMaster.getLocaleDate());
+                    setDate(transferMaster.getDate());
                     setFromBranch(transferMaster.getFromBranch());
                     setToBranch(transferMaster.getToBranch());
                     setNote(transferMaster.getNotes());

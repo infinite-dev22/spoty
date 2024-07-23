@@ -8,7 +8,6 @@ public abstract class ModalPage extends MFXGenericDialog implements Modal {
     public ModalPage() {
         super();
         setViewProperties();
-        setLightMode();
     }
 
     protected void addNode(MFXGenericDialog node) {
@@ -37,21 +36,5 @@ public abstract class ModalPage extends MFXGenericDialog implements Modal {
         this.setShowMinimize(false);
         this.setShowAlwaysOnTop(false);
         this.setShowClose(false);
-    }
-
-    public void setLightMode() {
-        this.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
-                SpotyCoreResourceLoader.load("styles/Buttons.css"),
-                SpotyCoreResourceLoader.load("styles/Common.css"),
-                SpotyCoreResourceLoader.load("styles/TextFields.css"),
-                SpotyCoreResourceLoader.load("styles/theming/Default.css"));
-    }
-
-    public void setDarkMode() {
-        this.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
-                SpotyCoreResourceLoader.load("styles/Buttons.css"),
-                SpotyCoreResourceLoader.load("styles/Common.css"),
-                SpotyCoreResourceLoader.load("styles/TextFields.css"),
-                SpotyCoreResourceLoader.load("styles/theming/Dark.css"));
     }
 }

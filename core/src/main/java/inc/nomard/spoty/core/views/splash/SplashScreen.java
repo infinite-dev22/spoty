@@ -1,13 +1,14 @@
 package inc.nomard.spoty.core.views.splash;
 
+import atlantafx.base.theme.*;
+import com.jthemedetecor.*;
 import fr.brouillard.oss.cssfx.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.navigation.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
@@ -26,6 +27,9 @@ import lombok.extern.java.*;
 
 @Log
 public class SplashScreen extends BorderPane {
+    private static final String lightThemeCSS = SpotyCoreResourceLoader.load("styles/theming/light-theme.css");
+    private static final String darkThemeCSS = SpotyCoreResourceLoader.load("styles/theming/dark-theme.css");
+
     public SplashScreen() {
         initUI();
     }
@@ -80,6 +84,8 @@ public class SplashScreen extends BorderPane {
     private static void initializePrimaryStage(Stage primaryStage, Rectangle2D screenBounds) throws IOException {
         var root = new AuthScreen(primaryStage);
         var scene = new Scene(root);
+        scene.getStylesheets().add(lightThemeCSS);
+        getSystemTheme(scene);
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         scene.setFill(null);
 
@@ -110,6 +116,55 @@ public class SplashScreen extends BorderPane {
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);
         fadeIn.play();
+    }
+
+    private static void getSystemTheme(Scene scene) {
+        // Apply platform color scheme preferences
+        // Preferences preferences = Platform.getPreferences();
+        // if (preferences == null) {
+        //     return;
+        // }
+
+        // ColorScheme colorScheme = preferences.getColorScheme();
+        // updateTheme(colorScheme, scene);
+
+        // Add a listener to update on color scheme changes
+        // preferences.colorSchemeProperty().addListener((observable, oldValue, newValue) -> updateTheme(newValue, scene));
+
+        final OsThemeDetector detector = OsThemeDetector.getDetector();
+        final boolean isDarkThemeUsed = detector.isDark();
+        if (isDarkThemeUsed) {
+            //The OS uses a dark theme
+            updateTheme(ColorScheme.DARK, scene);
+        } else {
+            //The OS uses a light theme
+            updateTheme(ColorScheme.LIGHT, scene);
+        }
+        detector.registerListener(isDark -> Platform.runLater(() -> {
+            if (isDark) {
+                // The OS switched to a dark theme
+                updateTheme(ColorScheme.DARK, scene);
+            } else {
+                // The OS switched to a light theme
+                updateTheme(ColorScheme.LIGHT, scene);
+            }
+        }));
+    }
+
+    // Instantiate the css files and hold them in a variable which you add to or remove from style sheets.
+    // the styles are held in memory and easily referenced.
+    private static void updateTheme(ColorScheme colorScheme, Scene scene) {
+        if (colorScheme == ColorScheme.DARK) {
+            // Remove light stylesheet, add dark stylesheet
+//            scene.getStylesheets().remove(lightThemeCSS);
+            scene.getStylesheets().set(0, darkThemeCSS);
+            Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+        } else {
+            // Remove dark stylesheet, add light stylesheet
+//            scene.getStylesheets().remove(darkThemeCSS);
+            scene.getStylesheets().set(0, lightThemeCSS);
+            Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
+        }
     }
 
     private void initUI() {

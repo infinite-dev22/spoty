@@ -10,15 +10,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -26,10 +22,10 @@ import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryBadgePage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<BeneficiaryBadge> masterTable;
+    private TextField searchBar;
+    private TableView<BeneficiaryBadge> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public BeneficiaryBadgePage() {
         super();
@@ -40,7 +36,6 @@ public class BeneficiaryBadgePage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -62,9 +57,8 @@ public class BeneficiaryBadgePage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search beneficiary badges");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -76,8 +70,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -87,7 +80,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -95,66 +88,39 @@ public class BeneficiaryBadgePage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<BeneficiaryBadge> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(BeneficiaryBadge::getName));
-        MFXTableColumn<BeneficiaryBadge> type =
-                new MFXTableColumn<>("Type", false, Comparator.comparing(BeneficiaryBadge::getBeneficiaryTypeName));
-        MFXTableColumn<BeneficiaryBadge> appearance =
-                new MFXTableColumn<>("Appearance", false, Comparator.comparing(BeneficiaryBadge::getColor));
-        MFXTableColumn<BeneficiaryBadge> description =
-                new MFXTableColumn<>("Description", false, Comparator.comparing(BeneficiaryBadge::getDescription));
-
-        name.setRowCellFactory(employee -> new MFXTableRowCell<>(BeneficiaryBadge::getName));
-        type.setRowCellFactory(employee -> new MFXTableRowCell<>(BeneficiaryBadge::getBeneficiaryType));
-        appearance.setRowCellFactory(employee -> new MFXTableRowCell<>(BeneficiaryBadge::getColor));
-        description.setRowCellFactory(
-                employee -> new MFXTableRowCell<>(BeneficiaryBadge::getDescription));
+        TableColumn<BeneficiaryBadge, String> name = new TableColumn<>("Name");
+        TableColumn<BeneficiaryBadge, String> type = new TableColumn<>("Type");
+        TableColumn<BeneficiaryBadge, String> appearance = new TableColumn<>("Appearance");
+        TableColumn<BeneficiaryBadge, String> description = new TableColumn<>("Description");
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         type.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        masterTable
-                .getTableColumns()
-                .addAll(name, type, appearance, description);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", BeneficiaryBadge::getName),
-                        new StringFilter<>("Type", BeneficiaryBadge::getBeneficiaryTypeName));
+        var columnList = new LinkedList<>(Stream.of(name, type, appearance, description).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         styleBeneficiaryBadgeTable();
 
-        if (BeneficiaryBadgeViewModel.getBeneficiaryBadges().isEmpty()) {
-            BeneficiaryBadgeViewModel.getBeneficiaryBadges()
-                    .addListener(
-                            (ListChangeListener<BeneficiaryBadge>)
-                                    c -> masterTable.setItems(BeneficiaryBadgeViewModel.getBeneficiaryBadges()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(BeneficiaryBadgeViewModel.beneficiaryBadgeProperty());
-        }
+        masterTable.setItems(BeneficiaryBadgeViewModel.getBeneficiaryBadges());
     }
 
     private void styleBeneficiaryBadgeTable() {
         masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<BeneficiaryBadge> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<BeneficiaryBadge> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<BeneficiaryBadge>) event.getSource())
+                                showContextMenu((TableRow<BeneficiaryBadge>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -166,7 +132,7 @@ public class BeneficiaryBadgePage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<BeneficiaryBadge> obj) {
+    private MFXContextMenu showContextMenu(TableRow<BeneficiaryBadge> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -174,13 +140,13 @@ public class BeneficiaryBadgePage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            BeneficiaryBadgeViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            BeneficiaryBadgeViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    BeneficiaryBadgeViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new BeneficiaryBadgeForm(), this).showAndWait(), this::errorMessage);
+                    BeneficiaryBadgeViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new BeneficiaryBadgeForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -195,10 +161,6 @@ public class BeneficiaryBadgePage extends OutlinePage {
 
     private void onSuccess() {
         BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null);
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

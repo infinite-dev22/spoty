@@ -10,6 +10,7 @@ import java.net.http.*;
 import java.util.concurrent.*;
 import lombok.extern.java.*;
 
+import javafx.util.Duration;
 @Log
 public class RolesRepositoryImpl extends ProtectedGlobals implements RoleRepository {
     @Override

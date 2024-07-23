@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -11,19 +10,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
-import javafx.application.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -32,10 +23,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class ProductCategoryPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<ProductCategory> masterTable;
+    private TextField searchBar;
+    private TableView<ProductCategory> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public ProductCategoryPage() {
         addNode(init());
@@ -45,7 +36,6 @@ public class ProductCategoryPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -67,9 +57,8 @@ public class ProductCategoryPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search product categories");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -81,8 +70,7 @@ public class ProductCategoryPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -92,7 +80,7 @@ public class ProductCategoryPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -100,57 +88,35 @@ public class ProductCategoryPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductCategory> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getName));
-        MFXTableColumn<ProductCategory> description =
-                new MFXTableColumn<>("Description", false, Comparator.comparing(ProductCategory::getDescription));
-
-        name.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
-        description.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getDescription));
+        TableColumn<ProductCategory, String> name = new TableColumn<>("Name");
+        TableColumn<ProductCategory, String> description = new TableColumn<>("Description");
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        masterTable.getTableColumns().addAll(name, description);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", ProductCategory::getName),
-                        new StringFilter<>("Description", ProductCategory::getDescription));
+        var columnList = new LinkedList<>(Stream.of(name, description).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getProductCategoryTable();
 
-        if (ProductCategoryViewModel.getCategories().isEmpty()) {
-            ProductCategoryViewModel.getCategories()
-                    .addListener(
-                            (ListChangeListener<ProductCategory>)
-                                    c -> masterTable.setItems(ProductCategoryViewModel.getCategories()));
-        } else {
-            masterTable
-                    .itemsProperty()
-                    .bindBidirectional(ProductCategoryViewModel.categoriesProperty());
-        }
+        masterTable.setItems(ProductCategoryViewModel.getCategories());
     }
 
     private void getProductCategoryTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<ProductCategory> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<ProductCategory> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<ProductCategory>) event.getSource())
+                                showContextMenu((TableRow<ProductCategory>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -162,20 +128,20 @@ public class ProductCategoryPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<ProductCategory> obj) {
+    private MFXContextMenu showContextMenu(TableRow<ProductCategory> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            ProductCategoryViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            ProductCategoryViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    ProductCategoryViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new ProductCategoryForm(), this).showAndWait(), this::errorMessage);
+                    ProductCategoryViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new ProductCategoryForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
         contextMenu.addItems(edit, delete);
@@ -214,10 +180,6 @@ public class ProductCategoryPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

@@ -1,0 +1,115 @@
+
+
+@import '../../fonts/Fonts.css';
+@import '../MFXColors.css';
+
+.chart-bar {
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-max-width: 50;
+    -fx-border-width: 50;
+    -fx-background-width: 50;
+    -fx-background-position: left center;
+}
+.default-color0.chart-bar {
+    -fx-bar-fill: #4EE29B;
+    -fx-border-color: darkgreen;
+}
+.default-color0.chart-bar:hover {
+    -fx-bar-fill: darkgreen;
+    -fx-border-color: #4EE29B;
+}
+/**************************************************
+ * Root
+**************************************************/
+app-root {
+    -fx-background-color: rgba(0, 0, 0, 1);
+}
+
+/*.content-view {
+    -fx-background-color: #343434;
+}*/
+
+/**************************************************
+ * Window Header
+**************************************************/
+.close-icon {
+    -mfx-color: -mfx-red;
+}
+
+.minimize-icon {
+    -mfx-color: -mfx-orange;
+}
+
+/*MESSAGE STYLES*/
+/*Error alert styles.*/
+.error {
+    -fx-background-color: #5c2416; /*Light red.*/
+    -fx-border-color: #f5a089;
+}
+
+.error .message-icon {
+    -fx-background-color: #cd5235; /*red*/
+}
+
+/*Success alert styles.*/
+.success {
+    -fx-background-color: #2c5e39; /*Light green.*/
+    -fx-border-color: #89f5a4;
+}
+
+.success .message-icon {
+    -fx-background-color: #35cc56; /*green.*/
+}
+
+/*POS PRODUCT CARD*/
+.pos-product-card {
+   -fx-border-color: -border-disabled;
+}
+.rounded-border {
+    -fx-border-color: transparent;
+}
+
+.rounded-accent-border:selected {
+    -fx-border-color: -spoty-accent-color;
+}
+
+/*CARDS*/
+.card-flat {
+    -fx-border-color: -border-disabled;
+}
+.card-flat-bottom {
+    -fx-border-color: -border-disabled;
+}
+.card-flat-no-border, .theme-item {
+    -fx-border-color: transparent;
+}
+.theme-item:selected {
+    -fx-border-color: -spoty-accent-color;
+}
+
+.green-bg{
+    -fx-background-color: green;
+}
+.red-bg{
+    -fx-background-color: red;
+}
+.orange-bg{
+    -fx-background-color: orange;
+}
+
+.content-view {
+    -fx-background-color: #1c1c1e;
+}
+
+.card-colored {
+    -fx-background-color: #1c1c1e;
+}
+
+.window {
+    /*-fx-background-color: rgba(43, 42, 51, .8);*/
+    -fx-background-color: rgba(51, 51, 51, .9);
+}
+.hero-image{
+    -fx-background-color: -mfx-charcoal;
+}

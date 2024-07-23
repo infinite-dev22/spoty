@@ -2,13 +2,11 @@ package inc.nomard.spoty.core.views.util;
 
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import lombok.*;
 
@@ -30,9 +28,9 @@ public interface Page {
     class PageHeader extends HBox {
         @Setter
         private SpotyGotFunctional.ParameterlessConsumer onTextEmpty, onSearchAction;
-        private MFXTextField searchBar;
+        private TextField searchBar;
         private MFXProgressSpinner progress;
-        private MFXButton createBtn;
+        private Button createBtn;
 
         public PageHeader() {
             super();
@@ -58,8 +56,7 @@ public interface Page {
         }
 
         private HBox buildCenterTop() {
-            searchBar = new MFXTextField();
-            searchBar.setFloatMode(FloatMode.DISABLED);
+            searchBar = new TextField();
             searchBar.setMinWidth(300d);
             searchBar.setPrefWidth(500d);
             searchBar.setMaxWidth(700d);
@@ -71,8 +68,8 @@ public interface Page {
         }
 
         private HBox buildRightTop() {
-            createBtn = new MFXButton("Create");
-            createBtn.getStyleClass().add("filled");
+            createBtn = new Button("Create");
+            createBtn.setDefaultButton(true);
             var hbox = new HBox(createBtn);
             hbox.setAlignment(Pos.CENTER_RIGHT);
             hbox.setPadding(new Insets(0d, 10d, 0d, 10d));

@@ -10,15 +10,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -26,10 +22,10 @@ import lombok.extern.java.*;
 
 @Log
 public class LeaveRequestPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<LeaveStatus> masterTable;
+    private TextField searchBar;
+    private TableView<LeaveStatus> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public LeaveRequestPage() {
         addNode(init());
@@ -39,7 +35,6 @@ public class LeaveRequestPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -61,9 +56,8 @@ public class LeaveRequestPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search leave requests");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -75,8 +69,7 @@ public class LeaveRequestPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -86,7 +79,7 @@ public class LeaveRequestPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -94,38 +87,19 @@ public class LeaveRequestPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<LeaveStatus> employeeName =
-                new MFXTableColumn<>("Employee Name", false, Comparator.comparing(LeaveStatus::getEmployeeName));
-        MFXTableColumn<LeaveStatus> designation =
-                new MFXTableColumn<>("Designation", false, Comparator.comparing(LeaveStatus::getDesignationName));
-        MFXTableColumn<LeaveStatus> dateAndTime =
-                new MFXTableColumn<>("Date & Time", false, Comparator.comparing(LeaveStatus::getStartDate));
-        MFXTableColumn<LeaveStatus> duration =
-                new MFXTableColumn<>("Duration", false, Comparator.comparing(LeaveStatus::getDuration));
-        MFXTableColumn<LeaveStatus> leaveType =
-                new MFXTableColumn<>(
-                        "Leave Type", false, Comparator.comparing(LeaveStatus::getLeaveType));
-        MFXTableColumn<LeaveStatus> attachment =
-                new MFXTableColumn<>("Attachment", false, Comparator.comparing(LeaveStatus::getAttachment));
-        MFXTableColumn<LeaveStatus> status =
-                new MFXTableColumn<>("Status", false, Comparator.comparing(LeaveStatus::getStatusName));
-
-        employeeName.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getEmployeeName));
-        designation.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getDesignationName));
-        dateAndTime.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getStartDate));
-        duration.setRowCellFactory(
-                employee -> new MFXTableRowCell<>(LeaveStatus::getLocaleDuration));
-        leaveType.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getLeaveType));
-        attachment.setRowCellFactory(employee -> new MFXTableRowCell<>(LeaveStatus::getAttachment));
+        TableColumn<LeaveStatus, String> employeeName = new TableColumn<>("Employee Name");
+        TableColumn<LeaveStatus, String> designation = new TableColumn<>("Designation");
+        TableColumn<LeaveStatus, String> dateAndTime = new TableColumn<>("Date & Time");
+        TableColumn<LeaveStatus, String> duration = new TableColumn<>("Duration");
+        TableColumn<LeaveStatus, String> leaveType = new TableColumn<>("Leave Type");
+        TableColumn<LeaveStatus, String> attachment = new TableColumn<>("Attachment");
+        TableColumn<LeaveStatus, String> status = new TableColumn<>("Status");
 
         employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         designation.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
@@ -134,40 +108,23 @@ public class LeaveRequestPage extends OutlinePage {
         leaveType.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         attachment.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        masterTable
-                .getTableColumns()
-                .addAll(employeeName, designation, dateAndTime, duration, leaveType, attachment, status);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Employee Name", LeaveStatus::getEmployeeName),
-                        new StringFilter<>("Designation", LeaveStatus::getDesignationName),
-//                        new StringFilter<>("Start On/At", LeaveStatus::getStartDate),
-                        new StringFilter<>("Status", LeaveStatus::getStatusName),
-                        new StringFilter<>("Duration", LeaveStatus::getLocaleDuration));
+        var columnList = new LinkedList<>(Stream.of(employeeName, designation, dateAndTime, duration, leaveType, attachment, status).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         styleLeaveStatusTable();
 
-        if (LeaveStatusViewModel.getLeaveStatuses().isEmpty()) {
-            LeaveStatusViewModel.getLeaveStatuses()
-                    .addListener(
-                            (ListChangeListener<LeaveStatus>)
-                                    c -> masterTable.setItems(LeaveStatusViewModel.getLeaveStatuses()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(LeaveStatusViewModel.leaveStatusProperty());
-        }
+        masterTable.setItems(LeaveStatusViewModel.getLeaveStatuses());
     }
 
     private void styleLeaveStatusTable() {
         masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<LeaveStatus> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<LeaveStatus> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<LeaveStatus>) event.getSource())
+                                showContextMenu((TableRow<LeaveStatus>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -179,7 +136,7 @@ public class LeaveRequestPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<LeaveStatus> obj) {
+    private MFXContextMenu showContextMenu(TableRow<LeaveStatus> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -187,13 +144,13 @@ public class LeaveRequestPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            LeaveStatusViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            LeaveStatusViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getEmployeeName() + "'s leave request", this));
+        }, obj.getItem().getEmployeeName() + "'s leave request", this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    LeaveStatusViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new LeaveRequestForm(), this).showAndWait(), this::errorMessage);
+                    LeaveStatusViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new LeaveRequestForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -208,10 +165,6 @@ public class LeaveRequestPage extends OutlinePage {
 
     private void onSuccess() {
         LeaveStatusViewModel.getAllLeaveStatuses(null, null);
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

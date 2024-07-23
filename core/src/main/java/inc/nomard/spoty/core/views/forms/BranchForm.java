@@ -1,21 +1,20 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.BranchViewModel.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -24,9 +23,9 @@ import lombok.extern.java.*;
 
 @Log
 public class BranchForm extends MFXGenericDialog {
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
-    public MFXTextField name,
+    public LabeledTextField name,
             email,
             phone,
             town,
@@ -65,9 +64,8 @@ public class BranchForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Name");
+        name = new LabeledTextField();
+        name.setLabel("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BranchViewModel.nameProperty());
         // Validation.
@@ -81,9 +79,8 @@ public class BranchForm extends MFXGenericDialog {
 
     private VBox buildPhone() {
         // Input.
-        phone = new MFXTextField();
-        phone.setFloatMode(FloatMode.BORDER);
-        phone.setFloatingText("Phone");
+        phone = new LabeledTextField();
+        name.setLabel("Phone");
         phone.setPrefWidth(400d);
         phone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
         // Validation.
@@ -97,9 +94,8 @@ public class BranchForm extends MFXGenericDialog {
 
     private VBox buildTown() {
         // Input.
-        town = new MFXTextField();
-        town.setFloatMode(FloatMode.BORDER);
-        town.setFloatingText("Town");
+        town = new LabeledTextField();
+        town.setLabel("Town");
         town.setPrefWidth(400d);
         town.textProperty().bindBidirectional(BranchViewModel.townProperty());
         // Validation.
@@ -113,9 +109,8 @@ public class BranchForm extends MFXGenericDialog {
 
     private VBox buildCity() {
         // Input.
-        city = new MFXTextField();
-        city.setFloatMode(FloatMode.BORDER);
-        city.setFloatingText("City");
+        city = new LabeledTextField();
+        city.setLabel("City");
         city.setPrefWidth(400d);
         city.textProperty().bindBidirectional(BranchViewModel.cityProperty());
         var vbox = new VBox();
@@ -127,9 +122,8 @@ public class BranchForm extends MFXGenericDialog {
 
     private VBox buildEmail() {
         // Input.
-        email = new MFXTextField();
-        email.setFloatMode(FloatMode.BORDER);
-        email.setFloatingText("Email");
+        email = new LabeledTextField();
+        email.setLabel("Email");
         email.setPrefWidth(400d);
         email.textProperty().bindBidirectional(BranchViewModel.emailProperty());
         var vbox = new VBox();
@@ -147,15 +141,15 @@ public class BranchForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 

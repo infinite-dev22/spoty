@@ -9,7 +9,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class RequisitionDetail {
     private Long id;

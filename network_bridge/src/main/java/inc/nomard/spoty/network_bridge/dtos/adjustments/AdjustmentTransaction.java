@@ -1,6 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.adjustments;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -10,14 +13,13 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class AdjustmentTransaction {
     private Long id;
     private ArrayList<Branch> branches;
     private Product product;
     private AdjustmentDetail adjustmentDetail;
-    private Date date;
+    private LocalDateTime date;
     private long adjustQuantity;
     private String adjustmentType;
 }

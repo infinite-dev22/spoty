@@ -1,20 +1,20 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.event.*;
@@ -26,13 +26,13 @@ import lombok.extern.java.*;
 
 @Log
 public class ExpenseForm extends MFXGenericDialog {
-    public MFXTextField amount,
+    public LabeledTextField amount,
             name;
-    public TextArea note;
-    public MFXButton saveBtn,
+    public LabeledTextArea note;
+    public Button saveBtn,
             cancelBtn;
-    public MFXDatePicker date;
-    public MFXFilterComboBox<Account> account;
+    public LabeledDatePicker date;
+    public LabeledComboBox<Account> account;
     public Label nameValidationLabel,
             dateValidationLabel,
             accountValidationLabel,
@@ -66,9 +66,8 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildAccount() {
         // Input.
-        account = new MFXFilterComboBox<>();
-        account.setFloatMode(FloatMode.BORDER);
-        account.setFloatingText("Account");
+        account = new LabeledComboBox<>();
+        account.setLabel("Account");
         account.setPrefWidth(400d);
         account.valueProperty().bindBidirectional(ExpensesViewModel.accountProperty());
         // Converter
@@ -84,7 +83,6 @@ public class ExpenseForm extends MFXGenericDialog {
         // Combo box properties.
         account.setItems(AccountViewModel.getAccounts());
         account.setConverter(accountConverter);
-        account.setFilterFunction(accountFilterFunction);
         // Validation.
         accountValidationLabel = buildValidationLabel();
         var vbox = new VBox();
@@ -96,9 +94,8 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Name");
+        name = new LabeledTextField();
+        name.setLabel("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
         // Validation.
@@ -112,11 +109,10 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildDate() {
         // Input.
-        date = new MFXDatePicker();
-        date.setFloatMode(FloatMode.BORDER);
-        date.setFloatingText("Expense Date");
+        date = new LabeledDatePicker();
+        date.setLabel("Expense Date");
         date.setPrefWidth(400d);
-        date.textProperty().bindBidirectional(ExpensesViewModel.dateProperty());
+        date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
         // Validation.
         dateValidationLabel = buildValidationLabel();
         var vbox = new VBox();
@@ -128,9 +124,8 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildAmount() {
         // Input.
-        amount = new MFXTextField();
-        amount.setFloatMode(FloatMode.BORDER);
-        amount.setFloatingText("Amount");
+        amount = new LabeledTextField();
+        amount.setLabel("Amount");
         amount.setPrefWidth(400d);
         amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
         ExpensesViewModel.idProperty().addListener((observableValue, oV, nV) -> amount.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
@@ -143,8 +138,8 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildNote() {
         // Input.
-        note = new TextArea();
-        note.setPromptText("Note");
+        note = new LabeledTextArea();
+        note.setLabel("Note");
         note.setPrefWidth(400d);
         note.textProperty().bindBidirectional(ExpensesViewModel.noteProperty());
         var vbox = new VBox();
@@ -162,15 +157,15 @@ public class ExpenseForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -195,7 +190,6 @@ public class ExpenseForm extends MFXGenericDialog {
                 (event) -> {
                     closeDialog(event);
                     ExpensesViewModel.resetProperties();
-                    account.clearSelection();
 
                     nameValidationLabel.setVisible(false);
                     dateValidationLabel.setVisible(false);
@@ -206,9 +200,6 @@ public class ExpenseForm extends MFXGenericDialog {
                     dateValidationLabel.setManaged(false);
                     accountValidationLabel.setManaged(false);
                     amountValidationLabel.setManaged(false);
-
-                    date.setValue(null);
-                    account.clearSelection();
 
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -269,9 +260,6 @@ public class ExpenseForm extends MFXGenericDialog {
     }
 
     private void onSuccess() {
-        date.setValue(null);
-        account.clearSelection();
-        account.clearSelection();
         closeDialog(actionEvent);
         ExpensesViewModel.resetProperties();
         ExpensesViewModel.getAllExpenses(null, null);
@@ -290,14 +278,14 @@ public class ExpenseForm extends MFXGenericDialog {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Date is required")
-                        .setCondition(date.textProperty().length().greaterThan(0))
+                        .setCondition(date.valueProperty().isNotNull())
                         .get();
         date.getValidator().constraint(dateConstraint);
         Constraint categoryConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Category is required")
-                        .setCondition(account.textProperty().length().greaterThan(0))
+                        .setCondition(account.valueProperty().isNotNull())
                         .get();
         account.getValidator().constraint(categoryConstraint);
         Constraint amountConstraint =

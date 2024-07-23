@@ -17,6 +17,7 @@ import java.net.URLConnection;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import javafx.util.Duration;
 @Log
 public class SeamlessUpdater {
 

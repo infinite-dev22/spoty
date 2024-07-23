@@ -1,20 +1,20 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -32,13 +32,13 @@ public class UOMForm extends ModalPage {
      * filled in its combo. =>The dialog should animate to expand and contract when a BaseUnit is
      * present i.e. not just have a scroll view.
      */
-    public MFXTextField name,
+    public LabeledTextField name,
             shortName,
             operatorValue;
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
-    public MFXFilterComboBox<UnitOfMeasure> baseUnit;
-    public MFXComboBox<String> operator;
+    public LabeledComboBox<UnitOfMeasure> baseUnit;
+    public LabeledComboBox<String> operator;
     public VBox formsHolder;
     public Label nameValidationLabel,
             operatorValidationLabel,
@@ -71,9 +71,8 @@ public class UOMForm extends ModalPage {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Name");
+        name = new LabeledTextField();
+        name.setLabel("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(UOMViewModel.nameProperty());
         // Validation.
@@ -87,9 +86,8 @@ public class UOMForm extends ModalPage {
 
     private VBox buildShortName() {
         // Input.
-        shortName = new MFXTextField();
-        shortName.setFloatMode(FloatMode.BORDER);
-        shortName.setFloatingText("Short Name");
+        shortName = new LabeledTextField();
+        shortName.setLabel("Short Name");
         shortName.setPrefWidth(400d);
         shortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
         var vbox = new VBox();
@@ -101,9 +99,8 @@ public class UOMForm extends ModalPage {
 
     private VBox buildBaseUnit() {
         // Input.
-        baseUnit = new MFXFilterComboBox<>();
-        baseUnit.setFloatMode(FloatMode.BORDER);
-        baseUnit.setFloatingText("Base Unit");
+        baseUnit = new LabeledComboBox<>();
+        baseUnit.setLabel("Base Unit");
         baseUnit.setPrefWidth(400d);
         baseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
         // Input listeners.
@@ -111,7 +108,7 @@ public class UOMForm extends ModalPage {
                 .valueProperty()
                 .addListener(
                         observable -> {
-                            if (baseUnit.getSelectedItem() != null) {
+                            if (baseUnit.getValue() != null) {
                                 formsHolder.setVisible(true);
                                 formsHolder.setManaged(true);
                                 MFXStageDialog dialog = (MFXStageDialog) baseUnit.getScene().getWindow();
@@ -136,7 +133,6 @@ public class UOMForm extends ModalPage {
 
         // ComboBox properties.
         baseUnit.setConverter(uomConverter);
-        baseUnit.setFilterFunction(uomFilterFunction);
         if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
             UOMViewModel.getUnitsOfMeasure()
                     .addListener(
@@ -154,9 +150,8 @@ public class UOMForm extends ModalPage {
 
     private VBox buildOperator() {
         // Input.
-        operator = new MFXComboBox<>();
-        operator.setFloatMode(FloatMode.BORDER);
-        operator.setFloatingText("Operator");
+        operator = new LabeledComboBox<>();
+        operator.setLabel("Operator");
         operator.setPrefWidth(400d);
         operator.valueProperty().bindBidirectional(UOMViewModel.operatorProperty());
         operator.setItems(UOMViewModel.operatorList);
@@ -171,9 +166,8 @@ public class UOMForm extends ModalPage {
 
     private VBox buildOperatorValue() {
         // Input.
-        operatorValue = new MFXTextField();
-        operatorValue.setFloatMode(FloatMode.BORDER);
-        operatorValue.setFloatingText("Operator Value");
+        operatorValue = new LabeledTextField();
+        operatorValue.setLabel("Operator Value");
         operatorValue.setPrefWidth(400d);
         operatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
         var vbox = new VBox();
@@ -200,15 +194,15 @@ public class UOMForm extends ModalPage {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -233,7 +227,6 @@ public class UOMForm extends ModalPage {
                 (event) -> {
                     closeDialog(event);
                     UOMViewModel.resetUOMProperties();
-                    baseUnit.clearSelection();
                     nameValidationLabel.setVisible(false);
                     operatorValidationLabel.setVisible(false);
                     operatorValueValidationLabel.setVisible(false);
@@ -252,7 +245,7 @@ public class UOMForm extends ModalPage {
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
-                    if (Objects.nonNull(baseUnit.getSelectedItem())) {
+                    if (Objects.nonNull(baseUnit.getValue())) {
                         operatorConstraints = operator.validate();
                         operatorValueConstraints = operatorValue.validate();
                     }
@@ -264,7 +257,7 @@ public class UOMForm extends ModalPage {
                         MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
                         dialog.sizeToScene();
                     }
-                    if (Objects.nonNull(baseUnit.getSelectedItem())) {
+                    if (Objects.nonNull(baseUnit.getValue())) {
                         if (!operatorConstraints.isEmpty()) {
                             operatorValidationLabel.setManaged(true);
                             operatorValidationLabel.setVisible(true);
@@ -283,7 +276,7 @@ public class UOMForm extends ModalPage {
                         }
                     }
                     if (nameConstraints.isEmpty()) {
-                        if (Objects.nonNull(baseUnit.getSelectedItem())) {
+                        if (Objects.nonNull(baseUnit.getValue())) {
                             if (!operatorConstraints.isEmpty()
                                     && !operatorValueConstraints.isEmpty()) {
                                 return;
@@ -328,7 +321,7 @@ public class UOMForm extends ModalPage {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Operator Value is required")
-                        .setCondition(operator.textProperty().length().greaterThan(0))
+                        .setCondition(operator.valueProperty().isNotNull())
                         .get();
         operator.getValidator().constraint(operatorConstraint);
         // Display error.

@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import javafx.util.Duration;
 @Log
 public class LocalTimeTypeAdapter implements JsonSerializer<LocalTime>, JsonDeserializer<LocalTime> {
     // Consider using a configurable formatter if needed

@@ -7,10 +7,14 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
 import java.net.*;
 import java.net.http.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import lombok.extern.java.*;
 
+import javafx.util.Duration;
 @Log
 public class BranchesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override

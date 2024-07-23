@@ -7,8 +7,13 @@
  * Root
 **************************************************/
 .body {
-    -fx-background-color: -mfx-app-background-light;
-    -fx-border-color: #ebebeb;
+    /*-fx-background-color: transparent;*/
+    /*-fx-background-color: rgba(255, 255, 255, 0.5);*/
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+.content-view {
+    -fx-background-color: #ebebeb;
 }
 
 /**************************************************
@@ -26,7 +31,8 @@
  * Sidebar
 **************************************************/
 .body .sidebar {
-    -fx-background-color: -mfx-charcoal;
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
 }
 
 .body .sidebar .header {
@@ -58,13 +64,15 @@
 
 /*TREE VIEW NAV STYLING.*/
 .body .sidebar .navbar .tree-view {
-    -fx-background-color: -mfx-charcoal;
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
     -fx-fill: #e3e7e9;
     -fx-text-fill: #e3e7e9;
 }
 
 .body .sidebar .navbar .tree-view .tree-cell {
-    -fx-background-color: -mfx-charcoal;
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
     -fx-fill: white;
     -fx-text-fill: white;
 }
@@ -105,7 +113,8 @@
 
 /*Style expanded group.*/
 .body .sidebar .navbar .tree-view .tree-cell:group:expanded {
-    -fx-background-color: -mfx-charcoal;
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }
@@ -220,8 +229,7 @@
 
 /*APPBAR STYLES*/
 .appBar {
-    -fx-background-color: -mfx-app-components-light;
-    -fx-border-color: -border-disabled;
+    -fx-background-color: transparent;
 }
 
 /*MESSAGE STYLES*/
@@ -334,8 +342,9 @@
     -fx-background-color: rgba(255, 255, 255, 1);
     -fx-border-color: -border-disabled;
 }
-.card-raised {
+.card-flat-1 {
     -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-border-color: -border-disabled;
 }
 .card-flat-no-border, .theme-item {
     -fx-background-color: -spoty-background-gray;
@@ -466,3 +475,9 @@
 .card-title{}
 .card-sub-title{}
 .username-label{}
+.icon {
+    -mfx-color: white;
+}
+.text {
+    -fx-text-fill: white;
+}

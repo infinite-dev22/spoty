@@ -11,7 +11,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class PurchaseDetail {
     private Long id;

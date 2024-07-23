@@ -1,22 +1,21 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import com.dlsc.gemsfx.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import javafx.collections.*;
@@ -34,10 +33,10 @@ import lombok.extern.java.*;
 
 @Log
 public class LeaveRequestForm extends ModalPage {
-    public MFXButton saveButton, cancelButton;
-    public MFXFilterComboBox<User> employee;
-    public MFXComboBox<String> leaveType;
-    public MFXDatePicker fromDate, toDate;
+    public Button saveButton, cancelButton;
+    public LabeledComboBox<User> employee;
+    public LabeledComboBox<String> leaveType;
+    public LabeledDatePicker fromDate, toDate;
     public TimePicker fromTime, toTime;
     public Label employeeValidationLabel,
             leaveTypeValidationLabel,
@@ -47,7 +46,7 @@ public class LeaveRequestForm extends ModalPage {
             toTimeValidationLabel,
             reasonValidationLabel,
             fileLabel;
-    public TextArea reason;
+    public LabeledTextArea reason;
     public VBox documentButton;
     public HBox uploadIcon;
     private FileChooser fileChooser;
@@ -70,13 +69,13 @@ public class LeaveRequestForm extends ModalPage {
         root.setPadding(new Insets(10.0));
 
         root.getChildren().addAll(
-                createValidationBox(employee = new MFXFilterComboBox<>(), "Employee", employeeValidationLabel = new Label()),
-                createValidationBox(leaveType = new MFXComboBox<>(), "Leave Type", leaveTypeValidationLabel = new Label()),
-                createDateTimeBox(fromDate = new MFXDatePicker(), "From Date", fromDateValidationLabel = new Label(),
+                createValidationBox(employee = new LabeledComboBox<>(), "Employee", employeeValidationLabel = new Label()),
+                createValidationBox(leaveType = new LabeledComboBox<>(), "Leave Type", leaveTypeValidationLabel = new Label()),
+                createDateTimeBox(fromDate = new LabeledDatePicker(), "From Date", fromDateValidationLabel = new Label(),
                         fromTime = new TimePicker(), "From Time", fromTimeValidationLabel = new Label(), 190d),
-                createDateTimeBox(toDate = new MFXDatePicker(), "To Date", toDateValidationLabel = new Label(),
+                createDateTimeBox(toDate = new LabeledDatePicker(), "To Date", toDateValidationLabel = new Label(),
                         toTime = new TimePicker(), "To Time", toTimeValidationLabel = new Label(), 190d),
-                createValidationTextArea(reason = new TextArea(), "Reason", reasonValidationLabel = new Label(), 400d, 100d),
+                createValidationTextArea(reason = new LabeledTextArea(), "Reason", reasonValidationLabel = new Label(), 400d, 100d),
                 createDocumentButtonBox()
         );
 
@@ -86,19 +85,17 @@ public class LeaveRequestForm extends ModalPage {
 
     public void initializeComponentProperties() {
         employee.valueProperty().bindBidirectional(LeaveStatusViewModel.employeeProperty());
-        leaveType.textProperty().bindBidirectional(LeaveStatusViewModel.leaveTypeProperty());
-        fromDate.textProperty().bindBidirectional(LeaveStatusViewModel.startDateProperty());
-        fromTime.timeProperty().bindBidirectional(LeaveStatusViewModel.startTimeProperty());
-        toDate.textProperty().bindBidirectional(LeaveStatusViewModel.endDateProperty());
-        toTime.timeProperty().bindBidirectional(LeaveStatusViewModel.endTimeProperty());
+        leaveType.valueProperty().bindBidirectional(LeaveStatusViewModel.leaveTypeProperty());
+        fromDate.valueProperty().bindBidirectional(LeaveStatusViewModel.startDateProperty());
+//        fromTime.timeProperty().bindBidirectional(LeaveStatusViewModel.startDateProperty());
+        toDate.valueProperty().bindBidirectional(LeaveStatusViewModel.endDateProperty());
+//        toTime.timeProperty().bindBidirectional(LeaveStatusViewModel.startDateProperty());
         reason.textProperty().bindBidirectional(LeaveStatusViewModel.descriptionProperty());
         // Combo box properties.
 
         StringConverter<User> employeeConverter = FunctionalStringConverter.to(
                 employeeDetail -> employeeDetail == null ? "" : employeeDetail.getName());
         employee.setConverter(employeeConverter);
-        employee.setFilterFunction(searchStr ->
-                employeeDetail -> StringUtils.containsIgnoreCase(employeeConverter.toString(employeeDetail), searchStr));
 
         if (UserViewModel.getUsers().isEmpty()) {
             UserViewModel.getUsers().addListener((ListChangeListener<User>) c -> employee.setItems(UserViewModel.getUsers()));
@@ -108,25 +105,15 @@ public class LeaveRequestForm extends ModalPage {
         leaveType.setItems(LeaveStatusViewModel.getLeaveTypeList());
     }
 
-    private <T> VBox createValidationBox(MFXFilterComboBox<T> comboBox, String promptText, Label validationLabel) {
-        comboBox.setFloatMode(FloatMode.BORDER);
-        comboBox.setFloatingText(promptText);
+    private <T> VBox createValidationBox(LabeledComboBox<T> comboBox, String promptText, Label validationLabel) {
+        comboBox.setLabel(promptText);
         comboBox.setPrefWidth(400d);
 
         return createValidationContainer(comboBox, validationLabel);
     }
 
-    private <T> VBox createValidationBox(MFXComboBox<T> comboBox, String promptText, Label validationLabel) {
-        comboBox.setFloatMode(FloatMode.BORDER);
-        comboBox.setFloatingText(promptText);
-        comboBox.setPrefWidth(400d);
-
-        return createValidationContainer(comboBox, validationLabel);
-    }
-
-    private VBox createValidationBox(MFXDatePicker datePicker, String promptText, Label validationLabel, double width) {
-        datePicker.setFloatMode(FloatMode.BORDER);
-        datePicker.setFloatingText(promptText);
+    private VBox createValidationBox(LabeledDatePicker datePicker, String promptText, Label validationLabel, double width) {
+        datePicker.setLabel(promptText);
         datePicker.setPrefWidth(width);
 
         return createValidationContainer(datePicker, validationLabel);
@@ -139,8 +126,8 @@ public class LeaveRequestForm extends ModalPage {
         return createValidationContainer(timePicker, validationLabel);
     }
 
-    private VBox createValidationTextArea(TextArea textArea, String promptText, Label validationLabel, double width, double height) {
-        textArea.setPromptText(promptText);
+    private VBox createValidationTextArea(LabeledTextArea textArea, String promptText, Label validationLabel, double width, double height) {
+        textArea.setLabel(promptText);
         textArea.setPrefWidth(width);
         textArea.setPrefHeight(height);
 
@@ -161,7 +148,7 @@ public class LeaveRequestForm extends ModalPage {
         return box;
     }
 
-    private HBox createDateTimeBox(MFXDatePicker datePicker, String datePrompt, Label dateValidationLabel,
+    private HBox createDateTimeBox(LabeledDatePicker datePicker, String datePrompt, Label dateValidationLabel,
                                    TimePicker timePicker, String timePrompt, Label timeValidationLabel, double width) {
         HBox box = new HBox(10.0);
         box.getChildren().addAll(
@@ -199,11 +186,11 @@ public class LeaveRequestForm extends ModalPage {
         box.setAlignment(Pos.CENTER_RIGHT);
         box.setPadding(new Insets(10.0));
 
-        saveButton = new MFXButton("Save");
-        saveButton.getStyleClass().add("filled");
+        saveButton = new Button("Save");
+        saveButton.setDefaultButton(true);
 
-        cancelButton = new MFXButton("Cancel");
-        cancelButton.getStyleClass().add("outlined");
+        cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         box.getChildren().addAll(saveButton, cancelButton);
         return box;
@@ -327,28 +314,28 @@ public class LeaveRequestForm extends ModalPage {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Employee is required")
-                        .setCondition(employee.textProperty().length().greaterThan(0))
+                        .setCondition(employee.valueProperty().isNotNull())
                         .get();
         employee.getValidator().constraint(employeeConstraint);
         Constraint leaveTypeConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Leave Type is required")
-                        .setCondition(leaveType.textProperty().length().greaterThan(0))
+                        .setCondition(leaveType.valueProperty().isNotNull())
                         .get();
         leaveType.getValidator().constraint(leaveTypeConstraint);
         Constraint fromDateConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
-                        .setMessage("From Date is required")
-                        .setCondition(fromDate.textProperty().length().greaterThan(0))
+                        .setMessage("From LocalDate is required")
+                        .setCondition(fromDate.valueProperty().isNotNull())
                         .get();
         fromDate.getValidator().constraint(fromDateConstraint);
         Constraint toDateConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
-                        .setMessage("To Date is required")
-                        .setCondition(toDate.textProperty().length().greaterThan(0))
+                        .setMessage("To LocalDate is required")
+                        .setCondition(toDate.valueProperty().isNotNull())
                         .get();
         toDate.getValidator().constraint(toDateConstraint);
         // Display error.

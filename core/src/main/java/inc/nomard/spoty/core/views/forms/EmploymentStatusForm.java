@@ -4,15 +4,14 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -25,15 +24,15 @@ import lombok.extern.java.*;
 @Log
 public class EmploymentStatusForm extends MFXGenericDialog {
     @FXML
-    public MFXTextField name;
+    public LabeledTextField name;
     @FXML
     public Label nameValidationLabel;
     @FXML
-    public MFXComboBox<String> colorPicker;
+    public LabeledComboBox<String> colorPicker;
     @FXML
-    public TextArea description;
+    public LabeledTextArea description;
     @FXML
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
     @FXML
     public Label colorPickerValidationLabel;
@@ -65,9 +64,8 @@ public class EmploymentStatusForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Name");
+        name = new LabeledTextField();
+        name.setLabel("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(EmploymentStatusViewModel.nameProperty());
         // Validation.
@@ -81,14 +79,13 @@ public class EmploymentStatusForm extends MFXGenericDialog {
 
     private VBox buildColor() {
         // Input.
-        colorPicker = new MFXFilterComboBox<>();
-        colorPicker.setFloatMode(FloatMode.BORDER);
-        colorPicker.setFloatingText("Appearance Color");
+        colorPicker = new LabeledComboBox<>();
+        colorPicker.setLabel("Appearance Color");
         colorPicker.setPrefWidth(400d);
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
         colorPicker.getStyleClass().add(Styles.BUTTON_OUTLINED);
         colorPicker.setItems(EmploymentStatusViewModel.getColorsList());
-        colorPicker.textProperty().bindBidirectional(EmploymentStatusViewModel.colorProperty());
+        colorPicker.valueProperty().bindBidirectional(EmploymentStatusViewModel.colorProperty());
         // Validation.
         colorPickerValidationLabel = buildValidationLabel();
         var vbox = new VBox();
@@ -100,8 +97,8 @@ public class EmploymentStatusForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
-        description.setPromptText("Description");
+        description = new LabeledTextArea();
+        description.setLabel("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());
         var vbox = new VBox();
@@ -119,15 +116,15 @@ public class EmploymentStatusForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -158,8 +155,6 @@ public class EmploymentStatusForm extends MFXGenericDialog {
 
                     nameValidationLabel.setManaged(false);
                     colorPickerValidationLabel.setManaged(false);
-
-                    colorPicker.clearSelection();
 
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -198,7 +193,6 @@ public class EmploymentStatusForm extends MFXGenericDialog {
     }
 
     private void onSuccess() {
-        colorPicker.clearSelection();
         closeDialog(actionEvent);
         EmploymentStatusViewModel.clearEmploymentStatusData();
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null);
@@ -217,7 +211,7 @@ public class EmploymentStatusForm extends MFXGenericDialog {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Color is required")
-                        .setCondition(colorPicker.textProperty().length().greaterThan(0))
+                        .setCondition(colorPicker.valueProperty().isNotNull())
                         .get();
         colorPicker.getValidator().constraint(lastName);
         // Display error.

@@ -1,12 +1,6 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.*;
-import java.util.*;
-import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;

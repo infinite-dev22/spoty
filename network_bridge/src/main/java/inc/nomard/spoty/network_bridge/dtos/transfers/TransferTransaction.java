@@ -1,6 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.transfers;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -10,7 +13,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class TransferTransaction {
     private Long id;
@@ -18,6 +20,6 @@ public class TransferTransaction {
     private Branch toBranch;
     private Product product;
     private TransferDetail transferDetail;
-    private Date date;
+    private LocalDateTime date;
     private long transferQuantity;
 }

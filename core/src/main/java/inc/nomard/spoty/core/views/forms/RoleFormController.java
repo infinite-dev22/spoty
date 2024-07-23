@@ -4,15 +4,15 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.title.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
+import io.github.palexdev.mfxcomponents.controls.checkbox.*;
 import java.net.*;
 import java.util.*;
 import javafx.event.*;
@@ -26,11 +26,11 @@ import lombok.extern.java.*;
 @Log
 public class RoleFormController implements Initializable {
     @FXML
-    public MFXTextField name;
+    public LabeledTextField name;
     @FXML
-    public TextArea roleDescriptionInputField;
+    public LabeledTextArea roleDescriptionInputField;
     @FXML
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
     // <editor-fold desc="Lots of MFXCheckboxes here 👇️">
     @FXML
@@ -1467,19 +1467,6 @@ public class RoleFormController implements Initializable {
                             if (newValue) {
                                 errorLabel.setVisible(false);
                                 name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        name
-                .delegateFocusedProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (oldValue && !newValue) {
-                                constraints = name.validate();
-                                if (!constraints.isEmpty()) {
-                                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                                    errorLabel.setText(constraints.getFirst().getMessage());
-                                    errorLabel.setVisible(true);
-                                }
                             }
                         });
     }

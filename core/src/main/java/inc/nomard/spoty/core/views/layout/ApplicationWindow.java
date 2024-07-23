@@ -14,9 +14,7 @@ public interface ApplicationWindow {
 
     void dispose();
 
-    void setLightMode();
-
-    void setDarkMode();
+    void setStyleSheets();
 
     void setMorph(Boolean morph);
 }

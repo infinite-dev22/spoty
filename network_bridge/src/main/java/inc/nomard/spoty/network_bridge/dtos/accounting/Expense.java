@@ -3,6 +3,9 @@ package inc.nomard.spoty.network_bridge.dtos.accounting;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import java.io.*;
 import java.text.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -12,11 +15,10 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class Expense implements Serializable {
     private Long id;
-    private Date date;
+    private LocalDate date;
     private String ref;
     private String name;
     private Account account;

@@ -11,15 +11,11 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -33,8 +29,8 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class SaleReturnPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<SaleReturnMaster> masterTable;
+    private TextField searchBar;
+    private TableView<SaleReturnMaster> masterTable;
     private MFXProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
@@ -55,7 +51,6 @@ public class SaleReturnPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -77,9 +72,8 @@ public class SaleReturnPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search sale/order returns");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -100,7 +94,7 @@ public class SaleReturnPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -108,42 +102,19 @@ public class SaleReturnPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<SaleReturnMaster> saleReturnCustomer =
-                new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleReturnMaster::getCustomerName));
-        MFXTableColumn<SaleReturnMaster> saleReturnStatus =
-                new MFXTableColumn<>("Order Status", false, Comparator.comparing(SaleReturnMaster::getSaleStatus));
-        MFXTableColumn<SaleReturnMaster> saleReturnPaymentStatus =
-                new MFXTableColumn<>(
-                        "Pay Status", false, Comparator.comparing(SaleReturnMaster::getPaymentStatus));
-        MFXTableColumn<SaleReturnMaster> saleReturnDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(SaleReturnMaster::getDate));
-        MFXTableColumn<SaleReturnMaster> saleReturnGrandTotal =
-                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(SaleReturnMaster::getTotal));
-        MFXTableColumn<SaleReturnMaster> saleReturnAmountPaid =
-                new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(SaleReturnMaster::getAmountPaid));
-        MFXTableColumn<SaleReturnMaster> saleReturnAmountDue =
-                new MFXTableColumn<>("Amount Due", false, Comparator.comparing(SaleReturnMaster::getAmountDue));
-
-        saleReturnCustomer.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getCustomerName));
-        saleReturnStatus.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getSaleStatus));
-        saleReturnPaymentStatus.setRowCellFactory(
-                saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getPaymentStatus));
-        saleReturnDate.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getLocaleDate));
-        saleReturnGrandTotal.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getTotal));
-        saleReturnAmountPaid.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getAmountPaid));
-        saleReturnAmountDue.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getAmountDue));
-
-        saleReturnPaymentStatus.setTooltip(new Tooltip("SaleMaster Return Payment Status"));
-        saleReturnStatus.setTooltip(new Tooltip("SaleMaster Return Status"));
+        TableColumn<SaleReturnMaster, String> saleReturnCustomer = new TableColumn<>("Customer");
+        TableColumn<SaleReturnMaster, String> saleReturnStatus = new TableColumn<>("Order Status");
+        TableColumn<SaleReturnMaster, String> saleReturnPaymentStatus = new TableColumn<>("Pay Status");
+        TableColumn<SaleReturnMaster, String> saleReturnDate = new TableColumn<>("Date");
+        TableColumn<SaleReturnMaster, String> saleReturnGrandTotal = new TableColumn<>("Total Amount");
+        TableColumn<SaleReturnMaster, String> saleReturnAmountPaid = new TableColumn<>("Paid Amount");
+        TableColumn<SaleReturnMaster, String> saleReturnAmountDue = new TableColumn<>("Amount Due");
 
         saleReturnDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
         saleReturnCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
@@ -154,52 +125,29 @@ public class SaleReturnPage extends OutlinePage {
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.143));
 
-        masterTable
-                .getTableColumns()
-                .addAll(
-                        saleReturnCustomer,
-                        saleReturnStatus,
-                        saleReturnPaymentStatus,
-                        saleReturnDate,
-                        saleReturnGrandTotal,
-                        saleReturnAmountPaid);
-
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Ref No.", SaleReturnMaster::getRef),
-                        new StringFilter<>("Customer", SaleReturnMaster::getCustomerName),
-                        new StringFilter<>("Sale Status", SaleReturnMaster::getSaleStatus),
-                        new StringFilter<>("Payment Status", SaleReturnMaster::getPaymentStatus),
-                        new DoubleFilter<>("Grand Total", SaleReturnMaster::getTotal),
-                        new DoubleFilter<>("Amount Paid", SaleReturnMaster::getAmountPaid),
-                        new DoubleFilter<>("Amount Due", SaleReturnMaster::getAmountDue));
-
+        var columnList = new LinkedList<>(Stream.of(saleReturnCustomer,
+                saleReturnStatus,
+                saleReturnPaymentStatus,
+                saleReturnDate,
+                saleReturnGrandTotal,
+                saleReturnAmountPaid,
+                saleReturnAmountDue).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getSaleReturnMasterTable();
 
-        if (SaleReturnMasterViewModel.getSaleReturns().isEmpty()) {
-            SaleReturnMasterViewModel.getSaleReturns()
-                    .addListener(
-                            (ListChangeListener<SaleReturnMaster>)
-                                    c -> masterTable.setItems(SaleReturnMasterViewModel.getSaleReturns()));
-        } else {
-            masterTable
-                    .itemsProperty()
-                    .bindBidirectional(SaleReturnMasterViewModel.saleReturnsProperty());
-        }
+        masterTable.setItems(SaleReturnMasterViewModel.getSaleReturns());
     }
 
     private void getSaleReturnMasterTable() {
         masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<SaleReturnMaster> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<SaleReturnMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<SaleReturnMaster>) event.getSource())
+                                showContextMenu((TableRow<SaleReturnMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -218,7 +166,7 @@ public class SaleReturnPage extends OutlinePage {
         SaleReturnMasterViewModel.getSaleReturnMasters(null, null);
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<SaleReturnMaster> obj) {
+    private MFXContextMenu showContextMenu(TableRow<SaleReturnMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -227,20 +175,20 @@ public class SaleReturnPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            SaleReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            SaleReturnMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getCustomerName() + "'s sale returns", this));
+        }, obj.getItem().getCustomerName() + "'s sale returns", this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    SaleReturnMasterViewModel.getItem(obj.getData().getId(), this::createBtnAction, this::errorMessage);
+                    SaleReturnMasterViewModel.getItem(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
                     createBtnAction();
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getData());
+                    viewShow(obj.getItem());
                     event.consume();
                 });
 
@@ -292,10 +240,6 @@ public class SaleReturnPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

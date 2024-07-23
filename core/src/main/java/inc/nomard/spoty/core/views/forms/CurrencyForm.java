@@ -1,18 +1,18 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.CurrencyViewModel.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -23,10 +23,10 @@ import lombok.extern.java.*;
 
 @Log
 public class CurrencyForm extends MFXGenericDialog {
-    public MFXTextField name,
+    public LabeledTextField name,
             code,
             symbol;
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
     public Label codeValidationLabel,
             nameValidationLabel,
@@ -60,9 +60,8 @@ public class CurrencyForm extends MFXGenericDialog {
 
     private VBox buildCode() {
         // Input.
-        code = new MFXTextField();
-        code.setFloatMode(FloatMode.BORDER);
-        code.setFloatingText("Currency Code");
+        code = new LabeledTextField();
+        code.setLabel("Currency Code");
         code.setPrefWidth(400d);
         code.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
         // Validation.
@@ -76,9 +75,8 @@ public class CurrencyForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new MFXTextField();
-        name.setFloatMode(FloatMode.BORDER);
-        name.setFloatingText("Currency Name");
+        name = new LabeledTextField();
+        name.setLabel("Currency Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
         // Validation.
@@ -92,9 +90,8 @@ public class CurrencyForm extends MFXGenericDialog {
 
     private VBox buildSymbol() {
         // Input.
-        symbol = new MFXTextField();
-        symbol.setFloatMode(FloatMode.BORDER);
-        symbol.setFloatingText("Currency Symbol");
+        symbol = new LabeledTextField();
+        symbol.setLabel("Currency Symbol");
         symbol.setPrefWidth(400d);
         symbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
         CurrencyViewModel.idProperty().addListener((observableValue, oV, nV) -> symbol.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
@@ -113,15 +110,15 @@ public class CurrencyForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 

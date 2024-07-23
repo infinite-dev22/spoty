@@ -12,16 +12,16 @@ public class OnlineQueryWorker {
                 return new Task<>() {
                     @Override
                     protected Void call() {
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getTotalEarnings(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getTotalPurchases(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getCountProducts(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getCountCustomers(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getCountSuppliers(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyRevenue(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyRevenue(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getTopProducts(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getRecentOrders(null, null));
-                        CompletableFuture.runAsync(() -> DashboardViewModel.getStockAlerts(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getTotalEarnings(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getTotalPurchases(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getCountProducts(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getCountCustomers(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getCountSuppliers(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyRevenue(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyRevenue(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getTopProducts(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getRecentOrders(null, null));
+//                        CompletableFuture.runAsync(() -> DashboardViewModel.getStockAlerts(null, null));
                         return null;
                     }
                 };

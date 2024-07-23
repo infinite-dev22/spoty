@@ -1,17 +1,17 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -22,13 +22,13 @@ import lombok.extern.java.*;
 
 @Log
 public class AccountForm extends MFXGenericDialog {
-    public MFXTextField balance,
+    public LabeledTextField balance,
             accountName,
             accountNumber;
-    public TextArea description;
+    public LabeledTextArea description;
     public Label accountNameValidationLabel,
             accountNumberValidationLabel;
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
     private List<Constraint> accountNameConstraints,
             accountNumberConstraints;
@@ -58,9 +58,8 @@ public class AccountForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        accountName = new MFXTextField();
-        accountName.setFloatMode(FloatMode.BORDER);
-        accountName.setFloatingText("Account Name");
+        accountName = new LabeledTextField();
+        accountName.setLabel("Account Name");
         accountName.setPrefWidth(400d);
         accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
         // Validation.
@@ -74,9 +73,8 @@ public class AccountForm extends MFXGenericDialog {
 
     private VBox buildNumber() {
         // Input.
-        accountNumber = new MFXTextField();
-        accountNumber.setFloatMode(FloatMode.BORDER);
-        accountNumber.setFloatingText("Account Number");
+        accountNumber = new LabeledTextField();
+        accountNumber.setLabel("Account Number");
         accountNumber.setPrefWidth(400d);
         accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
         // Validation.
@@ -90,9 +88,8 @@ public class AccountForm extends MFXGenericDialog {
 
     private VBox buildBalance() {
         // Input.
-        balance = new MFXTextField();
-        balance.setFloatMode(FloatMode.BORDER);
-        balance.setFloatingText("Balance");
+        balance = new LabeledTextField();
+        balance.setLabel("Balance (Optional)");
         balance.setPrefWidth(400d);
         balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty());
         AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> balance.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
@@ -105,8 +102,8 @@ public class AccountForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
-        description.setPromptText("Description");
+        description = new LabeledTextArea();
+        description.setLabel("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
         var vbox = new VBox();
@@ -124,15 +121,15 @@ public class AccountForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 

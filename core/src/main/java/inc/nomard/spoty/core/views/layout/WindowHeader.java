@@ -16,11 +16,9 @@ public class WindowHeader extends HBox {
     }
 
     private void init() {
-        this.setPrefHeight(45d);
         HBox.setHgrow(this, Priority.ALWAYS);
         this.setSpacing(10d);
-        UIUtils.anchor(this, 5d, 5d, null, 5d);
-        this.setPadding(new Insets(2d, 10d, 2d, 10d));
+        UIUtils.anchor(this, 0d, 0d, null, 0d);
         this.getStyleClass().add("appBar");
         this.getChildren().addAll(buildLeft(), buildCenter(), buildRight());
     }

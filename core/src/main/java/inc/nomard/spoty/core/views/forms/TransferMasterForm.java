@@ -1,30 +1,26 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -36,22 +32,15 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class TransferMasterForm extends OutlineFormPage {
-    @FXML
-    public MFXFilterComboBox<Branch> fromBranch,
+    public LabeledComboBox<Branch> fromBranch,
             toBranch;
-    @FXML
-    public MFXDatePicker date;
-    @FXML
-    public MFXTableView<TransferDetail> table;
-    @FXML
-    public MFXTextField note;
-    @FXML
+    public LabeledDatePicker date;
+    public TableView<TransferDetail> table;
+    public LabeledTextField note;
     public BorderPane contentPane;
-    @FXML
-    public MFXButton addBtn,
+    public Button addBtn,
             saveBtn,
             cancelBtn;
-    @FXML
     public Label title,
             dateValidationLabel,
             toBranchValidationLabel,
@@ -87,17 +76,17 @@ public class TransferMasterForm extends OutlineFormPage {
         return separator;
     }
 
-    private MFXButton buildAddButton() {
-        addBtn = new MFXButton("Add");
-        addBtn.getStyleClass().add("filled");
+    private Button buildAddButton() {
+        addBtn = new Button("Add");
+        addBtn.setDefaultButton(true);
         addBtn.setOnAction(event -> SpotyDialog.createDialog(new TransferDetailForm(), this).showAndWait());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
     }
 
-    private MFXTableView<TransferDetail> buildTable() {
-        table = new MFXTableView<>();
+    private TableView<TransferDetail> buildTable() {
+        table = new TableView<>();
         HBox.setHgrow(table, Priority.ALWAYS);
         setupTable();
         return table;
@@ -140,9 +129,8 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private VBox buildFromBranch() {
-        fromBranch = new MFXFilterComboBox<>();
-        fromBranch.setFloatMode(FloatMode.BORDER);
-        fromBranch.setFloatingText("From Branch");
+        fromBranch = new LabeledComboBox<>();
+        fromBranch.setLabel("From Branch");
         fromBranch.setPrefWidth(10000d);
         fromBranch
                 .valueProperty()
@@ -159,7 +147,6 @@ public class TransferMasterForm extends OutlineFormPage {
 
         // Combo box properties.
         fromBranch.setConverter(fromBranchConverter);
-        fromBranch.setFilterFunction(fromBranchFilterFunction);
         if (BranchViewModel.getBranches().isEmpty()) {
             BranchViewModel.getBranches()
                     .addListener(
@@ -173,9 +160,8 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private VBox buildToBranch() {
-        toBranch = new MFXFilterComboBox<>();
-        toBranch.setFloatMode(FloatMode.BORDER);
-        toBranch.setFloatingText("To Branch");
+        toBranch = new LabeledComboBox<>();
+        toBranch.setLabel("To Branch");
         toBranch.setPrefWidth(10000d);
         toBranch
                 .valueProperty()
@@ -192,7 +178,6 @@ public class TransferMasterForm extends OutlineFormPage {
 
         // Combo box properties.
         toBranch.setConverter(toBranchConverter);
-        toBranch.setFilterFunction(toBranchFilterFunction);
         if (BranchViewModel.getBranches().isEmpty()) {
             BranchViewModel.getBranches()
                     .addListener(
@@ -206,28 +191,26 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private VBox buildDatePicker() {
-        date = new MFXDatePicker();
-        date.setFloatMode(FloatMode.BORDER);
-        date.setFloatingText("Date");
+        date = new LabeledDatePicker();
+        date.setLabel("Date");
         date.setPrefWidth(10000d);
-        date.textProperty()
+        date.valueProperty()
                 .bindBidirectional(TransferMasterViewModel.dateProperty());
         dateValidationLabel = buildValidationLabel();
         return buildFieldHolder(date, dateValidationLabel);
     }
 
     private VBox buildNote() {
-        note = new MFXTextField();
-        note.setFloatMode(FloatMode.BORDER);
-        note.setFloatingText("Note");
+        note = new LabeledTextField();
+        note.setLabel("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
         return buildFieldHolder(note);
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
             if (!table.isDisabled() && TransferDetailViewModel.getTransferDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
@@ -245,9 +228,9 @@ public class TransferMasterForm extends OutlineFormPage {
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
             AppManager.getNavigation().navigate(TransferPage.class);
             TransferMasterViewModel.resetProperties();
@@ -267,30 +250,13 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private void setupTable() {
-        MFXTableColumn<TransferDetail> productName =
-                new MFXTableColumn<>(
-                        "Product", false, Comparator.comparing(TransferDetail::getProductName));
-        MFXTableColumn<TransferDetail> stock =
-                new MFXTableColumn<>(
-                        "Stock", false, Comparator.comparing(TransferDetail::getProductQuantity));
-        MFXTableColumn<TransferDetail> productQuantity =
-                new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
-
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getProductName));
-        productQuantity.setRowCellFactory(
-                product -> new MFXTableRowCell<>(TransferDetail::getQuantity));
-        stock.setRowCellFactory(
-                product -> new MFXTableRowCell<>(TransferDetail::getProductQuantity));
+        TableColumn<TransferDetail, String> productName = new TableColumn<>("Product");
+        TableColumn<TransferDetail, String> stock = new TableColumn<>("Stock");
+        TableColumn<TransferDetail, String> productQuantity = new TableColumn<>("Quantity");
 
         productName.prefWidthProperty().bind(table.widthProperty().multiply(.5));
         productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.5));
         stock.prefWidthProperty().bind(table.widthProperty().multiply(.5));
-
-        table.getTableColumns().addAll(productName, productQuantity, stock);
-
-        table
-                .getFilters()
-                .addAll(new StringFilter<>("Name", TransferDetail::getProductName));
 
         getTransferDetailTable();
 
@@ -308,15 +274,13 @@ public class TransferMasterForm extends OutlineFormPage {
 
     private void getTransferDetailTable() {
         table.setPrefSize(10000d, 10000d);
-        table.features().enableBounceEffect();
-        table.features().enableSmoothScrolling(0.5);
 
-        table.setTableRowFactory(
+        table.setRowFactory(
                 transferDetail -> {
-                    MFXTableRow<TransferDetail> row = new MFXTableRow<>(table, transferDetail);
+                    TableRow<TransferDetail> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<TransferDetail>) event.getSource())
+                                showContextMenu((TableRow<TransferDetail>) event.getSource())
                                         .show(
                                                 table.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -328,10 +292,10 @@ public class TransferMasterForm extends OutlineFormPage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<TransferDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(table);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<TransferDetail> obj) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem delete = new MenuItem("Delete");
+        MenuItem edit = new MenuItem("Edit");
 
         // Actions
         // Delete
@@ -339,17 +303,17 @@ public class TransferMasterForm extends OutlineFormPage {
             SpotyThreader.spotyThreadPool(
                     () ->
                             TransferDetailViewModel.removeTransferDetail(
-                                    obj.getData().getId(),
-                                    TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
+                                    obj.getItem().getId(),
+                                    TransferDetailViewModel.transferDetailsList.indexOf(obj.getItem())));
             event.consume();
-        }, obj.getData().getProductName(), contentPane));
+        }, obj.getItem().getProductName(), contentPane));
         // Edit
         edit.setOnAction(
                 event -> {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    TransferDetailViewModel.getTransferDetail(obj.getData());
+                                    TransferDetailViewModel.getTransferDetail(obj.getItem());
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -359,7 +323,7 @@ public class TransferMasterForm extends OutlineFormPage {
                     event.consume();
                 });
 
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
 
         return contextMenu;
     }
@@ -370,7 +334,17 @@ public class TransferMasterForm extends OutlineFormPage {
         validateField(date, dateValidationLabel);
     }
 
-    private void validateField(MFXTextField field, Label validationLabel) {
+    private void validateField(LabeledDatePicker field, Label validationLabel) {
+        List<Constraint> constraints = field.validate();
+        if (!constraints.isEmpty()) {
+            validationLabel.setManaged(true);
+            validationLabel.setVisible(true);
+            validationLabel.setText(constraints.getFirst().getMessage());
+            field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+    }
+
+    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -398,21 +372,21 @@ public class TransferMasterForm extends OutlineFormPage {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Date is required")
-                        .setCondition(date.textProperty().length().greaterThan(0))
+                        .setCondition(date.valueProperty().isNotNull())
                         .get();
         date.getValidator().constraint(dateConstraint);
         Constraint fromBranchConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("From Branch is required")
-                        .setCondition(fromBranch.textProperty().length().greaterThan(0))
+                        .setCondition(fromBranch.valueProperty().isNotNull())
                         .get();
         fromBranch.getValidator().constraint(fromBranchConstraint);
         Constraint toBranchConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("To Branch is required")
-                        .setCondition(toBranch.textProperty().length().greaterThan(0))
+                        .setCondition(toBranch.valueProperty().isNotNull())
                         .get();
         toBranch.getValidator().constraint(toBranchConstraint);
         // Display error.

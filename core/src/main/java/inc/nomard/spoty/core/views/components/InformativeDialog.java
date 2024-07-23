@@ -1,14 +1,16 @@
 package inc.nomard.spoty.core.views.components;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.*;
+import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
@@ -40,8 +42,7 @@ public class InformativeDialog extends MFXStageDialog {
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/MFXColors.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
-                SpotyCoreResourceLoader.load("styles/toolitip.css"),
-                SpotyCoreResourceLoader.load("styles/theming/Default.css"));
+                SpotyCoreResourceLoader.load("styles/toolitip.css"));
         return dialogContent;
     }
 
@@ -61,13 +62,13 @@ public class InformativeDialog extends MFXStageDialog {
     }
 
     private HBox buildBottom(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer) {
-        var cancelBtn = new MFXButton();
-        cancelBtn.getStyleClass().add("filled");
+        var cancelBtn = new Button();
+        cancelBtn.setDefaultButton(true);
         cancelBtn.setText("No, Cancel");
         cancelBtn.getStyleClass().add("primary-color");
         cancelBtn.setOnAction(GlobalActions::closeDialog);
-        var deleteBtn = new MFXButton();
-        deleteBtn.getStyleClass().add("outlined");
+        var deleteBtn = new Button();
+        deleteBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         deleteBtn.setText("Yes, Proceed");
         deleteBtn.getStyleClass().add("secondary-color");
         deleteBtn.setOnAction(event -> {

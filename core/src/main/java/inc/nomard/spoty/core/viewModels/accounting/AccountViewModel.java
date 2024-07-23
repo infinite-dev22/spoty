@@ -133,8 +133,8 @@ public class AccountViewModel {
     }
 
     public static void saveAccount(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                SpotyGotFunctional.MessageConsumer successMessage,
-                                SpotyGotFunctional.MessageConsumer errorMessage) {
+                                   SpotyGotFunctional.MessageConsumer successMessage,
+                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var account =
                 Account.builder()
                         .accountName(getAccountName())

@@ -10,15 +10,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,10 +23,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class UnitOfMeasurePage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<UnitOfMeasure> masterTable;
+    private TextField searchBar;
+    private TableView<UnitOfMeasure> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public UnitOfMeasurePage() {
         addNode(init());
@@ -40,7 +36,6 @@ public class UnitOfMeasurePage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -62,9 +57,8 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search units of measure");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -76,8 +70,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -87,7 +80,7 @@ public class UnitOfMeasurePage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -95,35 +88,17 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<UnitOfMeasure> uomName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(UnitOfMeasure::getName));
-        MFXTableColumn<UnitOfMeasure> uomShortName =
-                new MFXTableColumn<>(
-                        "Short Name", false, Comparator.comparing(UnitOfMeasure::getShortName));
-        MFXTableColumn<UnitOfMeasure> uomBaseUnit =
-                new MFXTableColumn<>(
-                        "Base Unit", false, Comparator.comparing(UnitOfMeasure::getBaseUnitName));
-        MFXTableColumn<UnitOfMeasure> uomOperator =
-                new MFXTableColumn<>("Operator", false, Comparator.comparing(UnitOfMeasure::getOperator));
-        MFXTableColumn<UnitOfMeasure> uomOperationValue =
-                new MFXTableColumn<>(
-                        "Operation Value", false, Comparator.comparing(UnitOfMeasure::getOperatorValue));
-
-        uomName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getName));
-        uomShortName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getShortName));
-        uomBaseUnit.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getBaseUnitName));
-        uomOperator.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperator));
-        uomOperationValue.setRowCellFactory(
-                brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperatorValue));
+        TableColumn<UnitOfMeasure, String> uomName = new TableColumn<>("Name");
+        TableColumn<UnitOfMeasure, String> uomShortName = new TableColumn<>("Short Name");
+        TableColumn<UnitOfMeasure, String> uomBaseUnit = new TableColumn<>("Base Unit");
+        TableColumn<UnitOfMeasure, String> uomOperator = new TableColumn<>("Operator");
+        TableColumn<UnitOfMeasure, String> uomOperationValue = new TableColumn<>("Operation Value");
 
         uomName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         uomShortName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
@@ -131,40 +106,23 @@ public class UnitOfMeasurePage extends OutlinePage {
         uomOperator.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         uomOperationValue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        masterTable
-                .getTableColumns()
-                .addAll(uomName, uomShortName, uomBaseUnit, uomOperator, uomOperationValue);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", UnitOfMeasure::getName),
-                        new StringFilter<>("Short Name", UnitOfMeasure::getShortName),
-                        new StringFilter<>("Base Unit", UnitOfMeasure::getBaseUnitName),
-                        new StringFilter<>("Operator", UnitOfMeasure::getOperator),
-                        new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue));
+        var columnList = new LinkedList<>(Stream.of(uomName, uomShortName, uomBaseUnit, uomOperator, uomOperationValue).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getUnitOfMeasureTable();
 
-        if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
-            UOMViewModel.getUnitsOfMeasure()
-                    .addListener(
-                            (ListChangeListener<UnitOfMeasure>)
-                                    c -> masterTable.setItems(UOMViewModel.getUnitsOfMeasure()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
-        }
+        masterTable.setItems(UOMViewModel.getUnitsOfMeasure());
     }
 
     private void getUnitOfMeasureTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<UnitOfMeasure> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<UnitOfMeasure> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<UnitOfMeasure>) event.getSource())
+                                showContextMenu((TableRow<UnitOfMeasure>) event.getSource())
                                         .show(masterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                                 event.consume();
                             };
@@ -173,7 +131,7 @@ public class UnitOfMeasurePage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<UnitOfMeasure> obj) {
+    private MFXContextMenu showContextMenu(TableRow<UnitOfMeasure> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -181,13 +139,13 @@ public class UnitOfMeasurePage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            UOMViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            UOMViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    UOMViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new UOMForm(), this).showAndWait(), this::errorMessage);
+                    UOMViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new UOMForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
         contextMenu.addItems(edit, delete);
@@ -226,10 +184,6 @@ public class UnitOfMeasurePage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

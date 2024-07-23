@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.values;
 
+
 import java.util.*;
 import javafx.beans.property.*;
 import lombok.extern.java.*;

@@ -4,6 +4,7 @@ import inc.nomard.spoty.utils.responsiveness.math.MathUtils;
 import javafx.scene.Node;
 import lombok.extern.java.Log;
 
+import javafx.util.Duration;
 @Log
 public class BootstrapColumn {
 

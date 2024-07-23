@@ -1,10 +1,11 @@
 package inc.nomard.spoty.core.views.settings;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -13,18 +14,13 @@ import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
 import java.util.*;
-import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -33,10 +29,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class BranchPage extends OutlinePage {
-    private MFXTextField searchBar;
+    private CustomTextField searchBar;
     private MFXTableView<Branch> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public BranchPage() {
         addNode(init());
@@ -68,9 +64,8 @@ public class BranchPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new CustomTextField();
         searchBar.setPromptText("Search accounts");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -82,8 +77,8 @@ public class BranchPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
+        createBtn.setDefaultButton(true);
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -93,7 +88,7 @@ public class BranchPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -102,10 +97,7 @@ public class BranchPage extends OutlinePage {
 
     private AnchorPane buildCenter() {
         masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
@@ -237,7 +229,7 @@ public class BranchPage extends OutlinePage {
     }
 
     private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
+        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {

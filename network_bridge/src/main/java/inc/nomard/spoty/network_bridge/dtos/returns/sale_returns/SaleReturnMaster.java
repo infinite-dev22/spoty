@@ -2,6 +2,9 @@ package inc.nomard.spoty.network_bridge.dtos.returns.sale_returns;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import java.text.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -11,11 +14,10 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class SaleReturnMaster {
     private Long id;
-    private Date date;
+    private LocalDateTime date;
     private String ref;
     private Customer customer;
     private ArrayList<Branch> branches;

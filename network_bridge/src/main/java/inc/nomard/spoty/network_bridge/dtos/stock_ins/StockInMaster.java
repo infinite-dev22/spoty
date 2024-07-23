@@ -2,6 +2,9 @@ package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -11,7 +14,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class StockInMaster {
     private Long id;
@@ -22,7 +24,7 @@ public class StockInMaster {
     private Double total;
     private User approvedBy;
     private User recordedBy;
-    private Date approvalDate;
-    private Date recordDate;
+    private LocalDateTime approvalDate;
+    private LocalDateTime recordDate;
     private String notes;
 }

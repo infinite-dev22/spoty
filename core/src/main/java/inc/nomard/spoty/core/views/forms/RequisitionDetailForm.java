@@ -1,22 +1,22 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -30,11 +30,11 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionDetailForm extends ModalPage {
     @FXML
-    public MFXTextField quantity;
+    public LabeledTextField quantity;
     @FXML
-    public MFXFilterComboBox<Product> product;
+    public LabeledComboBox<Product> product;
     @FXML
-    public MFXButton saveBtn,
+    public Button saveBtn,
             cancelBtn;
     @FXML
     public Label quantityValidationLabel,
@@ -65,9 +65,8 @@ public class RequisitionDetailForm extends ModalPage {
 
     private VBox buildProduct() {
         // Input.
-        product = new MFXFilterComboBox<>();
-        product.setFloatMode(FloatMode.BORDER);
-        product.setFloatingText("Product");
+        product = new LabeledComboBox<>();
+        product.setLabel("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
         // Combo box Converter.
@@ -84,7 +83,6 @@ public class RequisitionDetailForm extends ModalPage {
 
         // ComboBox properties.
         product.setConverter(productVariantConverter);
-        product.setFilterFunction(productVariantFilterFunction);
         if (ProductViewModel.getProducts().isEmpty()) {
             ProductViewModel.getProducts()
                     .addListener(
@@ -104,9 +102,8 @@ public class RequisitionDetailForm extends ModalPage {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new MFXTextField();
-        quantity.setFloatMode(FloatMode.BORDER);
-        quantity.setFloatingText("Quantity");
+        quantity = new LabeledTextField();
+        quantity.setLabel("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
         // Validation.
@@ -126,15 +123,15 @@ public class RequisitionDetailForm extends ModalPage {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -172,14 +169,11 @@ public class RequisitionDetailForm extends ModalPage {
                 (event) -> {
                     closeDialog(event);
                     RequisitionDetailViewModel.resetProperties();
-                    product.clearSelection();
                     productValidationLabel.setVisible(false);
                     quantityValidationLabel.setVisible(false);
 
                     productValidationLabel.setManaged(false);
                     quantityValidationLabel.setManaged(false);
-
-                    product.clearSelection();
 
                     product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -210,13 +204,11 @@ public class RequisitionDetailForm extends ModalPage {
                         if (tempIdProperty().get() > -1) {
                             RequisitionDetailViewModel.updateRequisitionDetail(RequisitionDetailViewModel.getId());
                             successMessage("Product changed successfully");
-                            product.clearSelection();
                             closeDialog(event);
                             return;
                         }
                         RequisitionDetailViewModel.addRequisitionDetail();
                         successMessage("Product added successfully");
-                        product.clearSelection();
                         closeDialog(event);
                     }
                     dispose();
@@ -229,7 +221,7 @@ public class RequisitionDetailForm extends ModalPage {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Product is required")
-                        .setCondition(product.textProperty().length().greaterThan(0))
+                        .setCondition(product.valueProperty().isNotNull())
                         .get();
         product.getValidator().constraint(productConstraint);
         Constraint quantityConstraint =

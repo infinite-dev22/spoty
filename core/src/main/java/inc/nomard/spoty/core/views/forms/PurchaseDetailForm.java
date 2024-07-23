@@ -1,24 +1,22 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
-import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -30,9 +28,9 @@ import lombok.extern.java.*;
 
 @Log
 public class PurchaseDetailForm extends MFXGenericDialog {
-    public MFXTextField quantity;
-    public MFXFilterComboBox<Product> product;
-    public MFXButton saveBtn, cancelBtn;
+    public LabeledTextField quantity;
+    public LabeledComboBox<Product> product;
+    public Button saveBtn, cancelBtn;
     public Label quantityValidationLabel, productValidationLabel;
 
     public PurchaseDetailForm() {
@@ -59,9 +57,8 @@ public class PurchaseDetailForm extends MFXGenericDialog {
 
     private VBox buildProduct() {
         // Input.
-        product = new MFXFilterComboBox<>();
-        product.setFloatMode(FloatMode.BORDER);
-        product.setFloatingText("Product");
+        product = new LabeledComboBox<>();
+        product.setLabel("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
         setupProductComboBox();
@@ -76,9 +73,8 @@ public class PurchaseDetailForm extends MFXGenericDialog {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new MFXTextField();
-        quantity.setFloatMode(FloatMode.BORDER);
-        quantity.setFloatingText("Account Number");
+        quantity = new LabeledTextField();
+        quantity.setLabel("Account Number");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
         // Validation.
@@ -98,15 +94,15 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private MFXButton buildSaveButton() {
-        saveBtn = new MFXButton("Save");
-        saveBtn.getStyleClass().add("filled");
+    private Button buildSaveButton() {
+        saveBtn = new Button("Save");
+        saveBtn.setDefaultButton(true);
         return saveBtn;
     }
 
-    private MFXButton buildCancelButton() {
-        cancelBtn = new MFXButton("Cancel");
-        cancelBtn.getStyleClass().add("outlined");
+    private Button buildCancelButton() {
+        cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         return cancelBtn;
     }
 
@@ -130,12 +126,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         StringConverter<Product> productConverter = FunctionalStringConverter.to(
                 productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
-        Function<String, Predicate<Product>> productFilterFunction = searchStr ->
-                productDetail -> StringUtils.containsIgnoreCase(
-                        productConverter.toString(productDetail), searchStr);
-
         product.setConverter(productConverter);
-        product.setFilterFunction(productFilterFunction);
 
         ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c ->
                 product.setItems(ProductViewModel.getProducts())
@@ -154,7 +145,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         Constraint productConstraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage("Product is required")
-                .setCondition(product.textProperty().length().greaterThan(0))
+                .setCondition(product.valueProperty().isNotNull())
                 .get();
         product.getValidator().constraint(productConstraint);
 
@@ -196,7 +187,6 @@ public class PurchaseDetailForm extends MFXGenericDialog {
     private void resetForm(ActionEvent event) {
         closeDialog(event);
         PurchaseDetailViewModel.resetProperties();
-        product.clearSelection();
         hideValidationLabels();
     }
 
@@ -243,7 +233,6 @@ public class PurchaseDetailForm extends MFXGenericDialog {
             message = "Product added successfully";
         }
         displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-        product.clearSelection();
         PurchaseDetailViewModel.resetProperties();
         closeDialog(event);
     }

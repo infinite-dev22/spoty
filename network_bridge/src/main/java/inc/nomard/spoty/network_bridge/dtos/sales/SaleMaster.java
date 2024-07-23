@@ -2,6 +2,9 @@ package inc.nomard.spoty.network_bridge.dtos.sales;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import java.text.*;
+import java.time.*;
+
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -11,7 +14,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class SaleMaster {
     private Long id;
@@ -29,7 +31,7 @@ public class SaleMaster {
     private String paymentStatus;
     private String saleStatus;
     private String notes;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     public String getCustomerName() {
         return customer.getName();

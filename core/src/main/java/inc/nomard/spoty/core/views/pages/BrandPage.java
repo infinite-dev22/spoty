@@ -10,15 +10,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,10 +23,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class BrandPage extends OutlinePage {
-    private MFXTextField searchBar;
-    private MFXTableView<Brand> masterTable;
+    private TextField searchBar;
+    private TableView<Brand> masterTable;
     private MFXProgressSpinner progress;
-    private MFXButton createBtn;
+    private Button createBtn;
 
     public BrandPage() {
         addNode(init());
@@ -40,7 +36,6 @@ public class BrandPage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -62,9 +57,8 @@ public class BrandPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new MFXTextField();
+        searchBar = new TextField();
         searchBar.setPromptText("Search brands");
-        searchBar.setFloatMode(FloatMode.DISABLED);
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -76,8 +70,7 @@ public class BrandPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new MFXButton("Create");
-        createBtn.getStyleClass().add("filled");
+        createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -87,7 +80,7 @@ public class BrandPage extends OutlinePage {
 
     private HBox buildTop() {
         var hbox = new HBox();
-        hbox.getStyleClass().add("card-flat");
+        hbox.getStyleClass().add("card-flat-bottom");
         BorderPane.setAlignment(hbox, Pos.CENTER);
         hbox.setPadding(new Insets(5d));
         hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
@@ -95,53 +88,35 @@ public class BrandPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        AnchorPane.setBottomAnchor(masterTable, 0d);
-        AnchorPane.setLeftAnchor(masterTable, 0d);
-        AnchorPane.setRightAnchor(masterTable, 0d);
-        AnchorPane.setTopAnchor(masterTable, 10d);
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
         return new AnchorPane(masterTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<Brand> brandName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Brand::getName));
-        MFXTableColumn<Brand> brandDescription =
-                new MFXTableColumn<>("Description", false, Comparator.comparing(Brand::getDescription));
+        TableColumn<Brand, String> name = new TableColumn<>("Name");
+        TableColumn<Brand, String> description = new TableColumn<>("Description");
 
-        brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getName));
-        brandDescription.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getDescription));
+        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        brandName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-        brandDescription.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-
-        masterTable.getTableColumns().addAll(brandName, brandDescription);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", Brand::getName),
-                        new StringFilter<>("Description", Brand::getDescription));
+        var columnList = new LinkedList<>(Stream.of(name, description).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
         getBrandTable();
 
-        if (BrandViewModel.getBrands().isEmpty()) {
-            BrandViewModel.getBrands().addListener(
-                    (ListChangeListener<Brand>) c -> masterTable.setItems(BrandViewModel.getBrands()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(BrandViewModel.brandsProperty());
-        }
+        masterTable.setItems(BrandViewModel.getBrands());
     }
 
     private void getBrandTable() {
         masterTable.setPrefSize(1000, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<Brand> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<Brand> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<Brand>) event.getSource())
+                                showContextMenu((TableRow<Brand>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                                 event.consume();
@@ -151,7 +126,7 @@ public class BrandPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Brand> obj) {
+    private MFXContextMenu showContextMenu(TableRow<Brand> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -159,13 +134,13 @@ public class BrandPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            BrandViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            BrandViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    BrandViewModel.getItem(obj.getData().getId(), () -> SpotyDialog.createDialog(new BrandForm(), this).showAndWait(), this::errorMessage);
+                    BrandViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new BrandForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -206,10 +181,6 @@ public class BrandPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
-    }
-
-    private void setIcons() {
-        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
     }
 
     public void setSearchBar() {
