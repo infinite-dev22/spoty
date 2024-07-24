@@ -11,10 +11,8 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -23,18 +21,12 @@ import lombok.extern.java.*;
 
 @Log
 public class EmploymentStatusForm extends MFXGenericDialog {
-    @FXML
     public LabeledTextField name;
-    @FXML
     public Label nameValidationLabel;
-    @FXML
     public LabeledComboBox<String> colorPicker;
-    @FXML
     public LabeledTextArea description;
-    @FXML
     public Button saveBtn,
             cancelBtn;
-    @FXML
     public Label colorPickerValidationLabel;
     private List<Constraint> nameConstraints,
             colorConstraints;
