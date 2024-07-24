@@ -9,6 +9,7 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -55,17 +56,6 @@ public class QuotationDetailForm extends MFXGenericDialog {
         setupActions();
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        label.setId("validationLabel");
-        return label;
-    }
-
 
     private VBox buildProduct() {
         // Input.
@@ -74,7 +64,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         // Validation.
-        productValidationLabel = buildValidationLabel();
+        productValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
@@ -89,7 +79,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
         // Validation.
-        quantityValidationLabel = buildValidationLabel();
+        quantityValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));

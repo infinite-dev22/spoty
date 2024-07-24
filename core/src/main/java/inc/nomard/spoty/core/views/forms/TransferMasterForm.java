@@ -9,6 +9,7 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
@@ -109,16 +110,6 @@ public class TransferMasterForm extends OutlineFormPage {
         return vbox;
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        return label;
-    }
-
     private VBox buildFieldHolder(Node... nodes) {
         VBox vbox = new VBox();
         vbox.setSpacing(5d);
@@ -155,7 +146,7 @@ public class TransferMasterForm extends OutlineFormPage {
         } else {
             fromBranch.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
         }
-        fromBranchValidationLabel = buildValidationLabel();
+        fromBranchValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(fromBranch, fromBranchValidationLabel);
     }
 
@@ -186,7 +177,7 @@ public class TransferMasterForm extends OutlineFormPage {
         } else {
             toBranch.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
         }
-        toBranchValidationLabel = buildValidationLabel();
+        toBranchValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(toBranch, toBranchValidationLabel);
     }
 
@@ -196,7 +187,7 @@ public class TransferMasterForm extends OutlineFormPage {
         date.setPrefWidth(10000d);
         date.valueProperty()
                 .bindBidirectional(TransferMasterViewModel.dateProperty());
-        dateValidationLabel = buildValidationLabel();
+        dateValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(date, dateValidationLabel);
     }
 

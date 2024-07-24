@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
@@ -88,17 +89,6 @@ public class AuthScreen extends BorderPane {
         init();
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        label.setId("validationLabel");
-        return label;
-    }
-
     // App branding.
     private VBox buildAppBranding() {
         loginAppNameLbl = new Label();
@@ -136,7 +126,7 @@ public class AuthScreen extends BorderPane {
         email.setPrefWidth(350d);
         email.textProperty().bindBidirectional(LoginViewModel.emailProperty());
         // Validation.
-        emailValidationLabel = buildValidationLabel();
+        emailValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
@@ -152,7 +142,7 @@ public class AuthScreen extends BorderPane {
         password.setPrefWidth(350d);
         password.textProperty().bindBidirectional(LoginViewModel.passwordProperty());
         // Validation.
-        passwordValidationLabel = buildValidationLabel();
+        passwordValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
@@ -238,7 +228,7 @@ public class AuthScreen extends BorderPane {
         firstName.setPrefWidth(350d);
         firstName.textProperty().bindBidirectional(SignupViewModel.firstNameProperty());
         // Validation.
-        firstNameValidationLabel = buildValidationLabel();
+        firstNameValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
@@ -254,7 +244,7 @@ public class AuthScreen extends BorderPane {
         lastName.setPrefWidth(350d);
         lastName.textProperty().bindBidirectional(SignupViewModel.lastNameProperty());
         // Validation.
-        lastNameValidationLabel = buildValidationLabel();
+        lastNameValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
@@ -290,7 +280,7 @@ public class AuthScreen extends BorderPane {
         phoneNumber.setPrefWidth(350d);
         phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
         // Validation.
-        phoneNumberValidationLabel = buildValidationLabel();
+        phoneNumberValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
@@ -306,7 +296,7 @@ public class AuthScreen extends BorderPane {
         signUpEmail.setPrefWidth(350d);
         signUpEmail.textProperty().bindBidirectional(SignupViewModel.emailProperty());
         // Validation.
-        signUpEmailValidationLabel = buildValidationLabel();
+        signUpEmailValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
@@ -382,7 +372,7 @@ public class AuthScreen extends BorderPane {
         signUpPassword.setPrefWidth(350d);
         signUpPassword.textProperty().bindBidirectional(SignupViewModel.passwordProperty());
         // Validation.
-        signUpPasswordValidationLabel = buildValidationLabel();
+        signUpPasswordValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
@@ -398,7 +388,7 @@ public class AuthScreen extends BorderPane {
         confirmPassword.setPrefWidth(350d);
         confirmPassword.textProperty().bindBidirectional(SignupViewModel.confirmPasswordProperty());
         // Validation.
-        confirmPasswordValidationLabel = buildValidationLabel();
+        confirmPasswordValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));

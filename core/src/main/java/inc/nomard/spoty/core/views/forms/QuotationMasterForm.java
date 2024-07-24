@@ -10,6 +10,7 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
@@ -113,16 +114,6 @@ public class QuotationMasterForm extends OutlineFormPage {
         return vbox;
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        return label;
-    }
-
     private VBox buildFieldHolder(Node... nodes) {
         VBox vbox = new VBox();
         vbox.setSpacing(5d);
@@ -159,7 +150,7 @@ public class QuotationMasterForm extends OutlineFormPage {
         } else {
             customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
         }
-        customerValidationLabel = buildValidationLabel();
+        customerValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(customer, customerValidationLabel);
     }
 
@@ -171,7 +162,7 @@ public class QuotationMasterForm extends OutlineFormPage {
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.statusProperty());
         status.setItems(FXCollections.observableArrayList(Values.QUOTATION_TYPE));
-        statusValidationLabel = buildValidationLabel();
+        statusValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(status, statusValidationLabel);
     }
 

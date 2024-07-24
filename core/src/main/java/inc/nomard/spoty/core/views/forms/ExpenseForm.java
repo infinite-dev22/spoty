@@ -8,6 +8,7 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -53,17 +54,6 @@ public class ExpenseForm extends MFXGenericDialog {
         dialogOnActions();
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        label.setId("validationLabel");
-        return label;
-    }
-
     private VBox buildAccount() {
         // Input.
         account = new LabeledComboBox<>();
@@ -84,7 +74,7 @@ public class ExpenseForm extends MFXGenericDialog {
         account.setItems(AccountViewModel.getAccounts());
         account.setConverter(accountConverter);
         // Validation.
-        accountValidationLabel = buildValidationLabel();
+        accountValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
@@ -99,7 +89,7 @@ public class ExpenseForm extends MFXGenericDialog {
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
         // Validation.
-        nameValidationLabel = buildValidationLabel();
+        nameValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
@@ -114,7 +104,7 @@ public class ExpenseForm extends MFXGenericDialog {
         date.setPrefWidth(400d);
         date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
         // Validation.
-        dateValidationLabel = buildValidationLabel();
+        dateValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));

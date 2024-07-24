@@ -8,6 +8,8 @@ import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
@@ -43,17 +45,6 @@ public class AccountForm extends MFXGenericDialog {
         dialogOnActions();
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        label.setId("validationLabel");
-        return label;
-    }
-
 
     private VBox buildName() {
         // Input.
@@ -62,7 +53,7 @@ public class AccountForm extends MFXGenericDialog {
         accountName.setPrefWidth(400d);
         accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
         // Validation.
-        accountNameValidationLabel = buildValidationLabel();
+        accountNameValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
@@ -77,7 +68,7 @@ public class AccountForm extends MFXGenericDialog {
         accountNumber.setPrefWidth(400d);
         accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
         // Validation.
-        accountNumberValidationLabel = buildValidationLabel();
+        accountNumberValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));

@@ -10,6 +10,7 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
@@ -109,16 +110,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
         return vbox;
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        return label;
-    }
-
     private VBox buildFieldHolder(Node... nodes) {
         VBox vbox = new VBox();
         vbox.setSpacing(5d);
@@ -132,7 +123,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
         supplier = new LabeledComboBox<>();
         supplier.setLabel("Supplier");
         supplier.setPrefWidth(10000d);
-        supplierValidationLabel = buildValidationLabel();
+        supplierValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(supplier, supplierValidationLabel);
     }
 
@@ -140,7 +131,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
         status = new LabeledComboBox<>();
         status.setLabel("Purchase Status");
         status.setPrefWidth(10000d);
-        statusValidationLabel = buildValidationLabel();
+        statusValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(status, statusValidationLabel);
     }
 
@@ -148,7 +139,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
         date = new LabeledDatePicker();
         date.setLabel("Date");
         date.setPrefWidth(10000d);
-        dateValidationLabel = buildValidationLabel();
+        dateValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(date, dateValidationLabel);
     }
 

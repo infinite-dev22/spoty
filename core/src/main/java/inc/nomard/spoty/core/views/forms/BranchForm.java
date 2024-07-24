@@ -9,6 +9,7 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
@@ -50,17 +51,6 @@ public class BranchForm extends MFXGenericDialog {
         dialogOnActions();
     }
 
-    // Validation label.
-    private Label buildValidationLabel() {
-        var label = new Label();
-        label.setManaged(false);
-        label.setVisible(false);
-        label.setWrapText(true);
-        label.getStyleClass().add("input-validation-error");
-        label.setId("validationLabel");
-        return label;
-    }
-
 
     private VBox buildName() {
         // Input.
@@ -69,7 +59,7 @@ public class BranchForm extends MFXGenericDialog {
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BranchViewModel.nameProperty());
         // Validation.
-        nameValidationLabel = buildValidationLabel();
+        nameValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
@@ -84,7 +74,7 @@ public class BranchForm extends MFXGenericDialog {
         phone.setPrefWidth(400d);
         phone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
         // Validation.
-        phoneValidationLabel = buildValidationLabel();
+        phoneValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
@@ -99,7 +89,7 @@ public class BranchForm extends MFXGenericDialog {
         town.setPrefWidth(400d);
         town.textProperty().bindBidirectional(BranchViewModel.townProperty());
         // Validation.
-        townValidationLabel = buildValidationLabel();
+        townValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));

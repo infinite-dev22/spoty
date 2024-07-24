@@ -3,8 +3,7 @@ package inc.nomard.spoty.core.views.layout;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxcore.controls.*;
-import io.github.palexdev.mfxcore.controls.Label;
+import io.github.palexdev.mfxcore.controls.*;import javafx.scene.control.Label;
 import java.util.*;
 import javafx.geometry.*;
 import javafx.scene.*;
@@ -108,13 +107,11 @@ public class PaymentPlanCard extends VBox {
         nameLabel.getStyleClass().add("plan-name");
         nameLabel.setAlignment(Pos.CENTER);
         nameLabel.setWrapText(true);
-        nameLabel.setForceDisableTextEllipsis(true);
 
         var subNameLabel = new Label(planSubName);
         subNameLabel.getStyleClass().add("plan-sub-name");
         subNameLabel.setAlignment(Pos.CENTER);
         subNameLabel.setWrapText(true);
-        subNameLabel.setForceDisableTextEllipsis(true);
         if (canTry) {
             subNameLabel.setStyle("-fx-text-fill: rgb("
                     + planColor.getRed() * 255 + ", "
@@ -141,7 +138,6 @@ public class PaymentPlanCard extends VBox {
         label.getStyleClass().add("plan-highlight");
         label.setAlignment(Pos.CENTER);
         label.setWrapText(true);
-        label.setForceDisableTextEllipsis(true);
         return label;
     }
 
@@ -150,7 +146,6 @@ public class PaymentPlanCard extends VBox {
         label.getStyleClass().add("plan-price");
         label.setAlignment(Pos.CENTER);
         label.setWrapText(true);
-        label.setForceDisableTextEllipsis(true);
         return label;
     }
 
@@ -161,7 +156,6 @@ public class PaymentPlanCard extends VBox {
             var label = new Label("\u25CF " + planDetail);
             label.getStyleClass().add("plan-details");
             label.setWrapText(true);
-            label.setForceDisableTextEllipsis(true);
             labelsList.add(label);
         }
         vBox.getChildren().addAll(labelsList);
