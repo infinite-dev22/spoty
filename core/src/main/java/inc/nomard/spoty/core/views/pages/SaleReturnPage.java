@@ -7,7 +7,6 @@ import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
@@ -16,7 +15,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
-import javafx.application.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -37,15 +35,20 @@ public class SaleReturnPage extends OutlinePage {
     private MFXStageDialog viewDialog;
 
     public SaleReturnPage() {
-        Platform.runLater(() ->
-        {
-            try {
-                viewDialogPane();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        try {
+            viewDialogPane();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         addNode(init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        SaleReturnMasterViewModel.getSaleReturnMasters(this::onDataInitializationSuccess, this::errorMessage);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
@@ -223,6 +226,8 @@ public class SaleReturnPage extends OutlinePage {
 
     private void errorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void displayNotification(String message, MessageVariants type, String icon) {

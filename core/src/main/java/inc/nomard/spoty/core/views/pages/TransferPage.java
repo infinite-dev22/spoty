@@ -8,7 +8,6 @@ import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
@@ -17,7 +16,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
-import javafx.application.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -38,15 +36,20 @@ public class TransferPage extends OutlinePage {
     private MFXStageDialog viewDialog;
 
     public TransferPage() {
-        Platform.runLater(() ->
-        {
-            try {
-                viewDialogPane();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        try {
+            viewDialogPane();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         addNode(init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        TransferMasterViewModel.getAllTransferMasters(this::onDataInitializationSuccess, this::errorMessage);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
@@ -208,6 +211,8 @@ public class TransferPage extends OutlinePage {
 
     private void errorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void displayNotification(String message, MessageVariants type, String icon) {

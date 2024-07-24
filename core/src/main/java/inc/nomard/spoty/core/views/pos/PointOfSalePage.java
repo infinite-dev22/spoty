@@ -7,7 +7,6 @@ import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pos.components.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -62,6 +61,14 @@ public class PointOfSalePage extends OutlinePage {
         setCheckoutProductsTable();
         bindTotalLabels();
         SaleMasterViewModel.setDefaultCustomer();
+        progress.setManaged(true);
+        progress.setVisible(true);
+        ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::displayErrorMessage);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     // Top UI.
@@ -653,6 +660,8 @@ public class PointOfSalePage extends OutlinePage {
 
     private void displayErrorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void displayNotification(String message, MessageVariants type, String icon) {

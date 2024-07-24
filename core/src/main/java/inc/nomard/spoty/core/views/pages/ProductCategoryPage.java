@@ -8,7 +8,6 @@ import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.util.*;
@@ -31,6 +30,14 @@ public class ProductCategoryPage extends OutlinePage {
 
     public ProductCategoryPage() {
         addNode(init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        ProductCategoryViewModel.getAllProductCategories(this::onDataInitializationSuccess, this::errorMessage);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
@@ -163,6 +170,8 @@ public class ProductCategoryPage extends OutlinePage {
 
     private void errorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void displayNotification(String message, MessageVariants type, String icon) {

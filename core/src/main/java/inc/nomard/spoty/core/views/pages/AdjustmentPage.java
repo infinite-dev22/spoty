@@ -6,7 +6,6 @@ import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
@@ -32,6 +31,14 @@ public class AdjustmentPage extends OutlinePage {
     public AdjustmentPage() {
         super();
         addNode(init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onDataInitializationSuccess, this::errorMessage);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
@@ -151,6 +158,8 @@ public class AdjustmentPage extends OutlinePage {
 
     private void errorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void displayNotification(String message, MessageVariants type, String icon) {

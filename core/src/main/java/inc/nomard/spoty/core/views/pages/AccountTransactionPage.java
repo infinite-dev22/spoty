@@ -6,8 +6,8 @@ import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
+import io.github.palexdev.materialfx.controls.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.geometry.*;
@@ -20,10 +20,19 @@ import lombok.extern.java.*;
 public class AccountTransactionPage extends OutlinePage {
     private TextField searchBar;
     private TableView<AccountTransaction> masterTable;
+    private MFXProgressSpinner progress;
 
     public AccountTransactionPage() {
         super();
         addNode(init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        AccountTransactionViewModel.getAllTransactions(this::onDataInitializationSuccess, this::errorMessage);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
@@ -36,7 +45,13 @@ public class AccountTransactionPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        var hbox = new HBox();
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        progress.setManaged(false);
+        var hbox = new HBox(progress);
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -125,6 +140,8 @@ public class AccountTransactionPage extends OutlinePage {
 
     private void errorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void displayNotification(String message, MessageVariants type, String icon) {
