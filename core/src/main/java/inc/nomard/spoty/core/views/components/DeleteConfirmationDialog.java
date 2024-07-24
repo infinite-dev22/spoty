@@ -40,7 +40,6 @@ public class DeleteConfirmationDialog extends MFXStageDialog {
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
-                SpotyCoreResourceLoader.load("styles/Buttons.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/MFXColors.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
