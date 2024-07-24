@@ -6,11 +6,10 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.dialogs.*;
@@ -18,8 +17,6 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxcore.controls.*;import javafx.scene.control.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.net.*;
@@ -43,18 +40,18 @@ import lombok.extern.java.*;
 
 @Log
 public class ProductForm extends ModalPage {
-    public LabeledTextField name,
+    public ValidatableTextField name,
             serialNumber,
             salePrice,
             stockAlert;
-    public LabeledTextArea description;
-    public LabeledComboBox<Brand> brand;
-    public LabeledComboBox<ProductCategory> category;
-    public LabeledComboBox<UnitOfMeasure> unitOfMeasure;
-    public LabeledComboBox<String> barcodeType;
-    public LabeledTextField costPrice;
-    public LabeledComboBox<Discount> discount;
-    public LabeledComboBox<Tax> tax;
+    public TextArea description;
+    public ValidatableComboBox<Brand> brand;
+    public ValidatableComboBox<ProductCategory> category;
+    public ValidatableComboBox<UnitOfMeasure> unitOfMeasure;
+    public ValidatableComboBox<String> barcodeType;
+    public ValidatableTextField costPrice;
+    public ValidatableComboBox<Discount> discount;
+    public ValidatableComboBox<Tax> tax;
     public Rectangle productImageView;
     public Button saveButton,
             cancelButton;
@@ -116,18 +113,18 @@ public class ProductForm extends ModalPage {
                 createRowConstraints()
         );
 
-        root.add(createValidationBox(name = new LabeledTextField(), "Name", nameValidationLabel = new Label(), 400.0), 0, 0);
-        root.add(createValidationBox(category = new LabeledComboBox<>(), "Category", categoryValidationLabel = new Label(), 400.0), 1, 0);
-        root.add(createValidationBox(brand = new LabeledComboBox<>(), "Brand", brandValidationLabel = new Label(), 400.0), 0, 1);
-        root.add(createValidationBox(unitOfMeasure = new LabeledComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 400.0), 1, 1);
-        root.add(createSimpleBox(costPrice = new LabeledTextField(), "Cost Price", 400.0), 0, 2);
-        root.add(createValidationBox(salePrice = new LabeledTextField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
-        root.add(createSimpleBox(discount = new LabeledComboBox<>(), "Discount", 400.0), 0, 3);
-        root.add(createSimpleBox(tax = new LabeledComboBox<>(), "Tax", 400.0), 1, 3);
-        root.add(createValidationBox(barcodeType = new LabeledComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
-        root.add(createSimpleBox(serialNumber = new LabeledTextField(), "Serial/Batch", 400.0), 1, 4);
-        root.add(createSimpleBox(stockAlert = new LabeledTextField(), "Stock Alert", 400.0), 0, 5);
-        root.add(createSimpleTextArea(description = new LabeledTextArea(), "Description", 400.0, 100.0), 1, 5);
+        root.add(createValidationBox(name = new ValidatableTextField(), "Name", nameValidationLabel = new Label(), 400.0), 0, 0);
+        root.add(createValidationBox(category = new ValidatableComboBox<>(), "Category", categoryValidationLabel = new Label(), 400.0), 1, 0);
+        root.add(createValidationBox(brand = new ValidatableComboBox<>(), "Brand", brandValidationLabel = new Label(), 400.0), 0, 1);
+        root.add(createValidationBox(unitOfMeasure = new ValidatableComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 400.0), 1, 1);
+        root.add(createSimpleBox(costPrice = new ValidatableTextField(), "Cost Price", 400.0), 0, 2);
+        root.add(createValidationBox(salePrice = new ValidatableTextField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
+        root.add(createSimpleBox(discount = new ValidatableComboBox<>(), "Discount", 400.0), 0, 3);
+        root.add(createSimpleBox(tax = new ValidatableComboBox<>(), "Tax", 400.0), 1, 3);
+        root.add(createValidationBox(barcodeType = new ValidatableComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
+        root.add(createSimpleBox(serialNumber = new ValidatableTextField(), "Serial/Batch", 400.0), 1, 4);
+        root.add(createSimpleBox(stockAlert = new ValidatableTextField(), "Stock Alert", 400.0), 0, 5);
+        root.add(createSimpleTextArea(description = new TextArea(), "Description", 400.0, 100.0), 1, 5);
 
         root.add(createUploadImageBox(), 2, 0, 1, 6);
 
@@ -148,52 +145,52 @@ public class ProductForm extends ModalPage {
         return rc;
     }
 
-    private VBox createValidationBox(LabeledTextField textField, String promptText, Label validationLabel, double width) {
-        textField.setLabel(promptText);
+    private VBox createValidationBox(ValidatableTextField textField, String promptText, Label validationLabel, double width) {
+        var label = new Label(promptText);
         textField.setPrefWidth(width);
 
-        return createValidationContainer(textField, validationLabel);
+        return createValidationContainer(label, textField, validationLabel);
     }
 
-    private <T> VBox createValidationBox(LabeledComboBox<T> comboBox, String promptText, Label validationLabel, double width) {
-        comboBox.setLabel(promptText);
+    private <T> VBox createValidationBox(ValidatableComboBox<T> comboBox, String promptText, Label validationLabel, double width) {
+        var label = new Label(promptText);
         comboBox.setPrefWidth(width);
 
-        return createValidationContainer(comboBox, validationLabel);
+        return createValidationContainer(label, comboBox, validationLabel);
     }
 
-    private <T> VBox createSimpleBox(LabeledComboBox<T> comboBox, String promptText, double width) {
-        comboBox.setLabel(promptText);
+    private <T> VBox createSimpleBox(ValidatableComboBox<T> comboBox, String promptText, double width) {
+        var label = new Label(promptText);
         comboBox.setPrefWidth(width);
 
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
-        box.getChildren().add(comboBox);
+        box.getChildren().addAll(label, comboBox);
         return box;
     }
 
-    private VBox createSimpleBox(LabeledTextField textField, String promptText, double width) {
-        textField.setLabel(promptText);
+    private VBox createSimpleBox(ValidatableTextField textField, String promptText, double width) {
+        var label = new Label(promptText);
         textField.setPrefWidth(width);
 
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
-        box.getChildren().add(textField);
+        box.getChildren().addAll(label, textField);
         return box;
     }
 
-    private VBox createSimpleTextArea(LabeledTextArea textArea, String promptText, double width, double height) {
-        textArea.setLabel(promptText);
+    private VBox createSimpleTextArea(TextArea textArea, String promptText, double width, double height) {
+        var label = new Label(promptText);
         textArea.setPrefWidth(width);
         textArea.setPrefHeight(height);
 
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
-        box.getChildren().add(textArea);
+        box.getChildren().addAll(label, textArea);
         return box;
     }
 
-    private VBox createValidationContainer(Node control, Label validationLabel) {
+    private VBox createValidationContainer(Label label, Node control, Label validationLabel) {
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
 
@@ -203,7 +200,7 @@ public class ProductForm extends ModalPage {
         validationLabel.setManaged(false);
         validationLabel.setWrapText(true);
 
-        box.getChildren().addAll(control, validationLabel);
+        box.getChildren().addAll(label, control, validationLabel);
         return box;
     }
 

@@ -4,7 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -15,7 +15,6 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -29,13 +28,13 @@ import lombok.extern.java.*;
 @Log
 public class BeneficiaryBadgeForm extends MFXGenericDialog {
     public Button saveBtn, cancelBtn;
-    public LabeledComboBox<BeneficiaryType> beneficiaryType;
-    public LabeledTextField name;
-    public LabeledTextArea description;
+    public ValidatableComboBox<BeneficiaryType> beneficiaryType;
+    public ValidatableTextField name;
+    public TextArea description;
     public Label colorPickerValidationLabel,
             nameValidationLabel,
             beneficiaryTypeValidationLabel;
-    public LabeledComboBox<String> colorPicker;
+    public ValidatableComboBox<String> colorPicker;
     private List<Constraint> nameConstraints,
             colorConstraints,
             beneficiaryTypeConstraints;
@@ -54,8 +53,8 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.nameProperty());
         // Validation.
@@ -63,14 +62,14 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildBeneficiaryType() {
         // Input.
-        beneficiaryType = new LabeledComboBox<>();
-        beneficiaryType.setLabel("Beneficiary Type");
+        beneficiaryType = new ValidatableComboBox<>();
+        var label = new Label("Beneficiary Type");
         beneficiaryType.setPrefWidth(400d);
         beneficiaryType.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.beneficiaryTypeProperty());
         // Converter
@@ -97,34 +96,34 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(beneficiaryType, beneficiaryTypeValidationLabel);
+        vbox.getChildren().addAll(label, beneficiaryType, beneficiaryTypeValidationLabel);
         return vbox;
     }
 
     private VBox buildColor() {
         // Input.
-        colorPicker = new LabeledComboBox<>();
-        colorPicker.setLabel("Appearance Color");
+        colorPicker = new ValidatableComboBox<>();
+        var label = new Label("Appearance Color");
         colorPicker.setPrefWidth(400d);
         colorPicker.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.colorProperty());
         colorPicker.setItems(BeneficiaryBadgeViewModel.getColorsList());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(colorPicker);
+        vbox.getChildren().addAll(label, colorPicker);
         return vbox;
     }
 
     private VBox buildDescription() {
         // Input.
-        description = new LabeledTextArea();
-        description.setLabel("Description");
+        description = new TextArea();
+        var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(description);
+        vbox.getChildren().addAll(label, description);
         return vbox;
     }
 

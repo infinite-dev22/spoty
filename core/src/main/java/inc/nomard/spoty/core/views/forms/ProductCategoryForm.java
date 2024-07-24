@@ -5,7 +5,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.ProductCategoryViewModel.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -13,7 +13,6 @@ import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -26,14 +25,14 @@ import lombok.extern.java.*;
 @Log
 public class ProductCategoryForm extends MFXGenericDialog {
     @FXML
-    public LabeledTextField name;
+    public ValidatableTextField name;
     @FXML
     public Button saveBtn,
             cancelBtn;
     @FXML
     public Label nameValidationLabel;
     @FXML
-    public LabeledTextArea description;
+    public TextArea description;
     private List<Constraint> nameConstraints;
     private ActionEvent actionEvent = null;
 
@@ -50,8 +49,8 @@ public class ProductCategoryForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
         // Validation.
@@ -59,20 +58,20 @@ public class ProductCategoryForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildDescription() {
         // Input.
-        description = new LabeledTextArea();
-        description.setLabel("Description");
+        description = new TextArea();
+        var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(ProductCategoryViewModel.descriptionProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(description);
+        vbox.getChildren().addAll(label, description);
         return vbox;
     }
 

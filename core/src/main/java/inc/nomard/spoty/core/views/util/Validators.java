@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.views.util;
 
 import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.regex.*;
@@ -44,7 +45,7 @@ public class Validators {
         return digitsOnly.length() >= 7 && digitsOnly.length() <= 15;
     }
 
-    public static void requiredValidator(LabeledTextField control, Label validationLabel, String message) {
+    public static void requiredValidator(ValidatableTextField control, Label validationLabel, String message) {
         Constraint constraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -66,7 +67,7 @@ public class Validators {
     }
 
     public static void requiredValidator(
-            LabeledPasswordField control,
+            ValidatablePasswordField control,
             Label validationLabel,
             String message1,
             String message2,
@@ -106,7 +107,7 @@ public class Validators {
                         });
     }
 
-    public static void requiredValidator(LabeledPasswordField control, Label validationLabel, String message) {
+    public static void requiredValidator(ValidatablePasswordField control, Label validationLabel, String message) {
         Constraint constraint1 =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -127,7 +128,7 @@ public class Validators {
                         });
     }
 
-    public static void matchingValidator(LabeledPasswordField control1, LabeledPasswordField control2, Label validationLabel, String message) {
+    public static void matchingValidator(ValidatablePasswordField control1, ValidatablePasswordField control2, Label validationLabel, String message) {
         Constraint constraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -194,7 +195,7 @@ public class Validators {
                         });
     }
 
-    public static void emailValidator(LabeledTextField control, Label validationLabel, String message) {
+    public static void emailValidator(ValidatableTextField control, Label validationLabel, String message) {
         Constraint constraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -218,7 +219,7 @@ public class Validators {
                         });
     }
 
-    public static void phoneValidator(LabeledTextField control, Label validationLabel, String message) {
+    public static void phoneValidator(ValidatableTextField control, Label validationLabel, String message) {
         Constraint validPhoneConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)

@@ -4,17 +4,15 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.*;
-import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -28,7 +26,7 @@ import lombok.extern.java.*;
 public class CustomerForm extends ModalPage {
     public Button saveBtn,
             cancelBtn;
-    public LabeledTextField name,
+    public ValidatableTextField name,
             email,
             phone,
             city,
@@ -54,13 +52,13 @@ public class CustomerForm extends ModalPage {
         emailValidationLabel = createValidationLabel();
         phoneValidationLabel = createValidationLabel();
 
-        name = createTextField("Name");
-        email = createTextField("Email");
-        phone = createTextField("Phone");
-        country = createTextField("Country");
-        city = createTextField("City");
-        address = createTextField("Address");
-        taxNumber = createTextField("Tax No.");
+        name = createTextField();
+        email = createTextField();
+        phone = createTextField();
+        country = createTextField();
+        city = createTextField();
+        address = createTextField();
+        taxNumber = createTextField();
 
         saveBtn = new Button("Save");
         saveBtn.setDefaultButton(true);
@@ -97,11 +95,15 @@ public class CustomerForm extends ModalPage {
         return label;
     }
 
-    private LabeledTextField createTextField(String floatingText) {
-        LabeledTextField textField = new LabeledTextField();
-        textField.setLabel(floatingText);
+    private ValidatableTextField createTextField() {
+        ValidatableTextField textField = new ValidatableTextField();
         textField.setPrefWidth(300);
         return textField;
+    }
+
+    private VBox buildFieldBox(ValidatableTextField textField, String floatingText) {
+        var label = new Label(floatingText);
+        return new VBox(label, textField);
     }
 
     private GridPane createGridPane() {
@@ -127,10 +129,10 @@ public class CustomerForm extends ModalPage {
     }
 
     private void addGridPaneContent(GridPane gridPane) {
-        addFormRow(gridPane, 0, name, nameValidationLabel, email, emailValidationLabel);
-        addFormRow(gridPane, 1, phone, phoneValidationLabel, country, null);
-        addFormRow(gridPane, 2, city, null, address, null);
-        addFormRow(gridPane, 3, taxNumber, null, null, null);
+        addFormRow(gridPane, 0, buildFieldBox(name, "Name"), nameValidationLabel, buildFieldBox(email, "Email"), emailValidationLabel);
+        addFormRow(gridPane, 1, buildFieldBox(phone, "Phone"), phoneValidationLabel, buildFieldBox(country, "Country"), null);
+        addFormRow(gridPane, 2, buildFieldBox(city, "City"), null, buildFieldBox(address, "Address"), null);
+        addFormRow(gridPane, 3, buildFieldBox(taxNumber, "Tax No."), null, null, null);
     }
 
     private void addFormRow(GridPane gridPane, int rowIndex, Node leftControl, Label leftLabel, Node rightControl, Label rightLabel) {
@@ -168,7 +170,7 @@ public class CustomerForm extends ModalPage {
         bindTextField(taxNumber, CustomerViewModel.taxNumberProperty());
     }
 
-    private void bindTextField(LabeledTextField textField, Property<String> property) {
+    private void bindTextField(ValidatableTextField textField, Property<String> property) {
         textField.textProperty().bindBidirectional(property);
     }
 

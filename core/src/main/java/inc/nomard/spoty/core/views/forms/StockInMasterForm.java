@@ -5,11 +5,10 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.utils.*;
@@ -26,7 +25,7 @@ import lombok.extern.java.*;
 @Log
 public class StockInMasterForm extends OutlineFormPage {
     public TableView<StockInDetail> table;
-    public LabeledTextField note;
+    public ValidatableTextField note;
     public Label title;
     public Button saveBtn,
             cancelBtn,
@@ -92,11 +91,11 @@ public class StockInMasterForm extends OutlineFormPage {
     }
 
     private VBox buildNote() {
-        note = new LabeledTextField();
-        note.setLabel("Note");
+        note = new ValidatableTextField();
+        var label = new Label("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
-        return buildFieldHolder(note);
+        return buildFieldHolder(label, note);
     }
 
     private Button buildSaveButton() {

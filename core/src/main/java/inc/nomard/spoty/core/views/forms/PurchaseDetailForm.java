@@ -6,7 +6,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -16,7 +16,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.collections.*;
 import javafx.event.*;
@@ -29,8 +28,8 @@ import lombok.extern.java.*;
 
 @Log
 public class PurchaseDetailForm extends MFXGenericDialog {
-    public LabeledTextField quantity;
-    public LabeledComboBox<Product> product;
+    public ValidatableTextField quantity;
+    public ValidatableComboBox<Product> product;
     public Button saveBtn, cancelBtn;
     public Label quantityValidationLabel, productValidationLabel;
 
@@ -47,8 +46,8 @@ public class PurchaseDetailForm extends MFXGenericDialog {
 
     private VBox buildProduct() {
         // Input.
-        product = new LabeledComboBox<>();
-        product.setLabel("Product");
+        product = new ValidatableComboBox<>();
+        var label = new Label("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
         setupProductComboBox();
@@ -57,14 +56,14 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(product, productValidationLabel);
+        vbox.getChildren().addAll(label, product, productValidationLabel);
         return vbox;
     }
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new LabeledTextField();
-        quantity.setLabel("Account Number");
+        quantity = new ValidatableTextField();
+        var label = new Label("Account Number");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
         // Validation.
@@ -72,7 +71,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        vbox.getChildren().addAll(label, quantity, quantityValidationLabel);
         return vbox;
     }
 

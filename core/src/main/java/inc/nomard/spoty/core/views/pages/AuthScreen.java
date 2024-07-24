@@ -18,11 +18,10 @@ import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.validation.*;
@@ -33,7 +32,6 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 import javafx.animation.*;
 import javafx.application.*;
-import javafx.beans.binding.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -48,13 +46,13 @@ import lombok.extern.java.*;
 @Log
 public class AuthScreen extends BorderPane {
     private final Stage stage;
-    public LabeledTextField email,
+    public ValidatableTextField email,
             signUpEmail,
             phoneNumber,
             otherName,
             lastName,
             firstName;
-    public LabeledPasswordField password,
+    public ValidatablePasswordField password,
             confirmPassword,
             signUpPassword;
     public Label forgotPassword,
@@ -121,8 +119,8 @@ public class AuthScreen extends BorderPane {
     // Email Input.
     private VBox buildLoginEmail() {
         // Input.
-        email = new LabeledTextField();
-        email.setLabel("Email");
+        email = new ValidatableTextField();
+        var label = new Label("Email");
         email.setPrefWidth(350d);
         email.textProperty().bindBidirectional(LoginViewModel.emailProperty());
         // Validation.
@@ -130,15 +128,15 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(email, emailValidationLabel);
+        vbox.getChildren().addAll(label, email, emailValidationLabel);
         return vbox;
     }
 
     // Password input.
     private VBox buildPassword() {
         // Input.
-        password = new LabeledPasswordField();
-        password.setLabel("Password");
+        password = new ValidatablePasswordField();
+        var label = new Label("Password");
         password.setPrefWidth(350d);
         password.textProperty().bindBidirectional(LoginViewModel.passwordProperty());
         // Validation.
@@ -146,7 +144,7 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(password, passwordValidationLabel);
+        vbox.getChildren().addAll(label, password, passwordValidationLabel);
         return vbox;
     }
 
@@ -208,8 +206,8 @@ public class AuthScreen extends BorderPane {
                 buildPassword(),
                 buildForgotPassword(),
                 buildLoginButton(),
-                buildRegistrationLink()/*,
-                buildAppBranding()*/);
+                buildRegistrationLink(),
+                buildAppBranding());
         return loginScreen;
     }
 
@@ -223,8 +221,8 @@ public class AuthScreen extends BorderPane {
     // First name input.
     private VBox buildFirstName() {
         // Input.
-        firstName = new LabeledTextField();
-        firstName.setLabel("First name");
+        firstName = new ValidatableTextField();
+        var label = new Label("First name");
         firstName.setPrefWidth(350d);
         firstName.textProperty().bindBidirectional(SignupViewModel.firstNameProperty());
         // Validation.
@@ -232,15 +230,15 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(firstName, firstNameValidationLabel);
+        vbox.getChildren().addAll(label, firstName, firstNameValidationLabel);
         return vbox;
     }
 
     // Last name input.
     private VBox buildLastName() {
         // Input.
-        lastName = new LabeledTextField();
-        lastName.setLabel("Last name");
+        lastName = new ValidatableTextField();
+        var label = new Label("Last name");
         lastName.setPrefWidth(350d);
         lastName.textProperty().bindBidirectional(SignupViewModel.lastNameProperty());
         // Validation.
@@ -248,7 +246,7 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(lastName, lastNameValidationLabel);
+        vbox.getChildren().addAll(label, lastName, lastNameValidationLabel);
         return vbox;
     }
 
@@ -262,11 +260,11 @@ public class AuthScreen extends BorderPane {
     // Other name input.
     private VBox buildOtherName() {
         // Input.
-        otherName = new LabeledTextField();
-        otherName.setLabel("Other name (Optional)");
+        otherName = new ValidatableTextField();
+        var label = new Label("Other name (Optional)");
         otherName.setPrefWidth(350d);
         otherName.textProperty().bindBidirectional(SignupViewModel.otherNameProperty());
-        var vbox = new VBox(otherName);
+        var vbox = new VBox(label, otherName);
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
         return vbox;
@@ -275,8 +273,8 @@ public class AuthScreen extends BorderPane {
     // Phone number input.
     private VBox buildPhoneName() {
         // Input.
-        phoneNumber = new LabeledTextField();
-        phoneNumber.setLabel("Phone number");
+        phoneNumber = new ValidatableTextField();
+        var label = new Label("Phone number");
         phoneNumber.setPrefWidth(350d);
         phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
         // Validation.
@@ -284,15 +282,15 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(phoneNumber, phoneNumberValidationLabel);
+        vbox.getChildren().addAll(label, phoneNumber, phoneNumberValidationLabel);
         return vbox;
     }
 
     // Email input.
     private VBox buildKYCEmail() {
         // Input.
-        signUpEmail = new LabeledTextField();
-        signUpEmail.setLabel("Email");
+        signUpEmail = new ValidatableTextField();
+        var label = new Label("Email");
         signUpEmail.setPrefWidth(350d);
         signUpEmail.textProperty().bindBidirectional(SignupViewModel.emailProperty());
         // Validation.
@@ -300,7 +298,7 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(signUpEmail, signUpEmailValidationLabel);
+        vbox.getChildren().addAll(label, signUpEmail, signUpEmailValidationLabel);
         return vbox;
     }
 
@@ -352,8 +350,8 @@ public class AuthScreen extends BorderPane {
                 buildOtherName(),
                 buildPhoneName(),
                 buildKYCEmail(),
-                buildKYCButtons()/*,
-                buildAppBranding()*/);
+                buildKYCButtons(),
+                buildAppBranding());
         return kycScreen;
     }
 
@@ -367,8 +365,8 @@ public class AuthScreen extends BorderPane {
     // Password input.
     private VBox buildRegisterPassword() {
         // Input.
-        signUpPassword = new LabeledPasswordField();
-        signUpPassword.setLabel("Password");
+        signUpPassword = new ValidatablePasswordField();
+        var label = new Label("Password");
         signUpPassword.setPrefWidth(350d);
         signUpPassword.textProperty().bindBidirectional(SignupViewModel.passwordProperty());
         // Validation.
@@ -376,15 +374,15 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(signUpPassword, signUpPasswordValidationLabel);
+        vbox.getChildren().addAll(label, signUpPassword, signUpPasswordValidationLabel);
         return vbox;
     }
 
     // Confirm password input.
     private VBox buildRegisterConfirmPassword() {
         // Input.
-        confirmPassword = new LabeledPasswordField();
-        confirmPassword.setLabel("Confirm Password");
+        confirmPassword = new ValidatablePasswordField();
+        var label = new Label("Confirm Password");
         confirmPassword.setPrefWidth(350d);
         confirmPassword.textProperty().bindBidirectional(SignupViewModel.confirmPasswordProperty());
         // Validation.
@@ -392,7 +390,7 @@ public class AuthScreen extends BorderPane {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().addAll(confirmPassword, confirmPasswordValidationLabel);
+        vbox.getChildren().addAll(label, confirmPassword, confirmPasswordValidationLabel);
         return vbox;
     }
 
@@ -462,8 +460,8 @@ public class AuthScreen extends BorderPane {
                 buildRegisterPassword(),
                 buildRegisterConfirmPassword(),
                 buildRegisterButtons(),
-                buildLoginLink()/*,
-                buildAppBranding()*/);
+                buildLoginLink(),
+                buildAppBranding());
         return authCreateScreen;
     }
 

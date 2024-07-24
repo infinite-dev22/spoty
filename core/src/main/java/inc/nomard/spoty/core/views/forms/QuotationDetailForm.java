@@ -5,7 +5,7 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -16,7 +16,6 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.beans.binding.*;
@@ -33,17 +32,17 @@ import lombok.extern.java.*;
 @Log
 public class QuotationDetailForm extends MFXGenericDialog {
     @FXML
-    public LabeledTextField quantity;
+    public ValidatableTextField quantity;
     @FXML
-    public LabeledComboBox<Product> product;
+    public ValidatableComboBox<Product> product;
     @FXML
     public Button saveBtn, cancelBtn;
     @FXML
     public Label productValidationLabel, quantityValidationLabel;
     @FXML
-    public LabeledComboBox<Discount> discount;
+    public ValidatableComboBox<Discount> discount;
     @FXML
-    public LabeledComboBox<Tax> tax;
+    public ValidatableComboBox<Tax> tax;
 
     public QuotationDetailForm() {
         init();
@@ -59,8 +58,8 @@ public class QuotationDetailForm extends MFXGenericDialog {
 
     private VBox buildProduct() {
         // Input.
-        product = new LabeledComboBox<>();
-        product.setLabel("Product");
+        product = new ValidatableComboBox<>();
+        var label = new Label("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         // Validation.
@@ -68,14 +67,14 @@ public class QuotationDetailForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(product, productValidationLabel);
+        vbox.getChildren().addAll(label, product, productValidationLabel);
         return vbox;
     }
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new LabeledTextField();
-        quantity.setLabel("Quantity");
+        quantity = new ValidatableTextField();
+        var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
         // Validation.
@@ -83,33 +82,33 @@ public class QuotationDetailForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        vbox.getChildren().addAll(label, quantity, quantityValidationLabel);
         return vbox;
     }
 
     private VBox buildTax() {
         // Input.
-        tax = new LabeledComboBox<>();
-        tax.setLabel("Tax");
+        tax = new ValidatableComboBox<>();
+        var label = new Label("Tax");
         tax.setPrefWidth(400d);
         tax.valueProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().add(tax);
+        vbox.getChildren().addAll(label, tax);
         return vbox;
     }
 
     private VBox buildDiscount() {
         // Input.
-        discount = new LabeledComboBox<>();
-        discount.setLabel("Discount");
+        discount = new ValidatableComboBox<>();
+        var label = new Label("Discount");
         discount.setPrefWidth(400d);
         discount.valueProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().add(discount);
+        vbox.getChildren().addAll(label, discount);
         return vbox;
     }
 
@@ -186,7 +185,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         return searchStr -> obj -> StringUtils.containsIgnoreCase(toStringFunction.apply(obj), searchStr);
     }
 
-    private <T> void bindComboBoxItems(LabeledComboBox<T> comboBox, ObservableList<T> items, ListProperty<T> itemsProperty) {
+    private <T> void bindComboBoxItems(ValidatableComboBox<T> comboBox, ObservableList<T> items, ListProperty<T> itemsProperty) {
         if (items.isEmpty()) {
             items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
         } else {
@@ -202,7 +201,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         quantity.getValidator().validProperty().addListener((obs, oldVal, newVal) -> updateValidationState(newVal, quantityValidationLabel, quantity));
     }
 
-    private void createAndAddConstraint(LabeledTextField control, String message, BooleanExpression condition) {
+    private void createAndAddConstraint(ValidatableTextField control, String message, BooleanExpression condition) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
@@ -211,7 +210,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         control.getValidator().constraint(constraint);
     }
 
-    private <T> void createAndAddConstraint(LabeledComboBox<T> control, String message, BooleanExpression condition) {
+    private <T> void createAndAddConstraint(ValidatableComboBox<T> control, String message, BooleanExpression condition) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
@@ -220,13 +219,13 @@ public class QuotationDetailForm extends MFXGenericDialog {
         control.getValidator().constraint(constraint);
     }
 
-    private void updateValidationState(boolean isValid, Label validationLabel, LabeledTextField control) {
+    private void updateValidationState(boolean isValid, Label validationLabel, ValidatableTextField control) {
         validationLabel.setManaged(!isValid);
         validationLabel.setVisible(!isValid);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !isValid);
     }
 
-    private <T> void updateValidationState(boolean isValid, Label validationLabel, LabeledComboBox<T> control) {
+    private <T> void updateValidationState(boolean isValid, Label validationLabel, ValidatableComboBox<T> control) {
         validationLabel.setManaged(!isValid);
         validationLabel.setVisible(!isValid);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !isValid);
@@ -272,7 +271,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         }
     }
 
-    private boolean validateConstraints(List<Constraint> constraints, Label validationLabel, LabeledTextField control) {
+    private boolean validateConstraints(List<Constraint> constraints, Label validationLabel, ValidatableTextField control) {
         if (!constraints.isEmpty()) {
             validationLabel.setText(constraints.getFirst().getMessage());
             validationLabel.setManaged(true);
@@ -284,7 +283,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         return true;
     }
 
-    private <T> boolean validateConstraints(List<Constraint> constraints, Label validationLabel, LabeledComboBox<T> control) {
+    private <T> boolean validateConstraints(List<Constraint> constraints, Label validationLabel, ValidatableComboBox<T> control) {
         if (!constraints.isEmpty()) {
             validationLabel.setText(constraints.getFirst().getMessage());
             validationLabel.setManaged(true);

@@ -5,6 +5,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -22,10 +23,10 @@ import lombok.extern.java.*;
 
 @Log
 public class EmploymentStatusForm extends MFXGenericDialog {
-    public LabeledTextField name;
+    public ValidatableTextField name;
     public Label nameValidationLabel;
-    public LabeledComboBox<String> colorPicker;
-    public LabeledTextArea description;
+    public ValidatableComboBox<String> colorPicker;
+    public TextArea description;
     public Button saveBtn,
             cancelBtn;
     public Label colorPickerValidationLabel;
@@ -46,8 +47,8 @@ public class EmploymentStatusForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(EmploymentStatusViewModel.nameProperty());
         // Validation.
@@ -55,14 +56,14 @@ public class EmploymentStatusForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildColor() {
         // Input.
-        colorPicker = new LabeledComboBox<>();
-        colorPicker.setLabel("Appearance Color");
+        colorPicker = new ValidatableComboBox<>();
+        var label = new Label("Appearance Color");
         colorPicker.setPrefWidth(400d);
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
         colorPicker.getStyleClass().add(Styles.BUTTON_OUTLINED);
@@ -73,20 +74,20 @@ public class EmploymentStatusForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(colorPicker, colorPickerValidationLabel);
+        vbox.getChildren().addAll(label, colorPicker, colorPickerValidationLabel);
         return vbox;
     }
 
     private VBox buildDescription() {
         // Input.
-        description = new LabeledTextArea();
-        description.setLabel("Description");
+        description = new TextArea();
+        var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(description);
+        vbox.getChildren().addAll(label, description);
         return vbox;
     }
 

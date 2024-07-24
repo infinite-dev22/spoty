@@ -6,7 +6,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -17,7 +17,6 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -31,9 +30,9 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionDetailForm extends ModalPage {
     @FXML
-    public LabeledTextField quantity;
+    public ValidatableTextField quantity;
     @FXML
-    public LabeledComboBox<Product> product;
+    public ValidatableComboBox<Product> product;
     @FXML
     public Button saveBtn,
             cancelBtn;
@@ -55,8 +54,8 @@ public class RequisitionDetailForm extends ModalPage {
 
     private VBox buildProduct() {
         // Input.
-        product = new LabeledComboBox<>();
-        product.setLabel("Product");
+        product = new ValidatableComboBox<>();
+        var label = new Label("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
         // Combo box Converter.
@@ -86,14 +85,14 @@ public class RequisitionDetailForm extends ModalPage {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(product, productValidationLabel);
+        vbox.getChildren().addAll(label, product, productValidationLabel);
         return vbox;
     }
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new LabeledTextField();
-        quantity.setLabel("Quantity");
+        quantity = new ValidatableTextField();
+        var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
         // Validation.
@@ -101,7 +100,7 @@ public class RequisitionDetailForm extends ModalPage {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        vbox.getChildren().addAll(label, quantity, quantityValidationLabel);
         return vbox;
     }
 

@@ -6,7 +6,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -16,7 +16,6 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.collections.*;
 import javafx.event.*;
@@ -29,8 +28,8 @@ import lombok.extern.java.*;
 
 @Log
 public class StockInDetailForm extends ModalPage {
-    private LabeledTextField quantity;
-    private LabeledComboBox<Product> product;
+    private ValidatableTextField quantity;
+    private ValidatableComboBox<Product> product;
     private Button saveBtn, cancelBtn;
     private Label productValidationLabel, quantityValidationLabel;
     private List<Constraint> productConstraints, quantityConstraints;
@@ -47,8 +46,8 @@ public class StockInDetailForm extends ModalPage {
 
     private VBox buildProduct() {
         // Input.
-        product = new LabeledComboBox<>();
-        product.setLabel("Product");
+        product = new ValidatableComboBox<>();
+        var label = new Label("Product");
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
 
@@ -66,14 +65,14 @@ public class StockInDetailForm extends ModalPage {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(product, productValidationLabel);
+        vbox.getChildren().addAll(label, product, productValidationLabel);
         return vbox;
     }
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new LabeledTextField();
-        quantity.setLabel("Quantity");
+        quantity = new ValidatableTextField();
+        var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
         // Validation.
@@ -81,20 +80,20 @@ public class StockInDetailForm extends ModalPage {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        vbox.getChildren().addAll(label, quantity, quantityValidationLabel);
         return vbox;
     }
 
     private VBox buildDescription() {
         // Input.
-        var description = new LabeledTextArea();
-        description.setLabel("Description");
+        var description = new TextArea();
+        var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(description);
+        vbox.getChildren().addAll(label, description);
         return vbox;
     }
 
@@ -187,7 +186,7 @@ public class StockInDetailForm extends ModalPage {
         }
     }
 
-    private void showValidationLabel(Label label, String message, LabeledTextField control) {
+    private void showValidationLabel(Label label, String message, ValidatableTextField control) {
         label.setManaged(true);
         label.setVisible(true);
         label.setText(message);
@@ -196,7 +195,7 @@ public class StockInDetailForm extends ModalPage {
         dialog.sizeToScene();
     }
 
-    private <T> void showValidationLabel(Label label, String message, LabeledComboBox<T> control) {
+    private <T> void showValidationLabel(Label label, String message, ValidatableComboBox<T> control) {
         label.setManaged(true);
         label.setVisible(true);
         label.setText(message);
@@ -210,7 +209,7 @@ public class StockInDetailForm extends ModalPage {
         setupValidator(quantity, "Quantity is required");
     }
 
-    private void setupValidator(LabeledTextField control, String message) {
+    private void setupValidator(ValidatableTextField control, String message) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
@@ -225,7 +224,7 @@ public class StockInDetailForm extends ModalPage {
         });
     }
 
-    private void setupValidator(LabeledComboBox control, String message) {
+    private <T> void setupValidator(ValidatableComboBox<T> control, String message) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)

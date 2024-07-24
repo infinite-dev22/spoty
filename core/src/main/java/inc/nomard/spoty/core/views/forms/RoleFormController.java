@@ -4,15 +4,13 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.title.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxcomponents.controls.checkbox.*;
 import java.net.*;
 import java.util.*;
@@ -27,15 +25,15 @@ import lombok.extern.java.*;
 @Log
 public class RoleFormController implements Initializable {
     @FXML
-    public LabeledTextField name;
+    public ValidatableTextField name;
     @FXML
-    public LabeledTextArea roleDescriptionInputField;
+    public TextArea description;
     @FXML
     public Button saveBtn,
             cancelBtn;
-    // <editor-fold desc="Lots of MFXCheckboxes here 👇️">
+    // <editor-fold desc="Lots of CheckBoxes here 👇️">
     @FXML
-    private MFXCheckbox dashboardCheckbox,
+    private CheckBox dashboardCheckbox,
             accessPOSCheckbox,
             viewUsersCheckbox,
             editUsersCheckbox,
@@ -218,72 +216,72 @@ public class RoleFormController implements Initializable {
     }
 
     private void initialiseCheckboxes() {
-        dashboardCheckbox = new MFXCheckbox("Access Dashboard");
-        accessPOSCheckbox = new MFXCheckbox("Access Point Of Sale");
-        viewUsersCheckbox = new MFXCheckbox("Allow View");
-        editUsersCheckbox = new MFXCheckbox("Allow Edit");
-        createUserCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteUserCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewRoleCheckbox = new MFXCheckbox("Allow View");
-        editRoleCheckbox = new MFXCheckbox("Allow Edit");
-        createRoleCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteRoleCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewProductsCheckbox = new MFXCheckbox("Allow View");
-        editProductsCheckbox = new MFXCheckbox("Allow Edit");
-        createProductCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteProductCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        productBarcodesCheckbox = new MFXCheckbox("Edit barcodes");
-        productCategoriesCheckbox = new MFXCheckbox("Access Product Categories");
-        productUnitsCheckbox = new MFXCheckbox("Access Product Units");
-        productBrandsCheckbox = new MFXCheckbox("Access Product Brands");
-        viewAdjustmentsCheckbox = new MFXCheckbox("Allow View");
-        editAdjustmentsCheckbox = new MFXCheckbox("Allow Edit");
-        createAdjustmentCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteAdjustmentCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewTransfersCheckbox = new MFXCheckbox("Allow View");
-        editTransfersCheckbox = new MFXCheckbox("Allow Edit");
-        createTransferCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteTransferCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewExpensesCheckbox = new MFXCheckbox("Allow View");
-        editExpensesCheckbox = new MFXCheckbox("Allow Edit");
-        createExpenseCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteExpenseCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewSalesCheckbox = new MFXCheckbox("Allow View");
-        editSalesCheckbox = new MFXCheckbox("Allow Edit");
-        createSaleCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteSaleCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewPurchasesCheckbox = new MFXCheckbox("Allow View");
-        editPurchasesCheckbox = new MFXCheckbox("Allow Edit");
-        createPurchaseCheckbox = new MFXCheckbox("Allow Create/Add");
-        deletePurchaseCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewRequisitionCheckbox = new MFXCheckbox("Allow View");
-        editRequisitionCheckbox = new MFXCheckbox("Allow Edit");
-        createRequisitionCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteRequisitionCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewStockInCheckbox = new MFXCheckbox("Allow View");
-        editStockInCheckbox = new MFXCheckbox("Allow Edit");
-        createStockInCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteStockInCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewQuotationsCheckbox = new MFXCheckbox("Allow View");
-        editQuotationsCheckbox = new MFXCheckbox("Allow Edit");
-        createQuotationCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteQuotationCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewSaleReturnsCheckbox = new MFXCheckbox("Allow View");
-        editSaleReturnsCheckbox = new MFXCheckbox("Allow Edit");
-        createSaleReturnCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteSaleReturnCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewPurchaseReturnsCheckbox = new MFXCheckbox("Allow View");
-        editPurchaseReturnsCheckbox = new MFXCheckbox("Allow Edit");
-        createPurchaseReturnCheckbox = new MFXCheckbox("Allow Create/Add");
-        deletePurchaseReturnCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewCustomersCheckbox = new MFXCheckbox("Allow View");
-        editCustomersCheckbox = new MFXCheckbox("Allow Edit");
-        createCustomerCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteCustomerCheckbox = new MFXCheckbox("Allow Delete/Remove");
-        viewSuppliersCheckbox = new MFXCheckbox("Allow View");
-        editSuppliersCheckbox = new MFXCheckbox("Allow Edit");
-        createSupplierCheckbox = new MFXCheckbox("Allow Create/Add");
-        deleteSupplierCheckbox = new MFXCheckbox("Allow Delete/Remove");
+        dashboardCheckbox = new CheckBox("Access Dashboard");
+        accessPOSCheckbox = new CheckBox("Access Point Of Sale");
+        viewUsersCheckbox = new CheckBox("Allow View");
+        editUsersCheckbox = new CheckBox("Allow Edit");
+        createUserCheckbox = new CheckBox("Allow Create/Add");
+        deleteUserCheckbox = new CheckBox("Allow Delete/Remove");
+        viewRoleCheckbox = new CheckBox("Allow View");
+        editRoleCheckbox = new CheckBox("Allow Edit");
+        createRoleCheckbox = new CheckBox("Allow Create/Add");
+        deleteRoleCheckbox = new CheckBox("Allow Delete/Remove");
+        viewProductsCheckbox = new CheckBox("Allow View");
+        editProductsCheckbox = new CheckBox("Allow Edit");
+        createProductCheckbox = new CheckBox("Allow Create/Add");
+        deleteProductCheckbox = new CheckBox("Allow Delete/Remove");
+        productBarcodesCheckbox = new CheckBox("Edit barcodes");
+        productCategoriesCheckbox = new CheckBox("Access Product Categories");
+        productUnitsCheckbox = new CheckBox("Access Product Units");
+        productBrandsCheckbox = new CheckBox("Access Product Brands");
+        viewAdjustmentsCheckbox = new CheckBox("Allow View");
+        editAdjustmentsCheckbox = new CheckBox("Allow Edit");
+        createAdjustmentCheckbox = new CheckBox("Allow Create/Add");
+        deleteAdjustmentCheckbox = new CheckBox("Allow Delete/Remove");
+        viewTransfersCheckbox = new CheckBox("Allow View");
+        editTransfersCheckbox = new CheckBox("Allow Edit");
+        createTransferCheckbox = new CheckBox("Allow Create/Add");
+        deleteTransferCheckbox = new CheckBox("Allow Delete/Remove");
+        viewExpensesCheckbox = new CheckBox("Allow View");
+        editExpensesCheckbox = new CheckBox("Allow Edit");
+        createExpenseCheckbox = new CheckBox("Allow Create/Add");
+        deleteExpenseCheckbox = new CheckBox("Allow Delete/Remove");
+        viewSalesCheckbox = new CheckBox("Allow View");
+        editSalesCheckbox = new CheckBox("Allow Edit");
+        createSaleCheckbox = new CheckBox("Allow Create/Add");
+        deleteSaleCheckbox = new CheckBox("Allow Delete/Remove");
+        viewPurchasesCheckbox = new CheckBox("Allow View");
+        editPurchasesCheckbox = new CheckBox("Allow Edit");
+        createPurchaseCheckbox = new CheckBox("Allow Create/Add");
+        deletePurchaseCheckbox = new CheckBox("Allow Delete/Remove");
+        viewRequisitionCheckbox = new CheckBox("Allow View");
+        editRequisitionCheckbox = new CheckBox("Allow Edit");
+        createRequisitionCheckbox = new CheckBox("Allow Create/Add");
+        deleteRequisitionCheckbox = new CheckBox("Allow Delete/Remove");
+        viewStockInCheckbox = new CheckBox("Allow View");
+        editStockInCheckbox = new CheckBox("Allow Edit");
+        createStockInCheckbox = new CheckBox("Allow Create/Add");
+        deleteStockInCheckbox = new CheckBox("Allow Delete/Remove");
+        viewQuotationsCheckbox = new CheckBox("Allow View");
+        editQuotationsCheckbox = new CheckBox("Allow Edit");
+        createQuotationCheckbox = new CheckBox("Allow Create/Add");
+        deleteQuotationCheckbox = new CheckBox("Allow Delete/Remove");
+        viewSaleReturnsCheckbox = new CheckBox("Allow View");
+        editSaleReturnsCheckbox = new CheckBox("Allow Edit");
+        createSaleReturnCheckbox = new CheckBox("Allow Create/Add");
+        deleteSaleReturnCheckbox = new CheckBox("Allow Delete/Remove");
+        viewPurchaseReturnsCheckbox = new CheckBox("Allow View");
+        editPurchaseReturnsCheckbox = new CheckBox("Allow Edit");
+        createPurchaseReturnCheckbox = new CheckBox("Allow Create/Add");
+        deletePurchaseReturnCheckbox = new CheckBox("Allow Delete/Remove");
+        viewCustomersCheckbox = new CheckBox("Allow View");
+        editCustomersCheckbox = new CheckBox("Allow Edit");
+        createCustomerCheckbox = new CheckBox("Allow Create/Add");
+        deleteCustomerCheckbox = new CheckBox("Allow Delete/Remove");
+        viewSuppliersCheckbox = new CheckBox("Allow View");
+        editSuppliersCheckbox = new CheckBox("Allow Edit");
+        createSupplierCheckbox = new CheckBox("Allow Create/Add");
+        deleteSupplierCheckbox = new CheckBox("Allow Delete/Remove");
     }
 
     @Override
@@ -361,7 +359,7 @@ public class RoleFormController implements Initializable {
 
     private void bindProperties() {
         name.textProperty().bindBidirectional(RoleViewModel.nameProperty());
-        roleDescriptionInputField.textProperty().bindBidirectional(RoleViewModel.descriptionProperty());
+        description.textProperty().bindBidirectional(RoleViewModel.descriptionProperty());
     }
 
     private void getDashBoardSetting() {

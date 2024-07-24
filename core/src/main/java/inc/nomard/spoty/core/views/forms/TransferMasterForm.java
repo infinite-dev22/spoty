@@ -6,6 +6,7 @@ import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -33,11 +34,11 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class TransferMasterForm extends OutlineFormPage {
-    public LabeledComboBox<Branch> fromBranch,
+    public ValidatableComboBox<Branch> fromBranch,
             toBranch;
-    public LabeledDatePicker date;
+    public ValidatableDatePicker date;
     public TableView<TransferDetail> table;
-    public LabeledTextField note;
+    public ValidatableTextField note;
     public BorderPane contentPane;
     public Button addBtn,
             saveBtn,
@@ -120,8 +121,8 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private VBox buildFromBranch() {
-        fromBranch = new LabeledComboBox<>();
-        fromBranch.setLabel("From Branch");
+        fromBranch = new ValidatableComboBox<>();
+        var label = new Label("From Branch");
         fromBranch.setPrefWidth(10000d);
         fromBranch
                 .valueProperty()
@@ -147,12 +148,12 @@ public class TransferMasterForm extends OutlineFormPage {
             fromBranch.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
         }
         fromBranchValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(fromBranch, fromBranchValidationLabel);
+        return buildFieldHolder(label, fromBranch, fromBranchValidationLabel);
     }
 
     private VBox buildToBranch() {
-        toBranch = new LabeledComboBox<>();
-        toBranch.setLabel("To Branch");
+        toBranch = new ValidatableComboBox<>();
+        var label = new Label("To Branch");
         toBranch.setPrefWidth(10000d);
         toBranch
                 .valueProperty()
@@ -178,25 +179,25 @@ public class TransferMasterForm extends OutlineFormPage {
             toBranch.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
         }
         toBranchValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(toBranch, toBranchValidationLabel);
+        return buildFieldHolder(label, toBranch, toBranchValidationLabel);
     }
 
     private VBox buildDatePicker() {
-        date = new LabeledDatePicker();
-        date.setLabel("Date");
+        date = new ValidatableDatePicker();
+        var label = new Label("Date");
         date.setPrefWidth(10000d);
         date.valueProperty()
                 .bindBidirectional(TransferMasterViewModel.dateProperty());
         dateValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(date, dateValidationLabel);
+        return buildFieldHolder(label, date, dateValidationLabel);
     }
 
     private VBox buildNote() {
-        note = new LabeledTextField();
-        note.setLabel("Note");
+        note = new ValidatableTextField();
+        var label = new Label("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
-        return buildFieldHolder(note);
+        return buildFieldHolder(label, note);
     }
 
     private Button buildSaveButton() {
@@ -325,7 +326,7 @@ public class TransferMasterForm extends OutlineFormPage {
         validateField(date, dateValidationLabel);
     }
 
-    private void validateField(LabeledDatePicker field, Label validationLabel) {
+    private void validateField(ValidatableDatePicker field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -335,7 +336,7 @@ public class TransferMasterForm extends OutlineFormPage {
         }
     }
 
-    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
+    private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);

@@ -4,7 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -12,7 +12,6 @@ import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -26,9 +25,9 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
     public Button saveBtn, cancelBtn;
     public Label nameValidationLabel,
             colorPickerValidationLabel;
-    public LabeledTextField name;
-    public LabeledTextArea description;
-    public LabeledComboBox<String> colorPicker;
+    public ValidatableTextField name;
+    public TextArea description;
+    public ValidatableComboBox<String> colorPicker;
     private List<Constraint> nameConstraints,
             colorConstraints;
     private ActionEvent actionEvent = null;
@@ -46,8 +45,8 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BeneficiaryTypeViewModel.nameProperty());
         // Validation.
@@ -55,14 +54,14 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildColor() {
         // Input.
-        colorPicker = new LabeledComboBox<>();
-        colorPicker.setLabel("Color");
+        colorPicker = new ValidatableComboBox<>();
+        var label = new Label("Color");
         colorPicker.setPrefWidth(400d);
         colorPicker.valueProperty().bindBidirectional(BeneficiaryTypeViewModel.colorProperty());
         colorPicker.setItems(BeneficiaryTypeViewModel.getColorsList());
@@ -71,20 +70,20 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(colorPicker, colorPickerValidationLabel);
+        vbox.getChildren().addAll(label, colorPicker, colorPickerValidationLabel);
         return vbox;
     }
 
     private VBox buildDescription() {
         // Input.
-        description = new LabeledTextArea();
-        description.setLabel("Description");
+        description = new TextArea();
+        var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(BeneficiaryTypeViewModel.descriptionProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(description);
+        vbox.getChildren().addAll(label, description);
         return vbox;
     }
 

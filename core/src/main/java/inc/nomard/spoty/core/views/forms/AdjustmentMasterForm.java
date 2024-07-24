@@ -5,17 +5,16 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.utils.*;
-import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -25,7 +24,7 @@ import lombok.extern.java.*;
 @Log
 public class AdjustmentMasterForm extends OutlineFormPage {
     public TableView<AdjustmentDetail> tableView;
-    public LabeledTextField note;
+    public ValidatableTextField note;
     public Label title;
     public Button addBtn, saveBtn, cancelBtn;
 
@@ -40,53 +39,58 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         title = new Label("Adjustment Form");
         title.setId("title");
 
-        Separator separator = new Separator();
-        separator.setPrefWidth(200.0);
-
-        addBtn = new Button("Add Product");
-        addBtn.setDefaultButton(true);
-
-        tableView = new TableView<>();
-
-        note = new LabeledTextField();
-        note.setLabel("Note");
-
         HBox buttonBox = createButtonBox();
 
-        AnchorPane centerPane = new AnchorPane();
-        centerPane.getStyleClass().add("card-flat");
-        centerPane.setPadding(new Insets(5.0));
+        var vbox = new VBox();
+        vbox.getStyleClass().add("card-flat");
+        vbox.setPadding(new Insets(10d));
+        vbox.setSpacing(10d);
+        HBox.setHgrow(vbox, Priority.ALWAYS);
 
-        AnchorPane.setTopAnchor(title, 0.0);
-        AnchorPane.setLeftAnchor(title, 0.0);
-        AnchorPane.setRightAnchor(title, 0.0);
-
-        AnchorPane.setTopAnchor(separator, 20.0);
-        AnchorPane.setLeftAnchor(separator, 0.0);
-        AnchorPane.setRightAnchor(separator, 0.0);
-
-        AnchorPane.setTopAnchor(note, 40.0);
-        AnchorPane.setLeftAnchor(note, 0.0);
-        AnchorPane.setRightAnchor(note, 0.0);
-
-        AnchorPane.setTopAnchor(addBtn, 100.0);
-        AnchorPane.setLeftAnchor(addBtn, 0.0);
-        AnchorPane.setRightAnchor(addBtn, 0.0);
-
-        AnchorPane.setTopAnchor(tableView, 160.0);
-        AnchorPane.setBottomAnchor(tableView, 78.0);
-        AnchorPane.setLeftAnchor(tableView, 5.0);
-        AnchorPane.setRightAnchor(tableView, 5.0);
-
-        AnchorPane.setBottomAnchor(buttonBox, 10.0);
-        AnchorPane.setLeftAnchor(buttonBox, 0.0);
-        AnchorPane.setRightAnchor(buttonBox, 0.0);
-
-        centerPane.getChildren().addAll(title, separator, note, addBtn, tableView, buttonBox);
+        vbox.getChildren().addAll(title, buildSeparator(), buildNote(), buildAddButton(), buildTable(), buttonBox);
 
         var pane = new BorderPane();
-        pane.setCenter(centerPane);
+        pane.setCenter(vbox);
         return pane;
+    }
+
+    private Separator buildSeparator() {
+        var separator = new Separator();
+        separator.setPrefWidth(200.0);
+        HBox.setHgrow(separator, Priority.ALWAYS);
+        return separator;
+    }
+
+    private TableView<AdjustmentDetail> buildTable() {
+        tableView = new TableView<>();
+        HBox.setHgrow(tableView, Priority.ALWAYS);
+        setupTable();
+        return tableView;
+    }
+
+    private Button buildAddButton() {
+        addBtn = new Button("Add");
+        addBtn.setDefaultButton(true);
+        addBtn.setOnAction(event -> SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait());
+        addBtn.setPrefWidth(10000d);
+        HBox.setHgrow(addBtn, Priority.ALWAYS);
+        return addBtn;
+    }
+
+    private VBox buildNote() {
+        note = new ValidatableTextField();
+        var label = new Label("Note");
+        note.setPrefWidth(10000d);
+        return buildFieldHolder(label, note);
+    }
+
+    private VBox buildFieldHolder(Node... nodes) {
+        VBox vbox = new VBox();
+        vbox.setSpacing(5d);
+        vbox.setPadding(new Insets(5d, 0d, 0d, 0d));
+        vbox.getChildren().addAll(nodes);
+        HBox.setHgrow(vbox, Priority.ALWAYS);
+        return vbox;
     }
 
     private HBox createButtonBox() {

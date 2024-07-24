@@ -5,14 +5,14 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.TaxViewModel.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;import javafx.scene.control.Label;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import javafx.event.*;
@@ -27,7 +27,7 @@ import lombok.extern.java.*;
 @Log
 public class DiscountForm extends MFXGenericDialog {
     @FXML
-    public LabeledTextField name,
+    public ValidatableTextField name,
             percentage;
     @FXML
     public Label nameValidationLabel,
@@ -52,8 +52,8 @@ public class DiscountForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(DiscountViewModel.nameProperty());
         // Validation.
@@ -61,14 +61,14 @@ public class DiscountForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildPercentage() {
         // Input.
-        percentage = new LabeledTextField();
-        percentage.setLabel("Percentage");
+        percentage = new ValidatableTextField();
+        var label = new Label("Percentage");
         percentage.setPrefWidth(400d);
         percentage.setRight(new MFXFontIcon("fas-percent"));
         percentage.textProperty().bindBidirectional(DiscountViewModel.percentageProperty(), new NumberStringConverter());
@@ -77,7 +77,7 @@ public class DiscountForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(percentage, percentageValidationLabel);
+        vbox.getChildren().addAll(label, percentage, percentageValidationLabel);
         return vbox;
     }
 

@@ -5,7 +5,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.CurrencyViewModel.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -13,7 +13,6 @@ import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -24,7 +23,7 @@ import lombok.extern.java.*;
 
 @Log
 public class CurrencyForm extends MFXGenericDialog {
-    public LabeledTextField name,
+    public ValidatableTextField name,
             code,
             symbol;
     public Button saveBtn,
@@ -50,8 +49,8 @@ public class CurrencyForm extends MFXGenericDialog {
 
     private VBox buildCode() {
         // Input.
-        code = new LabeledTextField();
-        code.setLabel("Currency Code");
+        code = new ValidatableTextField();
+        var label = new Label("Currency Code");
         code.setPrefWidth(400d);
         code.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
         // Validation.
@@ -59,14 +58,14 @@ public class CurrencyForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(code, codeValidationLabel);
+        vbox.getChildren().addAll(label, code, codeValidationLabel);
         return vbox;
     }
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Currency Name");
+        name = new ValidatableTextField();
+        var label = new Label("Currency Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
         // Validation.
@@ -74,21 +73,21 @@ public class CurrencyForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildSymbol() {
         // Input.
-        symbol = new LabeledTextField();
-        symbol.setLabel("Currency Symbol");
+        symbol = new ValidatableTextField();
+        var label = new Label("Currency Symbol");
         symbol.setPrefWidth(400d);
         symbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
         CurrencyViewModel.idProperty().addListener((observableValue, oV, nV) -> symbol.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(symbol);
+        vbox.getChildren().addAll(label, symbol);
         return vbox;
     }
 

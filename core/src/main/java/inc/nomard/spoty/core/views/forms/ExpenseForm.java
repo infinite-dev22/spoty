@@ -4,7 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -15,7 +15,6 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.event.*;
@@ -27,13 +26,13 @@ import lombok.extern.java.*;
 
 @Log
 public class ExpenseForm extends MFXGenericDialog {
-    public LabeledTextField amount,
+    public ValidatableTextField amount,
             name;
-    public LabeledTextArea note;
+    public TextArea note;
     public Button saveBtn,
             cancelBtn;
-    public LabeledDatePicker date;
-    public LabeledComboBox<Account> account;
+    public ValidatableDatePicker date;
+    public ValidatableComboBox<Account> account;
     public Label nameValidationLabel,
             dateValidationLabel,
             accountValidationLabel,
@@ -56,8 +55,8 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildAccount() {
         // Input.
-        account = new LabeledComboBox<>();
-        account.setLabel("Account");
+        account = new ValidatableComboBox<>();
+        var label = new Label("Account");
         account.setPrefWidth(400d);
         account.valueProperty().bindBidirectional(ExpensesViewModel.accountProperty());
         // Converter
@@ -78,14 +77,14 @@ public class ExpenseForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(account, accountValidationLabel);
+        vbox.getChildren().addAll(label, account, accountValidationLabel);
         return vbox;
     }
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
         // Validation.
@@ -93,14 +92,14 @@ public class ExpenseForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildDate() {
         // Input.
-        date = new LabeledDatePicker();
-        date.setLabel("Expense Date");
+        date = new ValidatableDatePicker();
+        var label = new Label("Expense Date");
         date.setPrefWidth(400d);
         date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
         // Validation.
@@ -108,34 +107,34 @@ public class ExpenseForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(date, dateValidationLabel);
+        vbox.getChildren().addAll(label, date, dateValidationLabel);
         return vbox;
     }
 
     private VBox buildAmount() {
         // Input.
-        amount = new LabeledTextField();
-        amount.setLabel("Amount");
+        amount = new ValidatableTextField();
+        var label = new Label("Amount");
         amount.setPrefWidth(400d);
         amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
         ExpensesViewModel.idProperty().addListener((observableValue, oV, nV) -> amount.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(amount);
+        vbox.getChildren().addAll(label, amount);
         return vbox;
     }
 
     private VBox buildNote() {
         // Input.
-        note = new LabeledTextArea();
-        note.setLabel("Note");
+        note = new TextArea();
+        var label = new Label("Note");
         note.setPrefWidth(400d);
         note.textProperty().bindBidirectional(ExpensesViewModel.noteProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(note);
+        vbox.getChildren().addAll(label, note);
         return vbox;
     }
 

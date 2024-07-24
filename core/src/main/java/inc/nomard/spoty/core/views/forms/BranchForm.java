@@ -5,7 +5,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.BranchViewModel.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -13,7 +13,6 @@ import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -26,7 +25,7 @@ import lombok.extern.java.*;
 public class BranchForm extends MFXGenericDialog {
     public Button saveBtn,
             cancelBtn;
-    public LabeledTextField name,
+    public ValidatableTextField name,
             email,
             phone,
             town,
@@ -54,8 +53,8 @@ public class BranchForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(BranchViewModel.nameProperty());
         // Validation.
@@ -63,14 +62,14 @@ public class BranchForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildPhone() {
         // Input.
-        phone = new LabeledTextField();
-        name.setLabel("Phone");
+        phone = new ValidatableTextField();
+        var label = new Label("Phone");
         phone.setPrefWidth(400d);
         phone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
         // Validation.
@@ -78,14 +77,14 @@ public class BranchForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(phone, phoneValidationLabel);
+        vbox.getChildren().addAll(label, phone, phoneValidationLabel);
         return vbox;
     }
 
     private VBox buildTown() {
         // Input.
-        town = new LabeledTextField();
-        town.setLabel("Town");
+        town = new ValidatableTextField();
+        var label = new Label("Town");
         town.setPrefWidth(400d);
         town.textProperty().bindBidirectional(BranchViewModel.townProperty());
         // Validation.
@@ -93,33 +92,33 @@ public class BranchForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(town);
+        vbox.getChildren().addAll(label, town);
         return vbox;
     }
 
     private VBox buildCity() {
         // Input.
-        city = new LabeledTextField();
-        city.setLabel("City");
+        city = new ValidatableTextField();
+        var label = new Label("City");
         city.setPrefWidth(400d);
         city.textProperty().bindBidirectional(BranchViewModel.cityProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(city);
+        vbox.getChildren().addAll(label, city);
         return vbox;
     }
 
     private VBox buildEmail() {
         // Input.
-        email = new LabeledTextField();
-        email.setLabel("Email");
+        email = new ValidatableTextField();
+        var label = new Label("Email");
         email.setPrefWidth(400d);
         email.textProperty().bindBidirectional(BranchViewModel.emailProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(email);
+        vbox.getChildren().addAll(label, email);
         return vbox;
     }
 

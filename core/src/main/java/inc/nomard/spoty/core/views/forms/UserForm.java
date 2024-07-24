@@ -7,6 +7,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -36,18 +37,18 @@ import lombok.extern.java.*;
 @Log
 public class UserForm extends ModalPage {
     private Button saveBtn, cancelBtn;
-    private LabeledTextField email, phone, firstname, lastname, username;
-    private LabeledComboBox<Role> role;
+    private ValidatableTextField email, phone, firstname, lastname, username;
+    private ValidatableComboBox<Role> role;
     private ToggleSwitch status;
     private Label firstNameValidationLabel, emailValidationLabel, phoneValidationLabel,
             lastNameValidationLabel, userNameValidationLabel, roleValidationLabel,
             departmentValidationLabel, designationValidationLabel,
             employmentStatusValidationLabel, workShiftValidationLabel;
-    private LabeledDatePicker dateOfBirth;
-    private LabeledComboBox<Department> department;
-    private LabeledComboBox<Designation> designation;
-    private LabeledComboBox<EmploymentStatus> employmentStatus;
-    private LabeledComboBox<String> workShift;
+    private ValidatableDatePicker dateOfBirth;
+    private ValidatableComboBox<Department> department;
+    private ValidatableComboBox<Designation> designation;
+    private ValidatableComboBox<EmploymentStatus> employmentStatus;
+    private ValidatableComboBox<String> workShift;
     private List<Constraint> firstNameConstraints, lastNameConstraints,
             userNameConstraints, userRoleConstraints;
     private ActionEvent actionEvent = null;
@@ -122,31 +123,27 @@ public class UserForm extends ModalPage {
         return label;
     }
 
-    private LabeledTextField createTextField(String floatingText) {
-        LabeledTextField textField = new LabeledTextField();
-        textField.setLabel(floatingText);
+    private ValidatableTextField createTextField(String floatingText) {
+        ValidatableTextField textField = new ValidatableTextField();
         textField.setPrefWidth(300);
         return textField;
     }
 
-    private LabeledDatePicker createDatePicker() {
-        LabeledDatePicker datePicker = new LabeledDatePicker();
-        datePicker.setLabel("Date of Birth");
+    private ValidatableDatePicker createDatePicker() {
+        ValidatableDatePicker datePicker = new ValidatableDatePicker();
         datePicker.setPrefWidth(300);
         return datePicker;
     }
 
-    private <T> LabeledComboBox<T> createFilterComboBox(String floatingText, ObservableList<T> items) {
-        LabeledComboBox<T> comboBox = new LabeledComboBox<>();
-        comboBox.setLabel(floatingText);
+    private <T> ValidatableComboBox<T> createFilterComboBox(String floatingText, ObservableList<T> items) {
+        ValidatableComboBox<T> comboBox = new ValidatableComboBox<>();
         comboBox.setPrefWidth(300);
         comboBox.setItems(items);
         return comboBox;
     }
 
-    private LabeledComboBox<String> createComboBox() {
-        LabeledComboBox<String> comboBox = new LabeledComboBox<>();
-        comboBox.setLabel("Work Shift");
+    private ValidatableComboBox<String> createComboBox() {
+        ValidatableComboBox<String> comboBox = new ValidatableComboBox<>();
         comboBox.setPrefWidth(300);
         comboBox.setItems(UserViewModel.getWorkShiftsList());
         return comboBox;
@@ -175,12 +172,17 @@ public class UserForm extends ModalPage {
     }
 
     private void addGridPaneContent(GridPane gridPane) {
-        addFormRow(gridPane, 0, firstname, firstNameValidationLabel, lastname, lastNameValidationLabel);
-        addFormRow(gridPane, 1, username, userNameValidationLabel, dateOfBirth, null);
-        addFormRow(gridPane, 2, email, emailValidationLabel, phone, phoneValidationLabel);
-        addFormRow(gridPane, 3, department, departmentValidationLabel, designation, designationValidationLabel);
-        addFormRow(gridPane, 4, employmentStatus, employmentStatusValidationLabel, workShift, workShiftValidationLabel);
-        addFormRow(gridPane, 5, role, roleValidationLabel, status, null);
+        addFormRow(gridPane, 0, buildFieldBox(firstname, "First name"), firstNameValidationLabel, buildFieldBox(lastname, "Last name"), lastNameValidationLabel);
+        addFormRow(gridPane, 1, buildFieldBox(username, "Username"), userNameValidationLabel, buildFieldBox(dateOfBirth, "Date Of Birth"), null);
+        addFormRow(gridPane, 2, buildFieldBox(email, "Email"), emailValidationLabel, buildFieldBox(phone, "Phone"), phoneValidationLabel);
+        addFormRow(gridPane, 3, buildFieldBox(department, "Department"), departmentValidationLabel, buildFieldBox(designation, "Designation"), designationValidationLabel);
+        addFormRow(gridPane, 4, buildFieldBox(employmentStatus, "Employment Status"), employmentStatusValidationLabel, buildFieldBox(workShift, "Work Shift"), workShiftValidationLabel);
+        addFormRow(gridPane, 5, buildFieldBox(role, "Role"), roleValidationLabel, buildFieldBox(status, "Active"), null);
+    }
+
+    private VBox buildFieldBox(Control textField, String floatingText) {
+        var label = new Label(floatingText);
+        return new VBox(label, textField);
     }
 
     private void addFormRow(GridPane gridPane, int rowIndex, Node leftControl, Label leftLabel, Node rightControl, Label rightLabel) {
@@ -221,15 +223,15 @@ public class UserForm extends ModalPage {
         bindDatePicker(dateOfBirth, UserViewModel.dateOfBirthProperty());
     }
 
-    private void bindTextField(LabeledTextField textField, Property<String> property) {
+    private void bindTextField(ValidatableTextField textField, Property<String> property) {
         textField.textProperty().bindBidirectional(property);
     }
 
-    private <T> void bindFilterComboBox(LabeledComboBox<T> comboBox, Property<T> property) {
+    private <T> void bindFilterComboBox(ValidatableComboBox<T> comboBox, Property<T> property) {
         comboBox.valueProperty().bindBidirectional(property);
     }
 
-    private <T> void bindComboBox(LabeledComboBox<T> comboBox, Property<T> property) {
+    private <T> void bindComboBox(ValidatableComboBox<T> comboBox, Property<T> property) {
         comboBox.valueProperty().bindBidirectional(property);
     }
 
@@ -237,7 +239,7 @@ public class UserForm extends ModalPage {
         toggleButton.selectedProperty().bindBidirectional(property);
     }
 
-    private void bindDatePicker(LabeledDatePicker datePicker, Property<LocalDate> property) {
+    private void bindDatePicker(ValidatableDatePicker datePicker, Property<LocalDate> property) {
         datePicker.valueProperty().bindBidirectional(property);
     }
 
@@ -248,7 +250,7 @@ public class UserForm extends ModalPage {
         requiredValidator(role, roleValidationLabel, "Role is required");
     }
 
-    private void requiredValidator(LabeledTextField control, Label validationLabel, String message) {
+    private void requiredValidator(ValidatableTextField control, Label validationLabel, String message) {
         // Name input validation.
         Constraint firstName =
                 Constraint.Builder.build()
@@ -270,7 +272,7 @@ public class UserForm extends ModalPage {
                         });
     }
 
-    private <T> void requiredValidator(LabeledComboBox<T> control, Label validationLabel, String message) {
+    private <T> void requiredValidator(ValidatableComboBox<T> control, Label validationLabel, String message) {
         // Name input validation.
         Constraint firstName =
                 Constraint.Builder.build()

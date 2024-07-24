@@ -4,7 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -15,7 +15,6 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
@@ -33,13 +32,13 @@ public class UOMForm extends ModalPage {
      * filled in its combo. =>The dialog should animate to expand and contract when a BaseUnit is
      * present i.e. not just have a scroll view.
      */
-    public LabeledTextField name,
+    public ValidatableTextField name,
             shortName,
             operatorValue;
     public Button saveBtn,
             cancelBtn;
-    public LabeledComboBox<UnitOfMeasure> baseUnit;
-    public LabeledComboBox<String> operator;
+    public ValidatableComboBox<UnitOfMeasure> baseUnit;
+    public ValidatableComboBox<String> operator;
     public VBox formsHolder;
     public Label nameValidationLabel,
             operatorValidationLabel,
@@ -61,8 +60,8 @@ public class UOMForm extends ModalPage {
 
     private VBox buildName() {
         // Input.
-        name = new LabeledTextField();
-        name.setLabel("Name");
+        name = new ValidatableTextField();
+        var label = new Label("Name");
         name.setPrefWidth(400d);
         name.textProperty().bindBidirectional(UOMViewModel.nameProperty());
         // Validation.
@@ -70,27 +69,27 @@ public class UOMForm extends ModalPage {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(name, nameValidationLabel);
+        vbox.getChildren().addAll(label, name, nameValidationLabel);
         return vbox;
     }
 
     private VBox buildShortName() {
         // Input.
-        shortName = new LabeledTextField();
-        shortName.setLabel("Short Name");
+        shortName = new ValidatableTextField();
+        var label = new Label("Short Name");
         shortName.setPrefWidth(400d);
         shortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().add(shortName);
+        vbox.getChildren().addAll(label, shortName);
         return vbox;
     }
 
     private VBox buildBaseUnit() {
         // Input.
-        baseUnit = new LabeledComboBox<>();
-        baseUnit.setLabel("Base Unit");
+        baseUnit = new ValidatableComboBox<>();
+        var label = new Label("Base Unit");
         baseUnit.setPrefWidth(400d);
         baseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
         // Input listeners.
@@ -134,14 +133,14 @@ public class UOMForm extends ModalPage {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().add(baseUnit);
+        vbox.getChildren().addAll(label, baseUnit);
         return vbox;
     }
 
     private VBox buildOperator() {
         // Input.
-        operator = new LabeledComboBox<>();
-        operator.setLabel("Operator");
+        operator = new ValidatableComboBox<>();
+        var label = new Label("Operator");
         operator.setPrefWidth(400d);
         operator.valueProperty().bindBidirectional(UOMViewModel.operatorProperty());
         operator.setItems(UOMViewModel.operatorList);
@@ -150,20 +149,20 @@ public class UOMForm extends ModalPage {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(operator, operatorValidationLabel);
+        vbox.getChildren().addAll(label, operator, operatorValidationLabel);
         return vbox;
     }
 
     private VBox buildOperatorValue() {
         // Input.
-        operatorValue = new LabeledTextField();
-        operatorValue.setLabel("Operator Value");
+        operatorValue = new ValidatableTextField();
+        var label = new Label("Operator Value");
         operatorValue.setPrefWidth(400d);
         operatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 0d, 0d));
-        vbox.getChildren().add(operatorValue);
+        vbox.getChildren().addAll(label, operatorValue);
         return vbox;
     }
 

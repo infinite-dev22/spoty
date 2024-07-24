@@ -5,12 +5,12 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.utils.*;
@@ -34,9 +34,9 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionMasterForm extends OutlineFormPage {
     public Label supplierValidationLabel;
-    public LabeledComboBox<Supplier> supplier;
+    public ValidatableComboBox<Supplier> supplier;
     public TableView<RequisitionDetail> table;
-    public LabeledTextField note;
+    public ValidatableTextField note;
     public Button saveBtn,
             cancelBtn,
             addBtn;
@@ -110,8 +110,8 @@ public class RequisitionMasterForm extends OutlineFormPage {
     }
 
     private VBox buildSupplier() {
-        supplier = new LabeledComboBox<>();
-        supplier.setLabel("Supplier");
+        supplier = new ValidatableComboBox<>();
+        var label = new Label("Supplier");
         supplier.setPrefWidth(10000d);
         supplier
                 .valueProperty()
@@ -137,15 +137,15 @@ public class RequisitionMasterForm extends OutlineFormPage {
             supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
         }
         supplierValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(supplier, supplierValidationLabel);
+        return buildFieldHolder(label, supplier, supplierValidationLabel);
     }
 
     private VBox buildNote() {
-        note = new LabeledTextField();
-        note.setLabel("Note");
+        note = new ValidatableTextField();
+        var label = new Label("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
-        return buildFieldHolder(note);
+        return buildFieldHolder(label, note);
     }
 
     private Button buildSaveButton() {
@@ -260,7 +260,7 @@ public class RequisitionMasterForm extends OutlineFormPage {
         validateField(supplier, supplierValidationLabel);
     }
 
-    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
+    private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);

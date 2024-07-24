@@ -10,11 +10,10 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
@@ -58,8 +57,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
 
     private BorderPane init() {
         Label purchaseFormTitle = new Label("Purchase Form");
-        UIUtils.anchor(purchaseFormTitle, 0d, null, null, 0d);
-
         var vbox = new VBox();
         vbox.getStyleClass().add("card-flat");
         vbox.setPadding(new Insets(10d));
@@ -106,7 +103,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
         vbox.setSpacing(10d);
         vbox.getChildren().addAll(hbox1, hbox2);
         HBox.setHgrow(vbox, Priority.ALWAYS);
-        UIUtils.anchor(vbox, 40d, 0d, null, 0d);
         return vbox;
     }
 

@@ -6,17 +6,15 @@ import com.dlsc.gemsfx.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import javafx.collections.*;
@@ -35,9 +33,9 @@ import lombok.extern.java.*;
 @Log
 public class LeaveRequestForm extends ModalPage {
     public Button saveButton, cancelButton;
-    public LabeledComboBox<User> employee;
-    public LabeledComboBox<String> leaveType;
-    public LabeledDatePicker fromDate, toDate;
+    public ValidatableComboBox<User> employee;
+    public ValidatableComboBox<String> leaveType;
+    public ValidatableDatePicker fromDate, toDate;
     public TimePicker fromTime, toTime;
     public Label employeeValidationLabel,
             leaveTypeValidationLabel,
@@ -47,7 +45,7 @@ public class LeaveRequestForm extends ModalPage {
             toTimeValidationLabel,
             reasonValidationLabel,
             fileLabel;
-    public LabeledTextArea reason;
+    public TextArea reason;
     public VBox documentButton;
     public HBox uploadIcon;
     private FileChooser fileChooser;
@@ -70,13 +68,13 @@ public class LeaveRequestForm extends ModalPage {
         root.setPadding(new Insets(10.0));
 
         root.getChildren().addAll(
-                createValidationBox(employee = new LabeledComboBox<>(), "Employee", employeeValidationLabel = new Label()),
-                createValidationBox(leaveType = new LabeledComboBox<>(), "Leave Type", leaveTypeValidationLabel = new Label()),
-                createDateTimeBox(fromDate = new LabeledDatePicker(), "From Date", fromDateValidationLabel = new Label(),
+                createValidationBox(employee = new ValidatableComboBox<>(), "Employee", employeeValidationLabel = new Label()),
+                createValidationBox(leaveType = new ValidatableComboBox<>(), "Leave Type", leaveTypeValidationLabel = new Label()),
+                createDateTimeBox(fromDate = new ValidatableDatePicker(), "From Date", fromDateValidationLabel = new Label(),
                         fromTime = new TimePicker(), "From Time", fromTimeValidationLabel = new Label(), 190d),
-                createDateTimeBox(toDate = new LabeledDatePicker(), "To Date", toDateValidationLabel = new Label(),
+                createDateTimeBox(toDate = new ValidatableDatePicker(), "To Date", toDateValidationLabel = new Label(),
                         toTime = new TimePicker(), "To Time", toTimeValidationLabel = new Label(), 190d),
-                createValidationTextArea(reason = new LabeledTextArea(), "Reason", reasonValidationLabel = new Label(), 400d, 100d),
+                createValidationTextArea(reason = new TextArea(), "Reason", reasonValidationLabel = new Label(), 400d, 100d),
                 createDocumentButtonBox()
         );
 
@@ -106,36 +104,37 @@ public class LeaveRequestForm extends ModalPage {
         leaveType.setItems(LeaveStatusViewModel.getLeaveTypeList());
     }
 
-    private <T> VBox createValidationBox(LabeledComboBox<T> comboBox, String promptText, Label validationLabel) {
-        comboBox.setLabel(promptText);
+    private <T> VBox createValidationBox(ValidatableComboBox<T> comboBox, String promptText, Label validationLabel) {
+        var label = new Label(promptText);
         comboBox.setPrefWidth(400d);
 
-        return createValidationContainer(comboBox, validationLabel);
+        return createValidationContainer(label, comboBox, validationLabel);
     }
 
-    private VBox createValidationBox(LabeledDatePicker datePicker, String promptText, Label validationLabel, double width) {
-        datePicker.setLabel(promptText);
+    private VBox createValidationBox(ValidatableDatePicker datePicker, String promptText, Label validationLabel, double width) {
+        var label = new Label(promptText);
         datePicker.setPrefWidth(width);
 
-        return createValidationContainer(datePicker, validationLabel);
+        return createValidationContainer(label, datePicker, validationLabel);
     }
 
     private VBox createValidationBox(TimePicker timePicker, String promptText, Label validationLabel, double width) {
         timePicker.setPromptText(promptText);
+        var label = new Label(promptText);
         timePicker.setPrefWidth(width);
 
-        return createValidationContainer(timePicker, validationLabel);
+        return createValidationContainer(label, timePicker, validationLabel);
     }
 
-    private VBox createValidationTextArea(LabeledTextArea textArea, String promptText, Label validationLabel, double width, double height) {
-        textArea.setLabel(promptText);
+    private VBox createValidationTextArea(TextArea textArea, String promptText, Label validationLabel, double width, double height) {
+        var label = new Label(promptText);
         textArea.setPrefWidth(width);
         textArea.setPrefHeight(height);
 
-        return createValidationContainer(textArea, validationLabel);
+        return createValidationContainer(label, textArea, validationLabel);
     }
 
-    private VBox createValidationContainer(Node control, Label validationLabel) {
+    private VBox createValidationContainer(Label label, Node control, Label validationLabel) {
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 5, 0));
 
@@ -145,11 +144,11 @@ public class LeaveRequestForm extends ModalPage {
         validationLabel.setManaged(false);
         validationLabel.setWrapText(true);
 
-        box.getChildren().addAll(control, validationLabel);
+        box.getChildren().addAll(label, control, validationLabel);
         return box;
     }
 
-    private HBox createDateTimeBox(LabeledDatePicker datePicker, String datePrompt, Label dateValidationLabel,
+    private HBox createDateTimeBox(ValidatableDatePicker datePicker, String datePrompt, Label dateValidationLabel,
                                    TimePicker timePicker, String timePrompt, Label timeValidationLabel, double width) {
         HBox box = new HBox(10.0);
         box.getChildren().addAll(

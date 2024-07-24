@@ -1,9 +1,9 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
+import atlantafx.base.controls.*;
 import io.github.palexdev.materialfx.validation.*;
-import javafx.scene.control.*;
 
-public class ValidatableTextField extends TextField implements Validated {
+public class ValidatableTextField extends CustomTextField implements Validated {
     protected final MFXValidator validator;
 
     public ValidatableTextField() {

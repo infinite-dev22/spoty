@@ -7,11 +7,12 @@ import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.pages.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import inc.nomard.spoty.utils.*;
@@ -23,7 +24,6 @@ import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -35,18 +35,12 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class QuotationMasterForm extends OutlineFormPage {
-    @FXML
-    public LabeledComboBox<Customer> customer;
-    @FXML
+    public ValidatableComboBox<Customer> customer;
     public TableView<QuotationDetail> table;
-    @FXML
-    public LabeledTextField note;
-    @FXML
-    public LabeledComboBox<String> status;
-    @FXML
+    public ValidatableTextField note;
+    public ValidatableComboBox<String> status;
     public Label customerValidationLabel,
             statusValidationLabel;
-    @FXML
     public Button saveBtn,
             cancelBtn,
             addBtn;
@@ -124,8 +118,8 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private VBox buildCustomer() {
-        customer = new LabeledComboBox<>();
-        customer.setLabel("Supplier");
+        customer = new ValidatableComboBox<>();
+        var label = new Label("Supplier");
         customer.setPrefWidth(10000d);
         customer
                 .valueProperty()
@@ -151,27 +145,27 @@ public class QuotationMasterForm extends OutlineFormPage {
             customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
         }
         customerValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(customer, customerValidationLabel);
+        return buildFieldHolder(label, customer, customerValidationLabel);
     }
 
     private VBox buildStatus() {
-        status = new LabeledComboBox<>();
-        status.setLabel("Quotation Status");
+        status = new ValidatableComboBox<>();
+        var label = new Label("Quotation Status");
         status.setPrefWidth(10000d);
         status
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.statusProperty());
         status.setItems(FXCollections.observableArrayList(Values.QUOTATION_TYPE));
         statusValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(status, statusValidationLabel);
+        return buildFieldHolder(label, status, statusValidationLabel);
     }
 
     private VBox buildNote() {
-        note = new LabeledTextField();
-        note.setLabel("Note");
+        note = new ValidatableTextField();
+        var label = new Label("Note");
         note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
-        return buildFieldHolder(note);
+        return buildFieldHolder(label, note);
     }
 
     private Button buildSaveButton() {
@@ -280,7 +274,7 @@ public class QuotationMasterForm extends OutlineFormPage {
         validateField(status, statusValidationLabel);
     }
 
-    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
+    private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
