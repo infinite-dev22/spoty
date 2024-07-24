@@ -99,7 +99,10 @@ run {
             "-XX:+UseStringDeduplication",
             "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
             "-Djava.security.egd=file:/dev/urandom",
-            "-XX:+AlwaysPreTouch"
+            "-XX:+AlwaysPreTouch",
+            "-Dprism.marlinratserizer=true",
+            "-Dprism.verbose=true",
+            "-Dsun.java2d.opengl=true"
     ]
 }
 
