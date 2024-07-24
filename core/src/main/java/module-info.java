@@ -41,4 +41,5 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.layout.navigation.event;
     opens inc.nomard.spoty.core.views.components.label_components.skins;
     opens inc.nomard.spoty.core.views.components.label_components.controls;
+    opens inc.nomard.spoty.core.views.components.validatables;
 }
