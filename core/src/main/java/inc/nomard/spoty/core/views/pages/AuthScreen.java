@@ -5,7 +5,6 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
-import static inc.nomard.spoty.core.values.strings.Values.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
@@ -23,8 +22,8 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.utils.*;
-import static io.github.palexdev.materialfx.utils.StringUtils.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxresources.fonts.*;
@@ -624,7 +623,7 @@ public class AuthScreen extends BorderPane {
                 SpotyCoreResourceLoader.load("styles/TextFields.css")
         );
         // Input listeners.
-        requiredValidator();
+        setupValidators();
         focusControl();
     }
 
@@ -810,193 +809,24 @@ public class AuthScreen extends BorderPane {
         timeline.play();
     }
 
-    private void requiredValidator() {
-        // Sign up form validators.
-        Constraint firstNameConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("First name is required")
-                        .setCondition(firstName.textProperty().length().greaterThan(0))
-                        .get();
-        firstName.getValidator().constraint(firstNameConstraint);
-        Constraint lastNameConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Last name is required")
-                        .setCondition(lastName.textProperty().length().greaterThan(0))
-                        .get();
-        lastName.getValidator().constraint(lastNameConstraint);
-        Constraint phoneConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Phone is required")
-                        .setCondition(phoneNumber.textProperty().length().greaterThan(0))
-                        .get();
-        phoneNumber.getValidator().constraint(phoneConstraint);
-        Constraint signUpEmailConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Email is required")
-                        .setCondition(signUpEmail.textProperty().length().greaterThan(0))
-                        .get();
-        Constraint signUpEmailAlphaCharsConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Invalid email")
-                        .setCondition(
-                                Bindings.createBooleanBinding(
-                                        () -> containsAny(signUpEmail.getText(), "", ALPHANUMERIC),
-                                        signUpEmail.textProperty()))
-                        .get();
-        Constraint signUpEmailSpecialCharsConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Invalid email")
-                        .setCondition(
-                                Bindings.createBooleanBinding(
-                                        () -> containsAll(signUpEmail.getText(), "", SPECIALS), signUpEmail.textProperty()))
-                        .get();
-        signUpEmail.getValidator().constraint(signUpEmailConstraint).constraint(signUpEmailAlphaCharsConstraint).constraint(signUpEmailSpecialCharsConstraint);
-        Constraint signUpPasswordConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Password is required")
-                        .setCondition(signUpPassword.textProperty().length().greaterThan(0))
-                        .get();
-        signUpPassword.getValidator()
-                .constraint(signUpPasswordConstraint);
-        Constraint passwordMatchConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Passwords do not match")
-                        .setCondition(
-                                Bindings.createBooleanBinding(
-                                        () -> confirmPassword.getText().equals(signUpPassword.getText()),
-                                        signUpPassword.textProperty(),
-                                        confirmPassword.textProperty()))
-                        .get();
-        confirmPassword.getValidator().constraint(passwordMatchConstraint);
-        // Login form validators.
-        Constraint emailConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Email is required")
-                        .setCondition(email.textProperty().length().greaterThan(0))
-                        .get();
-        Constraint alphaCharsConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Invalid email")
-                        .setCondition(
-                                Bindings.createBooleanBinding(
-                                        () -> containsAny(email.getText(), "", ALPHANUMERIC),
-                                        email.textProperty()))
-                        .get();
-        Constraint specialCharsConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Invalid email")
-                        .setCondition(
-                                Bindings.createBooleanBinding(
-                                        () -> containsAll(email.getText(), "", SPECIALS), email.textProperty()))
-                        .get();
-        email.getValidator().constraint(emailConstraint).constraint(alphaCharsConstraint).constraint(specialCharsConstraint);
-        Constraint passwordConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Password is required")
-                        .setCondition(password.textProperty().length().greaterThan(0))
-                        .get();
-        password.getValidator().constraint(passwordConstraint);
-        // Display error.
-        firstName
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                firstNameValidationLabel.setManaged(false);
-                                firstNameValidationLabel.setVisible(false);
-                                firstName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        lastName
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                lastNameValidationLabel.setManaged(false);
-                                lastNameValidationLabel.setVisible(false);
-                                lastName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        phoneNumber
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                phoneNumberValidationLabel.setManaged(false);
-                                phoneNumberValidationLabel.setVisible(false);
-                                phoneNumber.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        signUpPassword
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                signUpPasswordValidationLabel.setManaged(false);
-                                signUpPasswordValidationLabel.setVisible(false);
-                                signUpPassword.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        confirmPassword
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                confirmPasswordValidationLabel.setManaged(false);
-                                confirmPasswordValidationLabel.setVisible(false);
-                                confirmPassword.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        signUpEmail
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                signUpEmailValidationLabel.setManaged(false);
-                                signUpEmailValidationLabel.setVisible(false);
-                                signUpEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        email
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                emailValidationLabel.setManaged(false);
-                                emailValidationLabel.setVisible(false);
-                                email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        password
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                passwordValidationLabel.setManaged(false);
-                                passwordValidationLabel.setVisible(false);
-                                password.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
+    private void setupValidators() {
+        Validators.requiredValidator(firstName, firstNameValidationLabel, "First name is required");
+        Validators.requiredValidator(lastName, lastNameValidationLabel, "Last name is required");
+        Validators.requiredValidator(phoneNumber, phoneNumberValidationLabel, "Phone is required");
+        Validators.phoneValidator(phoneNumber, phoneNumberValidationLabel, "Invalid phone number");
+        Validators.requiredValidator(signUpEmail, signUpEmailValidationLabel, "Email is required");
+        Validators.emailValidator(signUpEmail, signUpEmailValidationLabel, "Invalid email");
+        Validators.requiredValidator(email, emailValidationLabel, "Email is required");
+        Validators.emailValidator(email, emailValidationLabel, "Invalid email");
+        Validators.requiredValidator(password, passwordValidationLabel, "Password is required");
+        Validators.requiredValidator(
+                signUpPassword,
+                signUpPasswordValidationLabel,
+                "Password can not be empty",
+                "Password must be at least 8 digits long",
+                "Password must contain Uppercase and Lowercase letter, digits and a symbol");
+        Validators.requiredValidator(confirmPassword, confirmPasswordValidationLabel, "Confirm password is required");
+        Validators.matchingValidator(signUpPassword, confirmPassword, confirmPasswordValidationLabel, "Password does not match");
     }
 
     private void focusControl() {

@@ -8,11 +8,13 @@ import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
+import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -175,31 +177,11 @@ public class SupplierForm extends ModalPage {
     }
 
     private void setupValidators() {
-        requiredValidator(name, nameValidationLabel, "Name is required");
-        requiredValidator(email, emailValidationLabel, "Email is required");
-        requiredValidator(phone, phoneValidationLabel, "Phone is required");
-    }
-
-    private void requiredValidator(LabeledTextField control, Label validationLabel, String message) {
-        // Name input validation.
-        Constraint firstName =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage(message)
-                        .setCondition(control.textProperty().length().greaterThan(0))
-                        .get();
-        control.getValidator().constraint(firstName);
-        control
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                validationLabel.setManaged(false);
-                                validationLabel.setVisible(false);
-                                control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
+        Validators.requiredValidator(name, nameValidationLabel, "Name is required");
+        Validators.requiredValidator(email, emailValidationLabel, "Email is required");
+        Validators.emailValidator(email, emailValidationLabel, "Invalid email");
+        Validators.requiredValidator(phone, phoneValidationLabel, "Phone is required");
+        Validators.phoneValidator(phone, phoneValidationLabel, "Invalid phone number");
     }
 
     private void setupListeners() {
