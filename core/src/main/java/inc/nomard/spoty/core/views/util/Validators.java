@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.util;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
@@ -88,7 +89,7 @@ public class Validators {
                         .setMessage(message3)
                         .setCondition(
                                 Bindings.createBooleanBinding(
-                                        () -> Validators.isValidPassword(control.getText()),
+                                        () -> isValidPassword(control.getText()),
                                         control.textProperty()))
                         .get();
         control.getValidator().constraint(constraint1).constraint(constraint2).constraint(constraint3);
@@ -200,7 +201,7 @@ public class Validators {
                         .setMessage(message)
                         .setCondition(
                                 Bindings.createBooleanBinding(
-                                        () -> Validators.isValidEmail(control.getText()),
+                                        () -> isValidEmail(control.getText()),
                                         control.textProperty()))
                         .get();
         control.getValidator().constraint(constraint);
@@ -224,7 +225,7 @@ public class Validators {
                         .setMessage(message)
                         .setCondition(
                                 Bindings.createBooleanBinding(
-                                        () -> Validators.isValidPhone(control.getText()),
+                                        () -> isValidPhone(control.getText()),
                                         control.textProperty()))
                         .get();
         control.getValidator().constraint(validPhoneConstraint);
@@ -239,5 +240,14 @@ public class Validators {
                                 control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    public static Label buildValidationLabel() {
+        var label = new Label();
+        label.setManaged(false);
+        label.setVisible(false);
+        label.setWrapText(true);
+        label.getStyleClass().addAll(Styles.DANGER, Styles.TEXT_SMALL);
+        return label;
     }
 }
