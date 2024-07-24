@@ -3,21 +3,8 @@ package inc.nomard.spoty.core.views.pages;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.viewModels.adjustments.*;
-import inc.nomard.spoty.core.viewModels.dashboard.*;
-import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.viewModels.requisitions.*;
-import inc.nomard.spoty.core.viewModels.returns.purchases.*;
-import inc.nomard.spoty.core.viewModels.returns.sales.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.core.viewModels.stock_ins.*;
-import inc.nomard.spoty.core.viewModels.transfers.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -28,7 +15,6 @@ import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.stream.*;
 import javafx.animation.*;
 import javafx.application.*;
@@ -615,62 +601,7 @@ public class AuthScreen extends BorderPane {
         focusControl();
     }
 
-    private void initData() {
-        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
-                CompletableFuture.runAsync(() -> AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null)),
-                CompletableFuture.runAsync(() -> BranchViewModel.getAllBranches(null, null)),
-                CompletableFuture.runAsync(() -> BrandViewModel.getAllBrands(null, null)),
-                CompletableFuture.runAsync(() -> AccountViewModel.getAllAccounts(null, null)),
-                CompletableFuture.runAsync(() -> CurrencyViewModel.getAllCurrencies(null, null)),
-                CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null)),
-                CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null)),
-                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null)),
-                CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null)),
-                CompletableFuture.runAsync(() -> ExpensesViewModel.getAllExpenses(null, null)),
-                CompletableFuture.runAsync(() -> PermissionsViewModel.getAllPermissions(null, null)),
-                CompletableFuture.runAsync(() -> ProductCategoryViewModel.getAllProductCategories(null, null)),
-                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null)),
-                CompletableFuture.runAsync(() -> PurchaseMasterViewModel.getAllPurchaseMasters(null, null)),
-                CompletableFuture.runAsync(() -> PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null)),
-                CompletableFuture.runAsync(() -> QuotationMasterViewModel.getAllQuotationMasters(null, null)),
-                CompletableFuture.runAsync(() -> RequisitionMasterViewModel.getAllRequisitionMasters(null, null)),
-                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null)),
-                CompletableFuture.runAsync(() -> SaleMasterViewModel.getAllSaleMasters(null, null)),
-                CompletableFuture.runAsync(() -> SaleReturnMasterViewModel.getSaleReturnMasters(null, null)),
-                CompletableFuture.runAsync(() -> StockInMasterViewModel.getAllStockInMasters(null, null)),
-                CompletableFuture.runAsync(() -> SupplierViewModel.getAllSuppliers(null, null)),
-                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null)),
-                CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null)),
-                CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null)),
-                CompletableFuture.runAsync(() -> UserViewModel.getAllUsers(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getTotalEarnings(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getTotalPurchases(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getCountProducts(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getCountCustomers(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getCountSuppliers(null, null)),
-                // CompletableFuture.runAsync(() -> DashboardViewModel.getYearlyExpenses(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyExpenses(null, null)),
-                // CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyExpenses(null, null)),
-                // CompletableFuture.runAsync(() -> DashboardViewModel.getYearlyIncomes(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyIncomes(null, null)),
-                // CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyIncomes(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getWeeklyRevenue(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getMonthlyRevenue(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getTopProducts(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getRecentOrders(null, null)),
-                CompletableFuture.runAsync(() -> DashboardViewModel.getStockAlerts(null, null))
-        );
-
-        allDataInitialization.thenRun(this::onDataInitializationSuccess)
-                .exceptionally(this::onDataInitializationFailure);
-    }
-
-    private Void onDataInitializationFailure(Throwable throwable) {
-        SpotyLogger.writeToFile(throwable, AuthScreen.class);
-        return null;
-    }
-
-    private void onDataInitializationSuccess() {
+    private void onLoginSuccess() {
         Platform.runLater(() -> {
             Timeline timeline = new Timeline(new KeyFrame(Duration.millis(3500), event -> loadMainView()));
             timeline.play();
@@ -683,26 +614,8 @@ public class AuthScreen extends BorderPane {
         this.getScene().setRoot(root);
         stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
         stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
-        stage.setTitle(Labels.APP_NAME);
-        stage.getIcons().addAll(
-                PreloadedData.icon16,
-                PreloadedData.icon32,
-                PreloadedData.icon64,
-                PreloadedData.icon128,
-                PreloadedData.icon256,
-                PreloadedData.icon512
-        );
         stage.show();
         stage.centerOnScreen();
-
-        var service = OnlineQueryWorker.fetchDataTask();
-        service.start();
-        service.setPeriod(Duration.seconds(10));
-        service.setDelay(Duration.seconds(0));
-    }
-
-    public void onLoginSuccess() {
-        initData();
     }
 
     private void onLoginPressed() {

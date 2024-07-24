@@ -99,7 +99,6 @@ public class SplashScreen extends BorderPane {
                 PreloadedData.icon256,
                 PreloadedData.icon512
         );
-
         primaryStage.show();
         primaryStage.setX((screenBounds.getWidth() - primaryStage.getWidth()) / 2);
         primaryStage.setY((screenBounds.getHeight() - primaryStage.getHeight()) / 2);
