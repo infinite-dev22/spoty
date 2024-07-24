@@ -9,6 +9,7 @@ import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -29,10 +30,10 @@ import lombok.extern.java.*;
 
 @Log
 public class AdjustmentDetailForm extends MFXGenericDialog {
-    public LabeledTextField quantity;
-    public LabeledComboBox<Product> product;
+    public ValidatableTextField quantity;
+    public ValidatableComboBox<Product> product;
     public Button saveBtn, cancelBtn;
-    public LabeledComboBox<String> type;
+    public ValidatableComboBox<String> type;
     public Label productValidationLabel, quantityValidationLabel, typeValidationLabel;
 
     public AdjustmentDetailForm() {
@@ -59,8 +60,8 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        product = new LabeledComboBox<>();
-        product.setLabel("Product");
+        var label = new Label("Product");
+        product = new ValidatableComboBox<>();
         product.setPrefWidth(400d);
         product.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
         setupProductComboBox();
@@ -69,14 +70,14 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(product, productValidationLabel);
+        vbox.getChildren().addAll(label, product, productValidationLabel);
         return vbox;
     }
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new LabeledTextField();
-        quantity.setLabel("Quantity");
+        var label = new Label("Quantity");
+        quantity = new ValidatableTextField();
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
         // Validation.
@@ -84,21 +85,21 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(quantity, quantityValidationLabel);
+        vbox.getChildren().addAll(label, quantity, quantityValidationLabel);
         return vbox;
     }
 
     private VBox buildAdjustmentType() {
         // Input.
-        type = new LabeledComboBox<>();
-        type.setLabel("Adjustment Type");
+        var label = new Label("Adjustment Type");
+        type = new ValidatableComboBox<>();
         type.setPrefWidth(400d);
         type.valueProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
         setupTypeComboBox();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(type);
+        vbox.getChildren().addAll(label, type);
         return vbox;
     }
 

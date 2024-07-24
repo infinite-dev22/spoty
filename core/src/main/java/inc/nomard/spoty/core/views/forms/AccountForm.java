@@ -4,14 +4,13 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import java.util.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -22,10 +21,10 @@ import lombok.extern.java.*;
 
 @Log
 public class AccountForm extends MFXGenericDialog {
-    public LabeledTextField balance,
+    public ValidatableTextField balance,
             accountName,
             accountNumber;
-    public LabeledTextArea description;
+    public TextArea description;
     public Label accountNameValidationLabel,
             accountNumberValidationLabel;
     public Button saveBtn,
@@ -58,8 +57,8 @@ public class AccountForm extends MFXGenericDialog {
 
     private VBox buildName() {
         // Input.
-        accountName = new LabeledTextField();
-        accountName.setLabel("Account Name");
+        var label = new Label("Account Name");
+        accountName = new ValidatableTextField();
         accountName.setPrefWidth(400d);
         accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
         // Validation.
@@ -67,14 +66,14 @@ public class AccountForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(accountName, accountNameValidationLabel);
+        vbox.getChildren().addAll(label, accountName, accountNameValidationLabel);
         return vbox;
     }
 
     private VBox buildNumber() {
         // Input.
-        accountNumber = new LabeledTextField();
-        accountNumber.setLabel("Account Number");
+        var label = new Label("Account Number");
+        accountNumber = new ValidatableTextField();
         accountNumber.setPrefWidth(400d);
         accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
         // Validation.
@@ -82,34 +81,34 @@ public class AccountForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(accountNumber, accountNumberValidationLabel);
+        vbox.getChildren().addAll(label, accountNumber, accountNumberValidationLabel);
         return vbox;
     }
 
     private VBox buildBalance() {
         // Input.
-        balance = new LabeledTextField();
-        balance.setLabel("Balance (Optional)");
+        var label = new Label("Balance (Optional)");
+        balance = new ValidatableTextField();
         balance.setPrefWidth(400d);
         balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty());
         AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> balance.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(balance);
+        vbox.getChildren().addAll(label, balance);
         return vbox;
     }
 
     private VBox buildDescription() {
         // Input.
-        description = new LabeledTextArea();
-        description.setLabel("Description (Optional)");
+        var label = new Label("Description (Optional)");
+        description = new TextArea();
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(description);
+        vbox.getChildren().addAll(label, description);
         return vbox;
     }
 
