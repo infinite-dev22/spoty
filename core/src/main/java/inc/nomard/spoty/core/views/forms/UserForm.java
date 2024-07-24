@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
@@ -36,7 +37,7 @@ public class UserForm extends ModalPage {
     private Button saveBtn, cancelBtn;
     private LabeledTextField email, phone, firstname, lastname, username;
     private LabeledComboBox<Role> role;
-    private MFXToggleButton status;
+    private ToggleSwitch status;
     private Label firstNameValidationLabel, emailValidationLabel, phoneValidationLabel,
             lastNameValidationLabel, userNameValidationLabel, roleValidationLabel,
             departmentValidationLabel, designationValidationLabel,
@@ -81,7 +82,7 @@ public class UserForm extends ModalPage {
         workShift = createComboBox();
         role = createFilterComboBox("Role", RoleViewModel.getRoles());
 
-        status = new MFXToggleButton();
+        status = new ToggleSwitch();
         status.setText("Active");
 
         saveBtn = new Button("Save");
@@ -231,7 +232,7 @@ public class UserForm extends ModalPage {
         comboBox.valueProperty().bindBidirectional(property);
     }
 
-    private void bindToggleButton(MFXToggleButton toggleButton, Property<Boolean> property) {
+    private void bindToggleButton(ToggleSwitch toggleButton, Property<Boolean> property) {
         toggleButton.selectedProperty().bindBidirectional(property);
     }
 
