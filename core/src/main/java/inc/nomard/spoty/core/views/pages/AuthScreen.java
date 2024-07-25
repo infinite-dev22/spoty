@@ -594,7 +594,8 @@ public class AuthScreen extends BorderPane {
                 SpotyCoreResourceLoader.load("styles/Splash.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/toolitip.css"),
-                SpotyCoreResourceLoader.load("styles/TextFields.css")
+                SpotyCoreResourceLoader.load("styles/TextFields.css"),
+                SpotyCoreResourceLoader.load("styles/theming/base.css")
         );
         // Input listeners.
         setupValidators();
