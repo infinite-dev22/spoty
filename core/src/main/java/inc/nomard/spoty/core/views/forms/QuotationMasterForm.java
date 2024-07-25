@@ -119,7 +119,7 @@ public class QuotationMasterForm extends OutlineFormPage {
 
     private VBox buildCustomer() {
         customer = new ValidatableComboBox<>();
-        var label = new Label("Supplier");
+        var label = new Label("Customer");
         customer.setPrefWidth(10000d);
         customer
                 .valueProperty()
