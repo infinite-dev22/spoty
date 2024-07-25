@@ -4,10 +4,7 @@
 .chart-plot-background {
     -fx-background-color: transparent;
 }
-.chart-bar {/*
-    -fx-background-color: rgba(0,168,355,0.05);
-    -fx-border-color: rgba(0,168,355,0.3) rgba(0,168,355,0.3)
-     transparent rgba(0,168,355,0.3);*/
+.chart-bar {
     -fx-background-radius: 50;
     -fx-border-radius: 50;
     -fx-max-width: 50;
@@ -120,27 +117,6 @@
     -fx-background-color: #404040;
 }
 
-/*MESSAGE STYLES*/
-/*Error alert styles.*/
-.error {
-    -fx-background-color: #5c2416; /*Light red.*/
-    -fx-border-color: #f5a089;
-}
-
-.error .message-icon {
-    -fx-background-color: #cd5235; /*red*/
-}
-
-/*Success alert styles.*/
-.success {
-    -fx-background-color: #2c5e39; /*Light green.*/
-    -fx-border-color: #89f5a4;
-}
-
-.success .message-icon {
-    -fx-background-color: #35cc56; /*green.*/
-}
-
 /*POS PRODUCT CARD*/
 .pos-product-card {
    -fx-border-color: -border-disabled;
@@ -155,36 +131,30 @@
     -fx-background-color: transparent;
 }
 
-/*Styling MFX TreeView*/
-.mfx-tree-view {
-    -fx-background-color: -mfx-charcoal;
+.pos-product-card {
+   -fx-border-color: -border-disabled;
 }
 
-.mfx-tree-cell {
-    -fx-background-color: -mfx-charcoal;
+.rounded-border {
+    -fx-border-color: -border-disabled;
 }
 
-.mfx-tree-cell:selected .container {
-    -fx-background-color: -mfx-selected-nav;
+.rounded-accent-border:selected {
+    -fx-border-color: -spoty-accent-color;
 }
 
-.mfx-tree-cell:hover {
-    -fx-background-color: -mfx-charcoal-disabled;
-}
-
-/*CARDS*/
 .card-flat {
     -fx-border-color: -border-disabled;
 }
-.card-flat-top {
-    -fx-border-color: -border-disabled;
-}
+
 .card-flat-bottom {
     -fx-border-color: -border-disabled;
 }
+
 .card-flat-no-border, .theme-item {
     -fx-border-color: transparent;
 }
+
 .theme-item:selected {
     -fx-border-color: -spoty-accent-color;
 }
@@ -192,12 +162,15 @@
 .green-bg{
     -fx-background-color: green;
 }
+
 .red-bg{
     -fx-background-color: red;
 }
+
 .orange-bg{
     -fx-background-color: orange;
 }
+
 .hero-image{
     -fx-background-color: -mfx-charcoal;
 }

@@ -233,8 +233,6 @@
 .card-flat-bottom {
     -fx-background-radius: 10 10 0 0;
     -fx-border-radius: 10 10 0 0;
-
-    ;
 }
 .card-flat-no-border {
     -fx-background-radius: 10;
