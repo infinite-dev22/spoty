@@ -48,7 +48,7 @@ public class AccountTransactionViewModel {
 
     public static void getAllTransactions(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                           SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = transactionsRepository.fetchAll();
+        CompletableFuture<HttpResponse<String>> responseFuture = transactionsRepository.fetchAllTransactions();
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {

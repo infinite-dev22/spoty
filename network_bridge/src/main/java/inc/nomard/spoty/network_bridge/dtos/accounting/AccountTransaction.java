@@ -12,6 +12,7 @@ import lombok.extern.java.*;
 @NoArgsConstructor
 @Builder
 @Log
+@ToString
 public class AccountTransaction {
     private Long id;
     private Account account;
