@@ -34,7 +34,7 @@ public class ExpensesViewModel {
             .create();
     private static final ListProperty<Expense> expenses = new SimpleListProperty<>(expensesList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<LocalDate> date = new SimpleObjectProperty("");
+    private static final ObjectProperty<LocalDate> date = new SimpleObjectProperty<>();
     private static final StringProperty reference = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty amount = new SimpleStringProperty("");

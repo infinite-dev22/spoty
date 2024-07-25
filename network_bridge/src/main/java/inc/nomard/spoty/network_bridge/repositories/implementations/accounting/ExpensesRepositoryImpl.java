@@ -5,6 +5,7 @@ import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.network_bridge.end_points.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
+import inc.nomard.spoty.utils.adapters.*;
 import java.net.*;
 import java.net.http.*;
 import java.time.*;
@@ -18,6 +19,14 @@ import javafx.util.Duration;
 @Log
 public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
     @Override

@@ -103,7 +103,7 @@ public class ExpenseForm extends MFXGenericDialog {
         date = new ValidatableDatePicker(LocalDate.now());
         var label = new Label("Expense Date");
         date.setPrefWidth(400d);
-//        date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
+        date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
         // Validation.
         dateValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
@@ -120,6 +120,7 @@ public class ExpenseForm extends MFXGenericDialog {
         amount.setPrefWidth(400d);
         amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
         ExpensesViewModel.idProperty().addListener((observableValue, oV, nV) -> amount.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
+        amountValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
