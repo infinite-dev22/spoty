@@ -1,17 +1,16 @@
 package inc.nomard.spoty.utils.flavouring;
 
 import inc.nomard.spoty.utils.*;
-import lombok.extern.java.Log;
+import java.io.*;
+import java.util.*;
+import lombok.extern.java.*;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javafx.util.Duration;
 @Log
 public class AppConfig {
 
     private static final String CONFIG_FILE = "config.properties";
     private static final String APP_VERSION_FILE = "version.properties";
+    private static final String APP_HOST_FILE = "host.properties";
     private static final Properties properties = new Properties();
 
     public static AppFlavor getActiveFlavor() {
@@ -23,7 +22,9 @@ public class AppConfig {
             SpotyLogger.writeToFile(e, AppConfig.class);
             return AppFlavor.MVP;
         }
-    };
+    }
+
+    ;
 
     public static String getAppVersion() {
         try {
@@ -33,6 +34,16 @@ public class AppConfig {
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, AppConfig.class);
             return "";
+        }
+    }
+
+    public static String getAppHostUrl() {
+        try {
+            properties.load(AppConfig.class.getClassLoader().getResourceAsStream(APP_HOST_FILE));
+            return properties.getProperty("app.host");
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, AppConfig.class);
+            return "http://localhost:8080";
         }
     }
 }
