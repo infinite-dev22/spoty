@@ -8,13 +8,17 @@ import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -26,6 +30,12 @@ public class DesignationPage extends OutlinePage {
     private TableView<Designation> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<Designation, String> name;
+    private TableColumn<Designation, String> description;
+    private TableColumn<Designation, Designation> createdBy;
+    private TableColumn<Designation, Designation> createdAt;
+    private TableColumn<Designation, Designation> updatedBy;
+    private TableColumn<Designation, Designation> updatedAt;
 
     public DesignationPage() {
         super();
@@ -103,13 +113,23 @@ public class DesignationPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<Designation, String> name = new TableColumn<>("Name");
-        TableColumn<Designation, String> description = new TableColumn<>("Description");
+        name = new TableColumn<>("Name");
+        description = new TableColumn<>("Description");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(name, description).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(name, description, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleDesignationTable();
@@ -211,5 +231,47 @@ public class DesignationPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Designation item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Designation item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Designation item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Designation item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
+        });
     }
 }

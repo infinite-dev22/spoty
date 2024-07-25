@@ -13,12 +13,14 @@ import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -34,6 +36,17 @@ public class OrderPage extends OutlinePage {
     private Button createBtn;
     private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
+    private TableColumn<SaleMaster, SaleMaster> saleCustomer;
+    private TableColumn<SaleMaster, SaleMaster> saleDate;
+    private TableColumn<SaleMaster, String> saleGrandTotal;
+    private TableColumn<SaleMaster, String> saleAmountPaid;
+    private TableColumn<SaleMaster, String> saleAmountDue;
+    private TableColumn<SaleMaster, String> saleStatus;
+    private TableColumn<SaleMaster, String> salePaymentStatus;
+    private TableColumn<SaleMaster, SaleMaster> createdBy;
+    private TableColumn<SaleMaster, SaleMaster> createdAt;
+    private TableColumn<SaleMaster, SaleMaster> updatedBy;
+    private TableColumn<SaleMaster, SaleMaster> updatedAt;
 
     public OrderPage() {
         try {
@@ -114,29 +127,43 @@ public class OrderPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<SaleMaster, String> saleCustomer = new TableColumn<>("Customer");
-        TableColumn<SaleMaster, String> saleStatus = new TableColumn<>("Order Status");
-        TableColumn<SaleMaster, String> salePaymentStatus = new TableColumn<>("Pay Status");
-        TableColumn<SaleMaster, String> saleDate = new TableColumn<>("Date");
-        TableColumn<SaleMaster, String> saleGrandTotal = new TableColumn<>("Total Amount");
-        TableColumn<SaleMaster, String> saleAmountPaid = new TableColumn<>("Paid Amount");
-        TableColumn<SaleMaster, String> saleAmountDue = new TableColumn<>("Amount Due");
+        saleCustomer = new TableColumn<>("Customer");
+        saleDate = new TableColumn<>("Date");
+        saleGrandTotal = new TableColumn<>("Total Amount");
+        saleAmountPaid = new TableColumn<>("Paid Amount");
+        saleAmountDue = new TableColumn<>("Amount Due");
+        saleStatus = new TableColumn<>("Order Status");
+        salePaymentStatus = new TableColumn<>("Pay Status");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
         saleCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        saleStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        salePaymentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         saleDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         saleGrandTotal.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         saleAmountPaid.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         saleAmountDue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        saleStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        salePaymentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+
+        setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(saleCustomer,
-                saleStatus,
-                salePaymentStatus,
                 saleDate,
                 saleGrandTotal,
                 saleAmountPaid,
-                saleAmountDue).toList());
+                saleAmountDue,
+                saleStatus,
+                salePaymentStatus,
+                createdBy,
+                createdAt,
+                updatedBy,
+                updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleSaleMasterTable();
@@ -260,6 +287,68 @@ public class OrderPage extends OutlinePage {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        saleCustomer.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getCustomerName());
+            }
+        });
+        saleDate.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        saleGrandTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+        saleAmountPaid.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
+        saleAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        saleStatus.setCellValueFactory(new PropertyValueFactory<>("saleStatus"));
+        salePaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

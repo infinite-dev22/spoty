@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,6 +29,13 @@ public class AdjustmentPage extends OutlinePage {
     private TableView<AdjustmentMaster> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<AdjustmentMaster, String> reference;
+    private TableColumn<AdjustmentMaster, String> note;
+    private TableColumn<AdjustmentMaster, String> status;
+    private TableColumn<AdjustmentMaster, AdjustmentMaster> createdBy;
+    private TableColumn<AdjustmentMaster, AdjustmentMaster> createdAt;
+    private TableColumn<AdjustmentMaster, AdjustmentMaster> updatedBy;
+    private TableColumn<AdjustmentMaster, AdjustmentMaster> updatedAt;
 
     public AdjustmentPage() {
         super();
@@ -103,14 +112,25 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<AdjustmentMaster, String> adjustmentStatus = new TableColumn<>("Status");
-        TableColumn<AdjustmentMaster, Double> adjustmentTotalAmount = new TableColumn<>("Total Amount");
-        adjustmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-        adjustmentTotalAmount
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.5));
+        reference = new TableColumn<>("Ref");
+        note = new TableColumn<>("Notes");
+        status = new TableColumn<>("Status");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        var columnList = new LinkedList<>(Stream.of(adjustmentStatus, adjustmentTotalAmount).toList());
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(reference, note, status, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
 
@@ -194,6 +214,49 @@ public class AdjustmentPage extends OutlinePage {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
+        note.setCellValueFactory(new PropertyValueFactory<>("notes"));
+        status.setCellValueFactory(new PropertyValueFactory<>("status"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

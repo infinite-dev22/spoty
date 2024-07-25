@@ -1,6 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.accounting;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import java.io.*;
 import java.text.*;
 import java.time.*;
@@ -25,6 +26,10 @@ public class Expense implements Serializable {
     private ArrayList<Branch> branches;
     private String note;
     private double amount;
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 
     public String getAccountName() {
         return account.getAccountName();

@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -26,6 +28,14 @@ public class BeneficiaryBadgePage extends OutlinePage {
     private TableView<BeneficiaryBadge> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<BeneficiaryBadge, String> name;
+    private TableColumn<BeneficiaryBadge, String> type;
+    private TableColumn<BeneficiaryBadge, BeneficiaryBadge> appearance;
+    private TableColumn<BeneficiaryBadge, String> description;
+    private TableColumn<BeneficiaryBadge, BeneficiaryBadge> createdBy;
+    private TableColumn<BeneficiaryBadge, BeneficiaryBadge> createdAt;
+    private TableColumn<BeneficiaryBadge, BeneficiaryBadge> updatedBy;
+    private TableColumn<BeneficiaryBadge, BeneficiaryBadge> updatedAt;
 
     public BeneficiaryBadgePage() {
         super();
@@ -102,17 +112,27 @@ public class BeneficiaryBadgePage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<BeneficiaryBadge, String> name = new TableColumn<>("Name");
-        TableColumn<BeneficiaryBadge, String> type = new TableColumn<>("Type");
-        TableColumn<BeneficiaryBadge, String> appearance = new TableColumn<>("Appearance");
-        TableColumn<BeneficiaryBadge, String> description = new TableColumn<>("Description");
+        name = new TableColumn<>("Name");
+        type = new TableColumn<>("Type");
+        appearance = new TableColumn<>("Appearance");
+        description = new TableColumn<>("Description");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         type.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(name, type, appearance, description).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(name, type, appearance, description, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleBeneficiaryBadgeTable();
@@ -214,5 +234,66 @@ public class BeneficiaryBadgePage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        type.setCellValueFactory(new PropertyValueFactory<>("beneficiaryType"));
+        appearance.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(BeneficiaryBadge item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                var chip = new Label(item.getName());
+                chip.setAlignment(Pos.CENTER);
+                chip.setPadding(new Insets(5, 10, 5, 10));
+                chip.setPrefWidth(50);
+                chip.setStyle("-fx-background-color: " + item.getColor() + ";"
+                        + "-fx-foreground-color: white;"
+                        + "-fx-background-radius: 50;"
+                        + "-fx-border-radius: 50;");
+                setGraphic(chip);
+                setText(null);
+            }
+        });
+        description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(BeneficiaryBadge item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(BeneficiaryBadge item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(BeneficiaryBadge item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(BeneficiaryBadge item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
+        });
     }
 }

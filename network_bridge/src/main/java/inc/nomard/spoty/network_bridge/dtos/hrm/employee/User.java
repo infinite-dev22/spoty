@@ -28,9 +28,13 @@ public class User {
     private String email;
     private String avatar;
     private ArrayList<Branch> branches;
-    private boolean active;
-    private boolean locked;
-    private boolean accessAllBranches;
+    private Boolean active;
+    private Boolean locked;
+    private Boolean accessAllBranches;
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 
     public String getName() {
         return userProfile.getFirstName() + " " + userProfile.getOtherName() + " " + userProfile.getLastName();
@@ -72,7 +76,7 @@ public class User {
         return userProfile.getPhone();
     }
 
-    public String getActive() {
+    public String isActive() {
         if (active) {
             return "Active";
         }

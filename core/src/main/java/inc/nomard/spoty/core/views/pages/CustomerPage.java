@@ -14,12 +14,14 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -35,6 +37,15 @@ public class CustomerPage extends OutlinePage {
     private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
+    private TableColumn<Customer, String> name;
+    private TableColumn<Customer, String> phone;
+    private TableColumn<Customer, String> email;
+    private TableColumn<Customer, String> address;
+    private TableColumn<Customer, String> city;
+    private TableColumn<Customer, String> country;
+    private TableColumn<Customer, String> taxNumber;
+    private TableColumn<Customer, Customer> createdBy;
+    private TableColumn<Customer, Customer> createdAt;
 
     public CustomerPage() {
         super();
@@ -116,17 +127,29 @@ public class CustomerPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<Customer, String> customerName = new TableColumn<>("Name");
-        TableColumn<Customer, String> customerPhone = new TableColumn<>("Phone");
-        TableColumn<Customer, String> customerEmail = new TableColumn<>("Email");
-        TableColumn<Customer, String> customerTax = new TableColumn<>("Tax No.");
+        name = new TableColumn<>("Name");
+        phone = new TableColumn<>("Phone");
+        email = new TableColumn<>("Email");
+        address = new TableColumn<>("Address");
+        city = new TableColumn<>("City");
+        country = new TableColumn<>("Country");
+        taxNumber = new TableColumn<>("Tax No.");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
 
-        customerName.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
-        customerPhone.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
-        customerEmail.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
-        customerTax.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        name.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        phone.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        email.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        address.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        city.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        country.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        taxNumber.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(customerName, customerPhone, customerEmail, customerTax).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(name, phone, email, address, city, country, taxNumber, createdBy, createdAt).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
         styleCustomerTable();
@@ -252,5 +275,33 @@ public class CustomerPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        phone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        address.setCellValueFactory(new PropertyValueFactory<>("address"));
+        city.setCellValueFactory(new PropertyValueFactory<>("city"));
+        country.setCellValueFactory(new PropertyValueFactory<>("country"));
+        taxNumber.setCellValueFactory(new PropertyValueFactory<>("taxNumber"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Customer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Customer item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
     }
 }

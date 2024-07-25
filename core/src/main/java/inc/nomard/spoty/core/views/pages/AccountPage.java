@@ -16,6 +16,7 @@ import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,6 +28,12 @@ public class AccountPage extends OutlinePage {
     private TableView<Account> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<Account, String> accountName;
+    private TableColumn<Account, String> accountNumber;
+    private TableColumn<Account, Double> credit;
+    private TableColumn<Account, Double> debit;
+    private TableColumn<Account, Double> balance;
+    private TableColumn<Account, String> description;
 
     public AccountPage() {
         super();
@@ -102,12 +109,12 @@ public class AccountPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<Account, String> accountName = new TableColumn<>("Account Name");
-        TableColumn<Account, String> accountNumber = new TableColumn<>("Account Number");
-        TableColumn<Account, Double> credit = new TableColumn<>("Credit");
-        TableColumn<Account, Double> debit = new TableColumn<>("Debit");
-        TableColumn<Account, Double> balance = new TableColumn<>("Balance");
-        TableColumn<Account, String> description = new TableColumn<>("Description");
+        accountName = new TableColumn<>("Account Name");
+        accountNumber = new TableColumn<>("Account Number");
+        credit = new TableColumn<>("Credit");
+        debit = new TableColumn<>("Debit");
+        balance = new TableColumn<>("Balance");
+        description = new TableColumn<>("Description");
 
         accountName.setEditable(false);
         accountNumber.setEditable(false);
@@ -129,6 +136,8 @@ public class AccountPage extends OutlinePage {
         debit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+
+        setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(accountName, accountNumber, credit, debit, balance, description).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -224,6 +233,15 @@ public class AccountPage extends OutlinePage {
 
     private void errorMessage(String message) {
         displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+    }
+
+    private void setupTableColumns() {
+        accountName.setCellValueFactory(new PropertyValueFactory<>("accountName"));
+        accountNumber.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
+        credit.setCellValueFactory(new PropertyValueFactory<>("credit"));
+        debit.setCellValueFactory(new PropertyValueFactory<>("debit"));
+        balance.setCellValueFactory(new PropertyValueFactory<>("balance"));
+        description.setCellValueFactory(new PropertyValueFactory<>("description"));
     }
 
     private void displayNotification(String message, MessageVariants type, String icon) {

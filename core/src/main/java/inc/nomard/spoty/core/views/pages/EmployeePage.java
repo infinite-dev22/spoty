@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -15,6 +16,7 @@ import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -26,6 +28,15 @@ public class EmployeePage extends OutlinePage {
     private TableView<User> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<User, User> employeeName;
+    private TableColumn<User, User> phone;
+    private TableColumn<User, String> email;
+    private TableColumn<User, User> employmentStatus;
+    private TableColumn<User, User> department;
+    private TableColumn<User, User> status;
+    private TableColumn<User, String> workShift;
+    private TableColumn<User, String> salary;
+    private TableColumn<User, User> role;
 
     public EmployeePage() {
         super();
@@ -102,21 +113,38 @@ public class EmployeePage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<User, String> employeeName = new TableColumn<>("Name");
-        TableColumn<User, String> phone = new TableColumn<>("Phone");
-        TableColumn<User, String> email = new TableColumn<>("Email");
-        TableColumn<User, String> employmentStatus = new TableColumn<>("Employment Status");
-        TableColumn<User, String> status = new TableColumn<>("Status");
-        TableColumn<User, String> workShift = new TableColumn<>("Work Shift");
+        employeeName = new TableColumn<>("Name");
+        phone = new TableColumn<>("Phone");
+        email = new TableColumn<>("Email");
+        employmentStatus = new TableColumn<>("Employment Status");
+        department = new TableColumn<>("Department");
+        status = new TableColumn<>("Status");
+        workShift = new TableColumn<>("Work Shift");
+        salary = new TableColumn<>("Salary");
+        role = new TableColumn<>("Role");
 
         employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.35));
         email.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         phone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        department.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         workShift.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        role.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(employeeName, phone, email, employmentStatus, status, workShift).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(
+                employeeName,
+                phone,
+                email,
+                employmentStatus,
+                department,
+                status,
+                workShift,
+                salary,
+                role).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleUserTable();
@@ -218,5 +246,87 @@ public class EmployeePage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        employeeName.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+                var employeeName = new Label(item.getName());
+                var employeeDesignation = new Label(item.getDesignation().getName());
+                employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
+                var vbox = new VBox(employeeName, employeeDesignation);
+                setGraphic(vbox);
+                setText(null);
+            }
+        });
+        phone.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getUserProfile().getPhone());
+            }
+        });
+        email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        employmentStatus.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                var chip = new Label(item.getEmploymentStatus().getName());
+                chip.setAlignment(Pos.CENTER);
+                chip.setPadding(new Insets(5, 10, 5, 10));
+                chip.setPrefWidth(50);
+                chip.setStyle("-fx-background-color: " + item.getEmploymentStatus().getColor() + ";"
+                        + "-fx-foreground-color: white;"
+                        + "-fx-background-radius: 50;"
+                        + "-fx-border-radius: 50;");
+                setGraphic(chip);
+                setText(null);
+            }
+        });
+        status.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+                this.setAlignment(Pos.CENTER);
+
+                var chip = new Label(item.isActive());
+                chip.setAlignment(Pos.CENTER);
+                chip.setPadding(new Insets(5, 10, 5, 10));
+                chip.setPrefWidth(50);
+                chip.setStyle("-fx-foreground-color: white;"
+                        + "-fx-background-radius: 50;"
+                        + "-fx-border-radius: 50;");
+                if (item.getActive()) {
+                    chip.getStyleClass().add(Styles.SUCCESS);
+                } else {
+                    chip.getStyleClass().add(Styles.DANGER);
+                }
+                setGraphic(chip);
+                setText(null);
+            }
+        });
+        workShift.setCellValueFactory(new PropertyValueFactory<>("workShift"));
+        salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
+        role.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(item.getRole().getName());
+            }
+        });
+        department.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(item.getDepartmentName());
+            }
+        });
     }
 }

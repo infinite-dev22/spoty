@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,6 +29,15 @@ public class ExpensePage extends OutlinePage {
     private TableView<Expense> tableView;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<Expense, Expense> accountName;
+    private TableColumn<Expense, String> expenseName;
+    private TableColumn<Expense, Expense> date;
+    private TableColumn<Expense, Double> amount;
+    private TableColumn<Expense, String> note;
+    private TableColumn<Expense, Expense> createdBy;
+    private TableColumn<Expense, Expense> createdAt;
+    private TableColumn<Expense, Expense> updatedBy;
+    private TableColumn<Expense, Expense> updatedAt;
 
     public ExpensePage() {
         addNode(init());
@@ -102,17 +113,28 @@ public class ExpensePage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<Expense, String> expenseDate = new TableColumn<>("Date");
-        TableColumn<Expense, String> expenseName = new TableColumn<>("Name");
-        TableColumn<Expense, Double> expenseAmount = new TableColumn<>("Amount");
-        TableColumn<Expense, String> expenseCategory = new TableColumn<>("Category");
+        accountName = new TableColumn<>("Account");
+        expenseName = new TableColumn<>("Name");
+        date = new TableColumn<>("Expense Date");
+        amount = new TableColumn<>("Amount");
+        note = new TableColumn<>("note");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        expenseDate.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
-        expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
-        expenseAmount.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
-        expenseCategory.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
+        date.prefWidthProperty().bind(tableView.widthProperty().multiply(.1));
+        expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        amount.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        note.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(expenseName, expenseCategory, expenseDate, expenseAmount).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(accountName, expenseName, date, amount, note, createdBy, createdAt, updatedBy, updatedAt).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
         styleExpenseTable();
@@ -210,5 +232,66 @@ public class ExpensePage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        accountName.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getAccountName()) ? null : item.getAccountName());
+            }
+        });
+        expenseName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        date.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDate()) ? null : item.getDate().format(dtf));
+            }
+        });
+        amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        note.setCellValueFactory(new PropertyValueFactory<>("note"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -10,6 +11,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
@@ -26,6 +28,13 @@ public class LeaveRequestPage extends OutlinePage {
     private TableView<LeaveStatus> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<LeaveStatus, LeaveStatus> employeeName;
+    private TableColumn<LeaveStatus, LeaveStatus> dateAndTime;
+    private TableColumn<LeaveStatus, LeaveStatus> leaveType;
+    private TableColumn<LeaveStatus, LeaveStatus> createdBy;
+    private TableColumn<LeaveStatus, LeaveStatus> createdAt;
+    private TableColumn<LeaveStatus, LeaveStatus> updatedBy;
+    private TableColumn<LeaveStatus, LeaveStatus> updatedAt;
 
     public LeaveRequestPage() {
         addNode(init());
@@ -101,22 +110,25 @@ public class LeaveRequestPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<LeaveStatus, String> employeeName = new TableColumn<>("Employee Name");
-        TableColumn<LeaveStatus, String> designation = new TableColumn<>("Designation");
-        TableColumn<LeaveStatus, String> dateAndTime = new TableColumn<>("Date & Time");
-        TableColumn<LeaveStatus, String> duration = new TableColumn<>("Duration");
-        TableColumn<LeaveStatus, String> leaveType = new TableColumn<>("Leave Type");
-        TableColumn<LeaveStatus, String> attachment = new TableColumn<>("Attachment");
-        TableColumn<LeaveStatus, String> status = new TableColumn<>("Status");
+        employeeName = new TableColumn<>("Employee");
+        dateAndTime = new TableColumn<>("Date & Time");
+        leaveType = new TableColumn<>("Leave Type");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        designation.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         dateAndTime.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        duration.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         leaveType.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        attachment.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(employeeName, designation, dateAndTime, duration, leaveType, attachment, status).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(employeeName, dateAndTime, leaveType, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleLeaveStatusTable();
@@ -218,5 +230,86 @@ public class LeaveRequestPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        employeeName.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(LeaveStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                var employeeName = new Label(item.getEmployeeName());
+                var employeeDesignation = new Label(item.getDesignation().getName());
+                employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
+                var vbox = new VBox(employeeName, employeeDesignation);
+                setGraphic(vbox);
+                setText(null);
+            }
+        });
+        dateAndTime.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(LeaveStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                var from = new Label("from:");
+                from.getStyleClass().add(Styles.TEXT_MUTED);
+                var to = new Label("to:");
+                to.getStyleClass().add(Styles.TEXT_MUTED);
+                var vbox1 = new VBox(from, to);
+                var fromTime = new Label(item.getStartDate().format(dtf));
+                var toTime = new Label(item.getEndDate().format(dtf));
+                var vbox2 = new VBox(fromTime, toTime);
+                var hbox = new HBox(2d, vbox1, vbox2);
+                setGraphic(hbox);
+                setText(null);
+            }
+        });
+        leaveType.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(LeaveStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(item.getLeaveType());
+            }
+        });
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(LeaveStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(LeaveStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(LeaveStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(LeaveStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
+        });
     }
 }

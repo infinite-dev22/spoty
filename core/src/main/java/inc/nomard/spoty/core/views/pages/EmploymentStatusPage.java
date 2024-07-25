@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
@@ -27,6 +29,13 @@ public class EmploymentStatusPage extends OutlinePage {
     private TableView<EmploymentStatus> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<EmploymentStatus, String> name;
+    private TableColumn<EmploymentStatus, EmploymentStatus> appearance;
+    private TableColumn<EmploymentStatus, String> description;
+    private TableColumn<EmploymentStatus, EmploymentStatus> createdBy;
+    private TableColumn<EmploymentStatus, EmploymentStatus> createdAt;
+    private TableColumn<EmploymentStatus, EmploymentStatus> updatedBy;
+    private TableColumn<EmploymentStatus, EmploymentStatus> updatedAt;
 
     public EmploymentStatusPage() {
         addNode(init());
@@ -103,41 +112,23 @@ public class EmploymentStatusPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<EmploymentStatus, String> name = new TableColumn<>("Name");
-        TableColumn<EmploymentStatus, EmploymentStatus> appearance = new TableColumn<>("Appearance");
-        TableColumn<EmploymentStatus, String> description = new TableColumn<>("Description");
-
-        appearance.setCellFactory(new Callback<>() {
-            @Override
-            public TableCell<EmploymentStatus, EmploymentStatus> call(TableColumn<EmploymentStatus, EmploymentStatus> btnCol) {
-                return new TableCell<>() {
-                    @Override
-                    public void updateItem(final EmploymentStatus employmentStatus, boolean empty) {
-                        super.updateItem(employmentStatus, empty);
-                        if (employmentStatus != null) {
-                            var col = Color.valueOf(employmentStatus.getColor());
-                            var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
-
-                            var label = new Label(employmentStatus.getName());
-                            label.setTextFill(Color.valueOf(employmentStatus.getColor()).darker());
-                            label.setPadding(new Insets(5, 10, 5, 10));
-                            label.setBorder(new Border(new BorderStroke(Color.valueOf(employmentStatus.getColor()).darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
-                            label.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
-                            var hBox = new VBox(label);
-                            hBox.setAlignment(Pos.CENTER);
-
-                            setGraphic(hBox);
-                        } else {
-                            setGraphic(null);
-                        }
-                    }
-                };
-            }
-        });
+        name = new TableColumn<>("Name");
+        appearance = new TableColumn<>("Appearance");
+        description = new TableColumn<>("Description");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+
+        setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(name, appearance, description).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -242,5 +233,67 @@ public class EmploymentStatusPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        appearance.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(EmploymentStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                var col = Color.valueOf(item.getColor());
+                var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
+
+                var chip = new Label(item.getName());
+                chip.setTextFill(Color.valueOf(item.getColor()).darker());
+                chip.setPadding(new Insets(5, 10, 5, 10));
+                chip.setBorder(new Border(new BorderStroke(Color.valueOf(item.getColor()).darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
+                chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
+                chip.setAlignment(Pos.CENTER);
+
+                setGraphic(chip);
+                setText(null);
+            }
+        });
+        description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(EmploymentStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(EmploymentStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(EmploymentStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(EmploymentStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
+        });
     }
 }

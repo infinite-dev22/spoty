@@ -3,8 +3,6 @@ package inc.nomard.spoty.network_bridge.dtos.adjustments;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import java.time.*;
-
-import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -24,4 +22,7 @@ public class AdjustmentMaster {
     private String status;
     private Double Total;
     private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 }

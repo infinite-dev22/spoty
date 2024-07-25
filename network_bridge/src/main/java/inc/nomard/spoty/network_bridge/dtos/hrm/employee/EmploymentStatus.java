@@ -21,4 +21,8 @@ public class EmploymentStatus {
     private String description;
     private ArrayList<Branch> branches;
     private boolean active;
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 }

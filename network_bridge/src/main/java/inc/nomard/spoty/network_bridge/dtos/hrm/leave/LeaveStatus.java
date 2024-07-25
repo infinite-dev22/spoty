@@ -23,10 +23,10 @@ public class LeaveStatus {
     private String leaveType;
     private String attachment;
     private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed
-
-    public String getLocaleStartDate() {
-        return DateFormat.getDateInstance().format(startDate);
-    }
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 
     public String getLocaleEndDate() {
         return DateFormat.getDateInstance().format(endDate);

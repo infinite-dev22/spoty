@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,6 +29,12 @@ public class ProductCategoryPage extends OutlinePage {
     private TableView<ProductCategory> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<ProductCategory, String> name;
+    private TableColumn<ProductCategory, String> description;
+    private TableColumn<ProductCategory, ProductCategory> createdBy;
+    private TableColumn<ProductCategory, ProductCategory> createdAt;
+    private TableColumn<ProductCategory, ProductCategory> updatedBy;
+    private TableColumn<ProductCategory, ProductCategory> updatedAt;
 
     public ProductCategoryPage() {
         addNode(init());
@@ -102,13 +110,23 @@ public class ProductCategoryPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<ProductCategory, String> name = new TableColumn<>("Name");
-        TableColumn<ProductCategory, String> description = new TableColumn<>("Description");
+        name = new TableColumn<>("Name");
+        description = new TableColumn<>("Description");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(name, description).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(name, description, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getProductCategoryTable();
@@ -203,6 +221,48 @@ public class ProductCategoryPage extends OutlinePage {
             progress.setManaged(true);
             progress.setVisible(true);
             ProductCategoryViewModel.searchItem(nv, () -> progress.setVisible(false), this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(ProductCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(ProductCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(ProductCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(ProductCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }
