@@ -8,7 +8,6 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.util.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -17,9 +16,7 @@ import lombok.extern.java.*;
 
 @Log
 public class PaySlipPage extends OutlinePage {
-    @FXML
     public VBox paySlipItemHolder;
-    @FXML
     public ScrollPane scrollPane;
     private TextField searchBar;
     private MFXProgressSpinner progress;
