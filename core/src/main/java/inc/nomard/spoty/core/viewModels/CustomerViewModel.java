@@ -11,6 +11,7 @@ import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -26,6 +27,12 @@ public class CustomerViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final ListProperty<Customer> customers = new SimpleListProperty<>(customersList);
     private static final LongProperty id = new SimpleLongProperty(0);

@@ -15,6 +15,7 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
+import java.time.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.event.*;
@@ -22,6 +23,7 @@ import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
+import javafx.util.Duration;
 import lombok.extern.java.*;
 
 @Log
@@ -98,10 +100,10 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildDate() {
         // Input.
-        date = new ValidatableDatePicker();
+        date = new ValidatableDatePicker(LocalDate.now());
         var label = new Label("Expense Date");
         date.setPrefWidth(400d);
-        date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
+//        date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
         // Validation.
         dateValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();

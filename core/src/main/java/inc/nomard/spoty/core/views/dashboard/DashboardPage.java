@@ -23,12 +23,26 @@ public class DashboardPage extends OutlinePage {
         addNode(init());
         configureKPIContainer();
         loadDashboardComponents();
+        loadDashBoard();
     }
 
     public BorderPane init() {
         var pane = new BorderPane();
         pane.setCenter(configureScrollPane());
         return pane;
+    }
+
+    private void loadDashBoard() {
+        DashboardViewModel.getTotalEarnings(null, null);
+        DashboardViewModel.getTotalPurchases(null, null);
+        DashboardViewModel.getCountProducts(null, null);
+        DashboardViewModel.getCountCustomers(null, null);
+        DashboardViewModel.getCountSuppliers(null, null);
+        DashboardViewModel.getWeeklyRevenue(null, null);
+        DashboardViewModel.getMonthlyRevenue(null, null);
+        DashboardViewModel.getTopProducts(null, null);
+        DashboardViewModel.getRecentOrders(null, null);
+        DashboardViewModel.getStockAlerts(null, null);
     }
 
     private AnchorPane configureScrollPane() {

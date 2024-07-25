@@ -6,6 +6,7 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.adapters.*;
+import java.time.*;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
@@ -20,6 +21,12 @@ public class SaleDetailViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final ListProperty<SaleDetail> saleDetails =
             new SimpleListProperty<>(saleDetailsList);

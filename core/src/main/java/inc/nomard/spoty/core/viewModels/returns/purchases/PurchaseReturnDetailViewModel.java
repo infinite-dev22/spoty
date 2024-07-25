@@ -4,6 +4,7 @@ import com.google.gson.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.utils.adapters.*;
+import java.time.*;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
@@ -18,6 +19,12 @@ public class PurchaseReturnDetailViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty();
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();

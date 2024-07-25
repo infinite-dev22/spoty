@@ -28,7 +28,14 @@ public class PurchaseMasterViewModel {
     @Getter
     public static final ObservableList<PurchaseMaster> purchasesList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class, new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(Date.class,
+                    new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final ListProperty<PurchaseMaster> purchases = new SimpleListProperty<>(purchasesList);
     private static final LongProperty id = new SimpleLongProperty(0);
