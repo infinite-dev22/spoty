@@ -87,7 +87,6 @@ run {
             "-Xms256m",
             "-Xmx1G",
             "-XX:ReservedCodeCacheSize=128m",
-            "-XX:+UseG1GC",
             "-XX:MaxGCPauseMillis=200",
             "-XX:SoftRefLRUPolicyMSPerMB=50",
             "-XX:+HeapDumpOnOutOfMemoryError",
@@ -104,7 +103,9 @@ run {
             "-Dprism.verbose=true",
             "-Dsun.java2d.opengl=true",
             "-XX:+AutoCreateSharedArchive",
-            "-XX:SharedArchiveFile=spoty.jsa"
+            "-XX:SharedArchiveFile=spoty.jsa",
+            "-XX:+UseZGC",
+            "-XX:+ZGenerational"
     ]
 }
 
@@ -136,7 +137,6 @@ jlink {
                 "-Xms256m",
                 "-Xmx1G",
                 "-XX:ReservedCodeCacheSize=128m",
-                "-XX:+UseG1GC",
                 "-XX:MaxGCPauseMillis=200",
                 "-XX:SoftRefLRUPolicyMSPerMB=50",
                 "-XX:+HeapDumpOnOutOfMemoryError",
@@ -153,7 +153,9 @@ jlink {
                 "-Dprism.verbose=true",
                 "-Dsun.java2d.opengl=true",
                 "-XX:+AutoCreateSharedArchive",
-                "-XX:SharedArchiveFile=spoty.jsa"
+                "-XX:SharedArchiveFile=spoty.jsa",
+                "-XX:+UseZGC",
+                "-XX:+ZGenerational"
         ]
     }
 
@@ -226,9 +228,9 @@ dependencies {
     implementation "io.github.mkpaz:atlantafx-styles:$atlantafx"
     implementation "io.github.mkpaz:atlantafx-base:$atlantafx"
     implementation "com.google.code.gson:gson:$gson"
-    compileOnly "org.projectlombok:lombok"
-    annotationProcessor "org.projectlombok:lombok"
     implementation "org.projectlombok:lombok:$lombok"
+    compileOnly "org.projectlombok:lombok:$lombok"
+    annotationProcessor "org.projectlombok:lombok:$lombok"
     implementation "io.github.palexdev:materialfx:$materialfx"
     implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
@@ -238,4 +240,6 @@ dependencies {
     implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
     implementation "org.junit.jupiter:junit-jupiter-api:$junit"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
+    testCompileOnly "org.projectlombok:lombok:$lombok"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombok"
 }
