@@ -18,6 +18,17 @@ public abstract class ModalPage extends MFXGenericDialog implements Modal {
     public void reset() {
     }
 
+    private void setStyles() {
+        this.getStylesheets().addAll(
+                SpotyCoreResourceLoader.load("styles/base.css"),
+                SpotyCoreResourceLoader.load("styles/Splash.css"),
+                SpotyCoreResourceLoader.load("styles/Common.css"),
+                SpotyCoreResourceLoader.load("styles/toolitip.css"),
+                SpotyCoreResourceLoader.load("styles/TextFields.css"),
+                SpotyCoreResourceLoader.load("styles/theming/base.css")
+        );
+    }
+
     @Override
     public Node getSnapshotTarget() {
         return this;
@@ -36,5 +47,6 @@ public abstract class ModalPage extends MFXGenericDialog implements Modal {
         this.setShowMinimize(false);
         this.setShowAlwaysOnTop(false);
         this.setShowClose(false);
+        this.setStyles();
     }
 }
