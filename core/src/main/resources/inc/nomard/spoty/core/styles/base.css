@@ -226,6 +226,10 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
+.card-flat-top {
+    -fx-background-radius: 0 0 10 10;
+    -fx-border-radius: 0 0 10 10;
+}
 .card-flat-bottom {
     -fx-background-radius: 10 10 0 0;
     -fx-border-radius: 10 10 0 0;

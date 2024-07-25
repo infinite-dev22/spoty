@@ -176,6 +176,9 @@
 .card-flat {
     -fx-border-color: -border-disabled;
 }
+.card-flat-top {
+    -fx-border-color: -border-disabled;
+}
 .card-flat-bottom {
     -fx-border-color: -border-disabled;
 }

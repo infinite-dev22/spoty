@@ -157,7 +157,7 @@ public class PointOfSalePage extends OutlinePage {
     // Product UI.
     private VBox buildProductUI() {
         var vbox = new VBox();
-        vbox.getStyleClass().add("card-flat");
+        vbox.getStyleClass().add("card-flat-top");
         vbox.setPadding(new Insets(2.5d));
         VBox.setVgrow(vbox, Priority.ALWAYS);
         vbox.getChildren().addAll(buildFilterUI(), buildProductCardHolderUI());
@@ -167,7 +167,6 @@ public class PointOfSalePage extends OutlinePage {
     // Center UI.
     private VBox buildCenter() {
         var vbox = new VBox();
-        vbox.setSpacing(10d);
         BorderPane.setAlignment(vbox, Pos.CENTER);
         BorderPane.setMargin(vbox, new Insets(0d, 5d, 0d, 0d));
         vbox.getChildren().addAll(buildHeaderUI(), buildProductUI());
@@ -309,7 +308,6 @@ public class PointOfSalePage extends OutlinePage {
     // POS UI.
     private BorderPane init() {
         var pane = new BorderPane();
-        pane.setPadding(new Insets(5d, 5d, 5d, 0d));
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
         pane.setRight(buildRight());
