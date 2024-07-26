@@ -7,12 +7,12 @@ import javafx.fxml.*;
 import lombok.extern.java.*;
 
 @Log
-public class SalaryAdvancePreviewController implements Initializable {
+public class SalaryPreviewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
 
-    public void init(SalaryAdvance salaryAdvance) {
+    public void init(Salary salary) {
     }
 }

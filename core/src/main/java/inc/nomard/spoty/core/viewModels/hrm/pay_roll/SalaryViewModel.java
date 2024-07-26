@@ -22,8 +22,8 @@ import javafx.collections.*;
 import lombok.extern.java.*;
 
 @Log
-public class SalaryAdvanceViewModel {
-    public static final ObservableList<SalaryAdvance> salaryAdvancesList = FXCollections.observableArrayList();
+public class SalaryViewModel {
+    public static final ObservableList<Salary> salaryAdvancesList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
@@ -34,21 +34,21 @@ public class SalaryAdvanceViewModel {
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
-    private static final ListProperty<SalaryAdvance> salaryAdvances = new SimpleListProperty<>(salaryAdvancesList);
+    private static final ListProperty<Salary> salaryAdvances = new SimpleListProperty<>(salaryAdvancesList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<User> employee = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<PaySlip> paySlip = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final DoubleProperty salary = new SimpleDoubleProperty(0);
     private static final DoubleProperty netSalary = new SimpleDoubleProperty(0);
-    private static final SalaryAdvancesRepositoryImpl salaryAdvancesRepository = new SalaryAdvancesRepositoryImpl();
+    private static final SalariesRepositoryImpl salariesRepository = new SalariesRepositoryImpl();
 
     public static Long getId() {
         return id.get();
     }
 
     public static void setId(long id) {
-        SalaryAdvanceViewModel.id.set(id);
+        SalaryViewModel.id.set(id);
     }
 
     public static LongProperty idProperty() {
@@ -60,7 +60,7 @@ public class SalaryAdvanceViewModel {
     }
 
     public static void setEmployee(User employee) {
-        SalaryAdvanceViewModel.employee.set(employee);
+        SalaryViewModel.employee.set(employee);
     }
 
     public static ObjectProperty<User> employeeProperty() {
@@ -72,7 +72,7 @@ public class SalaryAdvanceViewModel {
     }
 
     public static void setPaySlip(PaySlip paySlip) {
-        SalaryAdvanceViewModel.paySlip.set(paySlip);
+        SalaryViewModel.paySlip.set(paySlip);
     }
 
     public static ObjectProperty<PaySlip> paySlipProperty() {
@@ -84,7 +84,7 @@ public class SalaryAdvanceViewModel {
     }
 
     public static void setStatus(String status) {
-        SalaryAdvanceViewModel.status.set(status != null ? status : "");
+        SalaryViewModel.status.set(status != null ? status : "");
     }
 
     public static StringProperty statusProperty() {
@@ -96,7 +96,7 @@ public class SalaryAdvanceViewModel {
     }
 
     public static void setSalary(double salary) {
-        SalaryAdvanceViewModel.salary.set(salary);
+        SalaryViewModel.salary.set(salary);
     }
 
     public static DoubleProperty salaryProperty() {
@@ -108,36 +108,36 @@ public class SalaryAdvanceViewModel {
     }
 
     public static void setNetSalary(double netSalary) {
-        SalaryAdvanceViewModel.netSalary.set(netSalary);
+        SalaryViewModel.netSalary.set(netSalary);
     }
 
     public static DoubleProperty netSalaryProperty() {
         return netSalary;
     }
 
-    public static ObservableList<SalaryAdvance> getSalaryAdvances() {
+    public static ObservableList<Salary> getSalaries() {
         return salaryAdvances.get();
     }
 
-    public static void setSalaryAdvances(ObservableList<SalaryAdvance> salaryAdvances) {
-        SalaryAdvanceViewModel.salaryAdvances.set(salaryAdvances);
+    public static void setSalaries(ObservableList<Salary> salaryAdvances) {
+        SalaryViewModel.salaryAdvances.set(salaryAdvances);
     }
 
-    public static ListProperty<SalaryAdvance> salaryAdvancesProperty() {
+    public static ListProperty<Salary> salaryAdvancesProperty() {
         return salaryAdvances;
     }
 
-    public static void saveSalaryAdvance(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+    public static void saveSalary(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                          SpotyGotFunctional.MessageConsumer successMessage,
                                          SpotyGotFunctional.MessageConsumer errorMessage) {
-        var salaryAdvance = SalaryAdvance.builder()
+        var salaryAdvance = Salary.builder()
                 .employee(getEmployee())
                 .paySlip(getPaySlip())
                 .status(getStatus())
                 .salary(getSalary())
                 .netSalary(getNetSalary())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.post(salaryAdvance);
+        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.post(salaryAdvance);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
@@ -173,7 +173,7 @@ public class SalaryAdvanceViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            SpotyLogger.writeToFile(throwable, SalaryViewModel.class);
             return null;
         });
     }
@@ -191,17 +191,17 @@ public class SalaryAdvanceViewModel {
                 });
     }
 
-    public static void getAllSalaryAdvances(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+    public static void getAllSalaries(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                             SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.fetchAll();
+        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<SalaryAdvance>>() {
+                    Type listType = new TypeToken<ArrayList<Salary>>() {
                     }.getType();
-                    ArrayList<SalaryAdvance> salaryAdvanceList = gson.fromJson(response.body(), listType);
+                    ArrayList<Salary> salaryAdvanceList = gson.fromJson(response.body(), listType);
                     salaryAdvancesList.clear();
                     salaryAdvancesList.addAll(salaryAdvanceList);
                     if (Objects.nonNull(onSuccess)) {
@@ -235,22 +235,22 @@ public class SalaryAdvanceViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            SpotyLogger.writeToFile(throwable, SalaryViewModel.class);
             return null;
         });
     }
 
-    public static void getSalaryAdvance(Long index,
+    public static void getSalary(Long index,
                                         SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                         SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.fetch(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    var salaryAdvance = gson.fromJson(response.body(), SalaryAdvance.class);
+                    var salaryAdvance = gson.fromJson(response.body(), Salary.class);
                     setId(salaryAdvance.getId());
                     setEmployee(salaryAdvance.getEmployee());
                     setPaySlip(salaryAdvance.getPaySlip());
@@ -286,7 +286,7 @@ public class SalaryAdvanceViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            SpotyLogger.writeToFile(throwable, SalaryViewModel.class);
             return null;
         });
     }
@@ -295,15 +295,15 @@ public class SalaryAdvanceViewModel {
             String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.search(searchModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.search(searchModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<SalaryAdvance>>() {
+                    Type listType = new TypeToken<ArrayList<Salary>>() {
                     }.getType();
-                    ArrayList<SalaryAdvance> salaryAdvanceList = gson.fromJson(
+                    ArrayList<Salary> salaryAdvanceList = gson.fromJson(
                             response.body(), listType);
                     salaryAdvancesList.clear();
                     salaryAdvancesList.addAll(salaryAdvanceList);
@@ -336,15 +336,15 @@ public class SalaryAdvanceViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            SpotyLogger.writeToFile(throwable, SalaryViewModel.class);
             return null;
         });
     }
 
-    public static void updateSalaryAdvance(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+    public static void updateSalary(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                            SpotyGotFunctional.MessageConsumer successMessage,
                                            SpotyGotFunctional.MessageConsumer errorMessage) {
-        var salaryAdvance = SalaryAdvance.builder()
+        var salaryAdvance = Salary.builder()
                 .id(getId())
                 .employee(getEmployee())
                 .paySlip(getPaySlip())
@@ -352,7 +352,7 @@ public class SalaryAdvanceViewModel {
                 .salary(getSalary())
                 .netSalary(getNetSalary())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.put(salaryAdvance);
+        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.put(salaryAdvance);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
@@ -388,17 +388,17 @@ public class SalaryAdvanceViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            SpotyLogger.writeToFile(throwable, SalaryViewModel.class);
             return null;
         });
     }
 
-    public static void deleteSalaryAdvance(
+    public static void deleteSalary(
             Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
             SpotyGotFunctional.MessageConsumer successMessage,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.delete(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.delete(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
@@ -434,7 +434,7 @@ public class SalaryAdvanceViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            SpotyLogger.writeToFile(throwable, SalaryViewModel.class);
             return null;
         });
     }

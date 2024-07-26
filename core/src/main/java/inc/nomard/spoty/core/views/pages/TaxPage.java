@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -24,10 +26,17 @@ import lombok.extern.java.*;
 public class TaxPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Tax> masterTable;
-    private MFXProgressSpinner progress;
     private Button createBtn;
+    private MFXProgressSpinner progress;
+    private TableColumn<Tax, String> name;
+    private TableColumn<Tax, String> percentage;
+    private TableColumn<Tax, Tax> createdBy;
+    private TableColumn<Tax, Tax> createdAt;
+    private TableColumn<Tax, Tax> updatedBy;
+    private TableColumn<Tax, Tax> updatedAt;
 
     public TaxPage() {
+        super();
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
@@ -105,21 +114,33 @@ public class TaxPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<Tax, String> name = new TableColumn<>("Name");
-        TableColumn<Tax, String> percentage = new TableColumn<>("Percentage");
+        name = new TableColumn<>("Name");
+        percentage = new TableColumn<>("Percentage");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-        percentage.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        percentage.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(name, percentage).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(name, percentage, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleTable();
+
         masterTable.setItems(TaxViewModel.getTaxes());
     }
 
     private void styleTable() {
         masterTable.setPrefSize(1000, 1000);
+
         masterTable.setRowFactory(
                 t -> {
                     TableRow<Tax> row = new TableRow<>();
@@ -140,20 +161,23 @@ public class TaxPage extends OutlinePage {
     private MFXContextMenu showContextMenu(TableRow<Tax> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        // Edit
+        MFXContextMenuItem delete = getDeleteContextMenuItem(obj);
         edit.setOnAction(
                 event -> {
                     TaxViewModel.getTax(obj.getItem().getId(), () -> SpotyDialog.createDialog(new TaxForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
-        // Delete
+        contextMenu.addItems(edit, delete);
+        return contextMenu;
+    }
+
+    private MFXContextMenuItem getDeleteContextMenuItem(TableRow<Tax> obj) {
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             TaxViewModel.deleteTax(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName(), this));
-        contextMenu.addItems(edit, delete);
-        return contextMenu;
+        return delete;
     }
 
     private void onSuccess() {
@@ -190,5 +214,47 @@ public class TaxPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        percentage.setCellValueFactory(new PropertyValueFactory<>("percentage"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Tax item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Tax item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Tax item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Tax item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
+        });
     }
 }

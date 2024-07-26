@@ -192,17 +192,6 @@ public class EndPoints {
         public static final String deleteRequisitions = requisitionsUrl + "/delete/multiple";
     }
 
-    public static final class SalaryAdvances {
-        public static final String salaryAdvancesUrl = apiUrl + "/salary/advances";
-        public static final String allSalaryAdvances = salaryAdvancesUrl + "/all";
-        public static final String salaryAdvanceById = salaryAdvancesUrl + "/single";
-        public static final String searchSalaryAdvances = salaryAdvancesUrl + "/search";
-        public static final String addSalaryAdvance = salaryAdvancesUrl + "/add";
-        public static final String updateSalaryAdvance = salaryAdvancesUrl + "/update";
-        public static final String deleteSalaryAdvance = salaryAdvancesUrl + "/delete/single";
-        public static final String deleteSalaryAdvances = salaryAdvancesUrl + "/delete/multiple";
-    }
-
     public static final class Salaries {
         public static final String salariesUrl = apiUrl + "/salaries";
         public static final String allSalaries = salariesUrl + "/all";

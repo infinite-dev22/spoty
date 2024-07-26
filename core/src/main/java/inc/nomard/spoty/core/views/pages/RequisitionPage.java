@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
@@ -14,14 +15,17 @@ import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.*;
 import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
@@ -35,6 +39,13 @@ public class RequisitionPage extends OutlinePage {
     private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
+    private TableColumn<RequisitionMaster, String> reference;
+    private TableColumn<RequisitionMaster, RequisitionMaster> supplier;
+    private TableColumn<RequisitionMaster, RequisitionMaster> status;
+    private TableColumn<RequisitionMaster, RequisitionMaster> createdBy;
+    private TableColumn<RequisitionMaster, RequisitionMaster> createdAt;
+    private TableColumn<RequisitionMaster, RequisitionMaster> updatedBy;
+    private TableColumn<RequisitionMaster, RequisitionMaster> updatedAt;
 
     public RequisitionPage() {
         try {
@@ -115,13 +126,31 @@ public class RequisitionPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<RequisitionMaster, String> masterSupplier = new TableColumn<>("Supplier");
+        reference = new TableColumn<>("Ref");
+        supplier = new TableColumn<>("Supplier");
+        status = new TableColumn<>("Status");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        masterSupplier
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        supplier.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(masterSupplier).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(reference,
+                supplier,
+                status,
+                createdBy,
+                createdAt,
+                updatedBy,
+                updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getTable();
@@ -248,6 +277,82 @@ public class RequisitionPage extends OutlinePage {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
+        supplier.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getSupplierName());
+            }
+        });
+        status.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionMaster item, boolean empty) {
+                super.updateItem(item, empty);
+
+
+                var chip = new Label(item.getStatus());
+                chip.setPadding(new Insets(5, 10, 5, 10));
+                chip.setAlignment(Pos.CENTER);
+
+                Color col;
+                switch (item.getStatus()) {
+                    case "Approved" -> col = Color.valueOf(Styles.SUCCESS);
+                    case "Pending" -> col = Color.valueOf("blue");
+                    case "Rejected" -> col = Color.valueOf(Styles.DANGER);
+                    case "Returned" -> col = Color.valueOf(Styles.WARNING);
+                    default -> col = Color.valueOf(Styles.TEXT_MUTED);
+                }
+                var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
+
+                chip.setTextFill(color.darker());
+                chip.setBorder(new Border(new BorderStroke(color.darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
+                chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
+
+                setGraphic(chip);
+                setText(null);
+            }
+        });
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

@@ -11,16 +11,20 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -36,6 +40,14 @@ public class QuotationPage extends OutlinePage {
     private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
+    private TableColumn<QuotationMaster, String> reference;
+    private TableColumn<QuotationMaster, QuotationMaster> customer;
+    private TableColumn<QuotationMaster, String> total;
+    private TableColumn<QuotationMaster, String> status;
+    private TableColumn<QuotationMaster, QuotationMaster> createdBy;
+    private TableColumn<QuotationMaster, QuotationMaster> createdAt;
+    private TableColumn<QuotationMaster, QuotationMaster> updatedBy;
+    private TableColumn<QuotationMaster, QuotationMaster> updatedAt;
 
     public QuotationPage() {
         try {
@@ -116,13 +128,31 @@ public class QuotationPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<QuotationMaster, String> quotationCustomer = new TableColumn<>("Customer");
-        TableColumn<QuotationMaster, String> quotationTotalAmount = new TableColumn<>("Total Amount");
+        customer = new TableColumn<>("Customer");
+        total = new TableColumn<>("Total Amount");
+        status = new TableColumn<>("Status");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        quotationCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        quotationTotalAmount.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        customer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        total.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(quotationCustomer, quotationTotalAmount).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(customer,
+                total,
+                status,
+                createdBy,
+                createdAt,
+                updatedBy,
+                updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getQuotationMasterTable();
@@ -250,6 +280,55 @@ public class QuotationPage extends OutlinePage {
                 progress.setManaged(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        customer.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getCustomerName());
+            }
+        });
+        total.setCellValueFactory(new PropertyValueFactory<>("total"));
+        status.setCellValueFactory(new PropertyValueFactory<>("status"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

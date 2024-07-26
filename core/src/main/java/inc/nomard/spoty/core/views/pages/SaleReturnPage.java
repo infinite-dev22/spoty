@@ -13,12 +13,14 @@ import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -31,8 +33,20 @@ public class SaleReturnPage extends OutlinePage {
     private TextField searchBar;
     private TableView<SaleReturnMaster> masterTable;
     private MFXProgressSpinner progress;
+    private Button createBtn;
+    private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> saleCustomer;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> saleDate;
+    private TableColumn<SaleReturnMaster, String> saleGrandTotal;
+    private TableColumn<SaleReturnMaster, String> saleAmountPaid;
+    private TableColumn<SaleReturnMaster, String> saleAmountDue;
+    private TableColumn<SaleReturnMaster, String> saleStatus;
+    private TableColumn<SaleReturnMaster, String> salePaymentStatus;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> createdBy;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> createdAt;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> updatedBy;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> updatedAt;
 
     public SaleReturnPage() {
         try {
@@ -77,7 +91,7 @@ public class SaleReturnPage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new TextField();
-        searchBar.setPromptText("Search sale/order returns");
+        searchBar.setPromptText("Search orders");
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -89,7 +103,8 @@ public class SaleReturnPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        var hbox = new HBox();
+        createBtn = new Button("Create");
+        var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -112,38 +127,51 @@ public class SaleReturnPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<SaleReturnMaster, String> saleReturnCustomer = new TableColumn<>("Customer");
-        TableColumn<SaleReturnMaster, String> saleReturnStatus = new TableColumn<>("Order Status");
-        TableColumn<SaleReturnMaster, String> saleReturnPaymentStatus = new TableColumn<>("Pay Status");
-        TableColumn<SaleReturnMaster, String> saleReturnDate = new TableColumn<>("Date");
-        TableColumn<SaleReturnMaster, String> saleReturnGrandTotal = new TableColumn<>("Total Amount");
-        TableColumn<SaleReturnMaster, String> saleReturnAmountPaid = new TableColumn<>("Paid Amount");
-        TableColumn<SaleReturnMaster, String> saleReturnAmountDue = new TableColumn<>("Amount Due");
+        saleCustomer = new TableColumn<>("Customer");
+        saleDate = new TableColumn<>("Date");
+        saleGrandTotal = new TableColumn<>("Total Amount");
+        saleAmountPaid = new TableColumn<>("Paid Amount");
+        saleAmountDue = new TableColumn<>("Amount Due");
+        saleStatus = new TableColumn<>("Order Status");
+        salePaymentStatus = new TableColumn<>("Pay Status");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        saleReturnDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
-        saleReturnCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
-        saleReturnStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
-        saleReturnGrandTotal.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
-        saleReturnAmountPaid.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
-        saleReturnPaymentStatus
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.143));
+        saleCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        saleDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        saleGrandTotal.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        saleAmountPaid.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        saleAmountDue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        saleStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        salePaymentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(saleReturnCustomer,
-                saleReturnStatus,
-                saleReturnPaymentStatus,
-                saleReturnDate,
-                saleReturnGrandTotal,
-                saleReturnAmountPaid,
-                saleReturnAmountDue).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(saleCustomer,
+                saleDate,
+                saleGrandTotal,
+                saleAmountPaid,
+                saleAmountDue,
+                saleStatus,
+                salePaymentStatus,
+                createdBy,
+                createdAt,
+                updatedBy,
+                updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
-        getSaleReturnMasterTable();
+        styleSaleReturnMasterTable();
 
         masterTable.setItems(SaleReturnMasterViewModel.getSaleReturns());
     }
 
-    private void getSaleReturnMasterTable() {
+    private void styleSaleReturnMasterTable() {
         masterTable.setPrefSize(1200, 1000);
 
         masterTable.setRowFactory(
@@ -163,17 +191,9 @@ public class SaleReturnPage extends OutlinePage {
                 });
     }
 
-    public void createBtnAction() {
-    }
-
-    private void onSuccess() {
-        SaleReturnMasterViewModel.getSaleReturnMasters(null, null);
-    }
-
     private MFXContextMenu showContextMenu(TableRow<SaleReturnMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem view = new MFXContextMenuItem("View");
 
         // Actions
@@ -181,14 +201,7 @@ public class SaleReturnPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             SaleReturnMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getCustomerName() + "'s sale returns", this));
-        // Edit
-        edit.setOnAction(
-                e -> {
-                    SaleReturnMasterViewModel.getItem(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
-                    createBtnAction();
-                    e.consume();
-                });
+        }, obj.getItem().getCustomerName() + "'s order", this));
         // View
         view.setOnAction(
                 event -> {
@@ -196,9 +209,18 @@ public class SaleReturnPage extends OutlinePage {
                     event.consume();
                 });
 
-        contextMenu.addItems(view, edit, delete);
+        contextMenu.addItems(view, delete);
 
         return contextMenu;
+    }
+
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> {
+        });// BaseController.navigation.navigate(new PointOfSalePage(stage)));
+    }
+
+    private void onSuccess() {
+        SaleReturnMasterViewModel.getSaleReturnMasters(null, null);
     }
 
     private void viewDialogPane() throws IOException {
@@ -211,13 +233,16 @@ public class SaleReturnPage extends OutlinePage {
 
         dialogContent.setPrefHeight(screenHeight * .98);
         dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
+
+        dialog = SpotyDialog.createDialog(dialogContent, this);
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void viewShow(SaleReturnMaster saleReturnsMaster) {
+    public void viewShow(SaleReturnMaster saleMaster) {
         SaleReturnsPreviewController controller = viewFxmlLoader.getController();
-        controller.init(saleReturnsMaster);
-        viewDialog.showAndWait();
+        controller.init(saleMaster);
+        dialog.showAndWait();
     }
 
     private void successMessage(String message) {
@@ -262,6 +287,68 @@ public class SaleReturnPage extends OutlinePage {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        saleCustomer.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getCustomerName());
+            }
+        });
+        saleDate.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        saleGrandTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+        saleAmountPaid.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
+        saleAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        saleStatus.setCellValueFactory(new PropertyValueFactory<>("saleStatus"));
+        salePaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

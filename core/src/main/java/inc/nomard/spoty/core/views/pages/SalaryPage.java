@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
@@ -13,12 +14,14 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -28,21 +31,26 @@ import lombok.extern.java.*;
 @Log
 public class SalaryPage extends OutlinePage {
     private TextField searchBar;
-    private TableView<SalaryAdvance> masterTable;
+    private TableView<Salary> masterTable;
     private MFXProgressSpinner progress;
     private MFXStageDialog viewDialog;
     private FXMLLoader viewFxmlLoader;
+    private TableColumn<Salary, Salary> payslip;
+    private TableColumn<Salary, Salary> employee;
+    private TableColumn<Salary, String> status;
+    private TableColumn<Salary, String> salary;
+    private TableColumn<Salary, String> netSalary;
 
     public SalaryPage() {
         try {
-            productViewDialogPane();
+            salaryViewDialogPane();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        SalaryAdvanceViewModel.getAllSalaryAdvances(this::onDataInitializationSuccess, this::errorMessage);
+        SalaryViewModel.getAllSalaries(this::onDataInitializationSuccess, this::errorMessage);
     }
 
     private void onDataInitializationSuccess() {
@@ -110,10 +118,10 @@ public class SalaryPage extends OutlinePage {
         return new AnchorPane(masterTable);
     }
 
-    private void productViewDialogPane() throws IOException {
+    private void salaryViewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/SalaryAdvancePreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new SalaryAdvancePreviewController());
+        viewFxmlLoader = fxmlLoader("views/previews/SalaryPreview.fxml");
+        viewFxmlLoader.setControllerFactory(c -> new SalaryPreviewController());
 
         MFXGenericDialog dialogContent = viewFxmlLoader.load();
         dialogContent.setShowMinimize(false);
@@ -126,24 +134,26 @@ public class SalaryPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<SalaryAdvance, String> productName = new TableColumn<>("Employee");
-        TableColumn<SalaryAdvance, String> productCategory = new TableColumn<>("Period");
-        TableColumn<SalaryAdvance, String> productBrand = new TableColumn<>("Status");
-        TableColumn<SalaryAdvance, String> productQuantity = new TableColumn<>("Salary");
-        TableColumn<SalaryAdvance, String> productPrice = new TableColumn<>("Net Salary");
+        payslip = new TableColumn<>("Status");
+        employee = new TableColumn<>("Employee");
+        status = new TableColumn<>("Period");
+        salary = new TableColumn<>("Salary");
+        netSalary = new TableColumn<>("Net Salary");
 
-        productName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productCategory.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productBrand.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productQuantity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productPrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        employee.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        payslip.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        netSalary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
-        var columnList = new LinkedList<>(Stream.of(productName, productCategory, productBrand, productQuantity, productPrice).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(employee, status, payslip, salary, netSalary).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleTable();
 
-        masterTable.setItems(SalaryAdvanceViewModel.getSalaryAdvances());
+        masterTable.setItems(SalaryViewModel.getSalaries());
     }
 
     private void styleTable() {
@@ -151,10 +161,10 @@ public class SalaryPage extends OutlinePage {
 
         masterTable.setRowFactory(
                 t -> {
-                    TableRow<SalaryAdvance> row = new TableRow<>();
+                    TableRow<Salary> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((TableRow<SalaryAdvance>) event.getSource())
+                                showContextMenu((TableRow<Salary>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -166,7 +176,7 @@ public class SalaryPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<SalaryAdvance> obj) {
+    private MFXContextMenu showContextMenu(TableRow<Salary> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem view = new MFXContextMenuItem("View");
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
@@ -175,7 +185,7 @@ public class SalaryPage extends OutlinePage {
         // View
         view.setOnAction(event -> {
             try {
-                productViewShow(obj.getItem());
+                salaryViewShow(obj.getItem());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -183,7 +193,7 @@ public class SalaryPage extends OutlinePage {
         });
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            SalaryViewModel.deleteSalary(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getEmployeeName() + "'s salary", this));
 
@@ -193,12 +203,12 @@ public class SalaryPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        SalaryAdvanceViewModel.getAllSalaryAdvances(null, null);
+        SalaryViewModel.getAllSalaries(null, null);
     }
 
-    public void productViewShow(SalaryAdvance product) {
-        SalaryAdvancePreviewController controller = viewFxmlLoader.getController();
-        controller.init(product);
+    public void salaryViewShow(Salary salary) {
+        SalaryPreviewController controller = viewFxmlLoader.getController();
+        controller.init(salary);
         viewDialog.showAndWait();
     }
 
@@ -239,14 +249,41 @@ public class SalaryPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                SalaryAdvanceViewModel.getAllSalaryAdvances(null, null);
+                SalaryViewModel.getAllSalaries(null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
-            SalaryAdvanceViewModel.searchItem(nv, () -> {
+            SalaryViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
         });
+    }
+
+    private void setupTableColumns() {
+        payslip.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Salary item, boolean empty) {
+                super.updateItem(item, empty);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+                setText(empty || Objects.isNull(item) ? null : item.getPaySlip().getStartDate().format(dtf) + " - " + item.getPaySlip().getEndDate().format(dtf));
+            }
+        });
+        employee.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Salary item, boolean empty) {
+                super.updateItem(item, empty);
+                var employeeName = new Label(item.getEmployee().getName());
+                var employeeDesignation = new Label(item.getEmployee().getDesignation().getName());
+                employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
+                var vbox = new VBox(employeeName, employeeDesignation);
+                setGraphic(vbox);
+                setText(null);
+            }
+        });
+        status.setCellValueFactory(new PropertyValueFactory<>("status"));
+        salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
+        netSalary.setCellValueFactory(new PropertyValueFactory<>("netSalary"));
     }
 }

@@ -18,7 +18,6 @@ import lombok.extern.java.*;
 public class StockInMaster {
     private Long id;
     private String ref;
-    private ArrayList<Branch> branches;
     private List<StockInDetail> stockInDetails;
     private String shipping;
     private Double total;
@@ -27,4 +26,8 @@ public class StockInMaster {
     private LocalDateTime approvalDate;
     private LocalDateTime recordDate;
     private String notes;
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 }

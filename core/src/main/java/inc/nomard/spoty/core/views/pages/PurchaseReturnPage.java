@@ -10,16 +10,17 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -34,6 +35,17 @@ public class PurchaseReturnPage extends OutlinePage {
     private MFXProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> supplier;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseDate;
+    private TableColumn<PurchaseReturnMaster, String> purchaseTotalPrice;
+    private TableColumn<PurchaseReturnMaster, String> purchaseAmountPaid;
+    private TableColumn<PurchaseReturnMaster, String> purchaseAmountDue;
+    private TableColumn<PurchaseReturnMaster, String> purchaseStatus;
+    private TableColumn<PurchaseReturnMaster, String> masterPaymentStatus;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdBy;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdAt;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> updatedBy;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> updatedAt;
 
     public PurchaseReturnPage() {
         try {
@@ -58,7 +70,6 @@ public class PurchaseReturnPage extends OutlinePage {
         pane.setCenter(buildCenter());
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -78,7 +89,7 @@ public class PurchaseReturnPage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new TextField();
-        searchBar.setPromptText("Search purchase returns");
+        searchBar.setPromptText("Search purchases");
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -90,8 +101,7 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        var createBtn = new Button("Create");
-        var hbox = new HBox(createBtn);
+        var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -114,48 +124,59 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<PurchaseReturnMaster, String> purchaseReturnSupplier = new TableColumn<>(
-                "Supplier");
-        TableColumn<PurchaseReturnMaster, String> purchaseReturnStatus = new TableColumn<>("Status");
-        TableColumn<PurchaseReturnMaster, String> purchaseReturnPaymentStatus = new TableColumn<>(
-                "Pay Status");
-        TableColumn<PurchaseReturnMaster, String> purchaseReturnDate = new TableColumn<>("Date");
-        TableColumn<PurchaseReturnMaster, String> purchaseReturnGrandTotal = new TableColumn<>("Total Amount");
-        TableColumn<PurchaseReturnMaster, String> purchaseReturnAmountPaid = new TableColumn<>("Paid Amount");
-        TableColumn<PurchaseReturnMaster, String> purchaseReturnAmountDue = new TableColumn<>("Due Amount");
+        supplier = new TableColumn<>("Supplier");
+        purchaseDate = new TableColumn<>("Date");
+        purchaseTotalPrice = new TableColumn<>("Total Amount");
+        purchaseAmountPaid = new TableColumn<>("Paid Amount");
+        purchaseAmountDue = new TableColumn<>("Due Amount");
+        purchaseStatus = new TableColumn<>("Status");
+        masterPaymentStatus = new TableColumn<>("Pay Status");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        purchaseReturnDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.13));
-        purchaseReturnSupplier
+        supplier
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        purchaseReturnStatus
+        purchaseDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        purchaseTotalPrice
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        purchaseReturnGrandTotal
+        purchaseAmountPaid
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        purchaseReturnAmountPaid
+        purchaseAmountDue
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        purchaseReturnPaymentStatus
+        purchaseStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
+        masterPaymentStatus
+                .prefWidthProperty()
+                .bind(masterTable.widthProperty().multiply(.25));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(purchaseReturnSupplier,
-                purchaseReturnStatus,
-                purchaseReturnPaymentStatus,
-                purchaseReturnDate,
-                purchaseReturnGrandTotal,
-                purchaseReturnAmountPaid).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(supplier,
+                purchaseStatus,
+                masterPaymentStatus,
+                purchaseDate,
+                purchaseTotalPrice,
+                purchaseAmountPaid,
+                purchaseAmountDue).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
-
-        stylePurchaseReturnMasterTable();
+        getTable();
 
         masterTable.setItems(PurchaseReturnMasterViewModel.getPurchaseReturns());
     }
 
-    private void stylePurchaseReturnMasterTable() {
+    private void getTable() {
         masterTable.setPrefSize(1200, 1000);
 
         masterTable.setRowFactory(
@@ -175,17 +196,9 @@ public class PurchaseReturnPage extends OutlinePage {
                 });
     }
 
-    public void createBtnAction() {
-    }
-
-    private void onSuccess() {
-        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
-    }
-
     private MFXContextMenu showContextMenu(TableRow<PurchaseReturnMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem view = new MFXContextMenuItem("View");
 
         // Actions
@@ -193,39 +206,27 @@ public class PurchaseReturnPage extends OutlinePage {
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             PurchaseReturnMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getSupplierName() + "'s purchase return", this));
-        // Edit
-        edit.setOnAction(
-                e -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    PurchaseReturnMasterViewModel.getItem(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-                    e.consume();
-                });
+        }, obj.getItem().getSupplierName() + "'s purchase", this));
+
         // View
         view.setOnAction(
                 event -> {
-                    try {
-                        viewShow(obj.getItem());
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    viewShow(obj.getItem());
                     event.consume();
                 });
 
-        contextMenu.addItems(view, edit, delete);
+        contextMenu.addItems(view, delete);
 
         return contextMenu;
     }
 
+    private void onSuccess() {
+        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
+    }
+
     private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/PurchaseReturnsPreview.fxml");
+        viewFxmlLoader = fxmlLoader("views/previews/PurchaseReturnPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new PurchaseReturnsPreviewController());
         MFXGenericDialog dialogContent = viewFxmlLoader.load();
         dialogContent.setShowMinimize(false);
@@ -236,9 +237,9 @@ public class PurchaseReturnPage extends OutlinePage {
         viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
-    public void viewShow(PurchaseReturnMaster purchaseReturn) {
+    public void viewShow(PurchaseReturnMaster purchaseMaster) {
         PurchaseReturnsPreviewController controller = viewFxmlLoader.getController();
-        controller.init(purchaseReturn);
+        controller.init(purchaseMaster);
         viewDialog.showAndWait();
     }
 
@@ -284,6 +285,68 @@ public class PurchaseReturnPage extends OutlinePage {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        supplier.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getSupplierName());
+            }
+        });
+        purchaseDate.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : item.getDate().format(dtf));
+            }
+        });
+        purchaseTotalPrice.setCellValueFactory(new PropertyValueFactory<>("total"));
+        purchaseAmountPaid.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
+        purchaseAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        purchaseStatus.setCellValueFactory(new PropertyValueFactory<>("purchaseStatus"));
+        masterPaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

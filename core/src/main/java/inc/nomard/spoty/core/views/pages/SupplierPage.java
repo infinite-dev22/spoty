@@ -14,12 +14,14 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -30,13 +32,23 @@ import lombok.extern.java.*;
 @Log
 public class SupplierPage extends OutlinePage {
     private TextField searchBar;
-    private TableView<Supplier> masterTable;
+    private TableView<Supplier> tableView;
     private MFXProgressSpinner progress;
     private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
+    private TableColumn<Supplier, String> name;
+    private TableColumn<Supplier, String> phone;
+    private TableColumn<Supplier, String> email;
+    private TableColumn<Supplier, String> address;
+    private TableColumn<Supplier, String> city;
+    private TableColumn<Supplier, String> country;
+    private TableColumn<Supplier, String> taxNumber;
+    private TableColumn<Supplier, Supplier> createdBy;
+    private TableColumn<Supplier, Supplier> createdAt;
 
     public SupplierPage() {
+        super();
         try {
             viewDialogPane();
         } catch (IOException ex) {
@@ -109,42 +121,52 @@ public class SupplierPage extends OutlinePage {
     }
 
     private AnchorPane buildCenter() {
-        masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        tableView = new TableView<>();
+        NodeUtils.setAnchors(tableView, new Insets(0d));
+        return new AnchorPane(tableView);
     }
 
     private void setupTable() {
-        TableColumn<Supplier, String> supplierName = new TableColumn<>("Name");
-        TableColumn<Supplier, String> supplierPhone = new TableColumn<>("Phone");
-        TableColumn<Supplier, String> supplierEmail = new TableColumn<>("Email");
-        TableColumn<Supplier, String> supplierTax = new TableColumn<>("Tax No.");
+        name = new TableColumn<>("Name");
+        phone = new TableColumn<>("Phone");
+        email = new TableColumn<>("Email");
+        address = new TableColumn<>("Address");
+        city = new TableColumn<>("City");
+        country = new TableColumn<>("Country");
+        taxNumber = new TableColumn<>("Tax No.");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
 
+        name.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        phone.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        email.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        address.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        city.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        country.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        taxNumber.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
 
-        supplierName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
-        supplierPhone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        supplierEmail.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
-        supplierTax.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(supplierName, supplierPhone, supplierEmail, supplierTax).toList());
-        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        masterTable.getColumns().addAll(columnList);
-        styleTable();
+        var columnList = new LinkedList<>(Stream.of(name, phone, email, address, city, country, taxNumber, createdBy, createdAt).toList());
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        tableView.getColumns().addAll(columnList);
+        styleSupplierTable();
 
-        masterTable.setItems(SupplierViewModel.getSuppliers());
+        tableView.setItems(SupplierViewModel.getSuppliers());
     }
 
-    private void styleTable() {
-        masterTable.setPrefSize(1000, 1000);
-
-        masterTable.setRowFactory(
+    private void styleSupplierTable() {
+        tableView.setPrefSize(1000, 1000);
+        tableView.setRowFactory(
                 t -> {
                     TableRow<Supplier> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((TableRow<Supplier>) event.getSource())
                                         .show(
-                                                masterTable.getScene().getWindow(),
+                                                tableView.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -154,12 +176,11 @@ public class SupplierPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Supplier> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
-
+    private ContextMenu showContextMenu(TableRow<Supplier> obj) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem delete = new MenuItem("Delete");
+        MenuItem edit = new MenuItem("Edit");
+        MenuItem view = new MenuItem("View");
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
@@ -170,6 +191,7 @@ public class SupplierPage extends OutlinePage {
         edit.setOnAction(
                 e -> {
                     SupplierViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new SupplierForm(), this).showAndWait(), this::errorMessage);
+                    SpotyDialog.createDialog(new SupplierForm(), this).showAndWait();
                     e.consume();
                 });
         // View
@@ -178,9 +200,8 @@ public class SupplierPage extends OutlinePage {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-
-        contextMenu.addItems(view, edit, delete);
-
+        contextMenu.getItems().addAll(view, edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
@@ -199,8 +220,7 @@ public class SupplierPage extends OutlinePage {
         MFXGenericDialog dialogContent = viewFxmlLoader.load();
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setHeaderText("Supplier Details Preview");
-
+        dialogContent.setHeaderText("Supplier Details View");
         dialogContent.setPrefHeight(screenHeight * .98);
         dialogContent.setPrefWidth(700);
         viewDialog = SpotyDialog.createDialog(dialogContent, this);
@@ -255,5 +275,33 @@ public class SupplierPage extends OutlinePage {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        phone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        address.setCellValueFactory(new PropertyValueFactory<>("address"));
+        city.setCellValueFactory(new PropertyValueFactory<>("city"));
+        country.setCellValueFactory(new PropertyValueFactory<>("country"));
+        taxNumber.setCellValueFactory(new PropertyValueFactory<>("taxNumber"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Supplier item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Supplier item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
     }
 }

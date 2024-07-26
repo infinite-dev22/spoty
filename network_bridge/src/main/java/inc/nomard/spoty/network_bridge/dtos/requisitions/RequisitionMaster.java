@@ -22,7 +22,11 @@ public class RequisitionMaster {
     private Supplier supplier;
     private List<RequisitionDetail> requisitionDetails;
     private String notes;
+    private String status;
     private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 
     public String getSupplierName() {
         return supplier.getName();

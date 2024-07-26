@@ -20,25 +20,22 @@ import lombok.extern.java.*;
 public class PurchaseReturnMaster {
     private Long id;
     private String ref;
-    private LocalDateTime date;
+    private LocalDate date;
     private Supplier supplier;
-    private ArrayList<Branch> branches;
-    private List<PurchaseDetail> purchaseDetails;
-    private double taxRate;
-    private double netTax;
-    private double discount;
-    private String shipping;
+    private List<PurchaseReturnDetail> purchaseReturnDetails;
+    private Tax tax;
+    private Discount discount;
     private double amountPaid;
     private double total;
     private double amountDue;
-    private double changeAmount;
-    private double balanceAmount;
-    private double shippingFee;
     private double subTotal;
-    private String status;
+    private String purchaseStatus;
     private String paymentStatus;
     private String notes;
     private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 
     public String getSupplierName() {
         return supplier.getName();
@@ -46,9 +43,5 @@ public class PurchaseReturnMaster {
 
     public String getLocaleDate() {
         return DateFormat.getDateInstance().format(date);
-    }
-
-    public String doneBy() {
-        return createdBy.getUserProfile().getName();
     }
 }
