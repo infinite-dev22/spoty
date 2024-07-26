@@ -14,12 +14,14 @@ import inc.nomard.spoty.network_bridge.dtos.transfers.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
@@ -34,6 +36,15 @@ public class TransferPage extends OutlinePage {
     private MFXProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
+    private TableColumn<TransferMaster, String> reference;
+    private TableColumn<TransferMaster, TransferMaster> fromBranch;
+    private TableColumn<TransferMaster, TransferMaster> toBranch;
+    private TableColumn<TransferMaster, TransferMaster> transferDate;
+    private TableColumn<TransferMaster, String> note;
+    private TableColumn<TransferMaster, TransferMaster> createdBy;
+    private TableColumn<TransferMaster, TransferMaster> createdAt;
+    private TableColumn<TransferMaster, TransferMaster> updatedBy;
+    private TableColumn<TransferMaster, TransferMaster> updatedAt;
 
     public TransferPage() {
         try {
@@ -114,17 +125,37 @@ public class TransferPage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<TransferMaster, String> transferFromBranch = new TableColumn<>("Branch(From)");
-        TableColumn<TransferMaster, String> transferToBranch = new TableColumn<>("Branch(To)");
-        TableColumn<TransferMaster, String> transferDate = new TableColumn<>("Date");
-        TableColumn<TransferMaster, String> note = new TableColumn<>("Total Amount");
+        reference = new TableColumn<>("Ref");
+        fromBranch = new TableColumn<>("Branch(From)");
+        toBranch = new TableColumn<>("Branch(To)");
+        transferDate = new TableColumn<>("Date");
+        note = new TableColumn<>("Note");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        transferFromBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        transferToBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        transferDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        fromBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        toBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        transferDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(transferFromBranch, transferToBranch, transferDate, note).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(reference,
+                fromBranch,
+                toBranch,
+                transferDate,
+                note,
+                createdBy,
+                createdAt,
+                updatedBy,
+                updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getTransferMasterTable();
@@ -247,6 +278,72 @@ public class TransferPage extends OutlinePage {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
+        fromBranch.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getFromBranchName());
+            }
+        });
+        toBranch.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getToBranchName());
+            }
+        });
+        transferDate.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferMaster item, boolean empty) {
+                super.updateItem(item, empty);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDate()) ? null : item.getDate().format(dtf));
+            }
+        });
+        note.setCellValueFactory(new PropertyValueFactory<>("note"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

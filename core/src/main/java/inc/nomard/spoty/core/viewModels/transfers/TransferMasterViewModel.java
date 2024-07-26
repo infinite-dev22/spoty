@@ -40,7 +40,7 @@ public class TransferMasterViewModel {
     private static final ListProperty<TransferMaster> transfers =
             new SimpleListProperty<>(transfersList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<LocalDate> date = new SimpleObjectProperty<>();
+    private static final ObjectProperty<LocalDateTime> date = new SimpleObjectProperty<>();
     private static final ObjectProperty<Branch> fromBranch = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> toBranch = new SimpleObjectProperty<>(null);
     private static final StringProperty note = new SimpleStringProperty("");
@@ -58,15 +58,15 @@ public class TransferMasterViewModel {
         return id;
     }
 
-    public static LocalDate getDate() {
+    public static LocalDateTime getDate() {
         return date.get();
     }
 
-    public static void setDate(LocalDate date) {
+    public static void setDate(LocalDateTime date) {
         TransferMasterViewModel.date.set(date);
     }
 
-    public static ObjectProperty<LocalDate> dateProperty() {
+    public static ObjectProperty<LocalDateTime> dateProperty() {
         return date;
     }
 

@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
@@ -27,6 +29,15 @@ public class UnitOfMeasurePage extends OutlinePage {
     private TableView<UnitOfMeasure> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<UnitOfMeasure, String> uomName;
+    private TableColumn<UnitOfMeasure, String> uomShortName;
+    private TableColumn<UnitOfMeasure, UnitOfMeasure> uomBaseUnit;
+    private TableColumn<UnitOfMeasure, String> uomOperator;
+    private TableColumn<UnitOfMeasure, String> uomOperationValue;
+    private TableColumn<UnitOfMeasure, UnitOfMeasure> createdBy;
+    private TableColumn<UnitOfMeasure, UnitOfMeasure> createdAt;
+    private TableColumn<UnitOfMeasure, UnitOfMeasure> updatedBy;
+    private TableColumn<UnitOfMeasure, UnitOfMeasure> updatedAt;
 
     public UnitOfMeasurePage() {
         addNode(init());
@@ -102,19 +113,37 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     private void setupTable() {
-        TableColumn<UnitOfMeasure, String> uomName = new TableColumn<>("Name");
-        TableColumn<UnitOfMeasure, String> uomShortName = new TableColumn<>("Short Name");
-        TableColumn<UnitOfMeasure, String> uomBaseUnit = new TableColumn<>("Base Unit");
-        TableColumn<UnitOfMeasure, String> uomOperator = new TableColumn<>("Operator");
-        TableColumn<UnitOfMeasure, String> uomOperationValue = new TableColumn<>("Operation Value");
+        uomName = new TableColumn<>("Name");
+        uomShortName = new TableColumn<>("Short Name");
+        uomBaseUnit = new TableColumn<>("Base Unit");
+        uomOperator = new TableColumn<>("Operator");
+        uomOperationValue = new TableColumn<>("Operation Value");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
+        updatedBy = new TableColumn<>("Updated By");
+        updatedAt = new TableColumn<>("Updated At");
 
-        uomName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        uomShortName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        uomBaseUnit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        uomOperator.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        uomName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        uomShortName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.05));
+        uomBaseUnit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        uomOperator.prefWidthProperty().bind(masterTable.widthProperty().multiply(.05));
         uomOperationValue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        var columnList = new LinkedList<>(Stream.of(uomName, uomShortName, uomBaseUnit, uomOperator, uomOperationValue).toList());
+        setupTableColumns();
+
+        var columnList = new LinkedList<>(Stream.of(uomName,
+                uomShortName,
+                uomBaseUnit,
+                uomOperator,
+                uomOperationValue,
+                createdBy,
+                createdAt,
+                updatedBy,
+                updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getUnitOfMeasureTable();
@@ -210,6 +239,57 @@ public class UnitOfMeasurePage extends OutlinePage {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
+        });
+    }
+
+    private void setupTableColumns() {
+        uomName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        uomShortName.setCellValueFactory(new PropertyValueFactory<>("shortName"));
+        uomBaseUnit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(UnitOfMeasure item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getBaseUnitName());
+            }
+        });
+        uomOperator.setCellValueFactory(new PropertyValueFactory<>("operator"));
+        uomOperationValue.setCellValueFactory(new PropertyValueFactory<>("operatorValue"));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(UnitOfMeasure item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(UnitOfMeasure item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(UnitOfMeasure item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+            }
+        });
+        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(UnitOfMeasure item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+            }
         });
     }
 }

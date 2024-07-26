@@ -19,11 +19,15 @@ import lombok.extern.java.*;
 public class TransferMaster {
     private Long id;
     private String ref;
-    private LocalDate date;
+    private LocalDateTime date;
     private Branch fromBranch;
     private Branch toBranch;
     private List<TransferDetail> transferDetails;
     private String notes;
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 
     public String getToBranchName() {
         return toBranch.getName();
