@@ -130,7 +130,13 @@ public class EmploymentStatusPage extends OutlinePage {
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(name, appearance, description).toList());
+        var columnList = new LinkedList<>(Stream.of(name,
+                appearance,
+                description,
+                createdBy,
+                createdAt,
+                updatedBy,
+                updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleEmploymentStatusTable();
