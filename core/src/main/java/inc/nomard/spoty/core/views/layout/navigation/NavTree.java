@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.layout.navigation;
 
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.controls.*;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.beans.value.*;
@@ -231,7 +230,7 @@ public class NavTree extends TreeView<Nav> {
          */
         public static NavTreeItem mainPage(String title, Ikon icon, Class<? extends Page> view) {
             FontIcon node = new FontIcon(icon);
-            return new NavTreeItem(new Nav(title, null,node, view, null));
+            return new NavTreeItem(new Nav(title, null, node, view, null));
         }
 
         /**

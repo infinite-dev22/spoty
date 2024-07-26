@@ -1,9 +1,6 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
-import java.time.*;
-
-import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;

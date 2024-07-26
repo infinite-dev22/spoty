@@ -4,7 +4,7 @@ import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;import javafx.scene.control.Label;
+import inc.nomard.spoty.utils.navigation.*;
 import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.chart.*;

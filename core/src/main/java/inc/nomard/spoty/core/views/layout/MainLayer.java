@@ -12,7 +12,6 @@ import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
 import javafx.util.*;
 import org.kordamp.ikonli.fontawesome5.*;
 import org.kordamp.ikonli.javafx.*;

@@ -139,14 +139,14 @@ public class SaleReturnsPreviewController implements Initializable {
         customerName.setText(saleReturn.getCustomer().getName());
         customerNumber.setText(saleReturn.getCustomer().getPhone());
         customerEmail.setText(saleReturn.getCustomer().getEmail());
-        saleReturnDetailsList.addAll(saleReturn.getSaleReturnDetails());
+//        saleReturnDetailsList.addAll(saleReturn.getSaleReturnDetails());
         subTotal.setText(String.valueOf(saleReturn.getSubTotal()));
         discount.setText(String.valueOf(saleReturn.getDiscount()));
-        tax.setText(String.valueOf(saleReturn.getNetTax()));
+//        tax.setText(String.valueOf(saleReturn.getNetTax()));
         shipping.setText(String.valueOf(saleReturn.getShippingFee()));
         netCost.setText(String.valueOf(saleReturn.getTotal()));
         paidAmount.setText(String.valueOf(saleReturn.getAmountPaid()));
         changeDue.setText(String.valueOf(saleReturn.getChangeAmount()));
-        balance.setText(String.valueOf(saleReturn.getBalanceAmount()));
+//        balance.setText(String.valueOf(saleReturn.getBalanceAmount()));
     }
 }

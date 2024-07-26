@@ -118,16 +118,16 @@ public class SplashScreen extends BorderPane {
 
     private static void getSystemTheme(Scene scene) {
         // Apply platform color scheme preferences
-         Platform.Preferences preferences = Platform.getPreferences();
-         if (preferences == null) {
-             return;
-         }
+        Platform.Preferences preferences = Platform.getPreferences();
+        if (preferences == null) {
+            return;
+        }
 
-         ColorScheme colorScheme = preferences.getColorScheme();
-         updateTheme(colorScheme, scene);
+        ColorScheme colorScheme = preferences.getColorScheme();
+        updateTheme(colorScheme, scene);
 
         // Add a listener to update on color scheme changes
-         preferences.colorSchemeProperty().addListener((observable, oldValue, newValue) -> updateTheme(newValue, scene));
+        preferences.colorSchemeProperty().addListener((observable, oldValue, newValue) -> updateTheme(newValue, scene));
 
         // final OsThemeDetector detector = OsThemeDetector.getDetector();
         // final boolean isDarkThemeUsed = detector.isDark();

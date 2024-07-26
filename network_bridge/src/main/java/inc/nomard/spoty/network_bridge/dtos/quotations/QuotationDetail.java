@@ -21,6 +21,7 @@ public class QuotationDetail {
     public String getProductName() {
         return product.getName();
     }
+
     public Double getProductPrice() {
         return product.getSalePrice();
     }

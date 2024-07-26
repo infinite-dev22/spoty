@@ -26,6 +26,7 @@ import org.apache.http.entity.mime.*;
 import org.apache.http.entity.mime.content.*;
 
 import javafx.util.Duration;
+
 @Log
 public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductRepository {
     @Override

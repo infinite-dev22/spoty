@@ -5,8 +5,6 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import java.text.*;
 import java.time.*;
-
-import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -21,7 +19,7 @@ public class SaleReturnMaster {
     private Long id;
     private String ref;
     private Customer customer;
-    private List<SaleDetail> saleDetails;
+    private List<SaleDetail> saleReturnDetails;
     private Tax tax;
     private Discount discount;
     private double subTotal;
@@ -30,8 +28,8 @@ public class SaleReturnMaster {
     private double amountDue;
     private double changeAmount;
     private double shippingFee;
-    private String paymentStatus;
     private String saleStatus;
+    private String paymentStatus;
     private String notes;
     private User createdBy;
     private LocalDateTime createdAt;

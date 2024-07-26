@@ -11,7 +11,6 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxcomponents.controls.checkbox.*;
 import java.net.*;
 import java.util.*;
 import javafx.event.*;

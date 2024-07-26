@@ -128,8 +128,8 @@ public class SalaryViewModel {
     }
 
     public static void saveSalary(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var salaryAdvance = Salary.builder()
                 .employee(getEmployee())
                 .paySlip(getPaySlip())
@@ -192,7 +192,7 @@ public class SalaryViewModel {
     }
 
     public static void getAllSalaries(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                            SpotyGotFunctional.MessageConsumer errorMessage) {
+                                      SpotyGotFunctional.MessageConsumer errorMessage) {
         CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
@@ -241,8 +241,8 @@ public class SalaryViewModel {
     }
 
     public static void getSalary(Long index,
-                                        SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                        SpotyGotFunctional.MessageConsumer errorMessage) {
+                                 SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                 SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
         CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
@@ -342,8 +342,8 @@ public class SalaryViewModel {
     }
 
     public static void updateSalary(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                           SpotyGotFunctional.MessageConsumer successMessage,
-                                           SpotyGotFunctional.MessageConsumer errorMessage) {
+                                    SpotyGotFunctional.MessageConsumer successMessage,
+                                    SpotyGotFunctional.MessageConsumer errorMessage) {
         var salaryAdvance = Salary.builder()
                 .id(getId())
                 .employee(getEmployee())

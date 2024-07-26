@@ -2,8 +2,6 @@ package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import java.time.*;
-
-import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;

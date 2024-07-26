@@ -15,6 +15,7 @@ import java.util.concurrent.*;
 import lombok.extern.java.*;
 
 import javafx.util.Duration;
+
 @Log
 public class LeaveStatusRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override

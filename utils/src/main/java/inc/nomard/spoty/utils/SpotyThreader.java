@@ -1,11 +1,8 @@
 package inc.nomard.spoty.utils;
 
-import lombok.extern.java.Log;
+import java.util.concurrent.*;
+import lombok.extern.java.*;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javafx.util.Duration;
 @Log
 public class SpotyThreader {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);

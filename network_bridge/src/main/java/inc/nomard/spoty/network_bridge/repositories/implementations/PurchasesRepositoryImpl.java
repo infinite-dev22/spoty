@@ -16,6 +16,7 @@ import java.util.concurrent.*;
 import lombok.extern.java.*;
 
 import javafx.util.Duration;
+
 @Log
 public class PurchasesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     private static final Gson gson = new GsonBuilder()

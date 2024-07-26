@@ -1,6 +1,5 @@
 package inc.nomard.spoty.core.views.settings;
 
-import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.views.settings.app_settings.*;
 import inc.nomard.spoty.core.views.util.*;
 import javafx.geometry.*;

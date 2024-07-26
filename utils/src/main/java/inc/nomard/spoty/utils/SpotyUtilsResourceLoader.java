@@ -1,11 +1,9 @@
 package inc.nomard.spoty.utils;
 
-import lombok.extern.java.Log;
+import java.io.*;
+import java.net.*;
+import lombok.extern.java.*;
 
-import java.io.InputStream;
-import java.net.URL;
-
-import javafx.util.Duration;
 @Log
 public class SpotyUtilsResourceLoader {
     public SpotyUtilsResourceLoader() {

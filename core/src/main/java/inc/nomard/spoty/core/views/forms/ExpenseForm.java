@@ -22,8 +22,8 @@ import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.util.*;
 import javafx.util.Duration;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log

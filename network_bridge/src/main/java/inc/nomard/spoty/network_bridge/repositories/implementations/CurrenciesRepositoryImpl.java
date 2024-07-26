@@ -19,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
 import javafx.util.Duration;
+
 @Log
 public class CurrenciesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override

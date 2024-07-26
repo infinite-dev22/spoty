@@ -2,10 +2,7 @@ package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import java.text.*;
-import java.time.*;
-
 import java.time.*;
 import java.util.*;
 import lombok.*;

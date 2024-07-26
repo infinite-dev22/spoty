@@ -4,11 +4,9 @@ import atlantafx.base.controls.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -41,7 +39,6 @@ public class EmailPage extends OutlinePage {
 //        setIcons();
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -165,27 +162,11 @@ public class EmailPage extends OutlinePage {
             AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getAccountName(), this));
-        // Edit
-        edit.setOnAction(
-                event -> {
-                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
-                    event.consume();
-                });
-        // Deposit
-        deposit.setOnAction(
-                event -> {
-                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
-                    event.consume();
-                });
 
         contextMenu.addItems(deposit, edit, delete);
 
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
-    }
-
-    public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait());
     }
 
     private void onSuccess() {

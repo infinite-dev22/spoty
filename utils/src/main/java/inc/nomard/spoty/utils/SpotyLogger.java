@@ -2,14 +2,10 @@ package inc.nomard.spoty.utils;
 
 import java.io.*;
 import java.nio.file.*;
-import java.time.*;
-
-import java.time.*;
 import java.util.*;
 import java.util.logging.*;
 import lombok.extern.java.*;
 
-import javafx.util.Duration;
 @Log
 public class SpotyLogger {
     public static <T> void writeToFile(Throwable throwable, Class<T> currentClass) {

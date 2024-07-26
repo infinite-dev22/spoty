@@ -1,13 +1,9 @@
 package inc.nomard.spoty.utils.responsiveness.layouts;
 
-import javafx.scene.layout.GridPane;
-import lombok.extern.java.Log;
+import java.util.*;
+import javafx.scene.layout.*;
+import lombok.extern.java.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javafx.util.Duration;
 @Log
 public class BootstrapRow {
 

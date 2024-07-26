@@ -2,11 +2,8 @@ package inc.nomard.spoty.core.views.components.label_components.controls;
 
 import inc.nomard.spoty.core.views.components.label_components.skins.*;
 import io.github.palexdev.materialfx.validation.*;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.scene.control.Control;
-import javafx.scene.control.Skin;
-import javafx.scene.control.TextArea;
+import javafx.beans.property.*;
+import javafx.scene.control.*;
 
 public class LabeledTextArea extends Control implements Validated {
     protected final MFXValidator validator;
