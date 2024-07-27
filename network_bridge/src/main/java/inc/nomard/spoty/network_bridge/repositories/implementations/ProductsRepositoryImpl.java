@@ -31,6 +31,10 @@ import javafx.util.Duration;
 @Log
 public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductRepository {
     private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
