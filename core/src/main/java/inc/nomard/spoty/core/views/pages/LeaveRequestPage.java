@@ -14,6 +14,7 @@ import io.github.palexdev.materialfx.controls.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -233,6 +234,7 @@ public class LeaveRequestPage extends OutlinePage {
     }
 
     private void setupTableColumns() {
+        employeeName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employeeName.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
@@ -245,6 +247,7 @@ public class LeaveRequestPage extends OutlinePage {
                 setText(null);
             }
         });
+        dateAndTime.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         dateAndTime.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
@@ -266,6 +269,7 @@ public class LeaveRequestPage extends OutlinePage {
                 setText(null);
             }
         });
+        leaveType.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         leaveType.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
@@ -274,6 +278,7 @@ public class LeaveRequestPage extends OutlinePage {
                 setText(item.getLeaveType());
             }
         });
+        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
@@ -281,6 +286,7 @@ public class LeaveRequestPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
             }
         });
+        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
@@ -292,6 +298,7 @@ public class LeaveRequestPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
             }
         });
+        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
@@ -300,6 +307,7 @@ public class LeaveRequestPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
+        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {

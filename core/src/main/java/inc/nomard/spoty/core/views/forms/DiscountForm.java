@@ -25,14 +25,11 @@ import javafx.util.converter.*;
 import lombok.extern.java.*;
 
 @Log
-public class DiscountForm extends MFXGenericDialog {
-    @FXML
+public class DiscountForm extends ModalPage {
     public ValidatableTextField name,
             percentage;
-    @FXML
     public Label nameValidationLabel,
             percentageValidationLabel;
-    @FXML
     public Button saveBtn,
             cancelBtn;
     private List<Constraint> nameConstraints,
@@ -122,12 +119,7 @@ public class DiscountForm extends MFXGenericDialog {
                 (event) -> {
                     resetProperties();
                     closeDialog(event);
-                    nameValidationLabel.setVisible(false);
-                    percentageValidationLabel.setVisible(false);
-                    nameValidationLabel.setManaged(false);
-                    percentageValidationLabel.setManaged(false);
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    percentage.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    dispose();
                 });
         saveBtn.setOnAction(
                 (event) -> {
@@ -166,6 +158,7 @@ public class DiscountForm extends MFXGenericDialog {
         closeDialog(actionEvent);
         DiscountViewModel.resetProperties();
         DiscountViewModel.getDiscounts(null, null);
+        dispose();
     }
 
     public void requiredValidator() {
@@ -233,5 +226,19 @@ public class DiscountForm extends MFXGenericDialog {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.name = null;
+        this.percentage = null;
+        this.saveBtn = null;
+        this.cancelBtn = null;
+        this.nameValidationLabel = null;
+        this.percentageValidationLabel = null;
+        this.nameConstraints = null;
+        this.percentageConstraints = null;
+        this.actionEvent = null;
     }
 }

@@ -13,6 +13,7 @@ import io.github.palexdev.materialfx.controls.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -243,24 +244,28 @@ public class EmploymentStatusPage extends OutlinePage {
 
     private void setupTableColumns() {
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        appearance.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         appearance.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(EmploymentStatus item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                if (!empty || Objects.nonNull(item)) {
+                    this.setAlignment(Pos.CENTER);
 
-                var col = Color.valueOf(item.getColor());
-                var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
+                    var col = Color.valueOf(item.getColor());
+                    var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
 
-                var chip = new Label(item.getName());
-                chip.setTextFill(Color.valueOf(item.getColor()).darker());
-                chip.setPadding(new Insets(5, 10, 5, 10));
-                chip.setBorder(new Border(new BorderStroke(Color.valueOf(item.getColor()).darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
-                chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
-                chip.setAlignment(Pos.CENTER);
+                    var chip = new Label(item.getName());
+                    chip.setTextFill(Color.valueOf(item.getColor()).darker());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setBorder(new Border(new BorderStroke(Color.valueOf(item.getColor()).darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
+                    chip.setAlignment(Pos.CENTER);
+                    chip.setPrefWidth(150d);
 
-                setGraphic(chip);
-                setText(null);
+                    setGraphic(chip);
+                    setText(null);
+                }
             }
         });
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
@@ -271,6 +276,7 @@ public class EmploymentStatusPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
             }
         });
+        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(EmploymentStatus item, boolean empty) {
@@ -282,6 +288,7 @@ public class EmploymentStatusPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
             }
         });
+        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(EmploymentStatus item, boolean empty) {
@@ -290,6 +297,7 @@ public class EmploymentStatusPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
+        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(EmploymentStatus item, boolean empty) {

@@ -82,7 +82,6 @@ public class UserForm extends ModalPage {
         role = createFilterComboBox("Role", RoleViewModel.getRoles());
 
         status = new ToggleSwitch();
-        status.setText("Active");
 
         saveBtn = new Button("Save");
         saveBtn.setDefaultButton(true);
@@ -174,7 +173,7 @@ public class UserForm extends ModalPage {
         addFormRow(gridPane, 2, buildFieldBox(email, "Email"), emailValidationLabel, buildFieldBox(phone, "Phone"), phoneValidationLabel);
         addFormRow(gridPane, 3, buildFieldBox(department, "Department"), departmentValidationLabel, buildFieldBox(designation, "Designation"), designationValidationLabel);
         addFormRow(gridPane, 4, buildFieldBox(employmentStatus, "Employment Status"), employmentStatusValidationLabel, buildFieldBox(workShift, "Work Shift"), workShiftValidationLabel);
-        addFormRow(gridPane, 5, buildFieldBox(role, "Role"), roleValidationLabel, buildFieldBox(status, "Active"), null);
+        addFormRow(gridPane, 5, buildFieldBox(role, "Role"), roleValidationLabel, buildFieldBox(status, "Status"), null);
     }
 
     private VBox buildFieldBox(Control textField, String floatingText) {

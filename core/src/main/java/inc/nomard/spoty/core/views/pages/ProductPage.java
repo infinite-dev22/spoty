@@ -17,6 +17,7 @@ import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -156,16 +157,18 @@ public class ProductPage extends OutlinePage {
         updatedBy = new TableColumn<>("Updated By");
         updatedAt = new TableColumn<>("Updated At");
 
-        productName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productCategory.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productBrand.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        costPrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        salePrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productQuantity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        productName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        productCategory.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        productBrand.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        costPrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        salePrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        productQuantity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        tax.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        discount.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
 
         setupTableColumns();
 
@@ -300,6 +303,7 @@ public class ProductPage extends OutlinePage {
 
     private void setupTableColumns() {
         productName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        productCategory.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         productCategory.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
@@ -307,6 +311,7 @@ public class ProductPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getCategoryName());
             }
         });
+        productBrand.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         productBrand.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
@@ -317,20 +322,23 @@ public class ProductPage extends OutlinePage {
         costPrice.setCellValueFactory(new PropertyValueFactory<>("costPrice"));
         salePrice.setCellValueFactory(new PropertyValueFactory<>("salePrice"));
         productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        tax.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         tax.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getTax()) ? null : item.getTax().getName());
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getTax()) ? null : String.valueOf(item.getTax().getPercentage()));
             }
         });
+        discount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         discount.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDiscount()) ? null : item.getDiscount().getName());
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDiscount()) ? null : String.valueOf(item.getDiscount().getPercentage()));
             }
         });
+        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
@@ -338,6 +346,7 @@ public class ProductPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
             }
         });
+        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
@@ -349,6 +358,7 @@ public class ProductPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
             }
         });
+        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
@@ -357,6 +367,7 @@ public class ProductPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
+        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {

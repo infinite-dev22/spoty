@@ -16,6 +16,7 @@ import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -291,6 +292,7 @@ public class OrderPage extends OutlinePage {
     }
 
     private void setupTableColumns() {
+        saleCustomer.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         saleCustomer.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
@@ -298,6 +300,7 @@ public class OrderPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getCustomerName());
             }
         });
+        saleDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         saleDate.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
@@ -313,6 +316,7 @@ public class OrderPage extends OutlinePage {
         saleAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
         saleStatus.setCellValueFactory(new PropertyValueFactory<>("saleStatus"));
         salePaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
+        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
@@ -320,6 +324,7 @@ public class OrderPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
             }
         });
+        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
@@ -331,6 +336,7 @@ public class OrderPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
             }
         });
+        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
@@ -339,6 +345,7 @@ public class OrderPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
+        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {

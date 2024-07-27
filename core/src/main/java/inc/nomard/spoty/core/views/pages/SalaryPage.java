@@ -17,6 +17,7 @@ import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -261,6 +262,7 @@ public class SalaryPage extends OutlinePage {
     }
 
     private void setupTableColumns() {
+        payslip.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         payslip.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Salary item, boolean empty) {
@@ -270,6 +272,7 @@ public class SalaryPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getPaySlip().getStartDate().format(dtf) + " - " + item.getPaySlip().getEndDate().format(dtf));
             }
         });
+        employee.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employee.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Salary item, boolean empty) {

@@ -17,6 +17,7 @@ import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -191,7 +192,6 @@ public class SupplierPage extends OutlinePage {
         edit.setOnAction(
                 e -> {
                     SupplierViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new SupplierForm(), this).showAndWait(), this::errorMessage);
-                    SpotyDialog.createDialog(new SupplierForm(), this).showAndWait();
                     e.consume();
                 });
         // View
@@ -285,6 +285,7 @@ public class SupplierPage extends OutlinePage {
         city.setCellValueFactory(new PropertyValueFactory<>("city"));
         country.setCellValueFactory(new PropertyValueFactory<>("country"));
         taxNumber.setCellValueFactory(new PropertyValueFactory<>("taxNumber"));
+        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Supplier item, boolean empty) {
@@ -292,6 +293,7 @@ public class SupplierPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
             }
         });
+        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Supplier item, boolean empty) {

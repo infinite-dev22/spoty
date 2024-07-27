@@ -18,6 +18,7 @@ import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -282,6 +283,7 @@ public class RequisitionPage extends OutlinePage {
 
     private void setupTableColumns() {
         reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
+        supplier.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         supplier.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
@@ -289,6 +291,7 @@ public class RequisitionPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getSupplierName());
             }
         });
+        status.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         status.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
@@ -317,6 +320,7 @@ public class RequisitionPage extends OutlinePage {
                 setText(null);
             }
         });
+        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
@@ -324,6 +328,7 @@ public class RequisitionPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
             }
         });
+        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
@@ -335,6 +340,7 @@ public class RequisitionPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
             }
         });
+        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
@@ -343,6 +349,7 @@ public class RequisitionPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
+        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {

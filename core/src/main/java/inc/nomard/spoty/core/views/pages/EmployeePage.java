@@ -13,6 +13,7 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -123,12 +124,12 @@ public class EmployeePage extends OutlinePage {
         salary = new TableColumn<>("Salary");
         role = new TableColumn<>("Role");
 
-        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.35));
-        email.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        phone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        email.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        phone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         department.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         workShift.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         role.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
@@ -249,18 +250,22 @@ public class EmployeePage extends OutlinePage {
     }
 
     private void setupTableColumns() {
+        employeeName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employeeName.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                var employeeName = new Label(item.getName());
-                var employeeDesignation = new Label(item.getDesignation().getName());
-                employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
-                var vbox = new VBox(employeeName, employeeDesignation);
-                setGraphic(vbox);
-                setText(null);
+                if (!empty || !Objects.isNull(item) && !Objects.isNull(item.getDesignationName())) {
+                    var employeeName = new Label(item.getName());
+                    var employeeDesignation = new Label(item.getDesignationName());
+                    employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
+                    var vbox = new VBox(employeeName, employeeDesignation);
+                    setGraphic(vbox);
+                    setText(null);
+                }
             }
         });
+        phone.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         phone.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(User item, boolean empty) {
@@ -269,63 +274,74 @@ public class EmployeePage extends OutlinePage {
             }
         });
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        employmentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employmentStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                if (!empty || !Objects.isNull(item) && !Objects.isNull(item.getEmploymentStatusColor()) && !Objects.isNull(item.getEmploymentStatusName())) {
+                    this.setAlignment(Pos.CENTER);
 
-                var chip = new Label(item.getEmploymentStatus().getName());
-                chip.setAlignment(Pos.CENTER);
-                chip.setPadding(new Insets(5, 10, 5, 10));
-                chip.setPrefWidth(50);
-                chip.setStyle("-fx-background-color: " + item.getEmploymentStatus().getColor() + ";"
-                        + "-fx-foreground-color: white;"
-                        + "-fx-background-radius: 50;"
-                        + "-fx-border-radius: 50;");
-                setGraphic(chip);
-                setText(null);
+                    var chip = new Label(item.getEmploymentStatusName());
+                    chip.setAlignment(Pos.CENTER);
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setPrefWidth(50);
+                    chip.setStyle("-fx-background-color: " + item.getEmploymentStatusColor() + ";"
+                            + "-fx-foreground-color: white;"
+                            + "-fx-background-radius: 50;"
+                            + "-fx-border-radius: 50;");
+                    setGraphic(chip);
+                    setText(null);
+                }
             }
         });
+        status.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         status.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
-                this.setAlignment(Pos.CENTER);
+                if (!empty || Objects.nonNull(item)) {
+                    this.setAlignment(Pos.CENTER);
 
-                var chip = new Label(item.isActive());
-                chip.setAlignment(Pos.CENTER);
-                chip.setPadding(new Insets(5, 10, 5, 10));
-                chip.setPrefWidth(50);
-                chip.setStyle("-fx-foreground-color: white;"
-                        + "-fx-background-radius: 50;"
-                        + "-fx-border-radius: 50;");
-                if (item.getActive()) {
-                    chip.getStyleClass().add(Styles.SUCCESS);
-                } else {
-                    chip.getStyleClass().add(Styles.DANGER);
+                    var chip = new Label(item.isActive());
+                    chip.setAlignment(Pos.CENTER);
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setPrefWidth(150);
+                    chip.setStyle("-fx-foreground-color: white;"
+                            + "-fx-background-radius: 50;"
+                            + "-fx-border-radius: 50;");
+                    if (item.getActive()) {
+                        chip.getStyleClass().add(Styles.SUCCESS);
+                    } else {
+                        chip.getStyleClass().add(Styles.DANGER);
+                    }
+                    setGraphic(chip);
+                    setText(null);
                 }
-                setGraphic(chip);
-                setText(null);
             }
         });
         workShift.setCellValueFactory(new PropertyValueFactory<>("workShift"));
         salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
+        role.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         role.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
-                setText(item.getRole().getName());
+                if (!empty || Objects.nonNull(item)) {
+                    this.setAlignment(Pos.CENTER);
+                    setText(item.getRole().getName());
+                }
             }
         });
+        department.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         department.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
-                setText(item.getDepartmentName());
+                if (!empty || Objects.nonNull(item)) {
+                    this.setAlignment(Pos.CENTER);
+                    setText(item.getDepartmentName());
+                }
             }
         });
     }

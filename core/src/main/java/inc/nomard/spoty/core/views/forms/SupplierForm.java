@@ -15,7 +15,6 @@ import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.*;
 import javafx.beans.property.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -25,10 +24,8 @@ import lombok.extern.java.*;
 
 @Log
 public class SupplierForm extends ModalPage {
-    @FXML
     public Button saveBtn,
             cancelBtn;
-    @FXML
     public ValidatableTextField name,
             email,
             phone,
@@ -36,7 +33,6 @@ public class SupplierForm extends ModalPage {
             country,
             taxNumber,
             address;
-    @FXML
     public Label nameValidationLabel,
             emailValidationLabel,
             phoneValidationLabel;
@@ -237,24 +233,11 @@ public class SupplierForm extends ModalPage {
 
     private void onCancel(ActionEvent event) {
         closeDialog(event);
-        SupplierViewModel.resetProperties();
-        nameValidationLabel.setVisible(false);
-        emailValidationLabel.setVisible(false);
-        phoneValidationLabel.setVisible(false);
-
-        nameValidationLabel.setManaged(false);
-        emailValidationLabel.setManaged(false);
-        phoneValidationLabel.setManaged(false);
-
-        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         this.dispose();
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
-        SupplierViewModel.resetProperties();
         SupplierViewModel.getAllSuppliers(null, null);
         this.dispose();
     }
@@ -288,6 +271,7 @@ public class SupplierForm extends ModalPage {
     @Override
     public void dispose() {
         super.dispose();
+        SupplierViewModel.resetProperties();
         saveBtn = null;
         cancelBtn = null;
         name = null;
