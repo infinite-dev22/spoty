@@ -29,7 +29,7 @@ public class DepartmentForm extends MFXGenericDialog {
     public ValidatableTextField name, location;
     public ValidatableComboBox<User> manager;
     public ValidatableComboBox<Department> parentDepartment;
-    public Label nameValidationLabel, managerValidationLabel, parentDepartmentValidationLabel, locationValidationLabel;
+    public Label nameValidationLabel;
     public TextArea description;
     public Button saveBtn;
     public Button cancelBtn;
@@ -69,50 +69,44 @@ public class DepartmentForm extends MFXGenericDialog {
         manager.setPrefWidth(400d);
         manager.valueProperty().bindBidirectional(DepartmentViewModel.managerProperty());
         setupManagerComboBox();
-        // Validation.
-        managerValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, manager, managerValidationLabel);
+        vbox.getChildren().addAll(label, manager);
         return vbox;
     }
 
     private VBox buildParentDepartment() {
         // Input.
-        var label = new Label("Base Department");
+        var label = new Label("Base Department (Optional)");
         parentDepartment = new ValidatableComboBox<>();
         parentDepartment.setPrefWidth(400d);
         parentDepartment.valueProperty().bindBidirectional(DepartmentViewModel.parentDepartmentProperty());
         setupDepartmentComboBox();
-        // Validation.
-        parentDepartmentValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, parentDepartment, parentDepartmentValidationLabel);
+        vbox.getChildren().addAll(label, parentDepartment);
         return vbox;
     }
 
     private VBox buildLocation() {
         // Input.
         location = new ValidatableTextField();
-        var label = new Label("Location");
+        var label = new Label("Location (Optional)");
         location.setPrefWidth(400d);
         location.textProperty().bindBidirectional(DepartmentViewModel.locationProperty());
-        // Validation.
-        locationValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, location, locationValidationLabel);
+        vbox.getChildren().addAll(label, location);
         return vbox;
     }
 
     private VBox buildDescription() {
         // Input.
         description = new TextArea();
-        var label = new Label("Description");
+        var label = new Label("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(DepartmentViewModel.descriptionProperty());
         var vbox = new VBox();
