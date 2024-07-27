@@ -6,6 +6,7 @@ import inc.nomard.spoty.network_bridge.end_points.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
 import java.io.*;
 import java.net.*;
 import java.net.http.HttpRequest;
@@ -29,6 +30,10 @@ import javafx.util.Duration;
 
 @Log
 public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductRepository {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
+            .create();
     @Override
     public CompletableFuture<HttpResponse<String>> fetchAll() {
         var request = HttpRequest.newBuilder()
@@ -88,7 +93,7 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
          * Create a Multipart request body with MultipartEntityBuilder.
          */
         HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .addPart("product", new StringBody(new Gson().toJson(object), ContentType.APPLICATION_JSON))
+                .addPart("product", new StringBody(gson.toJson(object), ContentType.APPLICATION_JSON))
                 .addBinaryBody("file", imageFile)
                 .build();
         /*
@@ -127,7 +132,7 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
          * Create a Multipart request body with MultipartEntityBuilder.
          */
         HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .addPart("product", new StringBody(new Gson().toJson(object), ContentType.APPLICATION_JSON))
+                .addPart("product", new StringBody(gson.toJson(object), ContentType.APPLICATION_JSON))
                 .addBinaryBody("file", imageFile)
                 .build();
         /*

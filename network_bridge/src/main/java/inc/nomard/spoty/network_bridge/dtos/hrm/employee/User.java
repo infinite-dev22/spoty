@@ -21,7 +21,7 @@ public class User {
     private Department department;
     private Role role;
     private String workShift;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String salary;
     private String email;
     private String avatar;

@@ -214,17 +214,6 @@ public class EndPoints {
         public static final String deleteSales = salesUrl + "/delete/multiple";
     }
 
-    public static final class SaleTermsAndConditions {
-        public static final String saleTermsAndConditionsUrl = apiUrl + "/sale_terms_and_conditions";
-        public static final String allSaleTermsAndConditions = saleTermsAndConditionsUrl + "/all";
-        public static final String saleTermAndConditionById = saleTermsAndConditionsUrl + "/single";
-        public static final String searchSaleTermsAndConditions = saleTermsAndConditionsUrl + "/search";
-        public static final String addSaleTermAndCondition = saleTermsAndConditionsUrl + "/add";
-        public static final String updateSaleTermAndCondition = saleTermsAndConditionsUrl + "/update";
-        public static final String deleteSaleTermAndCondition = saleTermsAndConditionsUrl + "/delete/single";
-        public static final String deleteSaleTermsAndConditions = saleTermsAndConditionsUrl + "/delete/multiple";
-    }
-
     public static final class StockIns {
         public static final String stockInsUrl = apiUrl + "/stock_ins";
         public static final String allStockIns = stockInsUrl + "/all";

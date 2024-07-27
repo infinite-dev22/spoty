@@ -20,12 +20,8 @@ import javafx.util.Duration;
 @Log
 public class PurchasesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    new UnixEpochDateTypeAdapter())
             .registerTypeAdapter(LocalDate.class,
                     new LocalDateTypeAdapter())
-            .registerTypeAdapter(LocalTime.class,
-                    new LocalTimeTypeAdapter())
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();

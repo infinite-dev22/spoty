@@ -5,6 +5,7 @@ import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.network_bridge.end_points.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
+import inc.nomard.spoty.utils.adapters.*;
 import java.net.*;
 import java.net.http.*;
 import java.time.*;
@@ -18,6 +19,12 @@ import javafx.util.Duration;
 
 @Log
 public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
+            .create();
     @Override
     public CompletableFuture<HttpResponse<String>> fetchAll() {
         var request = HttpRequest.newBuilder()
@@ -64,7 +71,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
@@ -77,7 +84,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .method("PUT", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
