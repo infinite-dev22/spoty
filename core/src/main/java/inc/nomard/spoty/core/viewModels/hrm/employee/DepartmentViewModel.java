@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.viewModels.hrm.employee;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
@@ -33,6 +34,10 @@ public class DepartmentViewModel {
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
+    private static final ObjectProperty<User> manager = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Department> parentDepartment = new SimpleObjectProperty<>();
+    private static final StringProperty location = new SimpleStringProperty("");
+    private static final BooleanProperty active = new SimpleBooleanProperty();
     private static final StringProperty description = new SimpleStringProperty("");
     public static ObservableList<Department> departmentsList = FXCollections.observableArrayList();
     private static final ListProperty<Department> departments = new SimpleListProperty<>(departmentsList);
@@ -61,6 +66,54 @@ public class DepartmentViewModel {
 
     public static StringProperty nameProperty() {
         return name;
+    }
+
+    public static User getManager() {
+        return manager.get();
+    }
+
+    public static void setManager(User manager) {
+        DepartmentViewModel.manager.set(manager);
+    }
+
+    public static ObjectProperty<User> managerProperty() {
+        return manager;
+    }
+
+    public static Department getParentDepartment() {
+        return parentDepartment.get();
+    }
+
+    public static void setParentDepartment(Department parentDepartment) {
+        DepartmentViewModel.parentDepartment.set(parentDepartment);
+    }
+
+    public static ObjectProperty<Department> parentDepartmentProperty() {
+        return parentDepartment;
+    }
+
+    public static String getLocation() {
+        return location.get();
+    }
+
+    public static void setLocation(String location) {
+        DepartmentViewModel.location.set(location);
+    }
+
+    public static StringProperty locationProperty() {
+        return location;
+    }
+
+    public static Boolean isActive() {
+        return active.get();
+    }
+
+    public static void setActive(Boolean active) {
+        DepartmentViewModel.active.set(active);
+    }
+
+    public static BooleanProperty activeProperty() {
+        return active;
     }
 
     public static String getDescription() {
@@ -93,6 +146,10 @@ public class DepartmentViewModel {
         var department =
                 Department.builder()
                         .name(getName())
+                        .manager(getManager())
+                        .parentDepartment(getParentDepartment())
+                        .location(getLocation())
+                        .active(isActive())
                         .description(getDescription())
                         .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.post(department);
@@ -295,6 +352,10 @@ public class DepartmentViewModel {
         var department = Department.builder()
                 .id(getId())
                 .name(getName())
+                .manager(getManager())
+                .parentDepartment(getParentDepartment())
+                .location(getLocation())
+                .active(isActive())
                 .description(getDescription())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.put(department);

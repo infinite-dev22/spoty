@@ -6,6 +6,7 @@ import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
 import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.utils.flavouring.*;
 import java.util.*;
 import javafx.beans.property.*;
@@ -48,6 +49,7 @@ public class Navigation {
         map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", AccountTransactionPage.class));
         // HUMAN RESOURCE
         // HRM
+        map.put("DEPARTMENTS", NavTree.NavTreeItem.page("Departments", DepartmentPage.class));
         map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", DesignationPage.class));
         map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", EmployeePage.class));
         map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", EmploymentStatusPage.class));
@@ -168,6 +170,7 @@ public class Navigation {
         humanResourceManagement
                 .getChildren()
                 .setAll(
+                        NAV_TREE.get("DEPARTMENTS"),
                         NAV_TREE.get("DESIGNATION"),
                         NAV_TREE.get("EMPLOYMENT_STATUS"),
                         NAV_TREE.get("EMPLOYEES"));
