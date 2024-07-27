@@ -244,18 +244,23 @@ public class BeneficiaryBadgePage extends OutlinePage {
             @Override
             public void updateItem(BeneficiaryBadge item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                if (!empty && !Objects.isNull(item)) {
+                    this.setAlignment(Pos.CENTER);
 
-                var chip = new Label(item.getName());
-                chip.setAlignment(Pos.CENTER);
-                chip.setPadding(new Insets(5, 10, 5, 10));
-                chip.setPrefWidth(50);
-                chip.setStyle("-fx-background-color: " + item.getColor() + ";"
-                        + "-fx-foreground-color: white;"
-                        + "-fx-background-radius: 50;"
-                        + "-fx-border-radius: 50;");
-                setGraphic(chip);
-                setText(null);
+                    var chip = new Label(item.getName());
+                    chip.setAlignment(Pos.CENTER);
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setPrefWidth(50);
+                    chip.setStyle("-fx-background-color: " + item.getColor() + ";"
+                            + "-fx-foreground-color: white;"
+                            + "-fx-background-radius: 50;"
+                            + "-fx-border-radius: 50;");
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
         description.setCellValueFactory(new PropertyValueFactory<>("description"));

@@ -367,14 +367,19 @@ public class UserViewModel {
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    var user = gson.fromJson(response.body(), UserModel.class);
+                    var user = gson.fromJson(response.body(), User.class);
                     setId(user.getId());
-                    setFirstName(user.getFirstName());
-                    setLastName(user.getLastName());
-                    setOtherName(user.getOtherName());
-                    setActive(user.isActive());
-                    setPhone(user.getPhone());
+                    setFirstName(user.getUserProfile().getFirstName());
+                    setLastName(user.getUserProfile().getLastName());
+                    setOtherName(user.getUserProfile().getOtherName());
+                    setDateOfBirth(user.getDateOfBirth());
                     setEmail(user.getEmail());
+                    setPhone(user.getPhone());
+                    setDepartment(user.getDepartment());
+                    setDesignation(user.getDesignation());
+                    setEmploymentStatus(user.getEmploymentStatus());
+                    setWorkShift(user.getWorkShift());
+                    setActive(user.getActive());
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {

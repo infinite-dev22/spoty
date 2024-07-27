@@ -238,12 +238,17 @@ public class LeaveRequestPage extends OutlinePage {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
-                var employeeName = new Label(item.getEmployeeName());
-                var employeeDesignation = new Label(item.getDesignation().getName());
-                employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
-                var vbox = new VBox(employeeName, employeeDesignation);
-                setGraphic(vbox);
-                setText(null);
+                if (!empty && !Objects.isNull(item)) {
+                    var employeeName = new Label(item.getEmployeeName());
+                    var employeeDesignation = new Label(item.getDesignation().getName());
+                    employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
+                    var vbox = new VBox(employeeName, employeeDesignation);
+                    setGraphic(vbox);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
         dateAndTime.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
@@ -251,21 +256,26 @@ public class LeaveRequestPage extends OutlinePage {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                if (!empty && !Objects.isNull(item)) {
+                    this.setAlignment(Pos.CENTER);
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
-                var from = new Label("from:");
-                from.getStyleClass().add(Styles.TEXT_MUTED);
-                var to = new Label("to:");
-                to.getStyleClass().add(Styles.TEXT_MUTED);
-                var vbox1 = new VBox(from, to);
-                var fromTime = new Label(item.getStartDate().format(dtf));
-                var toTime = new Label(item.getEndDate().format(dtf));
-                var vbox2 = new VBox(fromTime, toTime);
-                var hbox = new HBox(2d, vbox1, vbox2);
-                setGraphic(hbox);
-                setText(null);
+                    var from = new Label("from:");
+                    from.getStyleClass().add(Styles.TEXT_MUTED);
+                    var to = new Label("to:");
+                    to.getStyleClass().add(Styles.TEXT_MUTED);
+                    var vbox1 = new VBox(from, to);
+                    var fromTime = new Label(item.getStartDate().format(dtf));
+                    var toTime = new Label(item.getEndDate().format(dtf));
+                    var vbox2 = new VBox(fromTime, toTime);
+                    var hbox = new HBox(2d, vbox1, vbox2);
+                    setGraphic(hbox);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
         leaveType.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));

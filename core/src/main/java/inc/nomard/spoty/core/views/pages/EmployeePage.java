@@ -254,12 +254,15 @@ public class EmployeePage extends OutlinePage {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty || !Objects.isNull(item) && !Objects.isNull(item.getDesignationName())) {
+                if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getDesignationName())) {
                     var employeeName = new Label(item.getName());
                     var employeeDesignation = new Label(item.getDesignationName());
                     employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
                     var vbox = new VBox(employeeName, employeeDesignation);
                     setGraphic(vbox);
+                    setText(null);
+                } else {
+                    setGraphic(null);
                     setText(null);
                 }
             }
@@ -269,7 +272,7 @@ public class EmployeePage extends OutlinePage {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getUserProfile().getPhone());
+                setText(empty && Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getUserProfile().getPhone());
             }
         });
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -278,7 +281,7 @@ public class EmployeePage extends OutlinePage {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty || !Objects.isNull(item) && !Objects.isNull(item.getEmploymentStatusColor()) && !Objects.isNull(item.getEmploymentStatusName())) {
+                if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getEmploymentStatusColor()) && !Objects.isNull(item.getEmploymentStatusName())) {
                     this.setAlignment(Pos.CENTER);
 
                     var chip = new Label(item.getEmploymentStatusName());
@@ -291,6 +294,9 @@ public class EmployeePage extends OutlinePage {
                             + "-fx-border-radius: 50;");
                     setGraphic(chip);
                     setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
                 }
             }
         });
@@ -299,7 +305,7 @@ public class EmployeePage extends OutlinePage {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty || Objects.nonNull(item)) {
+                if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
 
                     var chip = new Label(item.isActive());
@@ -316,6 +322,9 @@ public class EmployeePage extends OutlinePage {
                     }
                     setGraphic(chip);
                     setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
                 }
             }
         });
@@ -326,9 +335,12 @@ public class EmployeePage extends OutlinePage {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty || Objects.nonNull(item)) {
+                if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
                     setText(item.getRole().getName());
+                } else {
+                    setGraphic(null);
+                    setText(null);
                 }
             }
         });
@@ -337,9 +349,12 @@ public class EmployeePage extends OutlinePage {
             @Override
             public void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty || Objects.nonNull(item)) {
+                if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
                     setText(item.getDepartmentName());
+                } else {
+                    setGraphic(null);
+                    setText(null);
                 }
             }
         });

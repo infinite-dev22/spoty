@@ -15,8 +15,10 @@ import lombok.extern.java.*;
 
 @Log
 public class EmploymentStatusesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class,
-                    new LocalDateTimeTypeAdapter())
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class, new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
             .create();
 
     @Override

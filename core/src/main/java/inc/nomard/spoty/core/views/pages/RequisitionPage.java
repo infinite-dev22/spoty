@@ -296,27 +296,31 @@ public class RequisitionPage extends OutlinePage {
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
 
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
 
-                var chip = new Label(item.getStatus());
-                chip.setPadding(new Insets(5, 10, 5, 10));
-                chip.setAlignment(Pos.CENTER);
+                    Color col;
+                    switch (item.getStatus()) {
+                        case "Approved" -> col = Color.valueOf(Styles.SUCCESS);
+                        case "Pending" -> col = Color.valueOf("blue");
+                        case "Rejected" -> col = Color.valueOf(Styles.DANGER);
+                        case "Returned" -> col = Color.valueOf(Styles.WARNING);
+                        default -> col = Color.valueOf(Styles.TEXT_MUTED);
+                    }
+                    var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
 
-                Color col;
-                switch (item.getStatus()) {
-                    case "Approved" -> col = Color.valueOf(Styles.SUCCESS);
-                    case "Pending" -> col = Color.valueOf("blue");
-                    case "Rejected" -> col = Color.valueOf(Styles.DANGER);
-                    case "Returned" -> col = Color.valueOf(Styles.WARNING);
-                    default -> col = Color.valueOf(Styles.TEXT_MUTED);
+                    chip.setTextFill(color.darker());
+                    chip.setBorder(new Border(new BorderStroke(color.darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
                 }
-                var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
-
-                chip.setTextFill(color.darker());
-                chip.setBorder(new Border(new BorderStroke(color.darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
-                chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
-
-                setGraphic(chip);
-                setText(null);
             }
         });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));

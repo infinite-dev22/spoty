@@ -221,6 +221,7 @@ public class EmploymentStatusViewModel {
                     var employmentStatus = gson.fromJson(response.body(), EmploymentStatus.class);
                     setId(employmentStatus.getId());
                     setName(employmentStatus.getName());
+                    setColor(employmentStatus.getColor());
                     setDescription(employmentStatus.getDescription());
                     onSuccess.run();
                 });

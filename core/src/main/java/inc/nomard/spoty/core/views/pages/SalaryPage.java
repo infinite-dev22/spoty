@@ -276,12 +276,17 @@ public class SalaryPage extends OutlinePage {
             @Override
             public void updateItem(Salary item, boolean empty) {
                 super.updateItem(item, empty);
-                var employeeName = new Label(item.getEmployee().getName());
-                var employeeDesignation = new Label(item.getEmployee().getDesignation().getName());
-                employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
-                var vbox = new VBox(employeeName, employeeDesignation);
-                setGraphic(vbox);
-                setText(null);
+                if (!empty && !Objects.isNull(item)) {
+                    var employeeName = new Label(item.getEmployee().getName());
+                    var employeeDesignation = new Label(item.getEmployee().getDesignation().getName());
+                    employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
+                    var vbox = new VBox(employeeName, employeeDesignation);
+                    setGraphic(vbox);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
         status.setCellValueFactory(new PropertyValueFactory<>("status"));

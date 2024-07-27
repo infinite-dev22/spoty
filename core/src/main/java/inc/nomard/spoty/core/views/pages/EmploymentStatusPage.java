@@ -248,7 +248,7 @@ public class EmploymentStatusPage extends OutlinePage {
             @Override
             public void updateItem(EmploymentStatus item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty || Objects.nonNull(item)) {
+                if (!empty && !Objects.isNull(item)) {
                     this.setAlignment(Pos.CENTER);
 
                     var col = Color.valueOf(item.getColor());
@@ -263,6 +263,9 @@ public class EmploymentStatusPage extends OutlinePage {
                     chip.setPrefWidth(150d);
 
                     setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
                     setText(null);
                 }
             }

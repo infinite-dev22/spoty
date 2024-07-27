@@ -289,6 +289,8 @@ public class QuotationMasterViewModel {
                     // Process the successful response
                     var quotationMaster = gson.fromJson(response.body(), QuotationMaster.class);
                     setId(quotationMaster.getId());
+                    setCustomer(getCustomer());
+                    setStatus(getStatus());
                     setNote(quotationMaster.getNotes());
                     setTaxRate(getTaxRate());
                     setDiscount(getDiscount());

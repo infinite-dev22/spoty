@@ -192,7 +192,6 @@ public class CustomerPage extends OutlinePage {
         edit.setOnAction(
                 e -> {
                     CustomerViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new CustomerForm(), this).showAndWait(), this::errorMessage);
-                    SpotyDialog.createDialog(new CustomerForm(), this).showAndWait();
                     e.consume();
                 });
         // View
