@@ -201,6 +201,7 @@ public class Navigation {
             humanResource
                     .getChildren()
                     .setAll(
+                            NAV_TREE.get("DEPARTMENTS"),
                             NAV_TREE.get("DESIGNATION"),
                             NAV_TREE.get("EMPLOYMENT_STATUS"),
                             NAV_TREE.get("EMPLOYEES"));
