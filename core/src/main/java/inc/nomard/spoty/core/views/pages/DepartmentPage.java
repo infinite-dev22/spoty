@@ -173,10 +173,10 @@ public class DepartmentPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Department> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<Department> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete
@@ -190,9 +190,8 @@ public class DepartmentPage extends OutlinePage {
                     DepartmentViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new DepartmentForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
-
-        contextMenu.addItems(edit, delete);
-
+        contextMenu.getItems().addAll(edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

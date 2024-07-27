@@ -161,10 +161,10 @@ public class BeneficiaryBadgePage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<BeneficiaryBadge> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<BeneficiaryBadge> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete
@@ -178,9 +178,8 @@ public class BeneficiaryBadgePage extends OutlinePage {
                     BeneficiaryBadgeViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new BeneficiaryBadgeForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
-
-        contextMenu.addItems(edit, delete);
-
+        contextMenu.getItems().addAll(edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

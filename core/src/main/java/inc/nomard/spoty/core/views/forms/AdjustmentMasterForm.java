@@ -166,7 +166,7 @@ public class AdjustmentMasterForm extends OutlineFormPage {
     }
 
     private ContextMenu showContextMenu(TableRow<AdjustmentDetail> row) {
-        ContextMenu contextMenu = new ContextMenu();
+        var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getItem().getProductName(), this)));
         return contextMenu;
     }

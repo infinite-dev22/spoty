@@ -167,11 +167,11 @@ public class AccountPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Account> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem deposit = new MFXContextMenuItem("Deposit");
+    private ContextMenu showContextMenu(TableRow<Account> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
+        var deposit = new MenuItem("Deposit");
 
         // Actions
         // Delete
@@ -191,9 +191,7 @@ public class AccountPage extends OutlinePage {
                     AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
-
-        contextMenu.addItems(deposit, edit, delete);
-
+        contextMenu.getItems().addAll(edit, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }

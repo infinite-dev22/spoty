@@ -154,7 +154,7 @@ public class QuotationMasterForm extends OutlineFormPage {
         status
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.statusProperty());
-        status.setItems(FXCollections.observableArrayList(Values.QUOTATION_TYPE));
+        status.setItems(Values.QUOTATION_TYPE);
         statusValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(label, status, statusValidationLabel);
     }
@@ -243,9 +243,9 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private ContextMenu showContextMenu(TableRow<QuotationDetail> obj) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem delete = new MenuItem("Delete");
-        MenuItem edit = new MenuItem("Edit");
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete

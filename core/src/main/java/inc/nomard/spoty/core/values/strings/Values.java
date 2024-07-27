@@ -2,26 +2,25 @@ package inc.nomard.spoty.core.values.strings;
 
 
 import java.util.*;
+import javafx.collections.*;
 import lombok.extern.java.*;
 
 @Log
 public class Values {
-    public static final LinkedList<String> BARCODE_TYPES =
-            new LinkedList<>(
-                    Arrays.stream(new String[]{"Code128", "Code39", "EAN8", "EAN13", "UPC A", "UPC E"}).toList());
-    public static final LinkedList<String> PRODUCT_TYPES =
-            new LinkedList<>(
-                    Arrays.stream(new String[]{"Product", "Service"}).toList());
-    public static final LinkedList<String> PURCHASE_STATUSES =
-            new LinkedList<>(Arrays.stream(new String[]{"Ordered", "Pending", "Received", "Returned"}).toList());
-    public static final LinkedList<String> SALE_STATUSES =
-            new LinkedList<>(Arrays.stream(new String[]{"Ordered", "Pending", "Completed", "Returned"}).toList());
-    public static final LinkedList<String> PAYMENT_STATUSES =
-            new LinkedList<>(Arrays.stream(new String[]{"Partial", "Pending", "Paid"}).toList());
-    public static final LinkedList<String> ADJUSTMENT_TYPE =
-            new LinkedList<>(Arrays.stream(new String[]{"Increment", "Decrement"}).toList());
-    public static final LinkedList<String> QUOTATION_TYPE =
-            new LinkedList<>(Arrays.stream(new String[]{"Sent", "Pending", "Closed", "Cancelled"}).toList());
+    public static final ObservableList<String> BARCODE_TYPES =
+            FXCollections.observableArrayList(Arrays.stream(new String[]{"Code128", "Code39", "EAN8", "EAN13", "UPC A", "UPC E"}).toList());
+    public static final ObservableList<String> PRODUCT_TYPES =
+            FXCollections.observableArrayList(Arrays.stream(new String[]{"Product", "Service"}).toList());
+    public static final ObservableList<String> PURCHASE_STATUSES =
+            FXCollections.observableArrayList(Arrays.stream(new String[]{"Approved", "Pending", "Rejected", "Returned"}).toList());
+    public static final ObservableList<String> SALE_STATUSES =
+            FXCollections.observableArrayList(Arrays.stream(new String[]{"Ordered", "Pending", "Completed", "Returned"}).toList());
+    public static final ObservableList<String> PAYMENT_STATUSES =
+            FXCollections.observableArrayList(Arrays.stream(new String[]{"Partial", "Pending", "Paid"}).toList());
+    public static final ObservableList<String> ADJUSTMENT_TYPE =
+            FXCollections.observableArrayList(Arrays.stream(new String[]{"Increment", "Decrement"}).toList());
+    public static final ObservableList<String> QUOTATION_TYPE =
+            FXCollections.observableArrayList(Arrays.stream(new String[]{"Sent", "Pending", "Closed", "Cancelled"}).toList());
     public static final String[] SPECIALS = "@ . ".split(" ");
     public static final String[] CHARACTERS = "@ _ - £ $ % ^ & * ( ) \" ! / \\ > < ? | ' # ~ ¬ ` : ; [ ] { } + =".split(" ");
     public static final String[] ALPHANUMERIC =

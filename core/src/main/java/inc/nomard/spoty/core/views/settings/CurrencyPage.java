@@ -156,9 +156,9 @@ public class CurrencyPage extends OutlinePage {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        var contextMenu = new MFXContextMenu(masterTable);
+        var delete = new MFXContextMenuItem("Delete");
+        var edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {

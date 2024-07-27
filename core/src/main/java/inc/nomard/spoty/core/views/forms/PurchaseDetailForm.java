@@ -63,7 +63,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
     private VBox buildQuantity() {
         // Input.
         quantity = new ValidatableTextField();
-        var label = new Label("Account Number");
+        var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
         // Validation.

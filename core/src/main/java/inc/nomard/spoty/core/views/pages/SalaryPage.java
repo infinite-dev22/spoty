@@ -177,10 +177,10 @@ public class SalaryPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Salary> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    private ContextMenu showContextMenu(TableRow<Salary> obj) {
+        var contextMenu = new ContextMenu();
+        var view = new MenuItem("View");
+        var delete = new MenuItem("Delete");
 
         // Actions
         // View
@@ -197,9 +197,8 @@ public class SalaryPage extends OutlinePage {
             SalaryViewModel.deleteSalary(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getEmployeeName() + "'s salary", this));
-
-        contextMenu.addItems(view, delete);
-
+        contextMenu.getItems().addAll(view, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

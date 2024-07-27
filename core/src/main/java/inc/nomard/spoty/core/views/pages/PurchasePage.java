@@ -17,7 +17,6 @@ import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
-import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.fxml.*;
@@ -202,11 +201,11 @@ public class PurchasePage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<PurchaseMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
+    private ContextMenu showContextMenu(TableRow<PurchaseMaster> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
+        var view = new MenuItem("View");
 
         // Actions
         // Delete
@@ -217,7 +216,7 @@ public class PurchasePage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    Platform.runLater(() -> PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::createBtnAction, this::errorMessage));
+                    PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), () -> AppManager.getNavigation().navigate(PurchaseMasterForm.class), this::errorMessage);
                     e.consume();
                 });
         // View
@@ -226,9 +225,8 @@ public class PurchasePage extends OutlinePage {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-
-        contextMenu.addItems(view, edit, delete);
-
+        contextMenu.getItems().addAll(view, edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

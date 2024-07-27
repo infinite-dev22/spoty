@@ -169,10 +169,10 @@ public class UnitOfMeasurePage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<UnitOfMeasure> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<UnitOfMeasure> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete
@@ -186,7 +186,8 @@ public class UnitOfMeasurePage extends OutlinePage {
                     UOMViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new UOMForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

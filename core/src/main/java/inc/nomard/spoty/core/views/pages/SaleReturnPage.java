@@ -192,10 +192,10 @@ public class SaleReturnPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<SaleReturnMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
+    private ContextMenu showContextMenu(TableRow<SaleReturnMaster> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var view = new MenuItem("View");
 
         // Actions
         // Delete
@@ -209,9 +209,8 @@ public class SaleReturnPage extends OutlinePage {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-
-        contextMenu.addItems(view, delete);
-
+        contextMenu.getItems().addAll(view, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

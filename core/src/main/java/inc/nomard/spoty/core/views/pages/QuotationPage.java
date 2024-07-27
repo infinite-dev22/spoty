@@ -127,6 +127,7 @@ public class QuotationPage extends OutlinePage {
     }
 
     private void setupTable() {
+        reference = new TableColumn<>("Ref");
         customer = new TableColumn<>("Customer");
         total = new TableColumn<>("Total Amount");
         status = new TableColumn<>("Status");
@@ -135,6 +136,7 @@ public class QuotationPage extends OutlinePage {
         updatedBy = new TableColumn<>("Updated By");
         updatedAt = new TableColumn<>("Updated At");
 
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.05));
         customer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         total.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
@@ -145,7 +147,8 @@ public class QuotationPage extends OutlinePage {
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(customer,
+        var columnList = new LinkedList<>(Stream.of(reference,
+                customer,
                 total,
                 status,
                 createdBy,
@@ -179,11 +182,11 @@ public class QuotationPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<QuotationMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<QuotationMaster> obj) {
+        var contextMenu = new ContextMenu();
+        var view = new MenuItem("View");
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete
@@ -203,9 +206,8 @@ public class QuotationPage extends OutlinePage {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-
-        contextMenu.addItems(view, edit, delete);
-
+        contextMenu.getItems().addAll(view, edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
@@ -283,6 +285,7 @@ public class QuotationPage extends OutlinePage {
     }
 
     private void setupTableColumns() {
+        reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
         customer.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         customer.setCellFactory(tableColumn -> new TableCell<>() {
             @Override

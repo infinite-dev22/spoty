@@ -153,10 +153,10 @@ public class BrandPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Brand> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<Brand> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete
@@ -170,9 +170,8 @@ public class BrandPage extends OutlinePage {
                     BrandViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new BrandForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
-
-        contextMenu.addItems(edit, delete);
-
+        contextMenu.getItems().addAll(edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

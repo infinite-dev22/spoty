@@ -178,10 +178,10 @@ public class SupplierPage extends OutlinePage {
     }
 
     private ContextMenu showContextMenu(TableRow<Supplier> obj) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem delete = new MenuItem("Delete");
-        MenuItem edit = new MenuItem("Edit");
-        MenuItem view = new MenuItem("View");
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
+        var view = new MenuItem("View");
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {

@@ -159,17 +159,16 @@ public class AdjustmentPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<AdjustmentMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
+    private ContextMenu showContextMenu(TableRow<AdjustmentMaster> obj) {
+        var contextMenu = new ContextMenu();
+        var view = new MenuItem("View");
         view.setOnAction(
                 event -> {
                     SpotyDialog.createDialog(new AdjustmentPreview(obj.getItem()), this).showAndWait();
                     event.consume();
                 });
-
-        contextMenu.addItems(view);
-
+        contextMenu.getItems().add(view);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

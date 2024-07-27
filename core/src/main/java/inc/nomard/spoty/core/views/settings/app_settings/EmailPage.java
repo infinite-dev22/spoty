@@ -151,10 +151,10 @@ public class EmailPage extends OutlinePage {
     }
 
     private MFXContextMenu showContextMenu(TableRow<Account> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem deposit = new MFXContextMenuItem("Deposit");
+        var contextMenu = new MFXContextMenu(masterTable);
+        var delete = new MFXContextMenuItem("Delete");
+        var edit = new MFXContextMenuItem("Edit");
+        var deposit = new MFXContextMenuItem("Deposit");
 
         // Actions
         // Delete

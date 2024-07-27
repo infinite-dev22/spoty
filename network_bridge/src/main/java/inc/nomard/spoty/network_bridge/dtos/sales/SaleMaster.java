@@ -2,8 +2,8 @@ package inc.nomard.spoty.network_bridge.dtos.sales;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.text.*;
 import java.time.*;
+import java.time.format.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -40,6 +40,7 @@ public class SaleMaster {
     }
 
     public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(createdAt);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+        return createdAt.format(dtf);
     }
 }

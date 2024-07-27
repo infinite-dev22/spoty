@@ -211,11 +211,11 @@ public class ProductPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Product> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<Product> obj) {
+        var contextMenu = new ContextMenu();
+        var view = new MenuItem("View");
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // View
@@ -238,7 +238,8 @@ public class ProductPage extends OutlinePage {
                     ProductViewModel.getProduct(obj.getItem().getId(), () -> SpotyDialog.createDialog(new ProductForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
-        contextMenu.addItems(view, edit, delete);
+        contextMenu.getItems().addAll(view, edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

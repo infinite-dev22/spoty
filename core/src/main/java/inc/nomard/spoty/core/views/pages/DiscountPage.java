@@ -159,21 +159,22 @@ public class DiscountPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Discount> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem delete = getDeleteContextMenuItem(obj);
+    private ContextMenu showContextMenu(TableRow<Discount> obj) {
+        var contextMenu = new ContextMenu();
+        var edit = new MenuItem("Edit");
+        var delete = getDeleteContextMenuItem(obj);
         edit.setOnAction(
                 event -> {
                     DiscountViewModel.getDiscount(obj.getItem().getId(), () -> SpotyDialog.createDialog(new DiscountForm(), this).showAndWait(), this::errorMessage);
                     event.consume();
                 });
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
-    private MFXContextMenuItem getDeleteContextMenuItem(TableRow<Discount> obj) {
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    private MenuItem getDeleteContextMenuItem(TableRow<Discount> obj) {
+        var delete = new MenuItem("Delete");
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             DiscountViewModel.deleteDiscount(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();

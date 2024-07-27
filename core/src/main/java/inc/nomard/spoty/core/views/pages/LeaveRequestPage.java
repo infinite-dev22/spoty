@@ -157,10 +157,10 @@ public class LeaveRequestPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<LeaveStatus> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<LeaveStatus> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete
@@ -174,9 +174,8 @@ public class LeaveRequestPage extends OutlinePage {
                     LeaveStatusViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new LeaveRequestForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
-
-        contextMenu.addItems(edit, delete);
-
+        contextMenu.getItems().addAll(edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

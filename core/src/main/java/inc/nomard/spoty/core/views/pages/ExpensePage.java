@@ -162,10 +162,10 @@ public class ExpensePage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Expense> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(tableView);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<Expense> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
@@ -178,7 +178,8 @@ public class ExpensePage extends OutlinePage {
                     ExpensesViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new ExpenseForm(), this).showAndWait(), this::errorMessage);
                     e.consume();
                 });
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

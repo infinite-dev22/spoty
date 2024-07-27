@@ -372,7 +372,7 @@ public class ProductForm extends ModalPage {
             tax.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
         }
 
-        barcodeType.setItems(FXCollections.observableArrayList(Values.BARCODE_TYPES));
+        barcodeType.setItems(Values.BARCODE_TYPES);
     }
 
     private void dialogOnActions() {

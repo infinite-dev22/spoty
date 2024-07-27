@@ -27,6 +27,11 @@ public class PurchaseMasterViewModel {
 
     @Getter
     public static final ObservableList<PurchaseMaster> purchasesList = FXCollections.observableArrayList();
+    @Getter
+    public static final ObservableList<String> statusesList = FXCollections.observableArrayList("Approved",
+            "Pending",
+            "Rejected",
+            "Returned");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
@@ -267,11 +272,6 @@ public class PurchaseMasterViewModel {
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
         }
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class,
-                        new UnixEpochDateTypeAdapter())
-                .create();
-        System.out.println(gson.toJson(purchaseMaster));
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.put(purchaseMaster);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));

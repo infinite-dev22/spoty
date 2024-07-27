@@ -225,9 +225,9 @@ public class RequisitionMasterForm extends OutlineFormPage {
     }
 
     private ContextMenu showContextMenu(TableRow<RequisitionDetail> obj) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem delete = new MenuItem("Delete");
-        MenuItem edit = new MenuItem("Edit");
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
 
         // Actions
         // Delete

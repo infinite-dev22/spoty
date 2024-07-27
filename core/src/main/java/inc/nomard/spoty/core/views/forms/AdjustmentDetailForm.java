@@ -84,11 +84,12 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         type = new ValidatableComboBox<>();
         type.setPrefWidth(400d);
         type.valueProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
+        typeValidationLabel = Validators.buildValidationLabel();
         setupTypeComboBox();
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, type);
+        vbox.getChildren().addAll(label, type, typeValidationLabel);
         return vbox;
     }
 
@@ -143,7 +144,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
     }
 
     private void setupTypeComboBox() {
-        type.setItems(FXCollections.observableArrayList(Values.ADJUSTMENT_TYPE));
+        type.setItems(Values.ADJUSTMENT_TYPE);
     }
 
     private void requiredValidator() {

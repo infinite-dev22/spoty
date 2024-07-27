@@ -184,11 +184,11 @@ public class TransferPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<TransferMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
+    private ContextMenu showContextMenu(TableRow<TransferMaster> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
+        var view = new MenuItem("View");
 
         // Actions
         // Delete
@@ -208,9 +208,8 @@ public class TransferPage extends OutlinePage {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-
-        contextMenu.addItems(view, edit, delete);
-
+        contextMenu.getItems().addAll(view, edit, delete);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 

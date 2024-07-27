@@ -6,7 +6,7 @@ import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -36,11 +36,11 @@ public class PurchaseMasterForm extends OutlineFormPage {
     private Label supplierValidationLabel;
     private Label dateValidationLabel;
     private Label statusValidationLabel;
-    private LabeledDatePicker date;
-    private LabeledComboBox<Supplier> supplier;
+    private ValidatableDatePicker date;
+    private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
-    private LabeledTextField note;
-    private LabeledComboBox<String> status;
+    private ValidatableTextField note;
+    private ValidatableComboBox<String> status;
     private Button saveBtn, cancelBtn, addBtn;
 
     public PurchaseMasterForm() {
@@ -51,7 +51,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
     public void initializeComponentProperties() {
         bindProperties();
         configureSupplierComboBox();
-        status.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
+        status.setItems(Values.PURCHASE_STATUSES);
         requiredValidator();
     }
 
@@ -116,34 +116,34 @@ public class PurchaseMasterForm extends OutlineFormPage {
     }
 
     private VBox buildSupplier() {
-        supplier = new LabeledComboBox<>();
-        supplier.setLabel("Supplier");
+        var label = new Label("Supplier");
+        supplier = new ValidatableComboBox<>();
         supplier.setPrefWidth(10000d);
         supplierValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(supplier, supplierValidationLabel);
+        return buildFieldHolder(label, supplier, supplierValidationLabel);
     }
 
     private VBox buildStatus() {
-        status = new LabeledComboBox<>();
-        status.setLabel("Purchase Status");
+        var label = new Label("Purchase Status");
+        status = new ValidatableComboBox<>();
         status.setPrefWidth(10000d);
         statusValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(status, statusValidationLabel);
+        return buildFieldHolder(label, status, statusValidationLabel);
     }
 
     private VBox createDatePicker() {
-        date = new LabeledDatePicker();
-        date.setLabel("Date");
+        var label = new Label("Date");
+        date = new ValidatableDatePicker();
         date.setPrefWidth(10000d);
         dateValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(date, dateValidationLabel);
+        return buildFieldHolder(label, date, dateValidationLabel);
     }
 
     private VBox buildNote() {
-        note = new LabeledTextField();
-        note.setLabel("Note");
+        var label = new Label("Note");
+        note = new ValidatableTextField();
         note.setPrefWidth(10000d);
-        return buildFieldHolder(note);
+        return buildFieldHolder(label, note);
     }
 
     private Button buildSaveButton() {
@@ -213,7 +213,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
         validateField(status, statusValidationLabel);
     }
 
-    private <T> void validateField(LabeledComboBox<T> field, Label validationLabel) {
+    private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -223,7 +223,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
         }
     }
 
-    private void validateField(LabeledDatePicker field, Label validationLabel) {
+    private void validateField(ValidatableDatePicker field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -269,7 +269,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
     }
 
     private ContextMenu showContextMenu(TableRow<PurchaseDetail> row) {
-        ContextMenu contextMenu = new ContextMenu();
+        var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getItem().getProductName(), this)), createMenuItem("Edit", event -> handleEditAction(row)));
         return contextMenu;
     }
@@ -307,7 +307,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
         setupValidation(date, "Date is required", dateValidationLabel);
     }
 
-    private <T> void setupValidation(LabeledComboBox<T> field, String message, Label validationLabel) {
+    private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
@@ -324,7 +324,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
         });
     }
 
-    private void setupValidation(LabeledDatePicker field, String message, Label validationLabel) {
+    private void setupValidation(ValidatableDatePicker field, String message, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)

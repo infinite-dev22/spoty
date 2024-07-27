@@ -169,9 +169,9 @@ public class StockInPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<StockInMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
+    private ContextMenu showContextMenu(TableRow<StockInMaster> obj) {
+        var contextMenu = new ContextMenu();
+        var view = new MenuItem("View");
 
         // Actions
         // View
@@ -180,9 +180,8 @@ public class StockInPage extends OutlinePage {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-
-        contextMenu.addItems(view);
-
+        contextMenu.getItems().addAll(view);
+        if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
