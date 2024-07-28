@@ -34,25 +34,14 @@ public class SupplierViewModel {
             .create();
     private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
     private static final SuppliersRepositoryImpl suppliersRepository = new SuppliersRepositoryImpl();
-    private static LongProperty id;
-    private static StringProperty name;
-    private static StringProperty email;
-    private static StringProperty phone;
-    private static StringProperty city;
-    private static StringProperty address;
-    private static StringProperty taxNumber;
-    private static StringProperty country;
-
-    static {
-        id = new SimpleLongProperty(0);
-        name = new SimpleStringProperty("");
-        email = new SimpleStringProperty("");
-        phone = new SimpleStringProperty("");
-        city = new SimpleStringProperty("");
-        address = new SimpleStringProperty("");
-        taxNumber = new SimpleStringProperty("");
-        country = new SimpleStringProperty("");
-    }
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty email = new SimpleStringProperty("");
+    private static final StringProperty phone = new SimpleStringProperty("");
+    private static final StringProperty city = new SimpleStringProperty("");
+    private static final StringProperty address = new SimpleStringProperty("");
+    private static final StringProperty taxNumber = new SimpleStringProperty("");
+    private static final StringProperty country = new SimpleStringProperty("");
 
     public static long getId() {
         return id.get();
@@ -172,14 +161,6 @@ public class SupplierViewModel {
         setAddress("");
         setTaxNumber("");
         setCountry("");
-        id = null;
-        name = null;
-        email = null;
-        phone = null;
-        city = null;
-        address = null;
-        taxNumber = null;
-        country = null;
     }
 
     public static void saveSupplier(SpotyGotFunctional.ParameterlessConsumer onSuccess,

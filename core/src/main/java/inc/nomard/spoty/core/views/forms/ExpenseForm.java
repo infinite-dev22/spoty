@@ -134,6 +134,7 @@ public class ExpenseForm extends MFXGenericDialog {
         var label = new Label("Note");
         note.setPrefWidth(400d);
         note.textProperty().bindBidirectional(ExpensesViewModel.noteProperty());
+        note.setWrapText(true);
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));

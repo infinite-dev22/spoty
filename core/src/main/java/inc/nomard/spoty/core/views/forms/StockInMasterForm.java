@@ -12,9 +12,11 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.utils.*;
+import java.util.*;
+import java.util.stream.*;
 import javafx.event.*;
 import javafx.geometry.*;
-import javafx.scene.*;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -147,6 +149,9 @@ public class StockInMasterForm extends OutlineFormPage {
         productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.5));
         productDescription.prefWidthProperty().bind(table.widthProperty().multiply(.5));
 
+        var columnList = new LinkedList<>(Stream.of(productName, productQuantity, productDescription).toList());
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        table.getColumns().addAll(columnList);
         getStockInDetailTable();
 
         table.setItems(StockInDetailViewModel.getStockInDetails());

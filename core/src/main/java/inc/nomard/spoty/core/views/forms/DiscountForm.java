@@ -16,7 +16,6 @@ import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -68,6 +67,7 @@ public class DiscountForm extends ModalPage {
         var label = new Label("Percentage");
         percentage.setPrefWidth(400d);
         percentage.setRight(new MFXFontIcon("fas-percent"));
+        percentage.setPromptText("0.00");
         percentage.textProperty().bindBidirectional(DiscountViewModel.percentageProperty(), new NumberStringConverter());
         // Validation.
         percentageValidationLabel = Validators.buildValidationLabel();

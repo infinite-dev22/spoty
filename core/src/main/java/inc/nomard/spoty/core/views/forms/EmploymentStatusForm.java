@@ -80,9 +80,10 @@ public class EmploymentStatusForm extends MFXGenericDialog {
     private VBox buildDescription() {
         // Input.
         description = new TextArea();
-        var label = new Label("Description");
+        var label = new Label("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());
+        description.setWrapText(true);
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
@@ -189,13 +190,13 @@ public class EmploymentStatusForm extends MFXGenericDialog {
                         .setCondition(name.textProperty().length().greaterThan(0))
                         .get();
         name.getValidator().constraint(firstName);
-        Constraint lastName =
+        Constraint color =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Color is required")
                         .setCondition(colorPicker.valueProperty().isNotNull())
                         .get();
-        colorPicker.getValidator().constraint(lastName);
+        colorPicker.getValidator().constraint(color);
         // Display error.
         name
                 .getValidator()

@@ -68,6 +68,7 @@ public class ProductCategoryForm extends MFXGenericDialog {
         var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(ProductCategoryViewModel.descriptionProperty());
+        description.setWrapText(true);
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));

@@ -95,6 +95,7 @@ public class AccountForm extends MFXGenericDialog {
         description = new TextArea();
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
+        description.setWrapText(true);
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));

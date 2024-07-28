@@ -248,7 +248,11 @@ public class EmploymentStatusPage extends OutlinePage {
             @Override
             public void updateItem(EmploymentStatus item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && !Objects.isNull(item)) {
+                if (!empty
+                        && !Objects.isNull(item)
+                        && !Objects.isNull(item.getColor())
+                        && !item.getColor().isEmpty()
+                        && !item.getColor().isBlank()) {
                     this.setAlignment(Pos.CENTER);
 
                     var col = Color.valueOf(item.getColor());

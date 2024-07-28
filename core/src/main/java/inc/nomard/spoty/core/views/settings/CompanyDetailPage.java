@@ -49,7 +49,7 @@ public class CompanyDetailPage extends OutlinePage {
             companyTwitter,
             companyFacebook,
             companyLinkedin;
-    public LabeledTextArea companyTagLine;
+    public TextArea companyTagLine;
     public VBox content;
     public CheckBox reportsCheck,
             emailsCheck,
@@ -274,18 +274,19 @@ public class CompanyDetailPage extends OutlinePage {
     }
 
     private HBox buildCompanyTagLine() {
-        companyTagLine = new LabeledTextArea();
+        companyTagLine = new TextArea();
         companyTagLine.setPrefWidth(400d);
         companyTagLine.setPrefHeight(100d);
         companyTagLine.setMinHeight(100d);
-        companyTagLine.setLabel("Tag line");
+        companyTagLine.setWrapText(true);
 //        companyTagLine.setPrompt("Your company's tagline e.g. Just Do It, Think Different, Quality never goes out of style, etc.");
+        var label = new Label("Tag line");
         var hbox = buildSection();
         hbox.getChildren().addAll(
                 buildSectionTitle("Tag line",
                         "A quick snapshot of your company"),
                 spacer(),
-                companyTagLine);
+                new VBox(label, companyTagLine));
         return hbox;
     }
 

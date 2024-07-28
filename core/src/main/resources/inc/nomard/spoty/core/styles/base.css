@@ -475,3 +475,7 @@
 .icon {
     -mfx-size: 24;
 }
+
+.validation-label {
+    -fx-font-size: 11;
+}

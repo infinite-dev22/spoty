@@ -68,6 +68,7 @@ public class TaxForm extends ModalPage {
         percentage.setPrefWidth(400d);
         percentage.setRight(new MFXFontIcon("fas-percent"));
         percentage.textProperty().bindBidirectional(TaxViewModel.percentageProperty(), new NumberStringConverter());
+        percentage.setPromptText("0.00");
         // Validation.
         percentageValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();

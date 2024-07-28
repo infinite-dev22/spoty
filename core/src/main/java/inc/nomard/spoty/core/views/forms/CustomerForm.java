@@ -130,9 +130,9 @@ public class CustomerForm extends ModalPage {
 
     private void addGridPaneContent(GridPane gridPane) {
         addFormRow(gridPane, 0, buildFieldBox(name, "Name"), nameValidationLabel, buildFieldBox(email, "Email"), emailValidationLabel);
-        addFormRow(gridPane, 1, buildFieldBox(phone, "Phone"), phoneValidationLabel, buildFieldBox(country, "Country"), null);
-        addFormRow(gridPane, 2, buildFieldBox(city, "City"), null, buildFieldBox(address, "Address"), null);
-        addFormRow(gridPane, 3, buildFieldBox(taxNumber, "Tax No."), null, null, null);
+        addFormRow(gridPane, 1, buildFieldBox(phone, "Phone"), phoneValidationLabel, buildFieldBox(country, "Country (Optional)"), null);
+        addFormRow(gridPane, 2, buildFieldBox(city, "City (Optional)"), null, buildFieldBox(address, "Address (Optional)"), null);
+        addFormRow(gridPane, 3, buildFieldBox(taxNumber, "Tax No. (Optional)"), null, null, null);
     }
 
     private void addFormRow(GridPane gridPane, int rowIndex, Node leftControl, Label leftLabel, Node rightControl, Label rightLabel) {

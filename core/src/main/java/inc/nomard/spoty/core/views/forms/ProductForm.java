@@ -184,6 +184,8 @@ public class ProductForm extends ModalPage {
         textArea.setPrefWidth(width);
         textArea.setPrefHeight(height);
 
+        textArea.setWrapText(true);
+
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
         box.getChildren().addAll(label, textArea);

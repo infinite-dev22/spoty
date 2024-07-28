@@ -248,7 +248,7 @@ public class Validators {
         label.setManaged(false);
         label.setVisible(false);
         label.setWrapText(true);
-        label.getStyleClass().addAll(Styles.DANGER, Styles.TEXT_SMALL);
+        label.getStyleClass().addAll(Styles.DANGER, Styles.TEXT_SMALL, "validation-label");
         return label;
     }
 }
