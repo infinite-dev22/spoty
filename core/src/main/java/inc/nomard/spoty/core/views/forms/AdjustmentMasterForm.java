@@ -1,57 +1,55 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.utils.*;
+import java.util.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class AdjustmentMasterForm extends OutlineFormPage {
+public class AdjustmentMasterForm extends VBox {
+    private final ModalPane modalPane;
     public TableView<AdjustmentDetail> tableView;
-    public ValidatableTextField note;
+    public TextArea note;
     public Label title;
     public Button addBtn, saveBtn, cancelBtn;
+    private TableColumn<AdjustmentDetail, AdjustmentDetail> productName;
+    private TableColumn<AdjustmentDetail, String> productQuantity;
+    private TableColumn<AdjustmentDetail, String> adjustmentType;
 
-    public AdjustmentMasterForm() {
-        addNode(initialize());
-        bindProperties();
-        setupAddProductButton();
-        setupTable();
+    public AdjustmentMasterForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
+        init();
     }
 
-    private BorderPane initialize() {
-        title = new Label("Adjustment Form");
-        title.setId("title");
-
-        HBox buttonBox = createButtonBox();
-
-        var vbox = new VBox();
-        vbox.getStyleClass().add("card-flat");
-        vbox.setPadding(new Insets(10d));
-        vbox.setSpacing(10d);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-
-        vbox.getChildren().addAll(title, buildSeparator(), buildNote(), buildAddButton(), buildTable(), buttonBox);
-
-        var pane = new BorderPane();
-        pane.setCenter(vbox);
-        return pane;
+    private void init() {
+        this.getStyleClass().add("card-flat");
+        this.setPadding(new Insets(10d));
+        this.setSpacing(10d);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.getChildren().addAll(buildTitle(),
+                buildAddButton(),
+                buildTable(),
+                buildNote(),
+                createButtonBox());
     }
 
     private Separator buildSeparator() {
@@ -61,10 +59,31 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         return separator;
     }
 
+    private VBox buildTitle() {
+        var title = new Text("Create");
+        title.getStyleClass().add(Styles.TITLE_3);
+        var subTitle = new Text("Adjustment");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
+    }
+
     private TableView<AdjustmentDetail> buildTable() {
         tableView = new TableView<>();
         HBox.setHgrow(tableView, Priority.ALWAYS);
-        setupTable();
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+
+        productName = new TableColumn<>("Product");
+        productQuantity = new TableColumn<>("Quantity");
+        adjustmentType = new TableColumn<>("Adjustment Type");
+
+        productName.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
+        productQuantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        adjustmentType.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
+
+        tableView.getColumns().addAll(productName, productQuantity, adjustmentType);
+        tableView.setItems(AdjustmentDetailViewModel.getAdjustmentDetails());
+        setupTableColumns();
+        configureTable();
         return tableView;
     }
 
@@ -78,9 +97,11 @@ public class AdjustmentMasterForm extends OutlineFormPage {
     }
 
     private VBox buildNote() {
-        note = new ValidatableTextField();
         var label = new Label("Note");
-        note.setPrefWidth(10000d);
+        note = new TextArea();
+        note.setPrefHeight(100d);
+        note.setWrapText(true);
+        note.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
         return buildFieldHolder(label, note);
     }
 
@@ -117,47 +138,13 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         cancelBtn = new Button("Cancel");
         cancelBtn.setId("cancelBtn");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            AppManager.getNavigation().navigate(AdjustmentPage.class);
-            AdjustmentMasterViewModel.resetProperties();
-            this.dispose();
-        });
+        cancelBtn.setOnAction(event -> this.dispose());
 
         buttonBox.getChildren().addAll(saveBtn, cancelBtn);
         return buttonBox;
     }
 
-    private void bindProperties() {
-        note.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
-    }
-
-    private void setupAddProductButton() {
-        addBtn.setOnAction(e -> SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait());
-    }
-
-    private void setupTable() {
-        TableColumn<AdjustmentDetail, String> productName = createColumn("Product", 0.5);
-        TableColumn<AdjustmentDetail, String> productQuantity = createColumn("Quantity", 0.5);
-        TableColumn<AdjustmentDetail, String> adjustmentType = createColumn("Adjustment Type", 0.5);
-
-        tableView.getColumns().addAll(productName, productQuantity, adjustmentType);
-        loadTableData();
-        configureTableRow();
-    }
-
-    private <U extends Comparable<? super U>> TableColumn<AdjustmentDetail, String> createColumn(String title, double widthFactor) {
-        TableColumn<AdjustmentDetail, String> column = new TableColumn<>(title);
-        column.prefWidthProperty().bind(tableView.widthProperty().multiply(widthFactor));
-        return column;
-    }
-
-    private void loadTableData() {
-        tableView.setItems(AdjustmentDetailViewModel.getAdjustmentDetails());
-    }
-
-    private void configureTableRow() {
-        tableView.setPrefSize(1000, 1000);
-
+    private void configureTable() {
         tableView.setRowFactory(adjustmentDetail -> {
             TableRow<AdjustmentDetail> row = new TableRow<>();
             row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
@@ -187,11 +174,9 @@ public class AdjustmentMasterForm extends OutlineFormPage {
     }
 
     private void onSuccess() {
-        AppManager.getNavigation().navigate(AdjustmentPage.class);
-        AdjustmentMasterViewModel.resetProperties();
+        this.dispose();
         AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
-        this.dispose();
     }
 
     private void onRequiredFieldsMissing() {
@@ -231,9 +216,23 @@ public class AdjustmentMasterForm extends OutlineFormPage {
         }
     }
 
-    @Override
+    private void setupTableColumns() {
+        productName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        productName.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        adjustmentType.setCellValueFactory(new PropertyValueFactory<>("adjustmentType"));
+    }
+
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        AdjustmentMasterViewModel.resetProperties();
         tableView = null;
         note = null;
         title = null;

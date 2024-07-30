@@ -26,6 +26,7 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class AdjustmentPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<AdjustmentMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -40,10 +41,19 @@ public class AdjustmentPage extends OutlinePage {
 
     public AdjustmentPage() {
         super();
-        addNode(init());
+        modalPane = new SideModalPane();
+
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onDataInitializationSuccess, this::errorMessage);
+
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -173,7 +183,17 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(AdjustmentMasterForm.class));
+        createBtn.setOnAction(event -> {
+            var dialog = new ModalContentHolder(500, -1);
+            dialog.getChildren().add(new AdjustmentMasterForm(modalPane));
+            dialog.setPadding(new Insets(5d));
+            modalPane.setAlignment(Pos.TOP_RIGHT);
+            modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+            modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+            modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+            modalPane.show(dialog);
+            modalPane.setPersistent(true);
+        });
     }
 
     private void errorMessage(String message) {
