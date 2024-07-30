@@ -42,8 +42,8 @@ public class QuotationMasterViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-    private static final StringProperty taxRate = new SimpleStringProperty("");
-    private static final StringProperty discount = new SimpleStringProperty("");
+    private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>(null);
     private static final StringProperty shippingFee = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
@@ -109,27 +109,27 @@ public class QuotationMasterViewModel {
         return customer;
     }
 
-    public static String getTaxRate() {
-        return (taxRate.get().isEmpty() && taxRate.get().isBlank()) ? "0" : taxRate.get();
+    public static Tax getTax() {
+        return tax.get();
     }
 
-    public static void setTaxRate(String taxRate) {
-        QuotationMasterViewModel.taxRate.set(taxRate);
+    public static void setTax(Tax tax) {
+        QuotationMasterViewModel.tax.set(tax);
     }
 
-    public static StringProperty taxRateProperty() {
-        return taxRate;
+    public static ObjectProperty<Tax> taxProperty() {
+        return tax;
     }
 
-    public static String getDiscount() {
-        return (discount.get().isEmpty() && discount.get().isBlank()) ? "0" : discount.get();
+    public static Discount getDiscount() {
+        return discount.get();
     }
 
-    public static void setDiscount(String discount) {
+    public static void setDiscount(Discount discount) {
         QuotationMasterViewModel.discount.set(discount);
     }
 
-    public static StringProperty discountProperty() {
+    public static ObjectProperty<Discount> discountProperty() {
         return discount;
     }
 
@@ -161,8 +161,8 @@ public class QuotationMasterViewModel {
         setId(0L);
         setCustomer(null);
         setBranch(null);
-        setTaxRate("");
-        setDiscount("");
+        setTax(null);
+        setDiscount(null);
         setShippingFee("");
         setNote("");
         QuotationDetailViewModel.quotationDetailsList.clear();
@@ -176,7 +176,7 @@ public class QuotationMasterViewModel {
                 .customer(getCustomer())
                 .notes(getNote())
                 .status(getStatus())
-                .discount(Double.parseDouble(getDiscount()))
+                .discount(getDiscount())
                 .shippingFee(Double.parseDouble(getShippingFee()))
                 .build();
         if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
@@ -292,7 +292,7 @@ public class QuotationMasterViewModel {
                     setCustomer(getCustomer());
                     setStatus(getStatus());
                     setNote(quotationMaster.getNotes());
-                    setTaxRate(getTaxRate());
+                    setTax(getTax());
                     setDiscount(getDiscount());
                     setShippingFee(getShippingFee());
                     QuotationDetailViewModel.quotationDetailsList.clear();
@@ -392,7 +392,7 @@ public class QuotationMasterViewModel {
                 .id(getId())
                 .customer(getCustomer())
                 .status(getStatus())
-                .discount(Double.parseDouble(getDiscount()))
+                .discount(getDiscount())
                 .notes(getNote())
                 .shippingFee(Double.parseDouble(getShippingFee()))
                 .build();

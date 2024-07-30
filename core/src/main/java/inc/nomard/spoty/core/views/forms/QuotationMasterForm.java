@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -10,11 +10,9 @@ import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
@@ -28,24 +26,30 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.*;
 import javafx.util.*;
 import lombok.extern.java.*;
+import org.kordamp.ikonli.fontawesome5.*;
+import org.kordamp.ikonli.javafx.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class QuotationMasterForm extends OutlineFormPage {
-    public ValidatableComboBox<Customer> customer;
-    public TableView<QuotationDetail> table;
-    public ValidatableTextField note;
-    public ValidatableComboBox<String> status;
-    public Label customerValidationLabel,
-            statusValidationLabel;
-    public Button saveBtn,
+public class QuotationMasterForm extends VBox {
+    private final ModalPane modalPane;
+    private ValidatableComboBox<Customer> customer;
+    private ValidatableComboBox<Tax> tax;
+    private ValidatableComboBox<Discount> discount;
+    private TableView<QuotationDetail> table;
+    private CustomTextField shippingFee;
+    private TextArea note;
+    private Label customerValidationLabel;
+    private Button saveBtn,
             cancelBtn,
             addBtn;
 
-    public QuotationMasterForm() {
-        addNode(init());
+    public QuotationMasterForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
+        init();
         initializeComponentProperties();
     }
 
@@ -53,18 +57,19 @@ public class QuotationMasterForm extends OutlineFormPage {
         requiredValidator();
     }
 
-    private BorderPane init() {
-        Label purchaseFormTitle = new Label("Quotation Form");
-        UIUtils.anchor(purchaseFormTitle, 0d, null, null, 0d);
-
-        var vbox = new VBox();
-        vbox.getStyleClass().add("card-flat");
-        vbox.setPadding(new Insets(10d));
-        vbox.setSpacing(10d);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        vbox.getChildren().addAll(purchaseFormTitle, buildSeparator(), createCustomGrid(), buildAddButton(), buildTable(), createButtonBox());
-
-        return new BorderPane(vbox);
+    private void init() {
+        this.getStyleClass().add("card-flat");
+        this.setPadding(new Insets(10d));
+        this.setSpacing(10d);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.getChildren().addAll(buildTitle(),
+                buildCustomer(),
+                buildAddButton(),
+                buildTable(),
+                new HBox(20, buildTax(), buildDiscount()),
+                buildShippingFee(),
+                buildNote(),
+                createButtonBox());
     }
 
     private Separator buildSeparator() {
@@ -75,10 +80,9 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private Button buildAddButton() {
-        addBtn = new Button("Add");
+        addBtn = new Button("Add Product");
         addBtn.setDefaultButton(true);
         addBtn.setOnAction(event -> SpotyDialog.createDialog(new QuotationDetailForm(), this).showAndWait());
-        addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
     }
@@ -90,23 +94,6 @@ public class QuotationMasterForm extends OutlineFormPage {
         return table;
     }
 
-    private VBox createCustomGrid() {
-        var hbox1 = new HBox();
-        hbox1.getChildren().addAll(buildCustomer(), buildStatus());
-        hbox1.setSpacing(20d);
-        HBox.setHgrow(hbox1, Priority.ALWAYS);
-        var hbox2 = new HBox();
-        hbox2.getChildren().add(buildNote());
-        hbox2.setSpacing(20d);
-        HBox.setHgrow(hbox2, Priority.ALWAYS);
-        var vbox = new VBox();
-        vbox.setSpacing(10d);
-        vbox.getChildren().addAll(hbox1, hbox2);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        UIUtils.anchor(vbox, 40d, 0d, null, 0d);
-        return vbox;
-    }
-
     private VBox buildFieldHolder(Node... nodes) {
         VBox vbox = new VBox();
         vbox.setSpacing(5d);
@@ -116,10 +103,19 @@ public class QuotationMasterForm extends OutlineFormPage {
         return vbox;
     }
 
+    private VBox buildTitle() {
+        var title = new Text("Create");
+        title.getStyleClass().add(Styles.TITLE_3);
+        var subTitle = new Text("Quotation");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
+    }
+
     private VBox buildCustomer() {
         customer = new ValidatableComboBox<>();
         var label = new Label("Customer");
-        customer.setPrefWidth(10000d);
+        HBox.setHgrow(customer, Priority.ALWAYS);
+        customer.setPrefWidth(1000d);
         customer
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.customerProperty());
@@ -147,22 +143,80 @@ public class QuotationMasterForm extends OutlineFormPage {
         return buildFieldHolder(label, customer, customerValidationLabel);
     }
 
-    private VBox buildStatus() {
-        status = new ValidatableComboBox<>();
-        var label = new Label("Quotation Status");
-        status.setPrefWidth(10000d);
-        status
+    private VBox buildTax() {
+        var label = new Label("Tax");
+        tax = new ValidatableComboBox<>();
+        tax.setPrefWidth(1000d);
+        tax
                 .valueProperty()
-                .bindBidirectional(QuotationMasterViewModel.statusProperty());
-        status.setItems(Values.QUOTATION_TYPE);
-        statusValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(label, status, statusValidationLabel);
+                .bindBidirectional(QuotationMasterViewModel.taxProperty());
+        // ComboBox Converters.
+        StringConverter<Tax> taxConverter =
+                FunctionalStringConverter.to(tax -> (tax == null) ? "" : tax.getName());
+
+        // ComboBox Filter Functions.
+        Function<String, Predicate<Tax>> taxFilterFunction =
+                searchStr ->
+                        tax ->
+                                StringUtils.containsIgnoreCase(taxConverter.toString(tax), searchStr);
+
+        // Combo box properties.
+        tax.setConverter(taxConverter);
+        if (TaxViewModel.getTaxes().isEmpty()) {
+            TaxViewModel.getTaxes()
+                    .addListener(
+                            (ListChangeListener<Tax>)
+                                    c -> tax.setItems(TaxViewModel.getTaxes()));
+        } else {
+            tax.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
+        }
+        return buildFieldHolder(label, tax);
+    }
+
+    private VBox buildDiscount() {
+        var label = new Label("Discount");
+        discount = new ValidatableComboBox<>();
+        discount.setPrefWidth(1000d);
+        discount
+                .valueProperty()
+                .bindBidirectional(QuotationMasterViewModel.discountProperty());
+        // ComboBox Converters.
+        StringConverter<Discount> discountConverter =
+                FunctionalStringConverter.to(discount -> (discount == null) ? "" : discount.getName());
+
+        // ComboBox Filter Functions.
+        Function<String, Predicate<Discount>> discountFilterFunction =
+                searchStr ->
+                        discount ->
+                                StringUtils.containsIgnoreCase(discountConverter.toString(discount), searchStr);
+
+        // Combo box properties.
+        discount.setConverter(discountConverter);
+        if (DiscountViewModel.getDiscounts().isEmpty()) {
+            DiscountViewModel.getDiscounts()
+                    .addListener(
+                            (ListChangeListener<Discount>)
+                                    c -> discount.setItems(DiscountViewModel.getDiscounts()));
+        } else {
+            discount.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
+        }
+        return buildFieldHolder(label, discount);
+    }
+
+    private VBox buildShippingFee() {
+        var label = new Label("Shipping Fee");
+        shippingFee = new CustomTextField();
+        shippingFee.setPrefWidth(1000d);
+        shippingFee.setLeft(new FontIcon(FontAwesomeSolid.DOLLAR_SIGN));
+        shippingFee.textProperty().bindBidirectional(QuotationMasterViewModel.shippingFeeProperty());
+        return buildFieldHolder(label, shippingFee);
     }
 
     private VBox buildNote() {
-        note = new ValidatableTextField();
+        note = new TextArea();
+        note.setPrefHeight(100d);
+        note.setWrapText(true);
         var label = new Label("Note");
-        note.setPrefWidth(10000d);
         note.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
         return buildFieldHolder(label, note);
     }
@@ -191,8 +245,6 @@ public class QuotationMasterForm extends OutlineFormPage {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
-            AppManager.getNavigation().navigate(QuotationPage.class);
-            QuotationMasterViewModel.resetProperties();
             this.dispose();
         });
         return cancelBtn;
@@ -213,9 +265,9 @@ public class QuotationMasterForm extends OutlineFormPage {
         TableColumn<QuotationDetail, String> productPrice = new TableColumn<>("Price");
         TableColumn<QuotationDetail, String> productQuantity = new TableColumn<>("Quantity");
 
-        productName.prefWidthProperty().bind(table.widthProperty().multiply(.25));
-        productPrice.prefWidthProperty().bind(table.widthProperty().multiply(.25));
-        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.25));
+        productName.prefWidthProperty().bind(table.widthProperty().multiply(.4));
+        productPrice.prefWidthProperty().bind(table.widthProperty().multiply(.3));
+        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
 
         table.getColumns().addAll(productName, productPrice, productQuantity);
         getQuotationDetailTable();
@@ -223,7 +275,7 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private void getQuotationDetailTable() {
-        table.setPrefSize(10000, 10000);
+//        table.setPrefSize(10000, 10000);
 
         table.setRowFactory(
                 quotationDetail -> {
@@ -270,7 +322,6 @@ public class QuotationMasterForm extends OutlineFormPage {
 
     private void validateFields() {
         validateField(customer, customerValidationLabel);
-        validateField(status, statusValidationLabel);
     }
 
     private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
@@ -284,13 +335,11 @@ public class QuotationMasterForm extends OutlineFormPage {
     }
 
     private boolean isValidForm() {
-        return customer.validate().isEmpty() && status.validate().isEmpty() && !table.isDisabled() && !QuotationDetailViewModel.getQuotationDetails().isEmpty();
+        return customer.validate().isEmpty() && !table.isDisabled() && !QuotationDetailViewModel.getQuotationDetails().isEmpty();
     }
 
     private void onSuccess() {
         this.dispose();
-        AppManager.getNavigation().navigate(QuotationPage.class);
-        QuotationMasterViewModel.resetProperties();
         QuotationMasterViewModel.getAllQuotationMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
     }
@@ -304,13 +353,6 @@ public class QuotationMasterForm extends OutlineFormPage {
                         .setCondition(customer.valueProperty().isNotNull())
                         .get();
         customer.getValidator().constraint(customerConstraint);
-        Constraint statusConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Color is required")
-                        .setCondition(status.valueProperty().isNotNull())
-                        .get();
-        status.getValidator().constraint(statusConstraint);
         // Display error.
         customer
                 .getValidator()
@@ -321,17 +363,6 @@ public class QuotationMasterForm extends OutlineFormPage {
                                 customerValidationLabel.setManaged(false);
                                 customerValidationLabel.setVisible(false);
                                 customer.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        status
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                statusValidationLabel.setManaged(false);
-                                statusValidationLabel.setVisible(false);
-                                status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
     }
@@ -362,15 +393,17 @@ public class QuotationMasterForm extends OutlineFormPage {
         }
     }
 
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        QuotationMasterViewModel.resetProperties();
         customerValidationLabel = null;
-        statusValidationLabel = null;
         customer = null;
         table = null;
         note = null;
-        status = null;
+        tax = null;
+        discount = null;
+        shippingFee = null;
         saveBtn = null;
         cancelBtn = null;
         addBtn = null;

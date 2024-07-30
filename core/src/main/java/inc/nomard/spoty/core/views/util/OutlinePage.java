@@ -22,7 +22,7 @@ public abstract class OutlinePage extends StackPane implements Page {
         pageBody.getChildren().setAll(userContentArea);
         pageBody.getStyleClass().add("body");
 
-        setMinWidth(Page.MAX_WIDTH);
+//        setMinWidth(Page.MAX_WIDTH);
         getChildren().setAll(pageBody);
     }
 

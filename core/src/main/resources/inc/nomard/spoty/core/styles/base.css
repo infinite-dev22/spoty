@@ -212,6 +212,12 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
+.modal-dialog-side {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-insets: 2 2 2 0;
+    -fx-background-insets: 2 2 2 0;
+}
 .rounded-accent-border {
     -fx-background-radius: 500;
     -fx-border-radius: 500;

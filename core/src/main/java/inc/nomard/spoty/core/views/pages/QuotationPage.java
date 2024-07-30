@@ -33,6 +33,7 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class QuotationPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<QuotationMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -49,15 +50,25 @@ public class QuotationPage extends OutlinePage {
     private TableColumn<QuotationMaster, QuotationMaster> updatedAt;
 
     public QuotationPage() {
+        modalPane = new SideModalPane();
+
         try {
             viewDialogPane();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        addNode(init());
+
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         AccountTransactionViewModel.getAllTransactions(this::onDataInitializationSuccess, this::errorMessage);
+
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -197,7 +208,7 @@ public class QuotationPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    QuotationMasterViewModel.getQuotationMaster(obj.getItem().getId(), () -> AppManager.getNavigation().navigate(QuotationMasterForm.class), this::errorMessage);
+                    QuotationMasterViewModel.getQuotationMaster(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -212,7 +223,17 @@ public class QuotationPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(QuotationMasterForm.class));
+        createBtn.setOnAction(event -> {
+            var dialog = new ModalContentHolder(500, -1);
+            dialog.getChildren().add(new QuotationMasterForm(modalPane));
+            dialog.setPadding(new Insets(5d));
+            modalPane.setAlignment(Pos.TOP_RIGHT);
+            modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+            modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+            modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+            modalPane.show(dialog);
+            modalPane.setPersistent(true);
+        });
     }
 
     private void onSuccess() {
