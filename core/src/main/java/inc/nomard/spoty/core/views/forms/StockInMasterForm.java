@@ -1,54 +1,55 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.utils.*;
 import java.util.*;
-import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.geometry.*;
-import javafx.scene.Node;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class StockInMasterForm extends OutlineFormPage {
-    public TableView<StockInDetail> table;
-    public ValidatableTextField note;
+public class StockInMasterForm extends VBox {
+    private final ModalPane modalPane;
+    public TableView<StockInDetail> tableView;
+    public TextArea note;
     public Label title;
-    public Button saveBtn,
-            cancelBtn,
-            addBtn;
+    public Button addBtn, saveBtn, cancelBtn;
+    private TableColumn<StockInDetail, StockInDetail> productName;
+    private TableColumn<StockInDetail, String> productQuantity;
+    private TableColumn<StockInDetail, String> description;
 
-    public StockInMasterForm() {
-        addNode(init());
+    public StockInMasterForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
+        init();
     }
 
-    private BorderPane init() {
-        Label purchaseFormTitle = new Label("StockIn Form");
-        UIUtils.anchor(purchaseFormTitle, 0d, null, null, 0d);
-
-        var vbox = new VBox();
-        vbox.getStyleClass().add("card-flat");
-        vbox.setPadding(new Insets(10d));
-        vbox.setSpacing(10d);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        vbox.getChildren().addAll(purchaseFormTitle, buildSeparator(), createCustomGrid(), buildAddButton(), buildTable(), createButtonBox());
-
-        return new BorderPane(vbox);
+    private void init() {
+        this.getStyleClass().add("card-flat");
+        this.setPadding(new Insets(10d));
+        this.setSpacing(10d);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.getChildren().addAll(buildTitle(),
+                buildAddButton(),
+                buildTable(),
+                buildNote(),
+                createButtonBox());
     }
 
     private Separator buildSeparator() {
@@ -56,6 +57,34 @@ public class StockInMasterForm extends OutlineFormPage {
         separator.setPrefWidth(200.0);
         HBox.setHgrow(separator, Priority.ALWAYS);
         return separator;
+    }
+
+    private VBox buildTitle() {
+        var title = new Text("Create");
+        title.getStyleClass().add(Styles.TITLE_3);
+        var subTitle = new Text("Stock In");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
+    }
+
+    private TableView<StockInDetail> buildTable() {
+        tableView = new TableView<>();
+        HBox.setHgrow(tableView, Priority.ALWAYS);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+
+        productName = new TableColumn<>("Product");
+        productQuantity = new TableColumn<>("Quantity");
+        description = new TableColumn<>("Description");
+
+        productName.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
+        productQuantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        description.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
+
+        tableView.getColumns().addAll(productName, productQuantity, description);
+        tableView.setItems(StockInDetailViewModel.getStockInDetails());
+        setupTableColumns();
+        configureTable();
+        return tableView;
     }
 
     private Button buildAddButton() {
@@ -67,20 +96,13 @@ public class StockInMasterForm extends OutlineFormPage {
         return addBtn;
     }
 
-    private TableView<StockInDetail> buildTable() {
-        table = new TableView<>();
-        HBox.setHgrow(table, Priority.ALWAYS);
-        setupTable();
-        return table;
-    }
-
-    private VBox createCustomGrid() {
-        var vbox = new VBox();
-        vbox.setSpacing(10d);
-        vbox.getChildren().add(buildNote());
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        UIUtils.anchor(vbox, 40d, 0d, null, 0d);
-        return vbox;
+    private VBox buildNote() {
+        var label = new Label("Note");
+        note = new TextArea();
+        note.setPrefHeight(100d);
+        note.setWrapText(true);
+        note.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
+        return buildFieldHolder(label, note);
     }
 
     private VBox buildFieldHolder(Node... nodes) {
@@ -92,132 +114,80 @@ public class StockInMasterForm extends OutlineFormPage {
         return vbox;
     }
 
-    private VBox buildNote() {
-        note = new ValidatableTextField();
-        var label = new Label("Note");
-        note.setPrefWidth(10000d);
-        note.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
-        return buildFieldHolder(label, note);
-    }
-
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
-        saveBtn.setOnAction(event -> {
-            if (!table.isDisabled() && StockInDetailViewModel.getStockInDetails().isEmpty()) {
-                errorMessage("Table can't be Empty");
-            }
-
-            if (isValidForm()) {
-                if (StockInMasterViewModel.getId() > 0) {
-                    StockInMasterViewModel.updateStockInMaster(this::onSuccess, this::successMessage, this::errorMessage);
-                } else {
-                    StockInMasterViewModel.saveStockInMaster(this::onSuccess, this::successMessage, this::errorMessage);
-                }
-            }
-        });
-        return saveBtn;
-    }
-
-    private Button buildCancelButton() {
-        cancelBtn = new Button("Cancel");
-        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            AppManager.getNavigation().navigate(StockInPage.class);
-            StockInMasterViewModel.resetProperties();
-            this.dispose();
-        });
-        return cancelBtn;
-    }
-
     private HBox createButtonBox() {
-        var buttonBox = new HBox(20.0);
+        HBox buttonBox = new HBox(20.0);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10.0));
 
-        buttonBox.getChildren().addAll(buildSaveButton(), buildCancelButton());
-        HBox.setHgrow(buttonBox, Priority.ALWAYS);
+        saveBtn = new Button("Save");
+        saveBtn.setId("saveBtn");
+        saveBtn.setDefaultButton(true);
+        saveBtn.setOnAction(event -> {
+            if (StockInDetailViewModel.stockInDetailsList.isEmpty()) {
+                showErrorMessage("Table can't be Empty");
+                return;
+            }
+            if (StockInMasterViewModel.getId() > 0) {
+                StockInMasterViewModel.updateStockInMaster(this::onSuccess, this::successMessage, this::errorMessage);
+            } else {
+                StockInMasterViewModel.saveStockInMaster(this::onSuccess, this::successMessage, this::errorMessage);
+            }
+            onRequiredFieldsMissing();
+        });
+
+        cancelBtn = new Button("Cancel");
+        cancelBtn.setId("cancelBtn");
+        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
+        cancelBtn.setOnAction(event -> this.dispose());
+
+        buttonBox.getChildren().addAll(saveBtn, cancelBtn);
         return buttonBox;
     }
 
-    private void setupTable() {
-        TableColumn<StockInDetail, String> productName = new TableColumn<>("Product");
-        TableColumn<StockInDetail, String> productQuantity = new TableColumn<>("Quantity");
-        TableColumn<StockInDetail, String> productDescription = new TableColumn<>("Description");
-
-        productName.prefWidthProperty().bind(table.widthProperty().multiply(.5));
-        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.5));
-        productDescription.prefWidthProperty().bind(table.widthProperty().multiply(.5));
-
-        var columnList = new LinkedList<>(Stream.of(productName, productQuantity, productDescription).toList());
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        table.getColumns().addAll(columnList);
-        getStockInDetailTable();
-
-        table.setItems(StockInDetailViewModel.getStockInDetails());
+    private void configureTable() {
+        tableView.setRowFactory(stockInDetail -> {
+            TableRow<StockInDetail> row = new TableRow<>();
+            row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
+            return row;
+        });
     }
 
-    private void getStockInDetailTable() {
-        table.setPrefSize(10000d, 10000d);
-
-        table.setRowFactory(
-                stockInDetail -> {
-                    TableRow<StockInDetail> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<StockInDetail>) event.getSource())
-                                        .show(
-                                                table.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
-                });
-    }
-
-    private ContextMenu showContextMenu(TableRow<StockInDetail> obj) {
+    private ContextMenu showContextMenu(TableRow<StockInDetail> row) {
         var contextMenu = new ContextMenu();
-        var delete = new MenuItem("Delete");
-        var edit = new MenuItem("Edit");
-
-        // Actions
-        // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            StockInDetailViewModel.removeStockInDetail(
-                    obj.getItem().getId(),
-                    StockInDetailViewModel.stockInDetailsList.indexOf(obj.getItem()));
-            event.consume();
-        }, obj.getItem().getProductName(), this));
-
-        // Edit
-        edit.setOnAction(
-                event -> {
-                    try {
-                        StockInDetailViewModel.getStockInDetail(obj.getItem());
-                        SpotyDialog.createDialog(new StockInDetailForm(), this).showAndWait();
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                    event.consume();
-                });
-
-        contextMenu.getItems().addAll(edit, delete);
-
+        contextMenu.getItems().addAll(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> deleteRow(row), row.getItem().getProductName(), this)));
         return contextMenu;
     }
 
-    private boolean isValidForm() {
-        return !table.isDisabled() && !StockInDetailViewModel.getStockInDetails().isEmpty();
+    private MenuItem createMenuItem(String text, EventHandler<ActionEvent> handler) {
+        MenuItem item = new MenuItem(text);
+        item.setOnAction(handler);
+        return item;
+    }
+
+    private void editRow(TableRow<StockInDetail> row) {
+        SpotyThreader.spotyThreadPool(() -> StockInDetailViewModel.getStockInDetail(row.getItem()));
+        SpotyDialog.createDialog(new StockInDetailForm(), this).showAndWait();
+    }
+
+    private void deleteRow(TableRow<StockInDetail> row) {
+        StockInDetailViewModel.removeStockInDetail(row.getItem().getId(), StockInDetailViewModel.stockInDetailsList.indexOf(row.getItem()));
     }
 
     private void onSuccess() {
-        AppManager.getNavigation().navigate(StockInPage.class);
-        StockInMasterViewModel.resetProperties();
+        this.dispose();
         StockInMasterViewModel.getAllStockInMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
-        this.dispose();
+    }
+
+    private void onRequiredFieldsMissing() {
+        showErrorMessage("Required fields can't be null");
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        StockInMasterViewModel.getAllStockInMasters(null, null);
+    }
+
+    private void showErrorMessage(String message) {
+        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
     }
 
     private void successMessage(String message) {
@@ -246,13 +216,28 @@ public class StockInMasterForm extends OutlineFormPage {
         }
     }
 
-    @Override
+    private void setupTableColumns() {
+        productName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        productName.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(StockInDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        description.setCellValueFactory(new PropertyValueFactory<>("description"));
+    }
+
     public void dispose() {
-        super.dispose();
-        table = null;
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        StockInMasterViewModel.resetProperties();
+        tableView = null;
         note = null;
+        title = null;
+        addBtn = null;
         saveBtn = null;
         cancelBtn = null;
-        addBtn = null;
     }
 }

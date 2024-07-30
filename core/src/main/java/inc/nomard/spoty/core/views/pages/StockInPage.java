@@ -31,6 +31,7 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class StockInPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<StockInMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -50,10 +51,18 @@ public class StockInPage extends OutlinePage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         StockInMasterViewModel.getAllStockInMasters(this::onDataInitializationSuccess, this::errorMessage);
+
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -99,7 +108,17 @@ public class StockInPage extends OutlinePage {
 
     private HBox buildRightTop() {
         var createBtn = new Button("Create");
-        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(StockInMasterForm.class));
+        createBtn.setOnAction(event -> {
+            var dialog = new ModalContentHolder(500, -1);
+            dialog.getChildren().add(new StockInMasterForm(modalPane));
+            dialog.setPadding(new Insets(5d));
+            modalPane.setAlignment(Pos.TOP_RIGHT);
+            modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+            modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+            modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+            modalPane.show(dialog);
+            modalPane.setPersistent(true);
+        });
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
