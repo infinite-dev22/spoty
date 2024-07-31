@@ -4,19 +4,15 @@ import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.viewModels.returns.purchases.*;
+import inc.nomard.spoty.core.viewModels.returns.sales.*;
+import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
@@ -27,22 +23,18 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
-import javafx.util.Duration;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class PurchaseReturnMasterForm extends VBox {
+public class SaleReturnMasterForm extends VBox {
     private final ModalPane modalPane;
-    private Label supplierValidationLabel;
-    private Label dateValidationLabel;
-    private ValidatableDatePicker date;
-    private ValidatableComboBox<Supplier> supplier;
-    private TableView<PurchaseDetail> tableView;
+    private ValidatableComboBox<Customer> customer;
+    private TableView<SaleDetail> tableView;
     private TextArea note;
     private Button saveBtn, cancelBtn, addBtn;
 
-    public PurchaseReturnMasterForm(ModalPane modalPane) {
+    public SaleReturnMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
         init();
         initializeComponentProperties();
@@ -50,8 +42,7 @@ public class PurchaseReturnMasterForm extends VBox {
 
     public void initializeComponentProperties() {
         bindProperties();
-        configureSupplierComboBox();
-        requiredValidator();
+        configureCustomerComboBox();
     }
 
     private void init() {
@@ -60,8 +51,7 @@ public class PurchaseReturnMasterForm extends VBox {
         this.setSpacing(10d);
         VBox.setVgrow(this, Priority.ALWAYS);
         this.getChildren().addAll(buildTitle(),
-                buildSupplier(),
-                createDatePicker(),
+                buildCustomer(),
                 buildAddButton(),
                 buildTable(),
                 buildNote(),
@@ -78,7 +68,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private VBox buildTitle() {
         var title = new Text("Create");
         title.getStyleClass().add(Styles.TITLE_3);
-        var subTitle = new Text("Purchase return");
+        var subTitle = new Text("Sale return");
         subTitle.getStyleClass().add(Styles.TITLE_4);
         return buildFieldHolder(title, subTitle, buildSeparator());
     }
@@ -92,7 +82,7 @@ public class PurchaseReturnMasterForm extends VBox {
         return addBtn;
     }
 
-    private TableView<PurchaseDetail> buildTable() {
+    private TableView<SaleDetail> buildTable() {
         tableView = new TableView<>();
         HBox.setHgrow(tableView, Priority.ALWAYS);
         setupTable();
@@ -108,20 +98,12 @@ public class PurchaseReturnMasterForm extends VBox {
         return vbox;
     }
 
-    private VBox buildSupplier() {
-        var label = new Label("Supplier");
-        supplier = new ValidatableComboBox<>();
-        supplier.setPrefWidth(10000d);
-        supplier.setDisable(true);
-        return buildFieldHolder(label, supplier);
-    }
-
-    private VBox createDatePicker() {
-        var label = new Label("Date");
-        date = new ValidatableDatePicker(LocalDate.now());
-        date.setPrefWidth(10000d);
-        dateValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(label, date, dateValidationLabel);
+    private VBox buildCustomer() {
+        var label = new Label("Customer");
+        customer = new ValidatableComboBox<>();
+        customer.setPrefWidth(10000d);
+        customer.setDisable(true);
+        return buildFieldHolder(label, customer);
     }
 
     private VBox buildNote() {
@@ -137,13 +119,12 @@ public class PurchaseReturnMasterForm extends VBox {
         saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
             processProducts();
-            if (!tableView.isDisabled() && PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty()) {
+            if (!tableView.isDisabled() && SaleReturnDetailViewModel.getSaleReturnDetails().isEmpty()) {
                 errorMessage("No products selected");
             }
-            validateFields();
 
             if (isValidForm()) {
-                    PurchaseReturnMasterViewModel.savePurchaseReturnMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                SaleReturnMasterViewModel.saveSaleReturnMaster(this::onSuccess, this::successMessage, this::errorMessage);
             }
         });
         return saveBtn;
@@ -169,56 +150,30 @@ public class PurchaseReturnMasterForm extends VBox {
     }
 
     private void bindProperties() {
-        date.valueProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
-        supplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
-        note.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
+        customer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
+        note.textProperty().bindBidirectional(SaleMasterViewModel.notesProperty());
     }
 
-    private void configureSupplierComboBox() {
-        StringConverter<Supplier> supplierConverter = FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
+    private void configureCustomerComboBox() {
+        StringConverter<Customer> customerConverter = FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
 
-        supplier.setConverter(supplierConverter);
+        customer.setConverter(customerConverter);
 
-        if (SupplierViewModel.getSuppliers().isEmpty()) {
-            SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) c -> supplier.setItems(SupplierViewModel.getSuppliers()));
+        if (CustomerViewModel.getCustomers().isEmpty()) {
+            CustomerViewModel.getCustomers().addListener((ListChangeListener<Customer>) c -> customer.setItems(CustomerViewModel.getCustomers()));
         } else {
-            supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
-        }
-    }
-
-    private void validateFields() {
-        validateField(supplier, supplierValidationLabel);
-        validateField(date, dateValidationLabel);
-    }
-
-    private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
-        List<Constraint> constraints = field.validate();
-        if (!constraints.isEmpty()) {
-            validationLabel.setManaged(true);
-            validationLabel.setVisible(true);
-            validationLabel.setText(constraints.getFirst().getMessage());
-            field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-        }
-    }
-
-    private void validateField(ValidatableDatePicker field, Label validationLabel) {
-        List<Constraint> constraints = field.validate();
-        if (!constraints.isEmpty()) {
-            validationLabel.setManaged(true);
-            validationLabel.setVisible(true);
-            validationLabel.setText(constraints.getFirst().getMessage());
-            field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+            customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
         }
     }
 
     private boolean isValidForm() {
-        return supplier.validate().isEmpty() && date.validate().isEmpty() && !tableView.isDisabled() && !PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty();
+        return !tableView.isDisabled() && !SaleReturnDetailViewModel.getSaleReturnDetails().isEmpty();
     }
 
     private void processProducts() {
-        PurchaseDetailViewModel.getPurchaseDetails().forEach(purchaseDetail -> {
-            if (purchaseDetail.getSelected().get()) {
-                PurchaseReturnDetailViewModel.getPurchaseReturnDetails().add(purchaseDetail);
+        SaleDetailViewModel.getSaleDetails().forEach(saleDetail -> {
+            if (saleDetail.getSelected().get()) {
+                SaleReturnDetailViewModel.getSaleReturnDetails().add(saleDetail);
             }
         });
     }
@@ -232,7 +187,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private void setupTableColumns() {
         var selectAll = new CheckBox();
 
-        var select = new TableColumn<PurchaseDetail, Boolean>();
+        var select = new TableColumn<SaleDetail, Boolean>();
         select.setGraphic(selectAll);
         select.setSortable(false);
         select.setCellValueFactory(c -> c.getValue().getSelected());
@@ -244,8 +199,8 @@ public class PurchaseReturnMasterForm extends VBox {
             );
             evt.consume();
         });
-        var product = new TableColumn<PurchaseDetail, PurchaseDetail>("Product");
-        var quantity = new TableColumn<PurchaseDetail, PurchaseDetail>("Quantity");
+        var product = new TableColumn<SaleDetail, SaleDetail>("Product");
+        var quantity = new TableColumn<SaleDetail, SaleDetail>("Quantity");
 
         product.prefWidthProperty().bind(tableView.widthProperty().multiply(.7));
         quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
@@ -253,7 +208,7 @@ public class PurchaseReturnMasterForm extends VBox {
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         product.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseDetail item, boolean empty) {
+            public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : item.getProductName());
             }
@@ -261,7 +216,7 @@ public class PurchaseReturnMasterForm extends VBox {
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         quantity.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseDetail item, boolean empty) {
+            public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
                 if (!empty || !Objects.isNull(item)) {
@@ -270,8 +225,8 @@ public class PurchaseReturnMasterForm extends VBox {
                     quantitySpinner.getValueFactory().setValue(item.getQuantity());
                     quantitySpinner.valueProperty().addListener(
                             (obs, oldValue, newValue) -> {
-                                PurchaseDetailViewModel.getPurchaseDetail(item);
-                                PurchaseDetailViewModel.setQuantity(String.valueOf(newValue));
+                                SaleDetailViewModel.getSaleDetail(item);
+                                SaleDetailViewModel.setQuantity(Long.valueOf(newValue));
                             }
                     );
                     setGraphic(quantitySpinner);
@@ -292,7 +247,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private void styleTable() {
         tableView.setPrefSize(10000, 10000);
         tableView.setRowFactory(t -> {
-            TableRow<PurchaseDetail> row = new TableRow<>();
+            TableRow<SaleDetail> row = new TableRow<>();
             row.setOnContextMenuRequested(event -> {
             });
             return row;
@@ -300,52 +255,13 @@ public class PurchaseReturnMasterForm extends VBox {
     }
 
     private void bindTableItems() {
-        tableView.setItems(PurchaseDetailViewModel.getPurchaseDetails());
+        tableView.setItems(SaleDetailViewModel.getSaleDetails());
     }
 
     private void onSuccess() {
         this.dispose();
-        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
+        SaleMasterViewModel.getAllSaleMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
-    }
-
-    private void requiredValidator() {
-        setupValidation(supplier, "Supplier is required", supplierValidationLabel);
-        setupValidation(date, "Date is required", dateValidationLabel);
-    }
-
-    private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
-        Constraint constraint = Constraint.Builder.build()
-                .setSeverity(Severity.ERROR)
-                .setMessage(message)
-                .setCondition(field.valueProperty().isNotNull())
-                .get();
-
-        field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                validationLabel.setManaged(false);
-                validationLabel.setVisible(false);
-                field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-            }
-        });
-    }
-
-    private void setupValidation(ValidatableDatePicker field, String message, Label validationLabel) {
-        Constraint constraint = Constraint.Builder.build()
-                .setSeverity(Severity.ERROR)
-                .setMessage(message)
-                .setCondition(field.valueProperty().isNotNull())
-                .get();
-
-        field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                validationLabel.setManaged(false);
-                validationLabel.setVisible(false);
-                field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-            }
-        });
     }
 
     private void successMessage(String message) {
@@ -377,11 +293,8 @@ public class PurchaseReturnMasterForm extends VBox {
     public void dispose() {
         modalPane.hide(true);
         modalPane.setPersistent(false);
-        PurchaseMasterViewModel.resetProperties();
-        supplierValidationLabel = null;
-        dateValidationLabel = null;
-        date = null;
-        supplier = null;
+        SaleMasterViewModel.resetProperties();
+        customer = null;
         tableView = null;
         note = null;
         saveBtn = null;

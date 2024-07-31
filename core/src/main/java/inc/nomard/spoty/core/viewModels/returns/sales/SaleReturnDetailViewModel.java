@@ -2,7 +2,9 @@ package inc.nomard.spoty.core.viewModels.returns.sales;
 
 import com.google.gson.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.adapters.*;
 import java.time.*;
 import java.util.*;
@@ -13,6 +15,9 @@ import lombok.extern.java.*;
 
 @Log
 public class SaleReturnDetailViewModel {
+    @Getter
+    private static final ListProperty<SaleDetail> saleReturnDetails =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     @Getter
     public static final ObservableList<SaleReturnDetail> saleReturnDetailsList =
             FXCollections.observableArrayList();
@@ -125,13 +130,5 @@ public class SaleReturnDetailViewModel {
         setSerial("");
         setDescription("");
         setLocation("");
-    }
-
-    public static void getSaleReturnDetails() throws Exception {
-//        Dao<SaleReturnDetail, Long> saleReturnDetailDao =
-//                DaoManager.createDao(connectionSource, SaleReturnDetail.class);
-//
-//        saleReturnDetailsList.clear();
-//        saleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
     }
 }

@@ -155,4 +155,10 @@ public class SaleDetailViewModel {
         setQuantity((long) saleDetail.getQuantity());
         setSubTotalPrice(saleDetail.getSubTotalPrice());
     }
+
+    public static void getSaleDetail(SaleDetail saleDetail) {
+        setProduct(saleDetail.getProduct());
+        setQuantity((long) saleDetail.getQuantity());
+        setSubTotalPrice(saleDetail.getSubTotalPrice());
+    }
 }

@@ -18,6 +18,7 @@ public class PurchaseDetail {
     private Product product;
     private int quantity;
     private double subTotalCost;
+    @Builder.Default
     private transient SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
 
     public String getProductName() {

@@ -169,7 +169,7 @@ public class SaleReturnPage extends OutlinePage {
         masterTable.getColumns().addAll(columnList);
         styleSaleReturnMasterTable();
 
-        masterTable.setItems(SaleReturnMasterViewModel.getSaleReturns());
+        masterTable.setItems(SaleReturnMasterViewModel.getSales());
     }
 
     private void styleSaleReturnMasterTable() {
@@ -200,7 +200,7 @@ public class SaleReturnPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            SaleReturnMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            SaleReturnMasterViewModel.deleteSaleReturnMaster(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getCustomerName() + "'s order", this));
         // View
@@ -283,7 +283,7 @@ public class SaleReturnPage extends OutlinePage {
             }
             progress.setManaged(true);
             progress.setVisible(true);
-            SaleReturnMasterViewModel.searchItem(nv, () -> {
+            SaleReturnMasterViewModel.searchSaleReturnMaster(nv, () -> {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);

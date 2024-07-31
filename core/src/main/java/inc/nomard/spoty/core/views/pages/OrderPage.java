@@ -4,9 +4,11 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
@@ -31,10 +33,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class OrderPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<SaleMaster> masterTable;
     private MFXProgressSpinner progress;
-    private Button createBtn;
     private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
     private TableColumn<SaleMaster, SaleMaster> saleCustomer;
@@ -55,10 +57,19 @@ public class OrderPage extends OutlinePage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        addNode(init());
+        modalPane = new SideModalPane();
+
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         SaleMasterViewModel.getAllSaleMasters(this::onDataInitializationSuccess, this::errorMessage);
+
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -72,7 +83,6 @@ public class OrderPage extends OutlinePage {
         pane.setCenter(buildCenter());
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -104,7 +114,8 @@ public class OrderPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new Button("Create");
+        var createBtn = new Button("Create");
+        createBtn.setOnAction(actionEvent -> AppManager.getNavigation().navigate(PointOfSalePage.class));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -196,27 +207,37 @@ public class OrderPage extends OutlinePage {
         var contextMenu = new ContextMenu();
         var delete = new MenuItem("Delete");
         var view = new MenuItem("View");
+        var returnSale = new MenuItem("Return");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             SaleMasterViewModel.deleteSaleMaster(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getCustomerName() + "'s order", this));
-        // View
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-        contextMenu.getItems().addAll(view, delete);
+        returnSale.setOnAction(
+                e -> {
+                    SaleMasterViewModel.getSaleMaster(obj.getItem().getId(), this::showReturnForm, this::errorMessage);
+                    e.consume();
+                });
+        contextMenu.getItems().addAll(view, returnSale, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
-    public void createBtnAction() {
-        createBtn.setOnAction(event -> {
-        });// BaseController.navigation.navigate(new PointOfSalePage(stage)));
+    private void showReturnForm() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new SaleReturnMasterForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {

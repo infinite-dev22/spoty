@@ -1,6 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.sales;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import javafx.beans.property.*;
 import lombok.*;
 import lombok.extern.java.*;
 
@@ -15,6 +16,8 @@ public class SaleDetail {
     private Product product;
     private int quantity;
     private double subTotalPrice;
+    @Builder.Default
+    private transient SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
 
     public String getProductName() {
         return product.getName();
