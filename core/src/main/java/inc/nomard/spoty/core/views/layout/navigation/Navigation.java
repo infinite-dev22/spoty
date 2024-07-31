@@ -140,7 +140,7 @@ public class Navigation {
         }
 
         var inventory = NavTree.NavTreeItem.group("Inventory", FontAwesomeSolid.CUBES);
-        if (flavor == AppFlavor.TRACTION) {
+        if (flavor == AppFlavor.TRACTION || flavor == AppFlavor.DEV) {
             inventory
                     .getChildren()
                     .setAll(
