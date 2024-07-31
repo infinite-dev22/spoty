@@ -241,25 +241,20 @@ public class PurchasePage extends OutlinePage {
         var view = new MenuItem("View");
         var returnPurchase = new MenuItem("Return");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
             PurchaseMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getSupplierName() + "'s purchase", this));
-        // Edit
         edit.setOnAction(
                 e -> {
                     PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showForm, this::errorMessage);
                     e.consume();
                 });
-        // Edit
         returnPurchase.setOnAction(
                 e -> {
                     PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showReturnForm, this::errorMessage);
                     e.consume();
                 });
-        // View
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
