@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -10,7 +10,6 @@ import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
@@ -18,53 +17,59 @@ import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
+import java.time.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 import javafx.application.*;
+import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.*;
 import javafx.util.*;
+import javafx.util.Duration;
 import lombok.extern.java.*;
 
 @Log
-public class PurchaseMasterForm extends OutlineFormPage {
+public class PurchaseMasterForm extends VBox {
+    private final ModalPane modalPane;
     private Label supplierValidationLabel;
     private Label dateValidationLabel;
-    private Label statusValidationLabel;
     private ValidatableDatePicker date;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
-    private ValidatableTextField note;
-    private ValidatableComboBox<String> status;
+    private TextArea note;
     private Button saveBtn, cancelBtn, addBtn;
 
-    public PurchaseMasterForm() {
-        addNode(init());
+    public PurchaseMasterForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
+        init();
         initializeComponentProperties();
     }
 
     public void initializeComponentProperties() {
         bindProperties();
         configureSupplierComboBox();
-        status.setItems(Values.PURCHASE_STATUSES);
         requiredValidator();
     }
 
-    private BorderPane init() {
-        Label purchaseFormTitle = new Label("Purchase Form");
-        var vbox = new VBox();
-        vbox.getStyleClass().add("card-flat");
-        vbox.setPadding(new Insets(10d));
-        vbox.setSpacing(10d);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        vbox.getChildren().addAll(purchaseFormTitle, buildSeparator(), createCustomGrid(), buildAddButton(), buildTable(), createButtonBox());
-
-        return new BorderPane(vbox);
+    private void init() {
+        this.getStyleClass().add("card-flat");
+        this.setPadding(new Insets(10d));
+        this.setSpacing(10d);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.getChildren().addAll(buildTitle(),
+                buildSupplier(),
+                createDatePicker(),
+                buildAddButton(),
+                buildTable(),
+                buildNote(),
+                createButtonBox());
     }
 
     private Separator buildSeparator() {
@@ -72,6 +77,14 @@ public class PurchaseMasterForm extends OutlineFormPage {
         separator.setPrefWidth(200.0);
         HBox.setHgrow(separator, Priority.ALWAYS);
         return separator;
+    }
+
+    private VBox buildTitle() {
+        var title = new Text("Create");
+        title.getStyleClass().add(Styles.TITLE_3);
+        var subTitle = new Text("Purchase");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
     }
 
     private Button buildAddButton() {
@@ -88,22 +101,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
         HBox.setHgrow(tableView, Priority.ALWAYS);
         setupTable();
         return tableView;
-    }
-
-    private VBox createCustomGrid() {
-        var hbox1 = new HBox();
-        hbox1.getChildren().addAll(buildSupplier(), createDatePicker());
-        hbox1.setSpacing(20d);
-        HBox.setHgrow(hbox1, Priority.ALWAYS);
-        var hbox2 = new HBox();
-        hbox2.getChildren().addAll(buildStatus(), buildNote());
-        hbox2.setSpacing(20d);
-        HBox.setHgrow(hbox2, Priority.ALWAYS);
-        var vbox = new VBox();
-        vbox.setSpacing(10d);
-        vbox.getChildren().addAll(hbox1, hbox2);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        return vbox;
     }
 
     private VBox buildFieldHolder(Node... nodes) {
@@ -123,17 +120,9 @@ public class PurchaseMasterForm extends OutlineFormPage {
         return buildFieldHolder(label, supplier, supplierValidationLabel);
     }
 
-    private VBox buildStatus() {
-        var label = new Label("Purchase Status");
-        status = new ValidatableComboBox<>();
-        status.setPrefWidth(10000d);
-        statusValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(label, status, statusValidationLabel);
-    }
-
     private VBox createDatePicker() {
         var label = new Label("Date");
-        date = new ValidatableDatePicker();
+        date = new ValidatableDatePicker(LocalDate.now());
         date.setPrefWidth(10000d);
         dateValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(label, date, dateValidationLabel);
@@ -141,8 +130,9 @@ public class PurchaseMasterForm extends OutlineFormPage {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new ValidatableTextField();
-        note.setPrefWidth(10000d);
+        note = new TextArea();
+        note.setMinHeight(100d);
+        note.setWrapText(true);
         return buildFieldHolder(label, note);
     }
 
@@ -170,8 +160,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
-            AppManager.getNavigation().navigate(PurchasePage.class);
-            PurchaseMasterViewModel.resetProperties();
             this.dispose();
         });
         return cancelBtn;
@@ -190,7 +178,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
     private void bindProperties() {
         date.valueProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
         supplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
-        status.valueProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
         note.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
     }
 
@@ -210,7 +197,6 @@ public class PurchaseMasterForm extends OutlineFormPage {
     private void validateFields() {
         validateField(supplier, supplierValidationLabel);
         validateField(date, dateValidationLabel);
-        validateField(status, statusValidationLabel);
     }
 
     private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
@@ -234,7 +220,7 @@ public class PurchaseMasterForm extends OutlineFormPage {
     }
 
     private boolean isValidForm() {
-        return supplier.validate().isEmpty() && date.validate().isEmpty() && status.validate().isEmpty() && !tableView.isDisabled() && !PurchaseDetailViewModel.getPurchaseDetails().isEmpty();
+        return supplier.validate().isEmpty() && date.validate().isEmpty() && !tableView.isDisabled() && !PurchaseDetailViewModel.getPurchaseDetails().isEmpty();
     }
 
     private void setupTable() {
@@ -244,23 +230,29 @@ public class PurchaseMasterForm extends OutlineFormPage {
     }
 
     private void setupTableColumns() {
-        TableColumn<PurchaseDetail, String> product = createTableColumn("Product", 1);
-        TableColumn<PurchaseDetail, String> quantity = createTableColumn("Quantity", 1);
+        var product = new TableColumn<PurchaseDetail, PurchaseDetail>("Product");
+        var quantity = new TableColumn<PurchaseDetail, String>("Quantity");
+
+        product.prefWidthProperty().bind(tableView.widthProperty().multiply(.7));
+        quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
+
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
         var columnList = new LinkedList<>(Stream.of(product, quantity).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
     }
 
-    private <U extends Comparable<? super U>> TableColumn<PurchaseDetail, String> createTableColumn(String title, double widthPercentage) {
-        TableColumn<PurchaseDetail, String> column = new TableColumn<>(title);
-        column.prefWidthProperty().bind(tableView.widthProperty().multiply(widthPercentage));
-        return column;
-    }
-
     private void styleTable() {
         tableView.setPrefSize(10000, 10000);
-
         tableView.setRowFactory(t -> {
             TableRow<PurchaseDetail> row = new TableRow<>();
             row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
@@ -295,15 +287,12 @@ public class PurchaseMasterForm extends OutlineFormPage {
 
     private void onSuccess() {
         this.dispose();
-        AppManager.getNavigation().navigate(PurchasePage.class);
-        PurchaseMasterViewModel.resetProperties();
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
     }
 
     private void requiredValidator() {
         setupValidation(supplier, "Supplier is required", supplierValidationLabel);
-        setupValidation(status, "Beneficiary Type is required", statusValidationLabel);
         setupValidation(date, "Date is required", dateValidationLabel);
     }
 
@@ -367,17 +356,16 @@ public class PurchaseMasterForm extends OutlineFormPage {
         }
     }
 
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        PurchaseMasterViewModel.resetProperties();
         supplierValidationLabel = null;
         dateValidationLabel = null;
-        statusValidationLabel = null;
         date = null;
         supplier = null;
         tableView = null;
         note = null;
-        status = null;
         saveBtn = null;
         cancelBtn = null;
         addBtn = null;

@@ -32,6 +32,7 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class PurchasePage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<PurchaseMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -56,10 +57,19 @@ public class PurchasePage extends OutlinePage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        addNode(init());
+        modalPane = new SideModalPane();
+
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         PurchaseMasterViewModel.getAllPurchaseMasters(this::onDataInitializationSuccess, this::errorMessage);
+
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -73,7 +83,6 @@ public class PurchasePage extends OutlinePage {
         pane.setCenter(buildCenter());
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -105,12 +114,25 @@ public class PurchasePage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new Button("Create");
+        createBtn = new Button("Create purchase");
+        createBtn.setOnAction(event -> showForm());
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
         HBox.setHgrow(hbox, Priority.ALWAYS);
         return hbox;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new PurchaseMasterForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private HBox buildTop() {
@@ -216,7 +238,7 @@ public class PurchasePage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), () -> AppManager.getNavigation().navigate(PurchaseMasterForm.class), this::errorMessage);
+                    PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showForm, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -228,10 +250,6 @@ public class PurchasePage extends OutlinePage {
         contextMenu.getItems().addAll(view, edit, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
-    }
-
-    public void createBtnAction() {
-        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(PurchaseMasterForm.class));
     }
 
     private void onSuccess() {

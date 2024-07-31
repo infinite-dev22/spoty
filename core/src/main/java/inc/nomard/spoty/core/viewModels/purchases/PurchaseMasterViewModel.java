@@ -173,8 +173,6 @@ public class PurchaseMasterViewModel {
                 .amountPaid(0)
                 .total(0)
                 .amountDue(0)
-                .paymentStatus("")
-                .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
@@ -218,7 +216,6 @@ public class PurchaseMasterViewModel {
                     setNote(purchaseMaster.getNotes());
                     setDate(purchaseMaster.getDate());
                     setSupplier(purchaseMaster.getSupplier());
-                    setStatus(purchaseMaster.getPurchaseStatus());
                     PurchaseDetailViewModel.getPurchaseDetails().clear();
                     PurchaseDetailViewModel.getPurchaseDetails().addAll(purchaseMaster.getPurchaseDetails());
                     if (onSuccess != null) {
@@ -265,8 +262,6 @@ public class PurchaseMasterViewModel {
                 .amountPaid(0)
                 .total(0)
                 .amountDue(0)
-                .paymentStatus("")
-                .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
