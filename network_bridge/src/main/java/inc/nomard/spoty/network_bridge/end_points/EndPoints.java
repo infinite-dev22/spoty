@@ -6,6 +6,7 @@ import lombok.extern.java.*;
 @Log
 public class EndPoints {
     public static final String appDNS = AppConfig.getAppHostUrl();
+    public static final String apiUrl = appDNS + "/api/v1";
 
     public static final class Adjustments {
         public static final String adjustmentsUrl = apiUrl + "/adjustments";
