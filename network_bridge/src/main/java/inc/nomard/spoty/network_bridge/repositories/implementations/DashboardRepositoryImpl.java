@@ -8,6 +8,8 @@ import java.net.http.*;
 import java.util.concurrent.*;
 import lombok.extern.java.*;
 
+import javafx.util.Duration;
+
 @Log
 public class DashboardRepositoryImpl extends ProtectedGlobals implements DashboardRepository {
     @Override
@@ -22,6 +24,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
+
     @Override
     public CompletableFuture<HttpResponse<String>> kpiPurchases() {
         var request = HttpRequest.newBuilder()
@@ -34,6 +37,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
+
     @Override
     public CompletableFuture<HttpResponse<String>> kpiProducts() {
         var request = HttpRequest.newBuilder()
@@ -46,6 +50,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
+
     @Override
     public CompletableFuture<HttpResponse<String>> kpiCustomers() {
         var request = HttpRequest.newBuilder()
@@ -58,6 +63,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
+
     @Override
     public CompletableFuture<HttpResponse<String>> kpiSuppliers() {
         var request = HttpRequest.newBuilder()

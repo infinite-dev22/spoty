@@ -133,15 +133,15 @@ public class PurchaseReturnsPreviewController implements Initializable {
         supplierName.setText(purchaseMaster.getSupplier().getName());
         supplierNumber.setText(purchaseMaster.getSupplier().getPhone());
         supplierEmail.setText(purchaseMaster.getSupplier().getEmail());
-        purchaseDetailsList.addAll(purchaseMaster.getPurchaseDetails());
+//        purchaseDetailsList.addAll(purchaseMaster.getPurchaseDetails());
         subTotal.setText(String.valueOf(purchaseMaster.getSubTotal()));
         discount.setText(String.valueOf(purchaseMaster.getDiscount()));
-        tax.setText(String.valueOf(purchaseMaster.getTaxRate()));
-        shipping.setText(String.valueOf(purchaseMaster.getShippingFee()));
+//        tax.setText(String.valueOf(purchaseMaster.getTaxRate()));
+//        shipping.setText(String.valueOf(purchaseMaster.getShippingFee()));
         netCost.setText(String.valueOf(purchaseMaster.getTotal()));
         paidAmount.setText(String.valueOf(purchaseMaster.getAmountPaid()));
-        changeDue.setText(String.valueOf(purchaseMaster.getChangeAmount()));
-        balance.setText(String.valueOf(purchaseMaster.getBalanceAmount()));
+//        changeDue.setText(String.valueOf(purchaseMaster.getChangeAmount()));
+//        balance.setText(String.valueOf(purchaseMaster.getBalanceAmount()));
         purchaseNote.setText(purchaseMaster.getNotes());
 //        doneBy.setText(purchase.doneBy());
     }

@@ -1,8 +1,8 @@
 package inc.nomard.spoty.utils.responsiveness.layouts;
 
-import inc.nomard.spoty.utils.responsiveness.math.MathUtils;
-import javafx.scene.Node;
-import lombok.extern.java.Log;
+import inc.nomard.spoty.utils.responsiveness.math.*;
+import javafx.scene.*;
+import lombok.extern.java.*;
 
 @Log
 public class BootstrapColumn {

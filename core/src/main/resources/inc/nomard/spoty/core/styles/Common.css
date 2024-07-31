@@ -1,24 +1,9 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 @import '../fonts/Fonts.css';
 @import 'MFXColors.css';
 
 .card-title .header-label {
     -fx-font-family: 'Visby Round CF Bold';
     -fx-font-size: 14;
-    -fx-text-fill: -mfx-text-he;
 }
 
 .card-title .header-label .text {
@@ -27,19 +12,13 @@
 
 .card-sub-title .sub-header-label {
     -fx-font-family: 'Visby Round CF Demi Bold';
-    -fx-text-fill: -mfx-text-he;
 }
 
 .card-sub-title .sub-header-label .text {
     -fx-font-smoothing-type: lcd;
 }
 
-.grid-pane {
-    -fx-background-color: transparent;
-}
-
 .card, .innerNavbar {
-    -fx-background-color: rgba(255, 255, 255, 1);
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
@@ -54,32 +33,3 @@
     -fx-text-fill: -mfx-danger-red;
     -fx-font-size: 13;
 }
-/*
-.header-label {
-	-fx-font-family: 'Open Sans Bold';
-	-fx-font-size: 14;
-	-fx-text-fill: -mfx-text-he;
-}
-
-.header-label .text {
-	-fx-font-smoothing-type: lcd;
-}
-
-.sub-header-label {
-	-fx-font-family: 'Open Sans SemiBold';
-	-fx-text-fill: -mfx-text-he;
-}
-
-.sub-header-label .text {
-	-fx-font-smoothing-type: lcd;
-}
-
-.grid-pane {
-	-fx-background-color: transparent;
-}
-
-.grid-background {
-	-fx-background-color: white;
-	-fx-background-radius: 10;
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
-}*/

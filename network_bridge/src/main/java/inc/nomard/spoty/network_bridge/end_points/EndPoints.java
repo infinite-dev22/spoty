@@ -1,11 +1,11 @@
 package inc.nomard.spoty.network_bridge.end_points;
 
+import inc.nomard.spoty.utils.flavouring.*;
 import lombok.extern.java.*;
 
 @Log
 public class EndPoints {
-    public static final String appDNS = "http://217.142.243.147:8080";
-    public static final String apiUrl = appDNS + "/api/v1";
+    public static final String appDNS = AppConfig.getAppHostUrl();
 
     public static final class Adjustments {
         public static final String adjustmentsUrl = apiUrl + "/adjustments";
@@ -35,15 +35,16 @@ public class EndPoints {
         public static final String signup = authUrl + "/register";
     }
 
-    public static final class Banks {
-        public static final String banksUrl = apiUrl + "/banks";
-        public static final String allBanks = banksUrl + "/all";
-        public static final String bankById = banksUrl + "/single";
-        public static final String searchBanks = banksUrl + "/search";
-        public static final String addBank = banksUrl + "/add";
-        public static final String updateBank = banksUrl + "/update";
-        public static final String deleteBank = banksUrl + "/delete/single";
-        public static final String deleteBanks = banksUrl + "/delete/multiple";
+    public static final class Accounts {
+        public static final String accountsUrl = apiUrl + "/accounts";
+        public static final String allAccounts = accountsUrl + "/all";
+        public static final String accountById = accountsUrl + "/single";
+        public static final String searchAccounts = accountsUrl + "/search";
+        public static final String addAccount = accountsUrl + "/add";
+        public static final String updateAccount = accountsUrl + "/update";
+        public static final String deleteAccount = accountsUrl + "/delete/single";
+        public static final String deleteAccounts = accountsUrl + "/delete/multiple";
+        public static final String transactions = accountsUrl + "/transactions";
     }
 
     public static final class Branches {
@@ -123,17 +124,6 @@ public class EndPoints {
         public static final String deleteExpenses = expenseUrl + "/delete/multiple";
     }
 
-    public static final class ExpenseCategories {
-        public static final String expenseCategoriesUrl = apiUrl + "/expense/categories";
-        public static final String allExpenseCategories = expenseCategoriesUrl + "/all";
-        public static final String designationById = expenseCategoriesUrl + "/single";
-        public static final String searchExpenseCategories = expenseCategoriesUrl + "/search";
-        public static final String addExpenseCategory = expenseCategoriesUrl + "/add";
-        public static final String updateExpenseCategory = expenseCategoriesUrl + "/update";
-        public static final String deleteExpenseCategory = expenseCategoriesUrl + "/delete/single";
-        public static final String deleteExpenseCategories = expenseCategoriesUrl + "/delete/multiple";
-    }
-
     public static final class Organisations {
         public static final String organisationsUrl = apiUrl + "/organisations";
         public static final String allOrganisations = organisationsUrl + "/all";
@@ -179,6 +169,17 @@ public class EndPoints {
         public static final String deletePurchases = purchasesUrl + "/delete/multiple";
     }
 
+    public static final class PurchaseReturns {
+        public static final String purchaseReturnsUrl = apiUrl + "/purchases/returns";
+        public static final String allPurchaseReturns = purchaseReturnsUrl + "/all";
+        public static final String purchaseReturnById = purchaseReturnsUrl + "/single";
+        public static final String searchPurchaseReturns = purchaseReturnsUrl + "/search";
+        public static final String addPurchaseReturn = purchaseReturnsUrl + "/add";
+        public static final String updatePurchaseReturn = purchaseReturnsUrl + "/update";
+        public static final String deletePurchaseReturn = purchaseReturnsUrl + "/delete/single";
+        public static final String deletePurchaseReturns = purchaseReturnsUrl + "/delete/multiple";
+    }
+
     public static final class Quotations {
         public static final String quotationsUrl = apiUrl + "/quotations";
         public static final String allQuotations = quotationsUrl + "/all";
@@ -201,17 +202,6 @@ public class EndPoints {
         public static final String deleteRequisitions = requisitionsUrl + "/delete/multiple";
     }
 
-    public static final class SalaryAdvances {
-        public static final String salaryAdvancesUrl = apiUrl + "/salary/advances";
-        public static final String allSalaryAdvances = salaryAdvancesUrl + "/all";
-        public static final String salaryAdvanceById = salaryAdvancesUrl + "/single";
-        public static final String searchSalaryAdvances = salaryAdvancesUrl + "/search";
-        public static final String addSalaryAdvance = salaryAdvancesUrl + "/add";
-        public static final String updateSalaryAdvance = salaryAdvancesUrl + "/update";
-        public static final String deleteSalaryAdvance = salaryAdvancesUrl + "/delete/single";
-        public static final String deleteSalaryAdvances = salaryAdvancesUrl + "/delete/multiple";
-    }
-
     public static final class Salaries {
         public static final String salariesUrl = apiUrl + "/salaries";
         public static final String allSalaries = salariesUrl + "/all";
@@ -232,17 +222,6 @@ public class EndPoints {
         public static final String updateSale = salesUrl + "/update";
         public static final String deleteSale = salesUrl + "/delete/single";
         public static final String deleteSales = salesUrl + "/delete/multiple";
-    }
-
-    public static final class SaleTermsAndConditions {
-        public static final String saleTermsAndConditionsUrl = apiUrl + "/sale_terms_and_conditions";
-        public static final String allSaleTermsAndConditions = saleTermsAndConditionsUrl + "/all";
-        public static final String saleTermAndConditionById = saleTermsAndConditionsUrl + "/single";
-        public static final String searchSaleTermsAndConditions = saleTermsAndConditionsUrl + "/search";
-        public static final String addSaleTermAndCondition = saleTermsAndConditionsUrl + "/add";
-        public static final String updateSaleTermAndCondition = saleTermsAndConditionsUrl + "/update";
-        public static final String deleteSaleTermAndCondition = saleTermsAndConditionsUrl + "/delete/single";
-        public static final String deleteSaleTermsAndConditions = saleTermsAndConditionsUrl + "/delete/multiple";
     }
 
     public static final class StockIns {

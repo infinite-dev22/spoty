@@ -1,13 +1,11 @@
 package inc.nomard.spoty.core.auto_updater.v2;
 
-import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.flavouring.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
-import java.util.*;
-import java.util.logging.*;
 
 public class AutoUpdater {
 
@@ -60,7 +58,7 @@ public class AutoUpdater {
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, SpotyPaths.class);
         }
-        return flagFilePath.toString() + "update-available.flag";
+        return flagFilePath + "update-available.flag";
     }
 
     public static void checkForUpdates() {
@@ -77,20 +75,13 @@ public class AutoUpdater {
         }).start();
     }
 
-    private static String getCurrentVersion() throws IOException {
-        var appPropertiesPath = SpotyCoreResourceLoader.load("application.properties");
-        var appProps = new Properties();
-        appProps.load(new FileInputStream(appPropertiesPath));
-        return appProps.getProperty("version");
-    }
-
     private static boolean isUpdateAvailable() throws IOException {
         URL url = URI.create(VERSION_URL).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
             String latestVersion = in.readLine();
-            return compareVersions(getCurrentVersion(), latestVersion) < 0;
+            return compareVersions(AppConfig.getAppVersion(), latestVersion) < 0;
         }
     }
 

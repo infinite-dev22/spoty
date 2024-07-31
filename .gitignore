@@ -55,3 +55,6 @@ out
 *.json
 *.log
 *.hprof
+build.gradle
+public.key
+secret.key

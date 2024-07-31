@@ -1,22 +1,7 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 package inc.nomard.spoty.core.viewModels.hrm.leave;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
 import inc.nomard.spoty.network_bridge.models.*;
@@ -28,13 +13,13 @@ import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.mfxcore.base.properties.*;
 import java.lang.reflect.*;
 import java.net.http.*;
-import java.text.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
+import lombok.*;
 import lombok.extern.java.*;
 
 @Log
@@ -45,22 +30,51 @@ public class LeaveStatusViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
-            .registerTypeAdapter(LocalTime.class, new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<User> employee = new SimpleObjectProperty<>();
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>();
     private static final StringProperty description = new SimpleStringProperty("");
-    private static final StringProperty startDate = new SimpleStringProperty("");
-    private static final ObjectProperty<LocalTime> startTime = new SimpleObjectProperty<>();
-    private static final StringProperty endDate = new SimpleStringProperty("");
-    private static final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<>();
+    private static final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();
+    private static final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<>();
     private static final StringProperty duration = new SimpleStringProperty("");
-    private static final ObjectProperty<LeaveType> leaveType = new SimpleObjectProperty<>();
+    private static final StringProperty leaveType = new SimpleStringProperty();
     private static final StringProperty attachment = new SimpleStringProperty("");
     private static final CharProperty status = new CharProperty();
     private static final LeaveStatusRepositoryImpl leaveStatusRepository = new LeaveStatusRepositoryImpl();
+    @Getter
+    private static final ObservableList<String> leaveTypeList = FXCollections.observableArrayList(
+            "Adoption Leave",
+            "Annual Leave",
+            "Bereavement Leave",
+            "Casual Leave",
+            "Compassionate Leave",
+            "Extended Leave",
+            "Family Leave",
+            "Maternal Leave",
+            "Military Leave",
+            "Paid Leave",
+            "Paternal Leave",
+            "Personal Leave",
+            "Sabbatical Leave",
+            "Sick Leave",
+            "Study Leave",
+            "Unpaid Leave",
+            "Vacation Leave",
+            "Volunteer Leave",
+            "Compensatory off",
+            "Extra time off",
+            "Jury duty",
+            "Public holiday",
+            "Religious holidays",
+            "Toil");
 
     public static long getId() {
         return id.get();
@@ -110,66 +124,32 @@ public class LeaveStatusViewModel {
         return description;
     }
 
-    public static Date getStartDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-        }
-        return null;
+    public static LocalDate getStartDate() {
+        return startDate.get();
     }
 
-    public static void setStartDate(String startDate) {
+    public static void setStartDate(LocalDate startDate) {
         LeaveStatusViewModel.startDate.set(startDate);
     }
 
-    public static StringProperty startDateProperty() {
+    public static ObjectProperty<LocalDate> startDateProperty() {
         return startDate;
     }
 
-    public static Property<LocalTime> startTimeProperty() {
-        return startTime;
+    public static LocalDate getEndDate() {
+        return startDate.get();
     }
 
-    public static Date getEndDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-        }
-        return null;
-    }
-
-    public static void setEndDate(String endDate) {
+    public static void setEndDate(LocalDate endDate) {
         LeaveStatusViewModel.endDate.set(endDate);
     }
 
-    public static StringProperty endDateProperty() {
+    public static ObjectProperty<LocalDate> endDateProperty() {
         return endDate;
     }
 
-    public static LocalTime getEndTime() {
-        return endTime.get();
-    }
-
-    public static void setEndTime(LocalTime time) {
-        endTime.set(time);
-    }
-
-    public static Property<LocalTime> endTimeProperty() {
-        return endTime;
-    }
-
-    public static LocalTime getStartTime() {
-        return startTime.get();
-    }
-
-    public static void setStartTime(LocalTime time) {
-        startTime.set(time);
-    }
-
     public static Duration getDuration() {
-        return Duration.parse(startDate.get());
+        return Duration.between(startDate.get(), endDate.get());
     }
 
     public static void setDuration(String duration) {
@@ -180,15 +160,15 @@ public class LeaveStatusViewModel {
         return duration;
     }
 
-    public static LeaveType getLeaveType() {
+    public static String getLeaveType() {
         return leaveType.get();
     }
 
-    public static void setLeaveType(LeaveType leaveType) {
+    public static void setLeaveType(String leaveType) {
         LeaveStatusViewModel.leaveType.set(leaveType);
     }
 
-    public static ObjectProperty<LeaveType> leaveTypeProperty() {
+    public static StringProperty leaveTypeProperty() {
         return leaveType;
     }
 
@@ -233,12 +213,10 @@ public class LeaveStatusViewModel {
         setEmployee(null);
         setDesignation(null);
         setDescription("");
-        setStartDate("");
-        setEndDate("");
-        setStartTime(null);
-        setEndTime(null);
+        setStartDate(null);
+        setEndDate(null);
         setDuration("");
-        setLeaveType(null);
+        setLeaveType("null");
         setAttachment("");
         setStatus('P');
     }
@@ -252,8 +230,6 @@ public class LeaveStatusViewModel {
                 .description(getDescription())
                 .startDate(getStartDate())
                 .endDate(getEndDate())
-                .startTime(getStartTime())
-                .endTime(getEndTime())
                 .duration(getDuration())
                 .leaveType(getLeaveType())
                 .attachment(getAttachment())  // File to be uploaded.
@@ -364,10 +340,8 @@ public class LeaveStatusViewModel {
                     setEmployee(leaveStatus.getEmployee());
                     setDesignation(leaveStatus.getDesignation());
                     setDescription(leaveStatus.getDescription());
-                    setStartDate(leaveStatus.getLocaleStartDate());
-                    setEndDate(leaveStatus.getLocaleEndDate());
-                    setStartTime(leaveStatus.getStartTime());
-                    setEndTime(leaveStatus.getEndTime());
+                    setStartDate(leaveStatus.getStartDate());
+                    setEndDate(leaveStatus.getEndDate());
                     setDuration(leaveStatus.getLocaleDuration());
                     setLeaveType(leaveStatus.getLeaveType());
                     setAttachment(leaveStatus.getAttachment());
@@ -468,8 +442,6 @@ public class LeaveStatusViewModel {
                 .description(getDescription())
                 .startDate(getStartDate())
                 .endDate(getEndDate())
-                .startTime(getStartTime())
-                .endTime(getEndTime())
                 .duration(getDuration())
                 .leaveType(getLeaveType())
                 .attachment(getAttachment())  // File to be uploaded.

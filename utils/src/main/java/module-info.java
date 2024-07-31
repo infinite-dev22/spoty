@@ -4,6 +4,7 @@ module spoty.utils {
     requires lombok;
     requires java.xml;
     requires com.google.gson;
+    requires net.coobird.thumbnailator;
 
     opens inc.nomard.spoty.utils;
 

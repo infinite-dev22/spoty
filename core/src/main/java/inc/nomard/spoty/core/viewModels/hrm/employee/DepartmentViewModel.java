@@ -1,21 +1,8 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 package inc.nomard.spoty.core.viewModels.hrm.employee;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
@@ -25,6 +12,7 @@ import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -37,9 +25,19 @@ public class DepartmentViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
+    private static final ObjectProperty<User> manager = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Department> parentDepartment = new SimpleObjectProperty<>();
+    private static final StringProperty location = new SimpleStringProperty("");
+    private static final BooleanProperty active = new SimpleBooleanProperty();
     private static final StringProperty description = new SimpleStringProperty("");
     public static ObservableList<Department> departmentsList = FXCollections.observableArrayList();
     private static final ListProperty<Department> departments = new SimpleListProperty<>(departmentsList);
@@ -68,6 +66,54 @@ public class DepartmentViewModel {
 
     public static StringProperty nameProperty() {
         return name;
+    }
+
+    public static User getManager() {
+        return manager.get();
+    }
+
+    public static void setManager(User manager) {
+        DepartmentViewModel.manager.set(manager);
+    }
+
+    public static ObjectProperty<User> managerProperty() {
+        return manager;
+    }
+
+    public static Department getParentDepartment() {
+        return parentDepartment.get();
+    }
+
+    public static void setParentDepartment(Department parentDepartment) {
+        DepartmentViewModel.parentDepartment.set(parentDepartment);
+    }
+
+    public static ObjectProperty<Department> parentDepartmentProperty() {
+        return parentDepartment;
+    }
+
+    public static String getLocation() {
+        return location.get();
+    }
+
+    public static void setLocation(String location) {
+        DepartmentViewModel.location.set(location);
+    }
+
+    public static StringProperty locationProperty() {
+        return location;
+    }
+
+    public static Boolean isActive() {
+        return active.get();
+    }
+
+    public static void setActive(Boolean active) {
+        DepartmentViewModel.active.set(active);
+    }
+
+    public static BooleanProperty activeProperty() {
+        return active;
     }
 
     public static String getDescription() {
@@ -100,6 +146,10 @@ public class DepartmentViewModel {
         var department =
                 Department.builder()
                         .name(getName())
+                        .manager(getManager())
+                        .parentDepartment(getParentDepartment())
+                        .location(getLocation())
+                        .active(isActive())
                         .description(getDescription())
                         .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.post(department);
@@ -302,6 +352,10 @@ public class DepartmentViewModel {
         var department = Department.builder()
                 .id(getId())
                 .name(getName())
+                .manager(getManager())
+                .parentDepartment(getParentDepartment())
+                .location(getLocation())
+                .active(isActive())
                 .description(getDescription())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.put(department);

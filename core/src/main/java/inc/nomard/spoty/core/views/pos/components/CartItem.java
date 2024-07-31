@@ -36,7 +36,6 @@ public class CartItem extends HBox {
         getChildren().addAll(drawRect(), drawBody());
         getStylesheets().add(SpotyCoreResourceLoader.load("styles/base.css"));
         getStylesheets().add(SpotyCoreResourceLoader.load("styles/Common.css"));
-        getStylesheets().add(SpotyCoreResourceLoader.load("styles/theming/Default.css"));
         getStyleClass().add("card-raised");
     }
 

@@ -1,0 +1,42 @@
+@import '../../fonts/Fonts.css';
+@import '../MFXColors.css';
+
+app-root {
+    -fx-background-color: rgba(255, 255, 255, 1);
+}
+
+/*MESSAGE STYLES*/
+/*Error alert styles.*/
+.error {
+    -fx-background-color: #fcede9; /*Light red.*/
+    -fx-border-color: #f5a089;
+}
+
+.error .message-icon {
+    -fx-background-color: #cd5235; /*red*/
+}
+
+/*Success alert styles.*/
+.success {
+    -fx-background-color: #e4f0e7; /*Light green.*/
+    -fx-border-color: #89f5a4;
+}
+
+.success .message-icon {
+    -fx-background-color: #35cc56; /*green.*/
+}
+
+.content-view {
+    -fx-background-color: #ffffff;
+}
+
+.card-colored {
+    -fx-background-color: #ffffff;
+}
+
+.window {
+    -fx-background-color: rgba(240, 240, 240, .9);
+}
+.hero-image{
+    -fx-background-color: -mfx-charcoal;
+}

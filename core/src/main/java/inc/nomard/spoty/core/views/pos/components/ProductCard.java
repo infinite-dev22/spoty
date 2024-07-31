@@ -1,7 +1,9 @@
 package inc.nomard.spoty.core.views.pos.components;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.mfxcore.controls.*;
 import java.util.*;
 import javafx.application.*;
@@ -17,24 +19,10 @@ import lombok.extern.java.*;
 
 @Log
 public class ProductCard extends VBox {
-    private static final Random RND = new Random();
     private static final double IMAGE_SIZE = 160;
     private static final double ARC_SIZE = 20;
     private static final double SPACING = 10;
-    private static final double LABEL_WIDTH = 200;
-    //    private static final String PLACEHOLDER_IMAGE = SpotyCoreResourceLoader.load("images/product-image-placeholder.png");
-//    private static final String NO_IMAGE_PLACEHOLDER = SpotyCoreResourceLoader.load("images/no-image-placeholder.png");
-//    private static final String IMAGE_FAILED_TO_LOAD_PLACEHOLDER = SpotyCoreResourceLoader.load("images/image-loading-failed.png");
-    private static final List<String> IMAGE_PATHS = List.of(
-            "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=160&h=160&ixlib=rb-4.0.3&q=85&fm=png&crop=entropy&cs=srgb&dl=rachit-tank-2cFZ_FB08UM-unsplash.png",
-            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=160&h=160&ixlib=rb-4.0.3&q=85&fm=png&crop=entropy&cs=srgb&dl=c-d-x-PDX_a_82obo-unsplash.png",
-            "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=160&h=160&ixlib=rb-4.0.3&q=85&fm=png&crop=entropy&cs=srgb&dl=giorgio-trovato-K62u25Jk6vo-unsplash.png",
-            "https://images.unsplash.com/photo-1560343090-f0409e92791a?w=160&h=160&ixlib=rb-4.0.3&q=85&fm=png&crop=entropy&cs=srgb&dl=irene-kredenets-KStSiM1UvPw-unsplash.png",
-            "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=160&h=160&ixlib=rb-4.0.3&q=85&fm=png&crop=entropy&cs=srgb&dl=caroline-attwood-E1rH__X9SA0-unsplash.png",
-            "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=160&h=160&ixlib=rb-4.0.3&q=85&fm=png&crop=entropy&cs=srgb&dl=joan-tran-reEySFadyJQ-unsplash.png",
-            "",
-            "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=160&h=160&ixlib=rb-4.0.3&q=85&fm=png&crop=entropy&cs=srgb&dl=joan-tran-reEySFadwwveyJQ-unsplash.png"
-    );
+    private static final double LABEL_WIDTH = 150;
 
     private static final Map<String, Image> IMAGE_CACHE = new HashMap<>();
 
@@ -53,22 +41,24 @@ public class ProductCard extends VBox {
         productPriceLbl = new Label(String.valueOf(product.getSalePrice()));
         productQuantityLbl = new Label(product.getQuantity() + " Pcs available");
 
+        var labelsHolder = new VBox(
+                productNameLbl,
+                productPriceLbl,
+                productQuantityLbl);
+        labelsHolder.setAlignment(Pos.CENTER);
+        labelsHolder.setPadding(new Insets(0d, 5d, 0d, 5d));
+        labelsHolder.setMaxWidth(160);
+
         initializeLabels();
         this.getStyleClass().add("pos-product-card");
 
         getChildren().addAll(
                 getProductImage(),
-                productNameLbl,
-                productPriceLbl,
-                productQuantityLbl,
+                labelsHolder,
                 createSpacer()
         );
 
-        loadImageAsync();
-    }
-
-    public static void preloadImages() {
-        IMAGE_PATHS.forEach(path -> IMAGE_CACHE.computeIfAbsent(path, key -> new Image(key, IMAGE_SIZE, IMAGE_SIZE, true, false)));
+        loadImageAsync(product.getImage());
     }
 
     private void initializeLabels() {
@@ -80,7 +70,7 @@ public class ProductCard extends VBox {
 
         productNameLbl.getStyleClass().add("pos-product-card-name");
         productPriceLbl.getStyleClass().add("pos-product-card-price");
-        productQuantityLbl.getStyleClass().add("pos-product-card-quantity");
+        productQuantityLbl.getStyleClass().add(Styles.TEXT_MUTED);
 
         setAlignment(Pos.CENTER);
         setSpacing(SPACING);
@@ -118,14 +108,10 @@ public class ProductCard extends VBox {
     }
 
     private Region createSpacer() {
-        Region space = new Region();
-        space.setPrefHeight(SPACING);
-        return space;
+        return new Spacer(Orientation.VERTICAL);
     }
 
-    private void loadImageAsync() {
-        String imagePath = IMAGE_PATHS.get(RND.nextInt(IMAGE_PATHS.size()));
-
+    private void loadImageAsync(String imagePath) {
         if (imagePath.isEmpty()) {
             Platform.runLater(this::updateProductImageHolderWithPlaceholder);
             return;
@@ -160,7 +146,7 @@ public class ProductCard extends VBox {
 
         loadImageTask.setOnFailed(event -> {
             log.warning("Failed to load image from URL: " + imagePath + ". " + loadImageTask.getException());
-            Platform.runLater(() -> updateProductImageHolderWithPlaceholder());
+            Platform.runLater(this::updateProductImageHolderWithPlaceholder);
         });
 
         new Thread(loadImageTask).start();
@@ -169,9 +155,5 @@ public class ProductCard extends VBox {
     private void updateProductImageHolderWithPlaceholder() {
         productImage = PreloadedData.noImagePlaceholderImage;
         updateProductImageHolder();
-    }
-
-    private Image getCachedImage(String imagePath) {
-        return IMAGE_CACHE.computeIfAbsent(imagePath, path -> new Image(path, IMAGE_SIZE, IMAGE_SIZE, true, false));
     }
 }

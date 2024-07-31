@@ -1,22 +1,7 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import inc.nomard.spoty.network_bridge.models.*;
@@ -28,7 +13,7 @@ import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.mfxcore.base.properties.*;
 import java.lang.reflect.*;
 import java.net.http.*;
-import java.text.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -45,13 +30,19 @@ public class PaySlipViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty startDate = new SimpleStringProperty("");
-    private static final StringProperty endDate = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalDateTime> startDate = new SimpleObjectProperty<>();
+    private static final ObjectProperty<LocalDateTime> endDate = new SimpleObjectProperty<>();
     private static final IntegerProperty salariesQuantity = new SimpleIntegerProperty();
     private static final CharProperty status = new CharProperty();
-    private static final StringProperty createdOn = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalDateTime> createdOn = new SimpleObjectProperty<>();
     private static final StringProperty message = new SimpleStringProperty("");
     private static final PaySlipRepositoryImpl paySlipRepository = new PaySlipRepositoryImpl();
 
@@ -67,37 +58,27 @@ public class PaySlipViewModel {
         return id;
     }
 
-    public static Date getStartDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-        }
-        return null;
+    public static LocalDateTime getStartDate() {
+        return startDate.get();
     }
 
-    public static void setStartDate(String startDate) {
+    public static void setStartDate(LocalDateTime startDate) {
         PaySlipViewModel.startDate.set(startDate);
     }
 
-    public static StringProperty startDateProperty() {
+    public static ObjectProperty<LocalDateTime> startDateProperty() {
         return startDate;
     }
 
-    public static Date getEndDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-        }
-        return null;
+    public static LocalDateTime getEndDate() {
+        return startDate.get();
     }
 
-    public static void setEndDate(String endDate) {
+    public static void setEndDate(LocalDateTime endDate) {
         PaySlipViewModel.endDate.set(endDate);
     }
 
-    public static StringProperty endDateProperty() {
+    public static ObjectProperty<LocalDateTime> endDateProperty() {
         return endDate;
     }
 
@@ -125,20 +106,15 @@ public class PaySlipViewModel {
         return status;
     }
 
-    public static Date getCreatedDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(createdOn.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-        }
-        return null;
+    public static LocalDateTime getCreatedDate() {
+        return createdOn.get();
     }
 
-    public static void setCreatedDate(String createdOn) {
+    public static void setCreatedDate(LocalDateTime createdOn) {
         PaySlipViewModel.createdOn.set(createdOn);
     }
 
-    public static StringProperty createdDateProperty() {
+    public static ObjectProperty<LocalDateTime> createdDateProperty() {
         return createdOn;
     }
 
@@ -168,11 +144,11 @@ public class PaySlipViewModel {
 
     public static void resetProperties() {
         setId(0);
-        setStartDate("");
-        setEndDate("");
+        setStartDate(null);
+        setEndDate(null);
         setSalariesQuantity(0);
         setStatus('P');
-        setCreatedDate("");
+        setCreatedDate(null);
         setMessage("");
     }
 
@@ -289,11 +265,11 @@ public class PaySlipViewModel {
                 Platform.runLater(() -> {
                     var paySlip = gson.fromJson(response.body(), PaySlip.class);
                     setId(paySlip.getId());
-                    setStartDate(paySlip.getLocaleStartDate());
-                    setEndDate(paySlip.getLocaleEndDate());
+                    setStartDate(paySlip.getStartDate());
+                    setEndDate(paySlip.getEndDate());
                     setSalariesQuantity(paySlip.getSalariesQuantity());
                     setStatus(paySlip.getStatus());
-                    setCreatedDate(paySlip.getLocaleCreatedDate());
+                    setCreatedDate(paySlip.getCreatedOn());
                     setMessage(paySlip.getMessage());
                     onSuccess.run();
                 });
