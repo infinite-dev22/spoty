@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
@@ -9,59 +10,61 @@ import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
+import javafx.application.*;
+import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
-import javafx.scene.*;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
-@SuppressWarnings("unchecked")
 @Log
-public class RequisitionMasterForm extends OutlineFormPage {
-    public Label supplierValidationLabel;
-    public ValidatableComboBox<Supplier> supplier;
-    public TableView<RequisitionDetail> table;
-    public ValidatableTextField note;
-    public Button saveBtn,
-            cancelBtn,
-            addBtn;
+public class RequisitionMasterForm extends VBox {
+    private final ModalPane modalPane;
+    private Label supplierValidationLabel;
+    private ValidatableComboBox<Supplier> supplier;
+    private TableView<RequisitionDetail> tableView;
+    private TextArea note;
+    private Button saveBtn, cancelBtn, addBtn;
 
-    public RequisitionMasterForm() {
-        addNode(init());
+    public RequisitionMasterForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
+        init();
         initializeComponentProperties();
     }
 
     public void initializeComponentProperties() {
+        bindProperties();
+        configureSupplierComboBox();
         requiredValidator();
     }
 
-    private BorderPane init() {
-        Label purchaseFormTitle = new Label("Requisition Form");
-        UIUtils.anchor(purchaseFormTitle, 0d, null, null, 0d);
-
-        var vbox = new VBox();
-        vbox.getStyleClass().add("card-flat");
-        vbox.setPadding(new Insets(10d));
-        vbox.setSpacing(10d);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        vbox.getChildren().addAll(purchaseFormTitle, buildSeparator(), createCustomGrid(), buildAddButton(), buildTable(), createButtonBox());
-
-        return new BorderPane(vbox);
+    private void init() {
+        this.getStyleClass().add("card-flat");
+        this.setPadding(new Insets(10d));
+        this.setSpacing(10d);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.getChildren().addAll(buildTitle(),
+                buildSupplier(),
+                buildAddButton(),
+                buildTable(),
+                buildNote(),
+                createButtonBox());
     }
 
     private Separator buildSeparator() {
@@ -69,6 +72,14 @@ public class RequisitionMasterForm extends OutlineFormPage {
         separator.setPrefWidth(200.0);
         HBox.setHgrow(separator, Priority.ALWAYS);
         return separator;
+    }
+
+    private VBox buildTitle() {
+        var title = new Text("Create");
+        title.getStyleClass().add(Styles.TITLE_3);
+        var subTitle = new Text("Requisition");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
     }
 
     private Button buildAddButton() {
@@ -81,23 +92,10 @@ public class RequisitionMasterForm extends OutlineFormPage {
     }
 
     private TableView<RequisitionDetail> buildTable() {
-        table = new TableView<>();
-        HBox.setHgrow(table, Priority.ALWAYS);
+        tableView = new TableView<>();
+        HBox.setHgrow(tableView, Priority.ALWAYS);
         setupTable();
-        return table;
-    }
-
-    private VBox createCustomGrid() {
-        var hbox = new HBox();
-        hbox.getChildren().addAll(buildSupplier(), buildNote());
-        hbox.setSpacing(20d);
-        HBox.setHgrow(hbox, Priority.ALWAYS);
-        var vbox = new VBox();
-        vbox.setSpacing(10d);
-        vbox.getChildren().add(hbox);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        UIUtils.anchor(vbox, 40d, 0d, null, 0d);
-        return vbox;
+        return tableView;
     }
 
     private VBox buildFieldHolder(Node... nodes) {
@@ -110,41 +108,18 @@ public class RequisitionMasterForm extends OutlineFormPage {
     }
 
     private VBox buildSupplier() {
-        supplier = new ValidatableComboBox<>();
         var label = new Label("Supplier");
+        supplier = new ValidatableComboBox<>();
         supplier.setPrefWidth(10000d);
-        supplier
-                .valueProperty()
-                .bindBidirectional(RequisitionMasterViewModel.supplierProperty());
-        // ComboBox Converters.
-        StringConverter<Supplier> supplierConverter =
-                FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
-
-        // ComboBox Filter Functions.
-        Function<String, Predicate<Supplier>> supplierFilterFunction =
-                searchStr ->
-                        supplier ->
-                                StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
-
-        // Combo box properties.
-        supplier.setConverter(supplierConverter);
-        if (SupplierViewModel.getSuppliers().isEmpty()) {
-            SupplierViewModel.getSuppliers()
-                    .addListener(
-                            (ListChangeListener<Supplier>)
-                                    c -> supplier.setItems(SupplierViewModel.getSuppliers()));
-        } else {
-            supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
-        }
         supplierValidationLabel = Validators.buildValidationLabel();
         return buildFieldHolder(label, supplier, supplierValidationLabel);
     }
 
     private VBox buildNote() {
-        note = new ValidatableTextField();
         var label = new Label("Note");
-        note.setPrefWidth(10000d);
-        note.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
+        note = new TextArea();
+        note.setMinHeight(100d);
+        note.setWrapText(true);
         return buildFieldHolder(label, note);
     }
 
@@ -152,7 +127,7 @@ public class RequisitionMasterForm extends OutlineFormPage {
         saveBtn = new Button("Save");
         saveBtn.setDefaultButton(true);
         saveBtn.setOnAction(event -> {
-            if (!table.isDisabled() && RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
+            if (!tableView.isDisabled() && RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
             }
             validateFields();
@@ -172,8 +147,6 @@ public class RequisitionMasterForm extends OutlineFormPage {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         cancelBtn.setOnAction(event -> {
-            AppManager.getNavigation().navigate(RequisitionPage.class);
-            RequisitionMasterViewModel.resetProperties();
             this.dispose();
         });
         return cancelBtn;
@@ -189,71 +162,22 @@ public class RequisitionMasterForm extends OutlineFormPage {
         return buttonBox;
     }
 
-    private void setupTable() {
-        // Set table column titles.
-        TableColumn<RequisitionDetail, String> product = new TableColumn<>("Product");
-        TableColumn<RequisitionDetail, String> quantity = new TableColumn<>("Quantity");
-
-        // Set table column width.
-        product.prefWidthProperty().bind(table.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(table.widthProperty().multiply(.25));
-
-        styleTable();
-
-        // Populate table.
-        table.setItems(RequisitionDetailViewModel.getRequisitionDetails());
+    private void bindProperties() {
+        supplier.valueProperty().bindBidirectional(RequisitionMasterViewModel.supplierProperty());
+        note.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
     }
 
-    private void styleTable() {
-        table.setPrefSize(10000d, 10000d);
+    private void configureSupplierComboBox() {
+        StringConverter<Supplier> supplierConverter = FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
+        Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr -> supplier -> StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
-        table.setRowFactory(
-                t -> {
-                    TableRow<RequisitionDetail> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<RequisitionDetail>) event.getSource())
-                                        .show(
-                                                table.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
-                });
-    }
+        supplier.setConverter(supplierConverter);
 
-    private ContextMenu showContextMenu(TableRow<RequisitionDetail> obj) {
-        var contextMenu = new ContextMenu();
-        var delete = new MenuItem("Delete");
-        var edit = new MenuItem("Edit");
-
-        // Actions
-        // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            RequisitionDetailViewModel.removeRequisitionDetail(
-                    obj.getItem().getId(),
-                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getItem()));
-            event.consume();
-        }, obj.getItem().getProductName(), this));
-        // Edit
-        edit.setOnAction(
-                event -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            RequisitionDetailViewModel.getRequisitionDetail(obj.getItem().getId());
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
-                    });
-                    SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait();
-                    event.consume();
-                });
-
-        contextMenu.getItems().addAll(edit, delete);
-
-        return contextMenu;
+        if (SupplierViewModel.getSuppliers().isEmpty()) {
+            SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) c -> supplier.setItems(SupplierViewModel.getSuppliers()));
+        } else {
+            supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
+        }
     }
 
     private void validateFields() {
@@ -271,38 +195,96 @@ public class RequisitionMasterForm extends OutlineFormPage {
     }
 
     private boolean isValidForm() {
-        return supplier.validate().isEmpty() && !table.isDisabled() && !RequisitionDetailViewModel.getRequisitionDetails().isEmpty();
+        return supplier.validate().isEmpty() && !tableView.isDisabled() && !RequisitionDetailViewModel.getRequisitionDetails().isEmpty();
+    }
+
+    private void setupTable() {
+        setupTableColumns();
+        styleTable();
+        bindTableItems();
+    }
+
+    private void setupTableColumns() {
+        var product = new TableColumn<RequisitionDetail, RequisitionDetail>("Product");
+        var quantity = new TableColumn<RequisitionDetail, String>("Quantity");
+
+        product.prefWidthProperty().bind(tableView.widthProperty().multiply(.7));
+        quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
+
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+        var columnList = new LinkedList<>(Stream.of(product, quantity).toList());
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        tableView.getColumns().addAll(columnList);
+    }
+
+    private void styleTable() {
+        tableView.setPrefSize(10000, 10000);
+        tableView.setRowFactory(t -> {
+            TableRow<RequisitionDetail> row = new TableRow<>();
+            row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
+            return row;
+        });
+    }
+
+    private ContextMenu showContextMenu(TableRow<RequisitionDetail> row) {
+        var contextMenu = new ContextMenu();
+        contextMenu.getItems().addAll(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getItem().getProductName(), this)), createMenuItem("Edit", event -> handleEditAction(row)));
+        return contextMenu;
+    }
+
+    private MenuItem createMenuItem(String text, EventHandler<ActionEvent> action) {
+        MenuItem menuItem = new MenuItem(text);
+        menuItem.setOnAction(action);
+        return menuItem;
+    }
+
+    private void handleDeleteAction(TableRow<RequisitionDetail> row) {
+        RequisitionDetailViewModel.removeRequisitionDetail(row.getItem().getId(), RequisitionDetailViewModel.getRequisitionDetails().indexOf(row.getItem()));
+    }
+
+    private void handleEditAction(TableRow<RequisitionDetail> row) {
+        Platform.runLater(() -> RequisitionDetailViewModel.getRequisitionDetail(row.getItem().getId()));
+        SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait();
+    }
+
+    private void bindTableItems() {
+        tableView.setItems(RequisitionDetailViewModel.getRequisitionDetails());
     }
 
     private void onSuccess() {
         this.dispose();
-        AppManager.getNavigation().navigate(RequisitionPage.class);
-        RequisitionMasterViewModel.resetProperties();
         RequisitionMasterViewModel.getAllRequisitionMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
     }
 
-    public void requiredValidator() {
-        // Name input validation.
-        Constraint supplierConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Supplier is required")
-                        .setCondition(supplier.valueProperty().isNotNull())
-                        .get();
-        supplier.getValidator().constraint(supplierConstraint);
-        // Display error.
-        supplier
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                supplierValidationLabel.setManaged(false);
-                                supplierValidationLabel.setVisible(false);
-                                supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
+    private void requiredValidator() {
+        setupValidation(supplier, "Supplier is required", supplierValidationLabel);
+    }
+
+    private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
+        Constraint constraint = Constraint.Builder.build()
+                .setSeverity(Severity.ERROR)
+                .setMessage(message)
+                .setCondition(field.valueProperty().isNotNull())
+                .get();
+
+        field.getValidator().constraint(constraint);
+        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                validationLabel.setManaged(false);
+                validationLabel.setVisible(false);
+                field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+            }
+        });
     }
 
     private void successMessage(String message) {
@@ -331,12 +313,13 @@ public class RequisitionMasterForm extends OutlineFormPage {
         }
     }
 
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        RequisitionMasterViewModel.resetProperties();
         supplierValidationLabel = null;
         supplier = null;
-        table = null;
+        tableView = null;
         note = null;
         saveBtn = null;
         cancelBtn = null;

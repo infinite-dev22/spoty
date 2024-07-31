@@ -36,7 +36,6 @@ public class PurchasePage extends OutlinePage {
     private TextField searchBar;
     private TableView<PurchaseMaster> masterTable;
     private MFXProgressSpinner progress;
-    private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
     private TableColumn<PurchaseMaster, PurchaseMaster> supplier;
@@ -114,7 +113,7 @@ public class PurchasePage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new Button("Create purchase");
+        var createBtn = new Button("Create");
         createBtn.setOnAction(event -> showForm());
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);

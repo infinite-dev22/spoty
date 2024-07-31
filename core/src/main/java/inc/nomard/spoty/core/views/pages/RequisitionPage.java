@@ -34,10 +34,10 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class RequisitionPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<RequisitionMaster> masterTable;
     private MFXProgressSpinner progress;
-    private Button createBtn;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
     private TableColumn<RequisitionMaster, String> reference;
@@ -54,10 +54,19 @@ public class RequisitionPage extends OutlinePage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        addNode(init());
+        modalPane = new SideModalPane();
+
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         RequisitionMasterViewModel.getAllRequisitionMasters(this::onDataInitializationSuccess, this::errorMessage);
+
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -71,7 +80,6 @@ public class RequisitionPage extends OutlinePage {
         pane.setCenter(buildCenter());
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -103,7 +111,8 @@ public class RequisitionPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new Button("Create");
+        var createBtn = new Button("Create");
+        createBtn.setOnAction(event -> showForm());
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -194,7 +203,7 @@ public class RequisitionPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    RequisitionMasterViewModel.getRequisitionMaster(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
+                    RequisitionMasterViewModel.getRequisitionMaster(obj.getItem().getId(), this::showForm, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -208,8 +217,16 @@ public class RequisitionPage extends OutlinePage {
         return contextMenu;
     }
 
-    public void createBtnAction() {
-        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(RequisitionMasterForm.class));
+    private void showForm() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new RequisitionMasterForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
