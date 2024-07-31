@@ -32,6 +32,7 @@ import lombok.extern.java.*;
 @SuppressWarnings("unchecked")
 @Log
 public class TransferPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<TransferMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -53,10 +54,18 @@ public class TransferPage extends OutlinePage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         TransferMasterViewModel.getAllTransferMasters(this::onDataInitializationSuccess, this::errorMessage);
+
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -102,7 +111,7 @@ public class TransferPage extends OutlinePage {
 
     private HBox buildRightTop() {
         var createBtn = new Button("Create");
-        createBtn.setOnAction(event -> AppManager.getNavigation().navigate(TransferMasterForm.class));
+        createBtn.setOnAction(event -> showForm());
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -199,7 +208,7 @@ public class TransferPage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    TransferMasterViewModel.getTransfer(obj.getItem().getId(), () -> AppManager.getNavigation().navigate(TransferMasterForm.class), this::errorMessage);
+                    TransferMasterViewModel.getTransfer(obj.getItem().getId(), this::showForm, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -234,6 +243,18 @@ public class TransferPage extends OutlinePage {
         TransferPreviewController controller = viewFxmlLoader.getController();
         controller.init(transferMaster);
         viewDialog.showAndWait();
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new TransferMasterForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void successMessage(String message) {

@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
@@ -9,7 +10,6 @@ import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
@@ -20,24 +20,28 @@ import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.*;
 import java.util.function.*;
+import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class TransferMasterForm extends OutlineFormPage {
+public class TransferMasterForm extends VBox {
+    private final ModalPane modalPane;
     public ValidatableComboBox<Branch> fromBranch,
             toBranch;
     public ValidatableDatePicker date;
     public TableView<TransferDetail> table;
-    public ValidatableTextField note;
+    public TextArea note;
     public BorderPane contentPane;
     public Button addBtn,
             saveBtn,
@@ -46,9 +50,12 @@ public class TransferMasterForm extends OutlineFormPage {
             dateValidationLabel,
             toBranchValidationLabel,
             fromBranchValidationLabel;
+    private TableColumn<TransferDetail, TransferDetail> productName;
+    private TableColumn<TransferDetail, String> productQuantity;
 
-    public TransferMasterForm() {
-        addNode(init());
+    public TransferMasterForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
+        init();
         initializeComponentProperties();
     }
 
@@ -56,18 +63,18 @@ public class TransferMasterForm extends OutlineFormPage {
         requiredValidator();
     }
 
-    private BorderPane init() {
-        Label purchaseFormTitle = new Label("Transfer Form");
-        UIUtils.anchor(purchaseFormTitle, 0d, null, null, 0d);
-
-        var vbox = new VBox();
-        vbox.getStyleClass().add("card-flat");
-        vbox.setPadding(new Insets(10d));
-        vbox.setSpacing(10d);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        vbox.getChildren().addAll(purchaseFormTitle, buildSeparator(), createCustomGrid(), buildAddButton(), buildTable(), createButtonBox());
-
-        return new BorderPane(vbox);
+    private void init() {
+        this.getStyleClass().add("card-flat");
+        this.setPadding(new Insets(10d));
+        this.setSpacing(10d);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.getChildren().addAll(buildTitle(),
+                createCustomGrid(),
+                buildDatePicker(),
+                buildAddButton(),
+                buildTable(),
+                buildNote(),
+                createButtonBox());
     }
 
     private Separator buildSeparator() {
@@ -75,6 +82,14 @@ public class TransferMasterForm extends OutlineFormPage {
         separator.setPrefWidth(200.0);
         HBox.setHgrow(separator, Priority.ALWAYS);
         return separator;
+    }
+
+    private VBox buildTitle() {
+        var title = new Text("Create");
+        title.getStyleClass().add(Styles.TITLE_3);
+        var subTitle = new Text("Stock transfer");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
     }
 
     private Button buildAddButton() {
@@ -93,21 +108,12 @@ public class TransferMasterForm extends OutlineFormPage {
         return table;
     }
 
-    private VBox createCustomGrid() {
-        var hbox1 = new HBox();
-        hbox1.getChildren().addAll(buildFromBranch(), buildToBranch());
-        hbox1.setSpacing(20d);
-        HBox.setHgrow(hbox1, Priority.ALWAYS);
-        var hbox2 = new HBox();
-        hbox2.getChildren().addAll(buildDatePicker(), buildNote());
-        hbox2.setSpacing(20d);
-        HBox.setHgrow(hbox2, Priority.ALWAYS);
-        var vbox = new VBox();
-        vbox.setSpacing(10d);
-        vbox.getChildren().addAll(hbox1, hbox2);
-        HBox.setHgrow(vbox, Priority.ALWAYS);
-        UIUtils.anchor(vbox, 40d, 0d, null, 0d);
-        return vbox;
+    private HBox createCustomGrid() {
+        var hbox = new HBox();
+        hbox.getChildren().addAll(buildFromBranch(), buildToBranch());
+        hbox.setSpacing(20d);
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
     }
 
     private VBox buildFieldHolder(Node... nodes) {
@@ -192,9 +198,9 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private VBox buildNote() {
-        note = new ValidatableTextField();
         var label = new Label("Note");
-        note.setPrefWidth(10000d);
+        note = new TextArea();
+        note.setMinHeight(100d);
         note.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
         return buildFieldHolder(label, note);
     }
@@ -222,11 +228,7 @@ public class TransferMasterForm extends OutlineFormPage {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            AppManager.getNavigation().navigate(TransferPage.class);
-            TransferMasterViewModel.resetProperties();
-            this.dispose();
-        });
+        cancelBtn.setOnAction(event -> this.dispose());
         return cancelBtn;
     }
 
@@ -241,26 +243,15 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private void setupTable() {
-        TableColumn<TransferDetail, String> productName = new TableColumn<>("Product");
-        TableColumn<TransferDetail, String> stock = new TableColumn<>("Stock");
-        TableColumn<TransferDetail, String> productQuantity = new TableColumn<>("Quantity");
+        productName = new TableColumn<>("Product");
+        productQuantity = new TableColumn<>("Quantity");
+        productName.prefWidthProperty().bind(table.widthProperty().multiply(.7));
+        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
 
-        productName.prefWidthProperty().bind(table.widthProperty().multiply(.5));
-        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.5));
-        stock.prefWidthProperty().bind(table.widthProperty().multiply(.5));
-
+        table.getColumns().addAll(productName, productQuantity);
+        table.setItems(TransferDetailViewModel.getTransferDetails());
+        setupTableColumns();
         getTransferDetailTable();
-
-        if (TransferDetailViewModel.getTransferDetails().isEmpty()) {
-            TransferDetailViewModel.getTransferDetails()
-                    .addListener(
-                            (ListChangeListener<TransferDetail>)
-                                    change -> table.setItems(TransferDetailViewModel.getTransferDetails()));
-        } else {
-            table
-                    .itemsProperty()
-                    .bindBidirectional(TransferDetailViewModel.transferDetailsProperty());
-        }
     }
 
     private void getTransferDetailTable() {
@@ -350,8 +341,6 @@ public class TransferMasterForm extends OutlineFormPage {
     }
 
     private void onSuccess() {
-        AppManager.getNavigation().navigate(TransferPage.class);
-        TransferMasterViewModel.resetProperties();
         TransferMasterViewModel.getAllTransferMasters(null, null);
         ProductViewModel.getAllProducts(null, null);
         this.dispose();
@@ -442,9 +431,22 @@ public class TransferMasterForm extends OutlineFormPage {
         }
     }
 
-    @Override
+    private void setupTableColumns() {
+        productName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        productName.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+    }
+
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        TransferMasterViewModel.resetProperties();
         fromBranchValidationLabel = null;
         toBranchValidationLabel = null;
         dateValidationLabel = null;
