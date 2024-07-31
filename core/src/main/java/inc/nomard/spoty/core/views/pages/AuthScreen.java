@@ -631,7 +631,7 @@ public class AuthScreen extends BorderPane {
                 CompletableFuture.runAsync(() -> ProductCategoryViewModel.getAllProductCategories(null, null)),
                 CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null)),
                 CompletableFuture.runAsync(() -> PurchaseMasterViewModel.getAllPurchaseMasters(null, null)),
-                CompletableFuture.runAsync(() -> PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null)),
+                CompletableFuture.runAsync(() -> PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null)),
                 CompletableFuture.runAsync(() -> QuotationMasterViewModel.getAllQuotationMasters(null, null)),
                 CompletableFuture.runAsync(() -> RequisitionMasterViewModel.getAllRequisitionMasters(null, null)),
                 CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null)),

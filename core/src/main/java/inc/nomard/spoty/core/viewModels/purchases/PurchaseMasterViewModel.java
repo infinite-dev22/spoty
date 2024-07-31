@@ -24,7 +24,6 @@ import lombok.extern.java.*;
 
 @Log
 public class PurchaseMasterViewModel {
-
     @Getter
     public static final ObservableList<PurchaseMaster> purchasesList = FXCollections.observableArrayList();
     @Getter

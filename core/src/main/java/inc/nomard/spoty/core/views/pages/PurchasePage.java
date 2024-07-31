@@ -134,6 +134,18 @@ public class PurchasePage extends OutlinePage {
         modalPane.setPersistent(true);
     }
 
+    private void showReturnForm() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new PurchaseReturnMasterForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
+    }
+
     private HBox buildTop() {
         var hbox = new HBox();
         hbox.getStyleClass().add("card-flat-bottom");
@@ -227,6 +239,7 @@ public class PurchasePage extends OutlinePage {
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
         var view = new MenuItem("View");
+        var returnPurchase = new MenuItem("Return");
 
         // Actions
         // Delete
@@ -240,13 +253,19 @@ public class PurchasePage extends OutlinePage {
                     PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showForm, this::errorMessage);
                     e.consume();
                 });
+        // Edit
+        returnPurchase.setOnAction(
+                e -> {
+                    PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showReturnForm, this::errorMessage);
+                    e.consume();
+                });
         // View
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-        contextMenu.getItems().addAll(view, edit, delete);
+        contextMenu.getItems().addAll(view, edit, returnPurchase, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }

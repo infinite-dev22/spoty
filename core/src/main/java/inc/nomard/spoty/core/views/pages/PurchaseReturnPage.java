@@ -57,7 +57,7 @@ public class PurchaseReturnPage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(this::onDataInitializationSuccess, this::errorMessage);
+        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(this::onDataInitializationSuccess, this::errorMessage);
     }
 
     private void onDataInitializationSuccess() {
@@ -221,7 +221,7 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
+        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null);
     }
 
     private void viewDialogPane() throws IOException {
@@ -277,7 +277,7 @@ public class PurchaseReturnPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
+                PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);

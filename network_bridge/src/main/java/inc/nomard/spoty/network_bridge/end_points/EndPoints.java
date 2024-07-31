@@ -170,6 +170,17 @@ public class EndPoints {
         public static final String deletePurchases = purchasesUrl + "/delete/multiple";
     }
 
+    public static final class PurchaseReturns {
+        public static final String purchaseReturnsUrl = apiUrl + "/purchases/returns";
+        public static final String allPurchaseReturns = purchaseReturnsUrl + "/all";
+        public static final String purchaseReturnById = purchaseReturnsUrl + "/single";
+        public static final String searchPurchaseReturns = purchaseReturnsUrl + "/search";
+        public static final String addPurchaseReturn = purchaseReturnsUrl + "/add";
+        public static final String updatePurchaseReturn = purchaseReturnsUrl + "/update";
+        public static final String deletePurchaseReturn = purchaseReturnsUrl + "/delete/single";
+        public static final String deletePurchaseReturns = purchaseReturnsUrl + "/delete/multiple";
+    }
+
     public static final class Quotations {
         public static final String quotationsUrl = apiUrl + "/quotations";
         public static final String allQuotations = quotationsUrl + "/all";

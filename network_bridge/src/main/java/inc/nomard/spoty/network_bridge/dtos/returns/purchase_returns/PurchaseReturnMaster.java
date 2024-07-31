@@ -2,6 +2,7 @@ package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import java.text.*;
 import java.time.*;
 import java.util.*;
@@ -19,7 +20,7 @@ public class PurchaseReturnMaster {
     private String ref;
     private LocalDate date;
     private Supplier supplier;
-    private List<PurchaseReturnDetail> purchaseReturnDetails;
+    private List<PurchaseDetail> purchaseReturnDetails;
     private Tax tax;
     private Discount discount;
     private double amountPaid;
