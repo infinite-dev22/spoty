@@ -12,6 +12,9 @@ import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.theming.*;
+import io.github.palexdev.materialfx.theming.JavaFXThemes;
+import io.github.palexdev.materialfx.theming.UserAgentBuilder;
+import io.github.palexdev.mfxcomponents.theming.*;
 import java.io.*;
 import java.time.*;
 import javafx.animation.*;
@@ -85,7 +88,7 @@ public class SplashScreen extends BorderPane {
         var scene = new Scene(root);
         scene.getStylesheets().add(lightThemeCSS);
         getSystemTheme(scene);
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+        MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         scene.setFill(null);
 
         primaryStage.setScene(scene);
@@ -157,11 +160,13 @@ public class SplashScreen extends BorderPane {
 //            scene.getStylesheets().remove(lightThemeCSS);
             scene.getStylesheets().set(0, darkThemeCSS);
             Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+            MaterialThemes.PURPLE_DARK.applyOn(scene);
         } else {
             // Remove dark stylesheet, add light stylesheet
 //            scene.getStylesheets().remove(darkThemeCSS);
             scene.getStylesheets().set(0, lightThemeCSS);
             Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
+            MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         }
     }
 

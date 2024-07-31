@@ -3,6 +3,9 @@ package inc.nomard.spoty.core.views.splash;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.core.values.strings.*;
 import io.github.palexdev.materialfx.theming.*;
+import io.github.palexdev.materialfx.theming.JavaFXThemes;
+import io.github.palexdev.materialfx.theming.UserAgentBuilder;
+import io.github.palexdev.mfxcomponents.theming.*;
 import javafx.application.*;
 import javafx.scene.*;
 import javafx.stage.*;
@@ -24,7 +27,7 @@ public class LaunchPreloader extends Preloader {
 
         this.preloadStage = primaryStage;
         Scene scene = new Scene(new SplashScreen());
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+        MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         scene.setFill(null);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);
