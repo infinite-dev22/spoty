@@ -81,7 +81,7 @@ public class EmailFormController implements Initializable {
         bankName.textProperty().bindBidirectional(EmailViewModel.nameProperty());
         accountName.textProperty().bindBidirectional(EmailViewModel.emailProperty());
         accountNumber.textProperty().bindBidirectional(EmailViewModel.phoneProperty());
-//        branch.textProperty().bindBidirectional(EmailViewModel.townProperty());
+//        description.textProperty().bindBidirectional(EmailViewModel.townProperty());
         // Input listeners.
         requiredValidator(
                 bankName, "Name is required.", bankNameValidationLabel, saveBtn);

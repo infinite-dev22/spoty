@@ -700,4 +700,9 @@
      -fx-background-insets: 0, 2;
      -fx-background-radius: 10px;
      -fx-padding: 5px;
- }
+}
+
+.h4 {
+    -fx-font-family: 'Roboto Bold';
+    -fx-font-size: 25;
+}

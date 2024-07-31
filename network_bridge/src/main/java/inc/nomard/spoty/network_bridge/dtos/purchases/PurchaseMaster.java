@@ -33,9 +33,8 @@ public class PurchaseMaster {
     private Date date;
     private Supplier supplier;
     private List<PurchaseDetail> purchaseDetails;
-    private double taxRate;
-    private double netTax;
-    private double discount;
+    private Tax tax;
+    private Discount discount;
     private double amountPaid;
     private double total;
     private double amountDue;

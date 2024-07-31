@@ -67,7 +67,7 @@
                     <MFXTextField fx:id="note" floatMode="BORDER" floatingText="Note" prefWidth="10000.0"/>
                 </VBox>
             </GridPane>
-            <MFXButton onMouseClicked="#addBtnClicked" text="Add" AnchorPane.leftAnchor="0.0"
+            <MFXButton onMouseClicked="#addBtnClicked" text="Add" AnchorPane.leftAnchor="0.0" styleClass="filled"
                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0"/>
             <MFXTableView fx:id="detailTable" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0"/>

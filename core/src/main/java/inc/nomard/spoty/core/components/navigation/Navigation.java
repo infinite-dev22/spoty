@@ -70,10 +70,11 @@ public class Navigation {
         map.put("TRANSFERS", NavTree.NavTreeItem.page("Transfers", Pages.getTransferPane()));
         map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", Pages.getAdjustmentPane()));
         // Accounting
-        map.put("BANK_ACCOUNTS", NavTree.NavTreeItem.page("Bank Accounts", Pages.getBankPane()));
+        map.put("ACCOUNTS", NavTree.NavTreeItem.page("Accounts", Pages.getBankPane()));
         map.put(
                 "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", Pages.getExpenseCategoryPane()));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
+        map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", Pages.getTransactionPane()));
         // Reports
         map.put("STOCK_REPORT", NavTree.NavTreeItem.page("Stock Report", Pages.getStockReportPane()));
         map.put("CLOSING", NavTree.NavTreeItem.page("Closing", Pages.getClosingPane()));
@@ -295,16 +296,11 @@ public class Navigation {
         }
 
         var accounts = NavTree.NavTreeItem.group("Accounting", "fas-coins");
-        if (flavor == AppFlavor.TRACTION) {
-            accounts.getChildren().setAll(
-                    NAV_TREE.get("BANK_ACCOUNTS"),
-                    NAV_TREE.get("EXPENSE_CATEGORY"),
-                    NAV_TREE.get("EXPENSE"));
-        } else {
-            accounts.getChildren().setAll(
-                    NAV_TREE.get("EXPENSE_CATEGORY"),
-                    NAV_TREE.get("EXPENSE"));
-        }
+        accounts.getChildren().setAll(
+                NAV_TREE.get("ACCOUNTS"),
+                NAV_TREE.get("EXPENSE_CATEGORY"),
+                NAV_TREE.get("EXPENSE"),
+                NAV_TREE.get("TRANSACTIONS"));
 
         var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
 

@@ -83,7 +83,7 @@
                     <padding>
                         <Insets top="10.0"/>
                     </padding>
-                    <MFXButton fx:id="addBtn" text="Add Item" prefWidth="10000.0"/>
+                    <MFXButton fx:id="addBtn" text="Add Item" prefWidth="10000.0" styleClass="filled"/>
                 </VBox>
             </GridPane>
             <MFXTableView fx:id="detailTable" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0"

@@ -1,6 +1,5 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
-import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
 
@@ -11,11 +10,12 @@ import lombok.extern.java.*;
 @Builder
 
 @Log
-public class Bank {
+public class Account {
     private Long id;
-    private String bankName;
     private String accountName;
     private String accountNumber;
+    private String credit;
+    private String debit;
     private String balance;
-    private String logo;
+    private String description;
 }

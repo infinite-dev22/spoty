@@ -34,6 +34,8 @@ public class PurchaseMasterViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
     private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
@@ -91,6 +93,30 @@ public class PurchaseMasterViewModel {
         return status;
     }
 
+    public static Tax getTax() {
+        return tax.get();
+    }
+
+    public static void setTax(Tax tax) {
+        PurchaseMasterViewModel.tax.set(tax);
+    }
+
+    public static ObjectProperty<Tax> netTaxProperty() {
+        return tax;
+    }
+
+    public static Discount getDiscount() {
+        return discount.get();
+    }
+
+    public static void setDiscount(Discount discount) {
+        PurchaseMasterViewModel.discount.set(discount);
+    }
+
+    public static ObjectProperty<Discount> discountProperty() {
+        return discount;
+    }
+
     public static String getNotes() {
         return note.get();
     }
@@ -120,6 +146,8 @@ public class PurchaseMasterViewModel {
             setId(0L);
             setDate("");
             setSupplier(null);
+            setTax(null);
+            setDiscount(null);
             setStatus("");
             setNote("");
             PENDING_DELETES.clear();
@@ -133,9 +161,8 @@ public class PurchaseMasterViewModel {
         var purchaseMaster = PurchaseMaster.builder()
                 .date(getDate())
                 .supplier(getSupplier())
-                .taxRate(0)
-                .netTax(0)
-                .discount(0)
+                .tax(getTax())
+                .discount(getDiscount())
                 .amountPaid(0)
                 .total(0)
                 .amountDue(0)
@@ -226,9 +253,8 @@ public class PurchaseMasterViewModel {
                 .id(getId())
                 .date(getDate())
                 .supplier(getSupplier())
-                .taxRate(0)
-                .netTax(0)
-                .discount(0)
+                .tax(getTax())
+                .discount(getDiscount())
                 .amountPaid(0)
                 .total(0)
                 .amountDue(0)

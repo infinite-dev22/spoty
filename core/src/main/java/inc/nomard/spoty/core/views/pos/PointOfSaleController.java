@@ -265,7 +265,7 @@ public class PointOfSaleController implements Initializable {
         SaleDetailViewModel.setProduct(productCard.getProduct());
         SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
         SaleDetailViewModel.setQuantity(quantity);
-        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()) + saleDetail.getSubTotalPrice());
         SaleDetailViewModel.updateCartSale((long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
     }
 

@@ -147,7 +147,7 @@ public class PurchasePreviewController implements Initializable {
         purchaseDetailsList.addAll(purchase.getPurchaseDetails());
         grandTotal.setText(String.valueOf(purchase.getSubTotal()));
         discount.setText(String.valueOf(purchase.getDiscount()));
-        tax.setText(String.valueOf(purchase.getTaxRate()));
+        tax.setText(String.valueOf(purchase.getTax().getPercentage()));
         netCost.setText(String.valueOf(purchase.getTotal()));
 //        paidAmount.setText(String.valueOf(purchase.getAmountPaid()));
         purchaseNote.setText(purchase.getNotes());
