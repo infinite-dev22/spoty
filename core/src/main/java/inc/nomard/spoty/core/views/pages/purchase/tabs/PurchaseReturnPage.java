@@ -1,16 +1,15 @@
-package inc.nomard.spoty.core.views.pages;
+package inc.nomard.spoty.core.views.pages.purchase.tabs;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
+import inc.nomard.spoty.core.viewModels.returns.purchases.*;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
@@ -31,44 +30,34 @@ import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
-public class PurchasePage extends OutlinePage {
-    private final SideModalPane modalPane;
+public class PurchaseReturnPage extends OutlinePage {
     private TextField searchBar;
-    private TableView<PurchaseMaster> masterTable;
+    private TableView<PurchaseReturnMaster> masterTable;
     private MFXProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
-    private TableColumn<PurchaseMaster, PurchaseMaster> supplier;
-    private TableColumn<PurchaseMaster, PurchaseMaster> purchaseDate;
-    private TableColumn<PurchaseMaster, String> purchaseTotalPrice;
-    private TableColumn<PurchaseMaster, String> purchaseAmountPaid;
-    private TableColumn<PurchaseMaster, String> purchaseAmountDue;
-    private TableColumn<PurchaseMaster, String> purchaseStatus;
-    private TableColumn<PurchaseMaster, String> masterPaymentStatus;
-    private TableColumn<PurchaseMaster, PurchaseMaster> createdBy;
-    private TableColumn<PurchaseMaster, PurchaseMaster> createdAt;
-    private TableColumn<PurchaseMaster, PurchaseMaster> updatedBy;
-    private TableColumn<PurchaseMaster, PurchaseMaster> updatedAt;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> supplier;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseDate;
+    private TableColumn<PurchaseReturnMaster, String> purchaseTotalPrice;
+    private TableColumn<PurchaseReturnMaster, String> purchaseAmountPaid;
+    private TableColumn<PurchaseReturnMaster, String> purchaseAmountDue;
+    private TableColumn<PurchaseReturnMaster, String> purchaseStatus;
+    private TableColumn<PurchaseReturnMaster, String> masterPaymentStatus;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdBy;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdAt;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> updatedBy;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> updatedAt;
 
-    public PurchasePage() {
+    public PurchaseReturnPage() {
         try {
             viewDialogPane();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        modalPane = new SideModalPane();
-
-        getChildren().addAll(modalPane, init());
+        addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        PurchaseMasterViewModel.getAllPurchaseMasters(this::onDataInitializationSuccess, this::errorMessage);
-
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
-            if (!open) {
-                modalPane.setAlignment(Pos.CENTER);
-                modalPane.usePredefinedTransitionFactories(null);
-            }
-        });
+        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(this::onDataInitializationSuccess, this::errorMessage);
     }
 
     private void onDataInitializationSuccess() {
@@ -113,37 +102,11 @@ public class PurchasePage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        var createBtn = new Button("Create");
-        createBtn.setOnAction(event -> showForm());
-        var hbox = new HBox(createBtn);
+        var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
         HBox.setHgrow(hbox, Priority.ALWAYS);
         return hbox;
-    }
-
-    private void showForm() {
-        var dialog = new ModalContentHolder(500, -1);
-        dialog.getChildren().add(new PurchaseMasterForm(modalPane));
-        dialog.setPadding(new Insets(5d));
-        modalPane.setAlignment(Pos.TOP_RIGHT);
-        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-        modalPane.show(dialog);
-        modalPane.setPersistent(true);
-    }
-
-    private void showReturnForm() {
-        var dialog = new ModalContentHolder(500, -1);
-        dialog.getChildren().add(new PurchaseReturnMasterForm(modalPane));
-        dialog.setPadding(new Insets(5d));
-        modalPane.setAlignment(Pos.TOP_RIGHT);
-        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-        modalPane.show(dialog);
-        modalPane.setPersistent(true);
     }
 
     private HBox buildTop() {
@@ -211,7 +174,7 @@ public class PurchasePage extends OutlinePage {
         masterTable.getColumns().addAll(columnList);
         getTable();
 
-        masterTable.setItems(PurchaseMasterViewModel.getPurchases());
+        masterTable.setItems(PurchaseReturnMasterViewModel.getPurchaseReturns());
     }
 
     private void getTable() {
@@ -219,10 +182,10 @@ public class PurchasePage extends OutlinePage {
 
         masterTable.setRowFactory(
                 t -> {
-                    TableRow<PurchaseMaster> row = new TableRow<>();
+                    TableRow<PurchaseReturnMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((TableRow<PurchaseMaster>) event.getSource())
+                                showContextMenu((TableRow<PurchaseReturnMaster>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -234,45 +197,37 @@ public class PurchasePage extends OutlinePage {
                 });
     }
 
-    private ContextMenu showContextMenu(TableRow<PurchaseMaster> obj) {
+    private ContextMenu showContextMenu(TableRow<PurchaseReturnMaster> obj) {
         var contextMenu = new ContextMenu();
         var delete = new MenuItem("Delete");
-        var edit = new MenuItem("Edit");
         var view = new MenuItem("View");
-        var returnPurchase = new MenuItem("Return");
 
+        // Actions
+        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            PurchaseMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            PurchaseReturnMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getSupplierName() + "'s purchase", this));
-        edit.setOnAction(
-                e -> {
-                    PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showForm, this::errorMessage);
-                    e.consume();
-                });
-        returnPurchase.setOnAction(
-                e -> {
-                    PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showReturnForm, this::errorMessage);
-                    e.consume();
-                });
+
+        // View
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
                     event.consume();
                 });
-        contextMenu.getItems().addAll(view, edit, returnPurchase, delete);
+        contextMenu.getItems().addAll(view, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
     private void onSuccess() {
-        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
+        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null);
     }
 
     private void viewDialogPane() throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/PurchasePreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new PurchasePreviewController());
+        viewFxmlLoader = fxmlLoader("views/previews/PurchaseReturnsPreview.fxml");
+        viewFxmlLoader.setControllerFactory(c -> new PurchaseReturnsPreviewController());
         MFXGenericDialog dialogContent = viewFxmlLoader.load();
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
@@ -282,8 +237,8 @@ public class PurchasePage extends OutlinePage {
         viewDialog = SpotyDialog.createDialog(dialogContent, this);
     }
 
-    public void viewShow(PurchaseMaster purchaseMaster) {
-        PurchasePreviewController controller = viewFxmlLoader.getController();
+    public void viewShow(PurchaseReturnMaster purchaseMaster) {
+        PurchaseReturnsPreviewController controller = viewFxmlLoader.getController();
         controller.init(purchaseMaster);
         viewDialog.showAndWait();
     }
@@ -322,11 +277,11 @@ public class PurchasePage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
+                PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
-            PurchaseMasterViewModel.searchItem(nv, () -> {
+            PurchaseReturnMasterViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
@@ -337,7 +292,7 @@ public class PurchasePage extends OutlinePage {
         supplier.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         supplier.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseMaster item, boolean empty) {
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : item.getSupplierName());
             }
@@ -345,7 +300,7 @@ public class PurchasePage extends OutlinePage {
         purchaseDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         purchaseDate.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseMaster item, boolean empty) {
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
@@ -361,7 +316,7 @@ public class PurchasePage extends OutlinePage {
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseMaster item, boolean empty) {
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
             }
@@ -369,7 +324,7 @@ public class PurchasePage extends OutlinePage {
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseMaster item, boolean empty) {
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
 
@@ -381,7 +336,7 @@ public class PurchasePage extends OutlinePage {
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseMaster item, boolean empty) {
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
@@ -390,7 +345,7 @@ public class PurchasePage extends OutlinePage {
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(PurchaseMaster item, boolean empty) {
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
 

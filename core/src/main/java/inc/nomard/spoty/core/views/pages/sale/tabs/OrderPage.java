@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.views.pages;
+package inc.nomard.spoty.core.views.pages.sale.tabs;
 
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;

@@ -3,10 +3,12 @@ package inc.nomard.spoty.core.views.layout.navigation;
 import inc.nomard.spoty.core.views.dashboard.*;
 import static inc.nomard.spoty.core.views.layout.navigation.Navigation.SubLayer.*;
 import inc.nomard.spoty.core.views.pages.*;
+import inc.nomard.spoty.core.views.pages.purchase.*;
+import inc.nomard.spoty.core.views.pages.sale.*;
+import inc.nomard.spoty.core.views.pages.sale.tabs.*;
 import inc.nomard.spoty.core.views.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
 import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.utils.flavouring.*;
 import java.util.*;
 import javafx.beans.property.*;
@@ -33,7 +35,7 @@ public class Navigation {
         map.put("DISCOUNTS", NavTree.NavTreeItem.page("Discounts", DiscountPage.class));
         // Sales
         map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", PointOfSalePage.class));
-        map.put("ORDERS", NavTree.NavTreeItem.page("Orders", OrderPage.class));
+        map.put("ORDERS", NavTree.NavTreeItem.page("Orders", SalesMainPage.class));
         map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", SaleReturnPage.class));
         map.put("CATEGORY", NavTree.NavTreeItem.page("Category", ProductCategoryPage.class));
         map.put("BRAND", NavTree.NavTreeItem.page("Brand", BrandPage.class));
@@ -60,8 +62,7 @@ public class Navigation {
         map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", BeneficiaryBadgePage.class));
         map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", BeneficiaryTypePage.class));
         // Purchases
-        map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", PurchasePage.class));
-        map.put("PURCHASE_RETURNS", NavTree.NavTreeItem.page("Purchases Returns", PurchaseReturnPage.class));
+        map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", PurchaseMainPage.class));
         // SETTINGS
         map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", AppSettingPage.class));
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", BranchPage.class));
@@ -127,18 +128,6 @@ public class Navigation {
                         NAV_TREE.get("SUPPLIERS"),
                         NAV_TREE.get("CUSTOMERS"));
 
-        NavTree.NavTreeItem purchase;
-        if (flavor == AppFlavor.TRACTION) {
-            purchase = NavTree.NavTreeItem.group("Purchase");
-            purchase
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("PURCHASES"),
-                            NAV_TREE.get("PURCHASE_RETURNS"));
-        } else {
-            purchase = NavTree.NavTreeItem.page("Purchases", PurchasePage.class);
-        }
-
         var inventory = NavTree.NavTreeItem.group("Inventory", FontAwesomeSolid.CUBES);
         if (flavor == AppFlavor.TRACTION || flavor == AppFlavor.DEV) {
             inventory
@@ -149,7 +138,7 @@ public class Navigation {
                             NAV_TREE.get("UNIT"),
                             NAV_TREE.get("PRODUCTS"),
                             NAV_TREE.get("REQUISITIONS"),
-                            purchase,
+                            NAV_TREE.get("PURCHASES"),
                             NAV_TREE.get("STOCK_INS"),
                             NAV_TREE.get("TRANSFERS"),
                             NAV_TREE.get("ADJUSTMENTS"));
@@ -161,7 +150,7 @@ public class Navigation {
                             NAV_TREE.get("BRAND"),
                             NAV_TREE.get("UNIT"),
                             NAV_TREE.get("PRODUCTS"),
-                            purchase,
+                            NAV_TREE.get("PURCHASES"),
                             NAV_TREE.get("STOCK_INS"),
                             NAV_TREE.get("ADJUSTMENTS"));
         }

@@ -3,8 +3,8 @@ package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import java.text.*;
 import java.time.*;
+import java.time.format.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -40,6 +40,6 @@ public class PurchaseReturnMaster {
     }
 
     public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
+        return date.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault()));
     }
 }
