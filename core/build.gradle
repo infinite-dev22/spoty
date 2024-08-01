@@ -189,12 +189,12 @@ jlink {
                     "--icon", mac_icon,
                     "--type", mac_installer_type,
                     "--mac-package-name", app_installer_name,
-                    "--mac-package-signing-prefix", mac_package_signing_prefix,
-                    "--mac-sign",
-                    "--mac-signing-keychain", mac_signing_keychain,
-                    "--mac-signing-key-user-name", mac_signing_key_user_name,
-                    "--mac-app-store",
-                    "--mac-entitlements", mac_entitlements,
+                    //"--mac-package-signing-prefix", mac_package_signing_prefix,
+                    //"--mac-sign",
+                    //"--mac-signing-keychain", mac_signing_keychain,
+                    //"--mac-signing-key-user-name", mac_signing_key_user_name,
+                    //"--mac-app-store",
+                    //"--mac-entitlements", mac_entitlements,
                     "--mac-app-category", app_group_name,
             ]
         }
