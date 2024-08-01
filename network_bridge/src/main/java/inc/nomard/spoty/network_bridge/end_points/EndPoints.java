@@ -226,7 +226,7 @@ public class EndPoints {
     }
 
     public static final class SaleReturns {
-        public static final String saleReturnsUrl = apiUrl + "/sale/returns";
+        public static final String saleReturnsUrl = apiUrl + "/sales/returns";
         public static final String allSaleReturns = saleReturnsUrl + "/all";
         public static final String saleReturnById = saleReturnsUrl + "/single";
         public static final String searchSaleReturns = saleReturnsUrl + "/search";
