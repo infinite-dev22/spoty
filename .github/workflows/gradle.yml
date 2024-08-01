@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -82,22 +82,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/windows/*
           asset_name: OpenCore_v0.0.22.4-windows.msi
-          asset_content_type: application/octet-stream
-
-      - name: Download macOS package
-        uses: actions/download-artifact@v3
-        with:
-          name: app-macos-latest
-          path: ./artifacts/macos
-
-      - name: Upload macOS package to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/macos/*
-          asset_name: OpenCore_v0.0.22.4-macos.dmg
           asset_content_type: application/octet-stream
 
       - name: Download DEB package
