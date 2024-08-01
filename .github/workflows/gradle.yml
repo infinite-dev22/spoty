@@ -10,8 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -65,60 +64,54 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v0.0.22+4
-          release_name: v0.0.22.4
+          release_name: Release v0.0.22+4
           draft: false
           prerelease: true
 
       - name: Download Windows package
-        if: matrix.os == 'windows-latest'
         uses: actions/download-artifact@v3
         with:
           name: app-windows-latest
           path: ./artifacts/windows
 
       - name: Upload Windows package to release
-        if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/windows/build/jpackage/*
-          asset_name: app-windows
+          asset_path: ./artifacts/windows/*
+          asset_name: app-windows.msi
           asset_content_type: application/octet-stream
 
       - name: Download macOS package
-        if: matrix.os == 'macos-latest'
         uses: actions/download-artifact@v3
         with:
           name: app-macos-latest
           path: ./artifacts/macos
 
       - name: Upload macOS package to release
-        if: matrix.os == 'macos-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/macos/build/jpackage/*
-          asset_name: app-macos
+          asset_path: ./artifacts/macos/*
+          asset_name: app-macos.dmg
           asset_content_type: application/octet-stream
 
-      - name: Download DEB package
-        if: matrix.os == 'ubuntu-latest'
+      - name: Download RPM package
         uses: actions/download-artifact@v3
         with:
           name: app-ubuntu-latest
           path: ./artifacts/ubuntu
 
-      - name: Upload DEB package to release
-        if: matrix.os == 'ubuntu-latest'
+      - name: Upload RPM package to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/ubuntu/build/jpackage/*
-          asset_name: app-ubuntu
+          asset_path: ./artifacts/ubuntu/*
+          asset_name: app-ubuntu.rpm
           asset_content_type: application/octet-stream
