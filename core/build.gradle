@@ -185,7 +185,7 @@ jlink {
         }
         if (os.macOsX) {
             installerOptions += [
-                    "--app-version", apple_version,
+                    // "--app-version", apple_version,
                     "--icon", mac_icon,
                     "--type", mac_installer_type,
                     "--mac-package-name", app_installer_name,
