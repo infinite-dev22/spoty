@@ -52,7 +52,7 @@ public class SaleReturnMasterViewModel {
     private static final DoubleProperty shippingFee = new SimpleDoubleProperty();
     private static final StringProperty paymentStatus = new SimpleStringProperty("");
     private static final StringProperty notes = new SimpleStringProperty("");
-    private static final SalesRepositoryImpl saleReturnsRepository = new SalesRepositoryImpl();
+    private static final SaleReturnsRepositoryImpl saleReturnsRepository = new SaleReturnsRepositoryImpl();
 
     public static Long getId() {
         return id.get();

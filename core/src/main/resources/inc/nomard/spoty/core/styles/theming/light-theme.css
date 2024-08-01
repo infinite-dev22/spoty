@@ -40,3 +40,7 @@ app-root {
 .hero-image{
     -fx-background-color: -mfx-charcoal;
 }
+
+.shade-app {
+    -fx-background-color: rgba(240, 240, 240, .9);
+}

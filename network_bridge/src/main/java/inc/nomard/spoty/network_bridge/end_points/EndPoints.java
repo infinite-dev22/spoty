@@ -225,6 +225,17 @@ public class EndPoints {
         public static final String deleteSales = salesUrl + "/delete/multiple";
     }
 
+    public static final class SaleReturns {
+        public static final String saleReturnsUrl = apiUrl + "/sales/returns";
+        public static final String allSaleReturns = saleReturnsUrl + "/all";
+        public static final String saleReturnById = saleReturnsUrl + "/single";
+        public static final String searchSaleReturns = saleReturnsUrl + "/search";
+        public static final String addSaleReturn = saleReturnsUrl + "/add";
+        public static final String updateSaleReturn = saleReturnsUrl + "/update";
+        public static final String deleteSaleReturn = saleReturnsUrl + "/delete/single";
+        public static final String deleteSaleReturns = saleReturnsUrl + "/delete/multiple";
+    }
+
     public static final class StockIns {
         public static final String stockInsUrl = apiUrl + "/stock_ins";
         public static final String allStockIns = stockInsUrl + "/all";

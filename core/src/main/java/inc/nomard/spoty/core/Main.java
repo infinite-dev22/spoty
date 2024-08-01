@@ -16,8 +16,11 @@ package inc.nomard.spoty.core;
 
 import inc.nomard.spoty.core.auto_updater.v2.*;
 import inc.nomard.spoty.core.views.splash.*;
+import javafx.animation.*;
 import javafx.application.*;
+import javafx.concurrent.*;
 import javafx.stage.*;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
@@ -34,7 +37,36 @@ public class Main extends Application {
 
     @Override
     public void init() {
+        delaySplashScreen();
         SplashScreen.checkFunctions();
+    }
+
+    private void delaySplashScreen() {
+        // Notify pre-loader that application initialization is about to start
+        notifyPreloader(new Preloader.ProgressNotification(0));
+
+        // Simulate some long startup process
+        var task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(2000); // Delay for 3 seconds
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                // Notify pre-loader that initialization is complete
+                notifyPreloader(new Preloader.StateChangeNotification(
+                        Preloader.StateChangeNotification.Type.BEFORE_START));
+            }
+        };
+        new Thread(task).start();
+
+        try {
+            task.get(); // Wait for the task to complete
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

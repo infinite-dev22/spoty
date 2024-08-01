@@ -41,7 +41,7 @@ public class WindowRunner extends ApplicationWindowImpl {
             trialPlanDetails.add("Manage your customer relationships effectively.");
             var trialPlan = new PaymentPlanCard(SpotyCoreResourceLoader.load("images/cabin.png"),
                     "Free Trial",
-                    "Try It Free (7-Day Trial)",
+                    "Try It Free (30-Day Trial)",
                     "Unlock the potential of OpenSale ERP system with a no-obligation trial.",
                     "0",
                     trialPlanDetails,
@@ -97,9 +97,10 @@ public class WindowRunner extends ApplicationWindowImpl {
                 stage.close();
                 SpotyThreader.disposeSpotyThreadPool();
                 Platform.exit();
-            }, stage, this));
+            }, stage, vBox));
             StackPane.setAlignment(hBox1, Pos.CENTER);
             StackPane.setAlignment(hBox2, Pos.BOTTOM_CENTER);
+            vBox.getStyleClass().add("shade-app");
             this.getChildren().addAll(vBox);
         }
     }
