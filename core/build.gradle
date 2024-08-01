@@ -163,7 +163,6 @@ jlink {
         installerOptions = [
                 "--name", app_installer_name,
                 "--description", project.description,
-                "--app-version", project.version,
                 "--copyright", app_copyright,
                 "--vendor", app_vendor,
                 "--about-url", app_about_url,
@@ -173,6 +172,7 @@ jlink {
 
         if (os.linux) {
             installerOptions += [
+                    "--app-version", project.version,
                     "--icon", linux_icon,
                     "--type", linux_installer_type,
                     "--linux-app-release", spoty_release,
@@ -185,6 +185,7 @@ jlink {
         }
         if (os.macOsX) {
             installerOptions += [
+                    "--app-version", apple_version,
                     "--icon", mac_icon,
                     "--type", mac_installer_type,
                     "--mac-package-name", app_installer_name,
@@ -199,6 +200,7 @@ jlink {
         }
         if (os.windows) {
             installerOptions += [
+                    "--app-version", project.version,
                     "--icon", windows_icon,
                     "--type", windows_installer_type,
                     "--win-dir-chooser",
