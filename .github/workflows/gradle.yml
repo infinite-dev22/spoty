@@ -81,7 +81,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/windows/*
-          asset_name: app-windows.msi
+          asset_name: OpenCore_v0.0.22.4-windows.msi
           asset_content_type: application/octet-stream
 
       - name: Download macOS package
@@ -97,10 +97,10 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/macos/*
-          asset_name: app-macos.dmg
+          asset_name: OpenCore_v0.0.22.4-macos.dmg
           asset_content_type: application/octet-stream
 
-      - name: Download RPM package
+      - name: Download DEB package
         uses: actions/download-artifact@v3
         with:
           name: app-ubuntu-latest
@@ -113,5 +113,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/ubuntu/*
-          asset_name: app-ubuntu.rpm
+          asset_name: OpenCore_v0.0.22.4-debian.deb
           asset_content_type: application/octet-stream
