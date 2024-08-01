@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-${{ matrix.os }}
-          path: build/jpackage/**
+          path: build/jpackage/
 
   create_release:
     needs: build
