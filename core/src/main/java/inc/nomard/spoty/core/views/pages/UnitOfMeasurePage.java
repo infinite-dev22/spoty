@@ -125,9 +125,9 @@ public class UnitOfMeasurePage extends OutlinePage {
         updatedAt = new TableColumn<>("Updated At");
 
         uomName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        uomShortName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.05));
+        uomShortName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         uomBaseUnit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        uomOperator.prefWidthProperty().bind(masterTable.widthProperty().multiply(.05));
+        uomOperator.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         uomOperationValue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));

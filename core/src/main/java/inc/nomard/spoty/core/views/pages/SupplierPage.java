@@ -140,7 +140,7 @@ public class SupplierPage extends OutlinePage {
 
         name.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         phone.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
-        email.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        email.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         address.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         city.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         country.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));

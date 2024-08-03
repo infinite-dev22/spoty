@@ -124,8 +124,9 @@ public class ExpensePage extends OutlinePage {
         updatedBy = new TableColumn<>("Updated By");
         updatedAt = new TableColumn<>("Updated At");
 
+        accountName.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         date.prefWidthProperty().bind(tableView.widthProperty().multiply(.1));
-        expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         amount.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         note.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
