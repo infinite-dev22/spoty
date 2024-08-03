@@ -34,7 +34,6 @@ public class SaleReturnPage extends OutlinePage {
     private TextField searchBar;
     private TableView<SaleReturnMaster> masterTable;
     private MFXProgressSpinner progress;
-    private Button createBtn;
     private MFXStageDialog dialog;
     private FXMLLoader viewFxmlLoader;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleCustomer;
@@ -72,7 +71,6 @@ public class SaleReturnPage extends OutlinePage {
         pane.setCenter(buildCenter());
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -104,8 +102,7 @@ public class SaleReturnPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new Button("Create");
-        var hbox = new HBox(createBtn);
+        var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -212,11 +209,6 @@ public class SaleReturnPage extends OutlinePage {
         contextMenu.getItems().addAll(view, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
-    }
-
-    public void createBtnAction() {
-        createBtn.setOnAction(event -> {
-        });// BaseController.navigation.navigate(new PointOfSalePage(stage)));
     }
 
     private void onSuccess() {
