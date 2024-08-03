@@ -10,6 +10,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
+import java.text.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
@@ -30,7 +31,7 @@ public class TaxPage extends OutlinePage {
     private Button createBtn;
     private MFXProgressSpinner progress;
     private TableColumn<Tax, String> name;
-    private TableColumn<Tax, String> percentage;
+    private TableColumn<Tax, Tax> percentage;
     private TableColumn<Tax, Tax> createdBy;
     private TableColumn<Tax, Tax> createdAt;
     private TableColumn<Tax, Tax> updatedBy;
@@ -220,7 +221,16 @@ public class TaxPage extends OutlinePage {
 
     private void setupTableColumns() {
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        percentage.setCellValueFactory(new PropertyValueFactory<>("percentage"));
+        percentage.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        percentage.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Tax item, boolean empty) {
+                super.updateItem(item, empty);
+
+                DecimalFormat df = new DecimalFormat("###,###,###,###,###,###,###,###,###,###.##");
+                setText(empty || Objects.isNull(item) ? null : df.format(item.getPercentage()));
+            }
+        });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
