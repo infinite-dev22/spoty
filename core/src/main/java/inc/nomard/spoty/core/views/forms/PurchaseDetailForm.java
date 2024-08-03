@@ -28,7 +28,7 @@ import lombok.extern.java.*;
 
 @Log
 public class PurchaseDetailForm extends MFXGenericDialog {
-    public ValidatableTextField quantity;
+    public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
     public Button saveBtn, cancelBtn;
     public Label quantityValidationLabel, productValidationLabel;
@@ -62,7 +62,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());

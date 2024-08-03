@@ -32,7 +32,7 @@ import lombok.extern.java.*;
 @Log
 public class QuotationDetailForm extends MFXGenericDialog {
     @FXML
-    public ValidatableTextField quantity;
+    public ValidatableNumberField quantity;
     @FXML
     public ValidatableComboBox<Product> product;
     @FXML
@@ -73,7 +73,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
@@ -201,7 +201,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         quantity.getValidator().validProperty().addListener((obs, oldVal, newVal) -> updateValidationState(newVal, quantityValidationLabel, quantity));
     }
 
-    private void createAndAddConstraint(ValidatableTextField control, String message, BooleanExpression condition) {
+    private void createAndAddConstraint(ValidatableNumberField control, String message, BooleanExpression condition) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
@@ -219,7 +219,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         control.getValidator().constraint(constraint);
     }
 
-    private void updateValidationState(boolean isValid, Label validationLabel, ValidatableTextField control) {
+    private void updateValidationState(boolean isValid, Label validationLabel, ValidatableNumberField control) {
         validationLabel.setManaged(!isValid);
         validationLabel.setVisible(!isValid);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, !isValid);
@@ -271,7 +271,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         }
     }
 
-    private boolean validateConstraints(List<Constraint> constraints, Label validationLabel, ValidatableTextField control) {
+    private boolean validateConstraints(List<Constraint> constraints, Label validationLabel, ValidatableNumberField control) {
         if (!constraints.isEmpty()) {
             validationLabel.setText(constraints.getFirst().getMessage());
             validationLabel.setManaged(true);

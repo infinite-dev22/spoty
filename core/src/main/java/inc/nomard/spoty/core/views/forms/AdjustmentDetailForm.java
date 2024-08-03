@@ -30,7 +30,7 @@ import lombok.extern.java.*;
 
 @Log
 public class AdjustmentDetailForm extends MFXGenericDialog {
-    public ValidatableTextField quantity;
+    public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
     public Button saveBtn, cancelBtn;
     public ValidatableComboBox<String> type;
@@ -66,7 +66,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
     private VBox buildQuantity() {
         // Input.
         var label = new Label("Quantity");
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
         // Validation.

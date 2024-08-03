@@ -28,8 +28,8 @@ import lombok.extern.java.*;
 
 @Log
 public class ExpenseForm extends MFXGenericDialog {
-    public ValidatableTextField amount,
-            name;
+    public ValidatableNumberField amount;
+    public ValidatableTextField name;
     public ValidatableTextArea note;
     public Button saveBtn,
             cancelBtn;
@@ -115,9 +115,10 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildAmount() {
         // Input.
-        amount = new ValidatableTextField();
+        amount = new ValidatableNumberField();
         var label = new Label("Amount");
         amount.setPrefWidth(400d);
+        amount.setRight(new Label("UGX"));
         amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
         ExpensesViewModel.idProperty().addListener((observableValue, oV, nV) -> amount.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
         amountValidationLabel = Validators.buildValidationLabel();

@@ -26,7 +26,7 @@ import lombok.extern.java.*;
 
 @Log
 public class TransferDetailForm extends ModalPage {
-    public ValidatableTextField quantity;
+    public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
     public Button saveBtn,
             cancelBtn;
@@ -72,7 +72,7 @@ public class TransferDetailForm extends ModalPage {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());

@@ -41,15 +41,15 @@ import lombok.extern.java.*;
 @Log
 public class ProductForm extends ModalPage {
     public ValidatableTextField name,
-            serialNumber,
-            salePrice,
+            serialNumber;
+    public ValidatableNumberField salePrice,
+            costPrice,
             stockAlert;
     public ValidatableTextArea description;
     public ValidatableComboBox<Brand> brand;
     public ValidatableComboBox<ProductCategory> category;
     public ValidatableComboBox<UnitOfMeasure> unitOfMeasure;
     public ValidatableComboBox<String> barcodeType;
-    public ValidatableTextField costPrice;
     public ValidatableComboBox<Discount> discount;
     public ValidatableComboBox<Tax> tax;
     public Rectangle productImageView;
@@ -90,6 +90,7 @@ public class ProductForm extends ModalPage {
                 SpotyImageUtils.getFileFromResource(
                         SpotyCoreResourceLoader.loadURL("images/product-image-placeholder.png")
                 ));
+        customizeFields();
     }
 
     public void createDialog() {
@@ -117,19 +118,24 @@ public class ProductForm extends ModalPage {
         root.add(createValidationBox(category = new ValidatableComboBox<>(), "Category", categoryValidationLabel = new Label(), 400.0), 1, 0);
         root.add(createValidationBox(brand = new ValidatableComboBox<>(), "Brand", brandValidationLabel = new Label(), 400.0), 0, 1);
         root.add(createValidationBox(unitOfMeasure = new ValidatableComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 400.0), 1, 1);
-        root.add(createSimpleBox(costPrice = new ValidatableTextField(), "Cost Price", 400.0), 0, 2);
-        root.add(createValidationBox(salePrice = new ValidatableTextField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
+        root.add(createSimpleBox(costPrice = new ValidatableNumberField(), "Cost Price", 400.0), 0, 2);
+        root.add(createValidationBox(salePrice = new ValidatableNumberField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
         root.add(createSimpleBox(discount = new ValidatableComboBox<>(), "Discount", 400.0), 0, 3);
         root.add(createSimpleBox(tax = new ValidatableComboBox<>(), "Tax", 400.0), 1, 3);
         root.add(createValidationBox(barcodeType = new ValidatableComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
         root.add(createSimpleBox(serialNumber = new ValidatableTextField(), "Serial/Batch", 400.0), 1, 4);
-        root.add(createSimpleBox(stockAlert = new ValidatableTextField(), "Stock Alert", 400.0), 0, 5);
+        root.add(createSimpleBox(stockAlert = new ValidatableNumberField(), "Stock Alert", 400.0), 0, 5);
         root.add(createSimpleTextArea(description = new ValidatableTextArea(), "Description", 400.0, 100.0), 1, 5);
 
         root.add(createUploadImageBox(), 2, 0, 1, 6);
 
         this.setBottom(createBottomButtons());
         this.setCenter(root);
+    }
+
+    private void customizeFields() {
+        costPrice.setRight(new Label("UGX"));
+        salePrice.setRight(new Label("UGX"));
     }
 
     private ColumnConstraints createColumnConstraints(double prefWidth) {
@@ -169,7 +175,7 @@ public class ProductForm extends ModalPage {
         return box;
     }
 
-    private VBox createSimpleBox(ValidatableTextField textField, String promptText, double width) {
+    private VBox createSimpleBox(TextField textField, String promptText, double width) {
         var label = new Label(promptText);
         textField.setPrefWidth(width);
 

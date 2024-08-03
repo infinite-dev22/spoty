@@ -28,7 +28,7 @@ import lombok.extern.java.*;
 
 @Log
 public class StockInDetailForm extends ModalPage {
-    private ValidatableTextField quantity;
+    private ValidatableNumberField quantity;
     private ValidatableComboBox<Product> product;
     private Button saveBtn, cancelBtn;
     private Label productValidationLabel, quantityValidationLabel;
@@ -71,7 +71,7 @@ public class StockInDetailForm extends ModalPage {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
@@ -186,7 +186,7 @@ public class StockInDetailForm extends ModalPage {
         }
     }
 
-    private void showValidationLabel(Label label, String message, ValidatableTextField control) {
+    private void showValidationLabel(Label label, String message, ValidatableNumberField control) {
         label.setManaged(true);
         label.setVisible(true);
         label.setText(message);
@@ -209,7 +209,7 @@ public class StockInDetailForm extends ModalPage {
         setupValidator(quantity, "Quantity is required");
     }
 
-    private void setupValidator(ValidatableTextField control, String message) {
+    private void setupValidator(ValidatableNumberField control, String message) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)

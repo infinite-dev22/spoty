@@ -30,7 +30,7 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionDetailForm extends ModalPage {
     @FXML
-    public ValidatableTextField quantity;
+    public ValidatableNumberField quantity;
     @FXML
     public ValidatableComboBox<Product> product;
     @FXML
@@ -91,7 +91,7 @@ public class RequisitionDetailForm extends ModalPage {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
         quantity.setPrefWidth(400d);
         quantity.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());

@@ -33,8 +33,8 @@ public class UOMForm extends ModalPage {
      * present i.e. not just have a scroll view.
      */
     public ValidatableTextField name,
-            shortName,
-            operatorValue;
+            shortName;
+    public ValidatableNumberField operatorValue;
     public Button saveBtn,
             cancelBtn;
     public ValidatableComboBox<UnitOfMeasure> baseUnit;
@@ -155,7 +155,7 @@ public class UOMForm extends ModalPage {
 
     private VBox buildOperatorValue() {
         // Input.
-        operatorValue = new ValidatableTextField();
+        operatorValue = new ValidatableNumberField();
         var label = new Label("Operator Value");
         operatorValue.setPrefWidth(400d);
         operatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
