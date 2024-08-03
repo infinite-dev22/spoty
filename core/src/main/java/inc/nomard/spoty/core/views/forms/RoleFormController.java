@@ -26,7 +26,7 @@ public class RoleFormController implements Initializable {
     @FXML
     public ValidatableTextField name;
     @FXML
-    public TextArea description;
+    public ValidatableTextArea description;
     @FXML
     public Button saveBtn,
             cancelBtn;

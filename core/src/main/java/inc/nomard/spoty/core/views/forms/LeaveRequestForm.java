@@ -45,7 +45,7 @@ public class LeaveRequestForm extends ModalPage {
             toTimeValidationLabel,
             reasonValidationLabel,
             fileLabel;
-    public TextArea reason;
+    public ValidatableTextArea reason;
     public VBox documentButton;
     public HBox uploadIcon;
     private FileChooser fileChooser;
@@ -74,7 +74,7 @@ public class LeaveRequestForm extends ModalPage {
                         fromTime = new TimePicker(), "From Time", fromTimeValidationLabel = new Label(), 190d),
                 createDateTimeBox(toDate = new ValidatableDatePicker(), "To Date", toDateValidationLabel = new Label(),
                         toTime = new TimePicker(), "To Time", toTimeValidationLabel = new Label(), 190d),
-                createValidationTextArea(reason = new TextArea(), "Reason", reasonValidationLabel = new Label(), 400d, 100d),
+                createValidationTextArea(reason = new ValidatableTextArea(), "Reason", reasonValidationLabel = new Label(), 400d, 100d),
                 createDocumentButtonBox()
         );
 
@@ -126,7 +126,7 @@ public class LeaveRequestForm extends ModalPage {
         return createValidationContainer(label, timePicker, validationLabel);
     }
 
-    private VBox createValidationTextArea(TextArea textArea, String promptText, Label validationLabel, double width, double height) {
+    private VBox createValidationTextArea(ValidatableTextArea textArea, String promptText, Label validationLabel, double width, double height) {
         var label = new Label(promptText);
         textArea.setPrefWidth(width);
         textArea.setPrefHeight(height);

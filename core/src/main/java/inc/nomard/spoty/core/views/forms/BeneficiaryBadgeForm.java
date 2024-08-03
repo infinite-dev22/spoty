@@ -30,7 +30,7 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
     public Button saveBtn, cancelBtn;
     public ValidatableComboBox<BeneficiaryType> beneficiaryType;
     public ValidatableTextField name;
-    public TextArea description;
+    public ValidatableTextArea description;
     public Label colorPickerValidationLabel,
             nameValidationLabel,
             beneficiaryTypeValidationLabel;
@@ -116,7 +116,7 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());

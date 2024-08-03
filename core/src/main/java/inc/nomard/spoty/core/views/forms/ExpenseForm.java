@@ -30,7 +30,7 @@ import lombok.extern.java.*;
 public class ExpenseForm extends MFXGenericDialog {
     public ValidatableTextField amount,
             name;
-    public TextArea note;
+    public ValidatableTextArea note;
     public Button saveBtn,
             cancelBtn;
     public ValidatableDatePicker date;
@@ -130,7 +130,7 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildNote() {
         // Input.
-        note = new TextArea();
+        note = new ValidatableTextArea();
         var label = new Label("Note");
         note.setPrefWidth(400d);
         note.textProperty().bindBidirectional(ExpensesViewModel.noteProperty());

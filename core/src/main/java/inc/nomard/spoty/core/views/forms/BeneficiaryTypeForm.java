@@ -26,7 +26,7 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
     public Label nameValidationLabel,
             colorPickerValidationLabel;
     public ValidatableTextField name;
-    public TextArea description;
+    public ValidatableTextArea description;
     public ValidatableComboBox<String> colorPicker;
     private List<Constraint> nameConstraints,
             colorConstraints;
@@ -76,7 +76,7 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(BeneficiaryTypeViewModel.descriptionProperty());

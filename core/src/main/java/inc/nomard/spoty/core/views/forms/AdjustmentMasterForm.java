@@ -6,6 +6,7 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
@@ -28,7 +29,7 @@ import lombok.extern.java.*;
 public class AdjustmentMasterForm extends VBox {
     private final ModalPane modalPane;
     public TableView<AdjustmentDetail> tableView;
-    public TextArea note;
+    public ValidatableTextArea note;
     public Label title;
     public Button addBtn, saveBtn, cancelBtn;
     private TableColumn<AdjustmentDetail, AdjustmentDetail> productName;
@@ -98,7 +99,7 @@ public class AdjustmentMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setPrefHeight(100d);
         note.setWrapText(true);
         note.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());

@@ -41,7 +41,7 @@ public class TransferMasterForm extends VBox {
             toBranch;
     public ValidatableDatePicker date;
     public TableView<TransferDetail> table;
-    public TextArea note;
+    public ValidatableTextArea note;
     public BorderPane contentPane;
     public Button addBtn,
             saveBtn,
@@ -199,7 +199,7 @@ public class TransferMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setMinHeight(100d);
         note.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
         return buildFieldHolder(label, note);

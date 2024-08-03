@@ -39,7 +39,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private ValidatableDatePicker date;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
-    private TextArea note;
+    private ValidatableTextArea note;
     private Button saveBtn, cancelBtn, addBtn;
 
     public PurchaseReturnMasterForm(ModalPane modalPane) {
@@ -126,7 +126,7 @@ public class PurchaseReturnMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setMinHeight(100d);
         note.setWrapText(true);
         return buildFieldHolder(label, note);

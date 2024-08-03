@@ -47,7 +47,7 @@
                                wrapText="true"/>
                     </VBox>
                     <Label text="Role description"/>
-                    <TextArea fx:id="description" prefHeight="70.0" prefWidth="1000"/>
+                    <ValidatableTextArea fx:id="description" prefHeight="70.0" prefWidth="1000"/>
                 </VBox>
                 <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" styleClass="card-flat" GridPane.rowIndex="1">
                     <padding>

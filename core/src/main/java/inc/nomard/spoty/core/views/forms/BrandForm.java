@@ -24,7 +24,7 @@ import lombok.extern.java.*;
 @Log
 public class BrandForm extends MFXGenericDialog {
     public ValidatableTextField name;
-    public TextArea description;
+    public ValidatableTextArea description;
     public Button saveBtn,
             cancelBtn;
     public Label nameValidationLabel;
@@ -59,7 +59,7 @@ public class BrandForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());

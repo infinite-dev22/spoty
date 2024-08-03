@@ -23,10 +23,10 @@ import lombok.extern.java.*;
 
 @Log
 public class AccountForm extends MFXGenericDialog {
-    public ValidatableTextField balance,
-            accountName,
+    public ValidatableNumberField balance;
+    public ValidatableTextField accountName,
             accountNumber;
-    public TextArea description;
+    public ValidatableTextArea description;
     public Label accountNameValidationLabel,
             accountNumberValidationLabel;
     public Button saveBtn,
@@ -79,7 +79,7 @@ public class AccountForm extends MFXGenericDialog {
     private VBox buildBalance() {
         // Input.
         var label = new Label("Balance (Optional)");
-        balance = new ValidatableTextField();
+        balance = new ValidatableNumberField();
         balance.setPrefWidth(400d);
         balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty(), new NumberStringConverter());
         if (Objects.equals(balance.getText(), "0")) {
@@ -103,7 +103,7 @@ public class AccountForm extends MFXGenericDialog {
     private VBox buildDescription() {
         // Input.
         var label = new Label("Description (Optional)");
-        description = new TextArea();
+        description = new ValidatableTextArea();
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
         description.setWrapText(true);

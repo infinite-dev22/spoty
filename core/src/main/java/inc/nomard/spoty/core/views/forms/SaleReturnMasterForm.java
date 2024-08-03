@@ -31,7 +31,7 @@ public class SaleReturnMasterForm extends VBox {
     private final ModalPane modalPane;
     private ValidatableComboBox<Customer> customer;
     private TableView<SaleDetail> tableView;
-    private TextArea note;
+    private ValidatableTextArea note;
     private Button saveBtn, cancelBtn, addBtn;
 
     public SaleReturnMasterForm(ModalPane modalPane) {
@@ -108,7 +108,7 @@ public class SaleReturnMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setMinHeight(100d);
         note.setWrapText(true);
         return buildFieldHolder(label, note);

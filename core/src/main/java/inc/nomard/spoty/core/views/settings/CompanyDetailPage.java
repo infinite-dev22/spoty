@@ -5,6 +5,7 @@ import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.settings.system_settings.*;
 import inc.nomard.spoty.core.views.components.label_components.controls.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Currency;
@@ -49,7 +50,7 @@ public class CompanyDetailPage extends OutlinePage {
             companyTwitter,
             companyFacebook,
             companyLinkedin;
-    public TextArea companyTagLine;
+    public ValidatableTextArea companyTagLine;
     public VBox content;
     public CheckBox reportsCheck,
             emailsCheck,
@@ -274,7 +275,7 @@ public class CompanyDetailPage extends OutlinePage {
     }
 
     private HBox buildCompanyTagLine() {
-        companyTagLine = new TextArea();
+        companyTagLine = new ValidatableTextArea();
         companyTagLine.setPrefWidth(400d);
         companyTagLine.setPrefHeight(100d);
         companyTagLine.setMinHeight(100d);

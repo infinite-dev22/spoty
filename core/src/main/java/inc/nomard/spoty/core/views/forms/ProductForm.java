@@ -44,7 +44,7 @@ public class ProductForm extends ModalPage {
             serialNumber,
             salePrice,
             stockAlert;
-    public TextArea description;
+    public ValidatableTextArea description;
     public ValidatableComboBox<Brand> brand;
     public ValidatableComboBox<ProductCategory> category;
     public ValidatableComboBox<UnitOfMeasure> unitOfMeasure;
@@ -124,7 +124,7 @@ public class ProductForm extends ModalPage {
         root.add(createValidationBox(barcodeType = new ValidatableComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
         root.add(createSimpleBox(serialNumber = new ValidatableTextField(), "Serial/Batch", 400.0), 1, 4);
         root.add(createSimpleBox(stockAlert = new ValidatableTextField(), "Stock Alert", 400.0), 0, 5);
-        root.add(createSimpleTextArea(description = new TextArea(), "Description", 400.0, 100.0), 1, 5);
+        root.add(createSimpleTextArea(description = new ValidatableTextArea(), "Description", 400.0, 100.0), 1, 5);
 
         root.add(createUploadImageBox(), 2, 0, 1, 6);
 
@@ -179,7 +179,7 @@ public class ProductForm extends ModalPage {
         return box;
     }
 
-    private VBox createSimpleTextArea(TextArea textArea, String promptText, double width, double height) {
+    private VBox createSimpleTextArea(ValidatableTextArea textArea, String promptText, double width, double height) {
         var label = new Label(promptText);
         textArea.setPrefWidth(width);
         textArea.setPrefHeight(height);

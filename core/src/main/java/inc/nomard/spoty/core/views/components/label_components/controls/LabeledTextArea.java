@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
 import inc.nomard.spoty.core.views.components.label_components.skins.*;
+import inc.nomard.spoty.core.views.components.validatables.*;
 import io.github.palexdev.materialfx.validation.*;
 import javafx.beans.property.*;
 import javafx.scene.control.*;
@@ -9,7 +10,7 @@ public class LabeledTextArea extends Control implements Validated {
     protected final MFXValidator validator;
     private final StringProperty labelText = new SimpleStringProperty(this, "labelText");
     private final StringProperty text = new SimpleStringProperty(this, "text");
-    private final TextArea textArea = new TextArea();
+    private final ValidatableTextArea textArea = new ValidatableTextArea();
 
     public LabeledTextArea() {
         super();
@@ -41,7 +42,7 @@ public class LabeledTextArea extends Control implements Validated {
         return text;
     }
 
-    public TextArea getTextArea() {
+    public ValidatableTextArea getTextArea() {
         return textArea;
     }
 

@@ -30,7 +30,7 @@ public class DepartmentForm extends MFXGenericDialog {
     public ValidatableComboBox<User> manager;
     public ValidatableComboBox<Department> parentDepartment;
     public Label nameValidationLabel;
-    public TextArea description;
+    public ValidatableTextArea description;
     public Button saveBtn;
     public Button cancelBtn;
     private List<Constraint> constraints;
@@ -105,7 +105,7 @@ public class DepartmentForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(DepartmentViewModel.descriptionProperty());

@@ -25,7 +25,7 @@ public class EmploymentStatusForm extends MFXGenericDialog {
     public ValidatableTextField name;
     public Label nameValidationLabel;
     public ValidatableComboBox<String> colorPicker;
-    public TextArea description;
+    public ValidatableTextArea description;
     public Button saveBtn,
             cancelBtn;
     public Label colorPickerValidationLabel;
@@ -79,7 +79,7 @@ public class EmploymentStatusForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());

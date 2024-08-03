@@ -86,7 +86,7 @@ public class StockInDetailForm extends ModalPage {
 
     private VBox buildDescription() {
         // Input.
-        var description = new TextArea();
+        var description = new ValidatableTextArea();
         var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());

@@ -41,7 +41,7 @@ public class QuotationMasterForm extends VBox {
     private ValidatableComboBox<Discount> discount;
     private TableView<QuotationDetail> table;
     private CustomTextField shippingFee;
-    private TextArea note;
+    private ValidatableTextArea note;
     private Label customerValidationLabel;
     private Button saveBtn,
             cancelBtn,
@@ -213,7 +213,7 @@ public class QuotationMasterForm extends VBox {
     }
 
     private VBox buildNote() {
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setPrefHeight(100d);
         note.setWrapText(true);
         var label = new Label("Note");

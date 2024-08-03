@@ -32,7 +32,7 @@ public class ProductCategoryForm extends MFXGenericDialog {
     @FXML
     public Label nameValidationLabel;
     @FXML
-    public TextArea description;
+    public ValidatableTextArea description;
     private List<Constraint> nameConstraints;
     private ActionEvent actionEvent = null;
 
@@ -64,7 +64,7 @@ public class ProductCategoryForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(ProductCategoryViewModel.descriptionProperty());

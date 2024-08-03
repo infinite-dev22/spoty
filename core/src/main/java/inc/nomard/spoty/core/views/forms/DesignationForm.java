@@ -29,7 +29,7 @@ public class DesignationForm extends MFXGenericDialog {
     @FXML
     public Label nameValidationLabel;
     @FXML
-    public TextArea description;
+    public ValidatableTextArea description;
     @FXML
     public Button saveBtn;
     @FXML
@@ -67,7 +67,7 @@ public class DesignationForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(DesignationViewModel.descriptionProperty());

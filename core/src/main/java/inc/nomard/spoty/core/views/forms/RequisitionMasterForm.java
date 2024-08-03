@@ -39,7 +39,7 @@ public class RequisitionMasterForm extends VBox {
     private Label supplierValidationLabel;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<RequisitionDetail> tableView;
-    private TextArea note;
+    private ValidatableTextArea note;
     private Button saveBtn, cancelBtn, addBtn;
 
     public RequisitionMasterForm(ModalPane modalPane) {
@@ -117,7 +117,7 @@ public class RequisitionMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setMinHeight(100d);
         note.setWrapText(true);
         return buildFieldHolder(label, note);
