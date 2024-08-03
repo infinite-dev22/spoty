@@ -36,7 +36,7 @@ public class AccountViewModel {
     private static final StringProperty accountNumber = new SimpleStringProperty("");
     private static final StringProperty credit = new SimpleStringProperty("");
     private static final StringProperty debit = new SimpleStringProperty("");
-    private static final StringProperty balance = new SimpleStringProperty("");
+    private static final DoubleProperty balance = new SimpleDoubleProperty();
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<Account> account = new SimpleObjectProperty<>();
     public static ObservableList<Account> accountsList = FXCollections.observableArrayList();
@@ -103,15 +103,15 @@ public class AccountViewModel {
         return debit;
     }
 
-    public static String getBalance() {
-        return balance.get();
+    public static Double getBalance() {
+        return (balance.get() == 0d) ? 0d : balance.get();
     }
 
-    public static void setBalance(String balance) {
+    public static void setBalance(Double balance) {
         AccountViewModel.balance.set(balance);
     }
 
-    public static StringProperty balanceProperty() {
+    public static DoubleProperty balanceProperty() {
         return balance;
     }
 
@@ -197,7 +197,7 @@ public class AccountViewModel {
         setDescription("");
         setAccountNumber("");
         setAccountName("");
-        setBalance("");
+        setBalance(0d);
         setCredit("");
         setDebit("");
     }

@@ -16,6 +16,6 @@ public class Account {
     private String accountNumber;
     private String credit;
     private String debit;
-    private String balance;
+    private Double balance;
     private String description;
 }

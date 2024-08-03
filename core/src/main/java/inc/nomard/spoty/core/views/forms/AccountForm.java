@@ -18,6 +18,7 @@ import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
+import javafx.util.converter.*;
 import lombok.extern.java.*;
 
 @Log
@@ -80,8 +81,18 @@ public class AccountForm extends MFXGenericDialog {
         var label = new Label("Balance (Optional)");
         balance = new ValidatableTextField();
         balance.setPrefWidth(400d);
-        balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty());
-        AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> balance.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
+        balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty(), new NumberStringConverter());
+        if (Objects.equals(balance.getText(), "0")) {
+            balance.setText(null);
+        }
+        if (!Objects.isNull(balance.getText()) && !balance.getText().isBlank() && !balance.getText().isEmpty()) {
+            balance.setDisable(true);
+        }
+        balance.textProperty().addListener(observable -> {
+            if (Objects.equals(balance.getText(), "0")) {
+                balance.setText(null);
+            }
+        });
         var vbox = new VBox();
         vbox.setSpacing(2d);
         vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
