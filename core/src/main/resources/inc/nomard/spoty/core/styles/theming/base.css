@@ -1,0 +1,180 @@
+@import '../../fonts/Fonts.css';
+@import '../MFXColors.css';
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-bar {
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-max-width: 50;
+    -fx-border-width: 50;
+    -fx-background-width: 50;
+    -fx-background-position: left center;
+}
+.default-color0.chart-bar {
+    -fx-bar-fill: #4EE29B;
+    -fx-border-color: darkgreen;
+}
+.default-color0.chart-bar:hover {
+    -fx-bar-fill: darkgreen;
+    -fx-border-color: #4EE29B;
+}
+
+/*Remove Horizontal scrollbar and other components.*/
+.tree-view *.scroll-bar:horizontal,
+.tree-view *.scroll-bar:horizontal *.track,
+.tree-view *.scroll-bar:horizontal *.track-background,
+.tree-view *.scroll-bar:horizontal *.thumb,
+.tree-view *.row-header-background *.show-hide-rows-button,
+.tree-view *.scroll-bar:horizontal *.increment-button,
+.tree-view *.scroll-bar:horizontal *.decrement-button,
+.tree-view *.scroll-bar:horizontal *.increment-arrow,
+.tree-view *.scroll-bar:horizontal *.decrement-arrow,
+.tree-view *.scroll-bar:vertical,
+.tree-view *.column-header-background *.show-hide-columns-button,
+.tree-view *.scroll-bar:vertical *.increment-button,
+.tree-view *.scroll-bar:vertical *.decrement-button,
+.tree-view *.scroll-bar:vertical *.increment-arrow,
+.tree-view *.scroll-bar:vertical *.decrement-arrow {
+    -fx-background-color: transparent;
+}
+
+/**************************************************
+ * Window Header
+**************************************************/
+.close-icon {
+    -mfx-color: -mfx-red;
+}
+
+.minimize-icon {
+    -mfx-color: -mfx-orange;
+}
+
+/**************************************************
+ * Sidebar
+**************************************************/
+.sidebar {
+    -fx-background-color: transparent;
+}
+
+/*TREE VIEW NAV STYLING.*/
+.sidebar .navbar .tree-view {
+    -fx-background-color: transparent;
+    -fx-fill: white;
+}
+
+.sidebar .navbar .tree-view .tree-cell {
+    -fx-background-color: transparent;
+    -fx-fill: white;
+}
+
+.sidebar .navbar .tree-view .tree-cell:selected .container {
+    -fx-background-color: -mfx-selected-nav;
+    -fx-fill: white;
+}
+
+.sidebar .navbar .tree-view .tree-cell .container:hover {
+    -fx-background-color: -mfx-charcoal-disabled;
+    -fx-fill: white;
+}
+
+.sidebar .navbar .tree-view .tree-cell .container {
+    -fx-fill: -mfx-charcoal;
+}
+
+/*Style expanded group.*/
+.sidebar .navbar .tree-view .tree-cell:group:expanded {
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
+    -fx-fill: white;
+}
+
+/*Style group sub item.*/
+.sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
+    -fx-fill: white;
+}
+
+.sidebar .navbar .tree-view .tree-cell:selected:sub-tree-item {
+    -fx-fill: white;
+}
+
+.sidebar .navbar .tree-view .tree-cell .container:hover:sub-tree-item {
+    -fx-background-color: -mfx-charcoal-disabled;
+    -fx-fill: white;
+}
+
+.nav-tree-cell:group > .container .arrow {
+    -fx-fill: grey;
+    -fx-icon-color: grey;
+}
+
+.nav-tree-cell:group:expanded {
+    -fx-fill: grey;
+}
+
+.nav-tree-cell:expanded, .nav-tree-cell:sub-tree-item {
+    -fx-background-color: #404040;
+}
+
+/*POS PRODUCT CARD*/
+.pos-product-card {
+   -fx-border-color: -border-disabled;
+}
+
+.rounded-border {
+    -fx-border-color: transparent;
+}
+
+.rounded-accent-border:selected {
+    -fx-border-color: -spoty-accent-color;
+    -fx-background-color: transparent;
+}
+
+.pos-product-card {
+   -fx-border-color: -border-disabled;
+}
+
+.rounded-border {
+    -fx-border-color: -border-disabled;
+}
+
+.rounded-accent-border:selected {
+    -fx-border-color: -spoty-accent-color;
+}
+
+.card-flat {
+    -fx-border-color: -border-disabled;
+}
+
+.card-flat-top {
+    -fx-border-color: -border-disabled;
+}
+
+.card-flat-bottom {
+    -fx-border-color: -border-disabled;
+}
+
+.card-flat-no-border, .theme-item {
+    -fx-border-color: transparent;
+}
+
+.theme-item:selected {
+    -fx-border-color: -spoty-accent-color;
+}
+
+.green-bg{
+    -fx-background-color: green;
+}
+
+.red-bg{
+    -fx-background-color: red;
+}
+
+.orange-bg{
+    -fx-background-color: orange;
+}
+
+.hero-image{
+    -fx-background-color: -mfx-charcoal;
+}

@@ -13,7 +13,7 @@ import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
-import java.text.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -24,15 +24,26 @@ import lombok.extern.java.*;
 
 @Log
 public class PurchaseMasterViewModel {
-
     @Getter
     public static final ObservableList<PurchaseMaster> purchasesList = FXCollections.observableArrayList();
+    @Getter
+    public static final ObservableList<String> statusesList = FXCollections.observableArrayList("Approved",
+            "Pending",
+            "Rejected",
+            "Returned");
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class, new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(Date.class,
+                    new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final ListProperty<PurchaseMaster> purchases = new SimpleListProperty<>(purchasesList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalDate> date = new SimpleObjectProperty<>();
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
     private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
@@ -52,20 +63,15 @@ public class PurchaseMasterViewModel {
         return id;
     }
 
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, PurchaseMasterViewModel.class);
-        }
-        return null;
+    public static LocalDate getDate() {
+        return date.get();
     }
 
-    public static void setDate(String date) {
+    public static void setDate(LocalDate date) {
         PurchaseMasterViewModel.date.set(date);
     }
 
-    public static StringProperty dateProperty() {
+    public static ObjectProperty<LocalDate> dateProperty() {
         return date;
     }
 
@@ -144,7 +150,7 @@ public class PurchaseMasterViewModel {
     public static void resetProperties() {
         Platform.runLater(() -> {
             setId(0L);
-            setDate("");
+            setDate(null);
             setSupplier(null);
             setTax(null);
             setDiscount(null);
@@ -166,8 +172,6 @@ public class PurchaseMasterViewModel {
                 .amountPaid(0)
                 .total(0)
                 .amountDue(0)
-                .paymentStatus("")
-                .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
@@ -209,9 +213,8 @@ public class PurchaseMasterViewModel {
                     var purchaseMaster = gson.fromJson(response.body(), PurchaseMaster.class);
                     setId(purchaseMaster.getId());
                     setNote(purchaseMaster.getNotes());
-                    setDate(purchaseMaster.getLocaleDate());
+                    setDate(purchaseMaster.getDate());
                     setSupplier(purchaseMaster.getSupplier());
-                    setStatus(purchaseMaster.getPurchaseStatus());
                     PurchaseDetailViewModel.getPurchaseDetails().clear();
                     PurchaseDetailViewModel.getPurchaseDetails().addAll(purchaseMaster.getPurchaseDetails());
                     if (onSuccess != null) {
@@ -258,18 +261,11 @@ public class PurchaseMasterViewModel {
                 .amountPaid(0)
                 .total(0)
                 .amountDue(0)
-                .paymentStatus("")
-                .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
         }
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class,
-                        new UnixEpochDateTypeAdapter())
-                .create();
-        System.out.println(gson.toJson(purchaseMaster));
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.put(purchaseMaster);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));

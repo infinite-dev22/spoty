@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 package inc.nomard.spoty.core.viewModels.quotations;
 
 import com.google.gson.*;
@@ -27,6 +13,7 @@ import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -43,14 +30,20 @@ public class QuotationMasterViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final ListProperty<QuotationMaster> quotations =
             new SimpleListProperty<>(quotationsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-    private static final StringProperty taxRate = new SimpleStringProperty("");
-    private static final StringProperty discount = new SimpleStringProperty("");
+    private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>(null);
     private static final StringProperty shippingFee = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
@@ -116,27 +109,27 @@ public class QuotationMasterViewModel {
         return customer;
     }
 
-    public static String getTaxRate() {
-        return (taxRate.get().isEmpty() && taxRate.get().isBlank()) ? "0" : taxRate.get();
+    public static Tax getTax() {
+        return tax.get();
     }
 
-    public static void setTaxRate(String taxRate) {
-        QuotationMasterViewModel.taxRate.set(taxRate);
+    public static void setTax(Tax tax) {
+        QuotationMasterViewModel.tax.set(tax);
     }
 
-    public static StringProperty taxRateProperty() {
-        return taxRate;
+    public static ObjectProperty<Tax> taxProperty() {
+        return tax;
     }
 
-    public static String getDiscount() {
-        return (discount.get().isEmpty() && discount.get().isBlank()) ? "0" : discount.get();
+    public static Discount getDiscount() {
+        return discount.get();
     }
 
-    public static void setDiscount(String discount) {
+    public static void setDiscount(Discount discount) {
         QuotationMasterViewModel.discount.set(discount);
     }
 
-    public static StringProperty discountProperty() {
+    public static ObjectProperty<Discount> discountProperty() {
         return discount;
     }
 
@@ -168,8 +161,8 @@ public class QuotationMasterViewModel {
         setId(0L);
         setCustomer(null);
         setBranch(null);
-        setTaxRate("");
-        setDiscount("");
+        setTax(null);
+        setDiscount(null);
         setShippingFee("");
         setNote("");
         QuotationDetailViewModel.quotationDetailsList.clear();
@@ -183,7 +176,7 @@ public class QuotationMasterViewModel {
                 .customer(getCustomer())
                 .notes(getNote())
                 .status(getStatus())
-                .discount(Double.parseDouble(getDiscount()))
+                .discount(getDiscount())
                 .shippingFee(Double.parseDouble(getShippingFee()))
                 .build();
         if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
@@ -296,8 +289,10 @@ public class QuotationMasterViewModel {
                     // Process the successful response
                     var quotationMaster = gson.fromJson(response.body(), QuotationMaster.class);
                     setId(quotationMaster.getId());
+                    setCustomer(getCustomer());
+                    setStatus(getStatus());
                     setNote(quotationMaster.getNotes());
-                    setTaxRate(getTaxRate());
+                    setTax(getTax());
                     setDiscount(getDiscount());
                     setShippingFee(getShippingFee());
                     QuotationDetailViewModel.quotationDetailsList.clear();
@@ -397,7 +392,7 @@ public class QuotationMasterViewModel {
                 .id(getId())
                 .customer(getCustomer())
                 .status(getStatus())
-                .discount(Double.parseDouble(getDiscount()))
+                .discount(getDiscount())
                 .notes(getNote())
                 .shippingFee(Double.parseDouble(getShippingFee()))
                 .build();

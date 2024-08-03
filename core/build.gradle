@@ -5,6 +5,7 @@ plugins {
     id "org.openjfx.javafxplugin" version "$jfx_plugin"
     id "org.beryx.jlink" version "$jlink_plugin"
     id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
+//    maven { url "https://jitpack.io" }
     id "io.freefair.lombok" version "$lombok_plugin"
     id "com.github.mrcjkb.module-finder" version "$module_finder_plugin"
 }
@@ -20,10 +21,10 @@ repositories {
     mavenLocal()
     mavenCentral()
     gradlePluginPortal()
-    maven { url "https://jitpack.io" }
     maven {
         url "https://sandec.jfrog.io/artifactory/repo"
     }
+    maven { url 'https://jitpack.io' }
 }
 
 //graalvmNative {
@@ -86,7 +87,6 @@ run {
             "-Xms256m",
             "-Xmx1G",
             "-XX:ReservedCodeCacheSize=128m",
-            "-XX:+UseG1GC",
             "-XX:MaxGCPauseMillis=200",
             "-XX:SoftRefLRUPolicyMSPerMB=50",
             "-XX:+HeapDumpOnOutOfMemoryError",
@@ -98,7 +98,14 @@ run {
             "-XX:+UseStringDeduplication",
             "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
             "-Djava.security.egd=file:/dev/urandom",
-            "-XX:+AlwaysPreTouch"
+            "-XX:+AlwaysPreTouch",
+            "-Dprism.marlinratserizer=true",
+            "-Dprism.verbose=true",
+            "-Dsun.java2d.opengl=true",
+            "-XX:+AutoCreateSharedArchive",
+            "-XX:SharedArchiveFile=spoty.jsa",
+            "-XX:+UseZGC",
+            "-XX:+ZGenerational"
     ]
 }
 
@@ -130,7 +137,6 @@ jlink {
                 "-Xms256m",
                 "-Xmx1G",
                 "-XX:ReservedCodeCacheSize=128m",
-                "-XX:+UseG1GC",
                 "-XX:MaxGCPauseMillis=200",
                 "-XX:SoftRefLRUPolicyMSPerMB=50",
                 "-XX:+HeapDumpOnOutOfMemoryError",
@@ -142,7 +148,14 @@ jlink {
                 "-XX:+UseStringDeduplication",
                 "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
                 "-Djava.security.egd=file:/dev/urandom",
-                "-XX:+AlwaysPreTouch"
+                "-XX:+AlwaysPreTouch",
+                "-Dprism.marlinratserizer=true",
+                "-Dprism.verbose=true",
+                "-Dsun.java2d.opengl=true",
+                "-XX:+AutoCreateSharedArchive",
+                "-XX:SharedArchiveFile=spoty.jsa",
+                "-XX:+UseZGC",
+                "-XX:+ZGenerational"
         ]
     }
 
@@ -203,6 +216,7 @@ jlink {
 }
 
 dependencies {
+    // implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.9.1'
     implementation project(":network_bridge")
     implementation project(":utils")
     implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"
@@ -214,9 +228,9 @@ dependencies {
     implementation "io.github.mkpaz:atlantafx-styles:$atlantafx"
     implementation "io.github.mkpaz:atlantafx-base:$atlantafx"
     implementation "com.google.code.gson:gson:$gson"
-    compileOnly "org.projectlombok:lombok"
-    annotationProcessor "org.projectlombok:lombok"
     implementation "org.projectlombok:lombok:$lombok"
+    compileOnly "org.projectlombok:lombok:$lombok"
+    annotationProcessor "org.projectlombok:lombok:$lombok"
     implementation "io.github.palexdev:materialfx:$materialfx"
     implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
@@ -226,4 +240,6 @@ dependencies {
     implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
     implementation "org.junit.jupiter:junit-jupiter-api:$junit"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
+    testCompileOnly "org.projectlombok:lombok:$lombok"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombok"
 }

@@ -1,13 +1,5 @@
 package inc.nomard.spoty.utils;
 
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class SubscriptionChecker {
 //    private static final String SUBSCRIPTION_STATUS_URL = "http://your-api-url/subscription/status?email=";
 //    private static final int CHECK_INTERVAL = 60000; // Check every 60 seconds

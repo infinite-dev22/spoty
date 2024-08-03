@@ -1,24 +1,23 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.components.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import lombok.extern.java.*;
 
 @Log
 public class StockAlerts extends AnchorPane {
-    public MFXTableView<StockAlertModel> stockAlert;
+    public TableView<StockAlertModel> stockAlert;
 
     public StockAlerts() {
         this.setMinHeight(351d);
@@ -49,13 +48,11 @@ public class StockAlerts extends AnchorPane {
     }
 
     private ViewAll buildViewAll() {
-        var viewAll = new ViewAll();
-        return viewAll;
+        return new ViewAll();
     }
 
-    private MFXTableView<StockAlertModel> buildBottom() {
-        stockAlert = new MFXTableView<>();
-        stockAlert.setFooterVisible(false);
+    private TableView<StockAlertModel> buildBottom() {
+        stockAlert = new TableView<>();
         stockAlert.setBorder(null);
         setupTable();
         UIUtils.anchor(stockAlert, 32d, 0d, 0d, 0d);
@@ -63,24 +60,17 @@ public class StockAlerts extends AnchorPane {
     }
 
     private void setupTable() {
-        MFXTableColumn<StockAlertModel> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(StockAlertModel::getName));
-        MFXTableColumn<StockAlertModel> totalQuantity =
-                new MFXTableColumn<>("Quantity", false, Comparator.comparing(StockAlertModel::getTotalQuantity));
-        MFXTableColumn<StockAlertModel> costPrice =
-                new MFXTableColumn<>("Cost Price", false, Comparator.comparing(StockAlertModel::getCostPrice));
-
-        name.setRowCellFactory(customer -> new MFXTableRowCell<>(StockAlertModel::getName));
-        totalQuantity.setRowCellFactory(customer -> new MFXTableRowCell<>(StockAlertModel::getTotalQuantity));
-        costPrice.setRowCellFactory(customer -> new MFXTableRowCell<>(StockAlertModel::getCostPrice));
+        TableColumn<StockAlertModel, String> name = new TableColumn<>("Name");
+        TableColumn<StockAlertModel, String> totalQuantity = new TableColumn<>("Quantity");
+        TableColumn<StockAlertModel, String> costPrice = new TableColumn<>("Cost Price");
 
         name.prefWidthProperty().bind(stockAlert.widthProperty().multiply(.4));
         totalQuantity.prefWidthProperty().bind(stockAlert.widthProperty().multiply(.4));
         costPrice.prefWidthProperty().bind(stockAlert.widthProperty().multiply(.4));
 
-        stockAlert
-                .getTableColumns()
-                .addAll(name, totalQuantity, costPrice);
+        var columnList = new LinkedList<>(Stream.of(name, totalQuantity, costPrice).toList());
+        stockAlert.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        stockAlert.getColumns().addAll(columnList);
         styleTable();
 
         if (DashboardViewModel.getStockAlerts().isEmpty()) {
@@ -94,15 +84,13 @@ public class StockAlerts extends AnchorPane {
 
     private void styleTable() {
         stockAlert.setPrefSize(1000, 1000);
-        stockAlert.features().enableBounceEffect();
-        stockAlert.features().enableSmoothScrolling(0.5);
 
-        stockAlert.setTableRowFactory(
+        stockAlert.setRowFactory(
                 t -> {
-                    MFXTableRow<StockAlertModel> row = new MFXTableRow<>(stockAlert, t);
+                    TableRow<StockAlertModel> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-//                                showContextMenu((MFXTableRow<StockAlertModel>) event.getSource())
+//                                showContextMenu((TableRow<StockAlertModel>) event.getSource())
 //                                        .show(
 //                                                customers.getScene().getWindow(),
 //                                                event.getScreenX(),

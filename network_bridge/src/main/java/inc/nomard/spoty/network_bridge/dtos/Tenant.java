@@ -1,6 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
-import java.util.*;
+
+import java.time.*;
 import lombok.*;
 import lombok.extern.java.*;
 
@@ -9,17 +10,16 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class Tenant {
     private Long id;
     private String name;
-    private Date subscriptionEndDate;
+    private LocalDateTime subscriptionEndDate;
     @Builder.Default
     private boolean trial = false;
     @Builder.Default
     private boolean canTry = true;
-    private Date trialEndDate;
+    private LocalDateTime trialEndDate;
     @Builder.Default
     private boolean newTenancy = true;
 }

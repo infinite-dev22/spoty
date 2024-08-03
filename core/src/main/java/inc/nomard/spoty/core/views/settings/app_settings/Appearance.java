@@ -1,10 +1,10 @@
 package inc.nomard.spoty.core.views.settings.app_settings;
 
+import atlantafx.base.controls.*;
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.*;
 import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.mfxcore.controls.Label;
 import java.util.*;
 import java.util.prefs.*;
 import java.util.stream.*;
@@ -24,7 +24,7 @@ public class Appearance extends VBox {
     private final String darkTheme = SpotyCoreResourceLoader.load("images/dark.png");
     private final String lightTheme = SpotyCoreResourceLoader.load("images/light.png");
     private final String systemTheme = SpotyCoreResourceLoader.load("images/dark_or_light.png");
-    MFXFilterComboBox<String> languageCombo = new MFXFilterComboBox<>();
+    LabeledComboBox<String> languageCombo = new LabeledComboBox<>();
     private Preferences preferences;
 
     public Appearance() {
@@ -136,7 +136,7 @@ public class Appearance extends VBox {
         var titleLbl = new Label("Appearance");
         titleLbl.getStyleClass().add("header-title");
         var descriptionLbl = new Label("Change how your app looks and feels on your computer");
-        descriptionLbl.getStyleClass().add("header-description");
+        descriptionLbl.getStyleClass().add(Styles.TEXT_SUBTLE);
 
         vbox.getChildren().addAll(titleLbl, descriptionLbl);
 
@@ -152,7 +152,7 @@ public class Appearance extends VBox {
         var titleLbl = new Label(title);
         titleLbl.getStyleClass().add("sub-header-title");
         var descriptionLbl = new Label(description);
-        descriptionLbl.getStyleClass().add("sub-header-description");
+        descriptionLbl.getStyleClass().add(Styles.TEXT_SUBTLE);
 
         vbox.getChildren().addAll(titleLbl, descriptionLbl);
 
@@ -257,9 +257,8 @@ public class Appearance extends VBox {
         var hbox = new HBox();
         hbox.setSpacing(10);
         hbox.setPadding(new Insets(20, 0, 20, 0));
-        var fontCombo = new MFXComboBox<>();
-        fontCombo.setFloatMode(FloatMode.BORDER);
-        fontCombo.setFloatingText("Font type");
+        var fontCombo = new LabeledComboBox<>();
+        fontCombo.setLabel("Font type");
         fontCombo.setPrefWidth(300);
         var hbox1 = new HBox();
         hbox1.setAlignment(Pos.BOTTOM_LEFT);
@@ -295,7 +294,7 @@ public class Appearance extends VBox {
         var hbox = new HBox();
         hbox.setSpacing(10);
         hbox.setPadding(new Insets(20, 0, 20, 0));
-        var toggle = new MFXToggleButton();
+        var toggle = new ToggleSwitch();
         var hbox1 = new HBox();
         hbox1.setAlignment(Pos.BOTTOM_LEFT);
         hbox1.getChildren().add(toggle);
@@ -319,8 +318,7 @@ public class Appearance extends VBox {
         var hbox = new HBox();
         hbox.setSpacing(10);
         hbox.setPadding(new Insets(20, 0, 20, 0));
-        languageCombo.setFloatMode(FloatMode.BORDER);
-        languageCombo.setFloatingText("Language");
+        languageCombo.setLabel("Language");
         languageCombo.setPrefWidth(300);
         languageCombo.setItems(localeList);
         languageCombo.setValue(preferences.get(

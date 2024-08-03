@@ -1,23 +1,8 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 package inc.nomard.spoty.core.viewModels;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.core.views.pos.components.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
@@ -25,8 +10,10 @@ import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
+import java.io.*;
 import java.lang.reflect.*;
 import java.net.http.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -40,11 +27,18 @@ public class ProductViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalDate.class,
+                    new LocalDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class,
+                    new LocalTimeTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class,
+                    new LocalDateTimeTypeAdapter())
             .create();
     private static final ListProperty<Product> products = new SimpleListProperty<>(productsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<ProductCategory> category = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<File> imageFile = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty barcodeType = new SimpleStringProperty("");
@@ -250,6 +244,18 @@ public class ProductViewModel {
         return image;
     }
 
+    public static File getImageFile() {
+        return imageFile.get();
+    }
+
+    public static void setImageFile(File image) {
+        ProductViewModel.imageFile.set(image);
+    }
+
+    public static ObjectProperty<File> imageFileProperty() {
+        return imageFile;
+    }
+
     public static String getSerial() {
         return serial.get();
     }
@@ -292,7 +298,7 @@ public class ProductViewModel {
                 .serialNumber(getSerialNumber())
                 .image(getImage())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.post(product);
+        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.post(product, getImageFile());
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
@@ -315,6 +321,10 @@ public class ProductViewModel {
                 // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
                     Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage(response.body()));
                 }
             }
         }).exceptionally(throwable -> {
@@ -359,9 +369,7 @@ public class ProductViewModel {
                                       SpotyGotFunctional.MessageConsumer errorMessage) {
         CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.fetchAll();
         responseFuture.thenAccept(response -> {
-            // Handle successful response
             if (response.statusCode() == 200) {
-                // Process the successful response
                 Platform.runLater(() -> {
                     Type listType = new TypeToken<ArrayList<Product>>() {
                     }.getType();
@@ -369,28 +377,23 @@ public class ProductViewModel {
                     productsList.clear();
                     productsList.addAll(productList);
                     if (Objects.nonNull(onSuccess)) {
-                        ProductCard.preloadImages();
                         onSuccess.run();
                     }
                 });
             } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
                     Platform.runLater(() -> errorMessage.showMessage("Access denied"));
                 }
             } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
                     Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
                 }
             } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
                     Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
                 }
             }
         }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
             if (Connectivity.isConnectedToInternet()) {
                 if (Objects.nonNull(errorMessage)) {
                     Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
@@ -533,7 +536,7 @@ public class ProductViewModel {
                 .serialNumber(getSerialNumber())
                 .image(getImage())
                 .build();
-        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.put(product);
+        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.put(product, getImageFile());
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {

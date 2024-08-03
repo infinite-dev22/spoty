@@ -28,6 +28,8 @@ test {
 
 dependencies {
     implementation project(':utils')
+    implementation "org.apache.httpcomponents:httpmime:$http_mime"
+    implementation "org.apache.httpcomponents:httpcomponents-core:$http_core"
     implementation "com.google.code.gson:gson:$gson"
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"

@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.wrappers;
 
-import inc.nomard.spoty.network_bridge.dtos.dashboard.DashboardKPIModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import javafx.beans.property.*;
 
 public class DashboardKPIModelWrapper {

@@ -25,6 +25,7 @@ public interface DashboardRepository {
     CompletableFuture<HttpResponse<String>> monthlyIncomes();
 
     CompletableFuture<HttpResponse<String>> monthlyRevenue();
+
     CompletableFuture<HttpResponse<String>> weeklyRevenue();
 
     CompletableFuture<HttpResponse<String>> topProducts();

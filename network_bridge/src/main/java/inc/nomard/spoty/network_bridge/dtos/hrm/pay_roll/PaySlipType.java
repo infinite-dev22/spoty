@@ -10,7 +10,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class PaySlipType {
     private Long id;

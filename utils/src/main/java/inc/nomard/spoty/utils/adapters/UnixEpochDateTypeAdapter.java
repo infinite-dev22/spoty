@@ -1,13 +1,10 @@
 package inc.nomard.spoty.utils.adapters;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import lombok.Getter;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.util.Date;
+import com.google.gson.*;
+import com.google.gson.stream.*;
+import java.io.*;
+import java.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class UnixEpochDateTypeAdapter
