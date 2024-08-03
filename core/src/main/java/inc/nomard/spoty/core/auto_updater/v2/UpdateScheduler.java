@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.auto_updater.v2;
 
-import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.utils.*;
 import java.util.concurrent.*;
 import javafx.concurrent.*;
@@ -21,7 +21,7 @@ public class UpdateScheduler {
                     }
 
                     private Void onFailure(Throwable throwable) {
-                        SpotyLogger.writeToFile(throwable, AuthScreenController.class);
+                        SpotyLogger.writeToFile(throwable, AuthScreen.class);
                         return null;
                     }
                 };

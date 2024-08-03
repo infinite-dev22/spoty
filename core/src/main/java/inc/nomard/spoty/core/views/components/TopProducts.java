@@ -1,28 +1,23 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.components.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.mfxcore.controls.*;
-import java.net.*;
 import java.util.*;
-import javafx.application.*;
+import java.util.stream.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import lombok.extern.java.*;
 
 @Log
 public class TopProducts extends AnchorPane {
-    public MFXTableView<ProductSalesModel> products;
+    public TableView<ProductSalesModel> products;
 
     public TopProducts() {
         this.setMinHeight(351d);
@@ -53,13 +48,11 @@ public class TopProducts extends AnchorPane {
     }
 
     private ViewAll buildViewAll() {
-        var viewAll = new ViewAll();
-        return viewAll;
+        return new ViewAll();
     }
 
-    private MFXTableView<ProductSalesModel> buildBottom() {
-        products = new MFXTableView<>();
-        products.setFooterVisible(false);
+    private TableView<ProductSalesModel> buildBottom() {
+        products = new TableView<>();
         products.setBorder(null);
         setupTable();
         UIUtils.anchor(products, 32d, 0d, 0d, 0d);
@@ -67,28 +60,19 @@ public class TopProducts extends AnchorPane {
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductSalesModel> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(ProductSalesModel::getName));
-        MFXTableColumn<ProductSalesModel> cost =
-                new MFXTableColumn<>("Cost", false, Comparator.comparing(ProductSalesModel::getCostPrice));
-        MFXTableColumn<ProductSalesModel> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(ProductSalesModel::getSalePrice));
-        MFXTableColumn<ProductSalesModel> totalSale =
-                new MFXTableColumn<>("Total Sales", false, Comparator.comparing(ProductSalesModel::getTotalQuantity));
-
-        name.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getName));
-        cost.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getCostPrice));
-        price.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getSalePrice));
-        totalSale.setRowCellFactory(product -> new MFXTableRowCell<>(ProductSalesModel::getTotalQuantity));
+        TableColumn<ProductSalesModel, String> name = new TableColumn<>("Name");
+        TableColumn<ProductSalesModel, String> cost = new TableColumn<>("Cost");
+        TableColumn<ProductSalesModel, String> price = new TableColumn<>("Price");
+        TableColumn<ProductSalesModel, String> totalSale = new TableColumn<>("Total Sales");
 
         name.prefWidthProperty().bind(products.widthProperty().multiply(.3));
         cost.prefWidthProperty().bind(products.widthProperty().multiply(.25));
         price.prefWidthProperty().bind(products.widthProperty().multiply(.25));
         totalSale.prefWidthProperty().bind(products.widthProperty().multiply(.25));
 
-        products
-                .getTableColumns()
-                .addAll(name, cost, price, totalSale);
+        var columnList = new LinkedList<>(Stream.of(name, cost, price, totalSale).toList());
+        products.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        products.getColumns().addAll(columnList);
         getTable();
 
         if (DashboardViewModel.getTopProducts().isEmpty()) {
@@ -103,15 +87,13 @@ public class TopProducts extends AnchorPane {
 
     private void getTable() {
         products.setPrefSize(1000, 1000);
-        products.features().enableBounceEffect();
-        products.features().enableSmoothScrolling(0.5);
 
-        products.setTableRowFactory(
+        products.setRowFactory(
                 t -> {
-                    MFXTableRow<ProductSalesModel> row = new MFXTableRow<>(products, t);
+                    TableRow<ProductSalesModel> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-//                                showContextMenu((MFXTableRow<Product>) event.getSource())
+//                                showContextMenu((TableRow<Product>) event.getSource())
 //                                        .show(
 //                                                products.getScene().getWindow(),
 //                                                event.getScreenX(),

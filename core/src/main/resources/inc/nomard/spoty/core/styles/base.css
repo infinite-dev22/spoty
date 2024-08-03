@@ -1,26 +1,16 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 @import '../fonts/Fonts.css';
 @import 'MFXColors.css';
+
+.mfx-icon-button {
+    -mfx-size: 24;
+}
 
 /**************************************************
  * Root
 **************************************************/
-.rootPane {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
+.label, .text-field, .text-area, .button {
+    -fx-font-family: 'Open Sans Regular';
+    -fx-font-size: 16;
 }
 
 /**************************************************
@@ -47,29 +37,29 @@
 /**************************************************
  * Sidebar
 **************************************************/
-.rootPane .sidebar {
+.sidebar {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
 
-.rootPane .sidebar .header {
+.header {
     -fx-font-family: 'Visby Round CF Heavy';
     -fx-font-size: 26;
 }
 
-.rootPane .sidebar .menu-label {
+.menu-label {
     -fx-font-family: 'Visby Round CF Bold';
     -fx-font-size: 14;
 }
 
 /*TREE VIEW NAV STYLING.*/
-.rootPane .sidebar .navbar .tree-view {
+.navbar .tree-view {
     -fx-insets: 0;
     -fx-border-insets: 0;
     -fx-background-insets: 1;
     -fx-indent: 35;
 }
-.rootPane .sidebar .navbar .tree-view .tree-cell {
+.navbar .tree-view .tree-cell {
     -fx-pref-height: 40;
     -fx-font-family: 'Visby Round CF Demi Bold';
     -fx-font-size: 13;
@@ -79,18 +69,18 @@
     -fx-font-family: 'Visby Round CF Demi Bold';
     -fx-font-size: 13;
 }
-.rootPane .sidebar .navbar .tree-view .tree-cell:selected,
-.rootPane .sidebar .navbar .tree-view .tree-cell .container,
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:group,
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
+.navbar .tree-view .tree-cell:selected,
+.navbar .tree-view .tree-cell .container,
+.navbar .tree-view .tree-cell .container:group,
+.navbar .tree-view .tree-cell .container:sub-tree-item {
     -fx-background-radius: 10;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell .container{
-    -fx-padding: 3 5 3 15;
+.navbar .tree-view .tree-cell .container{
+    -fx-padding: 10 5 10 15;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell:sub-tree-item {
+.navbar .tree-view .tree-cell:sub-tree-item {
     -fx-padding: 3 3 3 20;
     -fx-border-insets: 3 3.5 3 34;
     -fx-background-insets: 3 3.5 3 34;
@@ -102,17 +92,6 @@
 
 .nav-tree-cell:group:expanded > .container > .arrow {
     -fx-icon-code: fas-angle-down;
-}
-
-.nav-toggle {
-}
-
-.nav-toggle .nav-toggle-arrow {
-    -fx-icon-code: fas-angle-left;
-}
-
-.nav-toggle:selected .nav-toggle-arrow {
-    -fx-icon-code: fas-angle-right;
 }
 
 /*Remove Horizontal scrollbar and other components.*/
@@ -158,13 +137,6 @@
 .tree-view *.scroll-bar:vertical *.thumb:hover {
     -fx-background-insets: 2.5, 0.0, 0.0;
     -fx-background-radius: 2.0em;
-}
-
-/*APPBAR STYLES*/
-.appBar {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
 }
 
 /*MESSAGE STYLES*/
@@ -240,6 +212,12 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
+.modal-dialog-side {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-insets: 2 2 2 0;
+    -fx-background-insets: 2 2 2 0;
+}
 .rounded-accent-border {
     -fx-background-radius: 500;
     -fx-border-radius: 500;
@@ -253,6 +231,14 @@
 .card-flat {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
+}
+.card-flat-top {
+    -fx-background-radius: 0 0 10 10;
+    -fx-border-radius: 0 0 10 10;
+}
+.card-flat-bottom {
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-radius: 10 10 0 0;
 }
 .card-flat-no-border {
     -fx-background-radius: 10;
@@ -268,40 +254,11 @@
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
 }
-/*TABBED PANES*/
-.tab{
-    -fx-background-insets: 0;
-    -fx-border-insets: 0;
-    -fx-opaque-insets: 0;
-    -fx-padding: .4em 5em .4em 5em;
-}
-.tab:selected{
-    -fx-background-insets: 0;
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
-    -fx-padding: .4em 5em .4em 5em;
-}
 
-.tab .tab-label {
-    -fx-alignment: CENTER;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-.tab:selected .tab-label {
-    -fx-alignment: CENTER;
-}
-
-.tabbed-pane:top *.tab-header-area {
-    -fx-background-insets: 0;
-    -fx-padding: .4em; /* overridden as 5 2 0 0 */
+.card-colored {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
-}
-
-.tabbed-pane *.tab-header-background {
-    -fx-background-radius: 10 10 0 0;
-    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
 }
 /* APPEARANCE STYLES */
 .header-title{
@@ -313,8 +270,6 @@
 .sub-header-title{
      -fx-font-size: 16;
      -fx-font-style: italic;
-}
-.sub-header-description{
 }
 . preview-header{
      -fx-font-weight: bold;
@@ -346,251 +301,6 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
-.popover{
-    -fx-padding: 0;
-}
-.text-area {
-    -fx-cursor: default;
-    -fx-border-color: -border-disabled;
-	-fx-border-width: 1;
-	-fx-background-radius: 8;
-	-fx-border-radius: 8;
-}
-.text-area .content {
-	-fx-background-insets: 0;
-	-fx-background-radius: 8;
-	-fx-border-radius: 8;
-    -fx-border-color: transparent;
-}
-.text-area:focused {
-	-fx-background-insets: 0;
-	-fx-border-width: 2;
-    -fx-border-color: -mfx-purple;
-}
-.text-area:focused .content {
-	-fx-background-insets: 0;
-	-fx-border-width: 0;
-}
-.text-area > .scroll-pane {
-     -fx-background-color: -translucent-light-gray;
-}
-
-.text-area > .scroll-bar:horizontal, .scroll-bar:vertical{
-    -fx-background-color:transparent;
-}
-
-.increment-button, .decrement-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
-.text-area > .scroll-pane .scroll-bar:horizontal .track,
-.scroll-bar:vertical .track{
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-background-radius: 0em;
-}
-
-.text-area > .scroll-pane .scroll-bar:horizontal .thumb,
-.text-area > .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: -translucent-dark-gray;
-    -fx-background-radius: 5em;
-}
-.text-area > .scroll-pane > .corner {
-    -fx-background-radius: 5;
-}
-/*
-* Time Picker.
-*/
-.time-picker {
-    -fx-padding: 0px;
-    /*-fx-pref-height: 2.5em;*/
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-background-insets: 0;
-    -fx-border-color: -mfx-charcoal-disabled;
-}
-
-.time-picker:focused {
-    -fx-border-width: 1.5;
-    -fx-border-color: -mfx-purple;
-}
-
-.time-picker > .box {
-    -fx-alignment: center;
-    -fx-border-color: transparent;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-background-insets: 0;
-    -fx-border-insets: 0;
-    -fx-spacing: 2;
-}
-
-.time-picker:focused > .box {
-    -fx-border-color: transparent;
-}
-
-.time-picker > .box > .edit-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
-    -fx-border-insets: 0;
-    -fx-min-height: 33;
-}
-
-.time-picker:focused > .box > .edit-button {
-    -fx-min-height: 32;
-}
-
-.time-picker:button-only > .box > .edit-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
-.time-picker:left:focused > .box > .edit-button {
-    -fx-border-width: 0;
-    -fx-border-insets: 0;
-}
-
-.time-picker:button-only:focused > .box > .edit-button {
-    -fx-background-insets: 0;
-    -fx-border-width: 0;
-    -fx-border-insets: 0;
-}
-
-.time-picker > .box > .edit-button > .ikonli-font-icon {
-    -fx-icon-code: far-clock;
-    -fx-icon-size: 25px;
-    -fx-icon-color: -fx-purple;
-}
-
-/*.time-picker:focused > .box > .edit-button > .ikonli-font-icon {
-    -fx-icon-color: -fx-purple;
-}*/
-
-.time-picker > .box > .fields-box {
-    -fx-padding: 0px 5px;
-}
-
-.time-picker > .box > .fields-box > .separator {
-    -fx-padding: 0px 1px;
-}
-
-.time-picker > .box > .fields-box > .separator:empty {
-    -fx-text-fill: derive(-fx-control-inner-background, -30%);
-}
-
-.time-picker > .box > .fields-box > .time-field {
-    -fx-pref-width: 1.6em;
-}
-
-.time-picker > .box > .fields-box > .time-field:empty {
-    -fx-text-fill: derive(-fx-control-inner-background, -30%);
-}
-
-.time-picker > .box > .fields-box > .time-field:focused {
-    -fx-background-radius: 2px;
-    -fx-background-color: -fx-purple;
-    -fx-text-fill: white;
-}
-
-.time-picker > .box > .fields-box > .time-field.hour {
-    -fx-padding: 0px 0px;
-    -fx-alignment: center;
-}
-
-.time-picker > .box > .fields-box > .time-field.minute {
-    -fx-padding: 0px 0px;
-    -fx-alignment: center;
-}
-
-.time-picker > .box > .fields-box > .time-field.second {
-    -fx-padding: 0px 0px;
-    -fx-alignment: center;
-}
-
-.time-picker > .box > .fields-box > .time-field.millisecond {
-    -fx-pref-width: 2.0em;
-    -fx-padding: 0px 0px;
-    -fx-alignment: center;
-}
-
-/* --------------------------------------------------------------
-* TimePickerPopup
-*/
-.time-picker-popup {
-    -fx-spacing: 5px;
-    -fx-pref-height: 210px;
-    -fx-background-color: -fx-box-border, white;
-    -fx-background-insets: 0;
-    -fx-padding: 10px;/*
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .26), 20, 0.19, -1, 6);*/
-    -fx-cursor: default;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-}
-
-.time-picker-popup .time-list-view {
-}
-
-.time-picker-popup .time-list-view .list-cell {
-    -fx-alignment: center;
-    -fx-background-color: white;
-}
-
-.time-picker-popup .time-list-view .list-cell:focus-within,
-.time-picker-popup .time-list-view .list-cell:selected,
-.time-picker-popup .time-list-view .list-cell:focused,
-.time-picker-popup .time-list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
-.time-picker-popup .time-list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
-    -fx-background-color: white;
-}
-
-.time-picker-popup .time-list-view .list-cell .time-label {
-    -fx-padding: .5em 0em;
-    -fx-alignment: center;
-    -fx-font-weight: bold;
-    -fx-background-color: -mfx-charcoal;
-    -fx-background-radius: 2px;
-    -fx-pref-width: 3em;
-    -fx-text-fill: white;
-    -fx-cursor: HAND;
-}
-
-.time-picker-popup .time-list-view .list-cell:hover .time-label {
-    -fx-background-color: lightgray;
-    -fx-background-insets: 0;
-    -fx-text-fill: black;
-}
-
-.time-picker-popup .time-list-view .list-cell:selected .time-label {
-    -fx-background-insets: 0;
-    -fx-background-color: -fx-accent;
-    -fx-text-fill: white;
-}
-
-.time-picker-popup .time-list-view .vertical-scroll-bar {
-    -fx-pref-width: 0;
-}
-
-.time-picker-popup .time-list-view {
-    -fx-background-insets: 0px;
-    -fx-pref-width: 70px;
-}
-
-.time-picker-popup .time-list-view > .virtual-flow > .scroll-bar,
-.time-picker-popup .time-list-view > .virtual-flow > .scroll-bar .decrement-arrow,
-.time-picker-popup .time-list-view > .virtual-flow > .scroll-bar .increment-arrow,
-.time-picker-popup .time-list-view > .virtual-flow > .scroll-bar .decrement-button,
-.time-picker-popup .time-list-view > .virtual-flow > .scroll-bar .increment-button {
-    -fx-pref-width: 0;
-    -fx-pref-height: 0;
-}
-
-.login-image {
-    -fx-background-radius: 20;
-    -fx-border-radius:  20;
-}
 
 .login-title {
     -fx-font-family: 'Visby Round CF Heavy';
@@ -612,7 +322,6 @@
 }
 
 .plan-card{
-    -fx-background-color: #D9DCD6;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 5;
@@ -653,32 +362,8 @@
     -fx-font-family: 'Comfortaa Bold';
     -fx-font-size: 13;
 }
-.dialog-cancel-btn {
-    -fx-background-color: purple;
-    -fx-foreground-color: purple;
-    -fx-text-fill: purple;
-}
-.dialog-delete-btn {
-    -fx-background-color: red;
-    -fx-foreground-color: red;
-    -fx-text-fill: red;
-}
 .dialog-top-icon {
-    -mfx-color: red;
     -mfx-size: 30;
-}
-.dialog-top-icon-background {
-    -fx-fill: red;
-}
-.primary-color {
-    -fx-background-color: purple;
-    -fx-foreground-color: purple;
-    -fx-text-fill: white;
-}
-.secondary-color {
-    -fx-background-color: white;
-    -fx-foreground-color: purple;
-    -fx-text-fill: purple;
 }
 /*
 * LineChart Styling
@@ -701,8 +386,102 @@
      -fx-background-radius: 10px;
      -fx-padding: 5px;
 }
+/*  ////////////////////////////////////////////////////////////////////////////////
+*   //                            New Organised CSS                               //
+*   ////////////////////////////////////////////////////////////////////////////////
+*/
+.body {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.content-view {
+    -fx-background-radius: 10 10 0 10;
+    -fx-border-radius: 10 10 0 10;
+}
+
+.h1 {
+    -fx-font-size: 2.5em;
+    -fx-font-weight: bold;
+}
+
+.h2 {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+}
+
+.h3 {
+    -fx-font-size: 1.75em;
+    -fx-font-weight: bold;
+}
 
 .h4 {
-    -fx-font-family: 'Roboto Bold';
-    -fx-font-size: 25;
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
+}
+
+.h5 {
+    -fx-font-size: 1.25em;
+    -fx-font-weight: bold;
+}
+
+.h6 {
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+}
+
+.disabled-text {
+    -fx-text-fill: #908686;
+}
+
+.fs-italic {
+    -fx-font-style: italic;
+}
+
+.text{
+     -fx-font-size: 1em;
+     -fx-line-height: 1.5;
+}
+
+.text-white{
+     -fx-text-fill: white;
+}
+
+.text-black{
+     -fx-text-fill: black;
+}
+
+.text-red{
+     -fx-text-fill: red;
+}
+
+.text-orange{
+     -fx-text-fill: orange;
+}
+
+.text-green{
+     -fx-text-fill: green;
+}
+
+/*  ////////////////////////////////////////////////////////////////////////////////
+*   //                            Specialised CSS Classes                         //
+*   ////////////////////////////////////////////////////////////////////////////////
+*/
+.nav-toggle {
+}
+
+.nav-toggle .nav-toggle-arrow {
+    -fx-icon-code: fas-angle-left;
+}
+
+.nav-toggle:selected .nav-toggle-arrow {
+    -fx-icon-code: fas-angle-right;
+}
+
+.icon {
+    -mfx-size: 24;
+}
+
+.validation-label {
+    -fx-font-size: 11;
 }

@@ -1,23 +1,24 @@
 package inc.nomard.spoty.core.views.components;
 
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
-import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
 
 public class DeleteConfirmationDialog extends MFXStageDialog {
-    public DeleteConfirmationDialog(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, String itemName, Stage stage, Pane ownerNode) {
+
+    public DeleteConfirmationDialog(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, String itemName, Pane ownerNode) {
         this.setContent(buildDialogContent(parameterlessConsumer, itemName));
-        this.initOwner(stage);
+        this.initOwner(AppManager.getPrimaryStage());
         this.initModality(Modality.WINDOW_MODAL);
         this.setOwnerNode(ownerNode);
         this.setScrimPriority(ScrimPriority.WINDOW);
@@ -36,12 +37,10 @@ public class DeleteConfirmationDialog extends MFXStageDialog {
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
-                SpotyCoreResourceLoader.load("styles/Buttons.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/MFXColors.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
-                SpotyCoreResourceLoader.load("styles/toolitip.css"),
-                SpotyCoreResourceLoader.load("styles/theming/Default.css"));
+                SpotyCoreResourceLoader.load("styles/toolitip.css"));
         return dialogContent;
     }
 
@@ -64,13 +63,13 @@ public class DeleteConfirmationDialog extends MFXStageDialog {
     }
 
     private HBox buildBottom(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer) {
-        var cancelBtn = new MFXButton();
-        cancelBtn.setVariants(ButtonVariants.FILLED);
+        var cancelBtn = new Button();
+        cancelBtn.setDefaultButton(true);
         cancelBtn.setText("No, Cancel");
         cancelBtn.getStyleClass().add("dialog-cancel-btn");
         cancelBtn.setOnAction(GlobalActions::closeDialog);
-        var deleteBtn = new MFXButton();
-        deleteBtn.setVariants(ButtonVariants.OUTLINED);
+        var deleteBtn = new Button();
+        deleteBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         deleteBtn.setText("Yes, Delete");
         deleteBtn.getStyleClass().add("dialog-delete-btn");
         deleteBtn.setOnAction(event -> {

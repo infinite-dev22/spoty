@@ -1,6 +1,8 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -10,7 +12,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class BeneficiaryBadge {
     private Long id;
@@ -19,8 +20,8 @@ public class BeneficiaryBadge {
     private BeneficiaryType beneficiaryType;
     private String color;
     private String description;
-
-    public String getBeneficiaryTypeName() {
-        return beneficiaryType.getName();
-    }
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 }

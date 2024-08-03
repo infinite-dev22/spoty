@@ -1,7 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
 import java.text.*;
-import java.util.*;
+import java.time.*;
 import lombok.*;
 import lombok.extern.java.*;
 
@@ -10,15 +10,14 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class PaySlip {
     private Long id;
-    private Date startDate;
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private int salariesQuantity;
     private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed, G - Generated, g - Generating, S - Sent
-    private Date createdOn;
+    private LocalDateTime createdOn;
     private String message;
 
     public String getLocaleStartDate() {

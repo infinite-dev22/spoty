@@ -8,7 +8,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class MoMoModel {
     private String amount;

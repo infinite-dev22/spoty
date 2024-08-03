@@ -14,10 +14,9 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
-<?import inc.nomard.spoty.utils.navigation.Spacer?>
-<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
-<?import io.github.palexdev.materialfx.controls.MFXTableView?>
-<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
+<?import inc.nomard.spoty.utils.navigation.*?>
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.materialfx.dialogs.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -102,22 +101,22 @@
                             </VBox>
                         </HBox>
                     </VBox>
-<!--                    <Separator/>-->
-<!--                    <HBox alignment="CENTER_RIGHT">-->
-<!--                        <VBox.margin>-->
-<!--                            <Insets top="10.0"/>-->
-<!--                        </VBox.margin>-->
-<!--                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">-->
-<!--                            <Label styleClass="preview-header" text="Paid Amount:"/>-->
-<!--                            <Label styleClass="preview-header" text="Change:"/>-->
-<!--                            <Label styleClass="preview-header" text="Balance:"/>-->
-<!--                        </VBox>-->
-<!--                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">-->
-<!--                            <Label fx:id="paidAmount" layoutX="10.0" layoutY="10.0"/>-->
-<!--                            <Label fx:id="changeDue" layoutX="10.0" layoutY="10.0"/>-->
-<!--                            <Label fx:id="balance" layoutX="10.0" layoutY="10.0"/>-->
-<!--                        </VBox>-->
-<!--                    </HBox>-->
+                    <!--                    <Separator/>-->
+                    <!--                    <HBox alignment="CENTER_RIGHT">-->
+                    <!--                        <VBox.margin>-->
+                    <!--                            <Insets top="10.0"/>-->
+                    <!--                        </VBox.margin>-->
+                    <!--                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">-->
+                    <!--                            <Label styleClass="preview-header" text="Paid Amount:"/>-->
+                    <!--                            <Label styleClass="preview-header" text="Change:"/>-->
+                    <!--                            <Label styleClass="preview-header" text="Balance:"/>-->
+                    <!--                        </VBox>-->
+                    <!--                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">-->
+                    <!--                            <Label fx:id="paidAmount" layoutX="10.0" layoutY="10.0"/>-->
+                    <!--                            <Label fx:id="changeDue" layoutX="10.0" layoutY="10.0"/>-->
+                    <!--                            <Label fx:id="balance" layoutX="10.0" layoutY="10.0"/>-->
+                    <!--                        </VBox>-->
+                    <!--                    </HBox>-->
                 </VBox>
                 <Separator/>
                 <VBox>

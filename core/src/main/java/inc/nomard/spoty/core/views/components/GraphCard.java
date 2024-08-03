@@ -4,7 +4,6 @@ import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
-import java.util.*;
 import javafx.collections.*;
 import javafx.geometry.*;
 import javafx.scene.*;
@@ -13,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
-import javafx.scene.text.*;
 import lombok.extern.java.*;
 
 @Log
@@ -23,8 +21,8 @@ public class GraphCard extends AnchorPane {
     private final Color expenseColor = Color.web("#00AEF5");
     private final Color incomeColor = Color.web("#4EE29B");
     private final Color strokeSymbolColor = Color.web("#293C47");
-    private CategoryAxis xAxis = new CategoryAxis();
-    private NumberAxis yAxis = new NumberAxis();
+    private final CategoryAxis xAxis = new CategoryAxis();
+    private final NumberAxis yAxis = new NumberAxis();
 
     public GraphCard() {
         this.setMinHeight(351d);

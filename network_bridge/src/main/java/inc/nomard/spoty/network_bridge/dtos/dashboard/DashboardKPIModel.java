@@ -1,9 +1,6 @@
 package inc.nomard.spoty.network_bridge.dtos.dashboard;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter

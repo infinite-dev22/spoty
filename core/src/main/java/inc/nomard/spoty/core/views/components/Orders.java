@@ -1,24 +1,23 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.components.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.dashboard.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import lombok.extern.java.*;
 
 @Log
 public class Orders extends AnchorPane {
-    public MFXTableView<SaleMaster> saleOrders;
+    public TableView<SaleMaster> saleOrders;
 
     public Orders() {
         this.setMinHeight(351d);
@@ -49,13 +48,11 @@ public class Orders extends AnchorPane {
     }
 
     private ViewAll buildViewAll() {
-        var viewAll = new ViewAll();
-        return viewAll;
+        return new ViewAll();
     }
 
-    private MFXTableView<SaleMaster> buildBottom() {
-        saleOrders = new MFXTableView<>();
-        saleOrders.setFooterVisible(false);
+    private TableView<SaleMaster> buildBottom() {
+        saleOrders = new TableView<>();
         saleOrders.setBorder(null);
         setupTable();
         UIUtils.anchor(saleOrders, 32d, 0d, 0d, 0d);
@@ -63,24 +60,11 @@ public class Orders extends AnchorPane {
     }
 
     private void setupTable() {
-        MFXTableColumn<SaleMaster> saleCustomer =
-                new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleMaster::getCustomerName));
-        MFXTableColumn<SaleMaster> saleStatus =
-                new MFXTableColumn<>("Order Status", false, Comparator.comparing(SaleMaster::getSaleStatus));
-        MFXTableColumn<SaleMaster> salePaymentStatus =
-                new MFXTableColumn<>(
-                        "Pay Status", false, Comparator.comparing(SaleMaster::getPaymentStatus));
-        MFXTableColumn<SaleMaster> saleGrandTotal =
-                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(SaleMaster::getTotal));
-        MFXTableColumn<SaleMaster> saleAmountPaid =
-                new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(SaleMaster::getAmountPaid));
-
-        saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
-        saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getSaleStatus));
-        salePaymentStatus.setRowCellFactory(
-                sale -> new MFXTableRowCell<>(SaleMaster::getPaymentStatus));
-        saleGrandTotal.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getTotal));
-        saleAmountPaid.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAmountPaid));
+        TableColumn<SaleMaster, String> saleCustomer = new TableColumn<>("Customer");
+        TableColumn<SaleMaster, String> saleStatus = new TableColumn<>("Order Status");
+        TableColumn<SaleMaster, String> salePaymentStatus = new TableColumn<>("Pay Status");
+        TableColumn<SaleMaster, String> saleGrandTotal = new TableColumn<>("Total Amount");
+        TableColumn<SaleMaster, String> saleAmountPaid = new TableColumn<>("Paid Amount");
 
         saleCustomer.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
         saleStatus.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
@@ -88,14 +72,13 @@ public class Orders extends AnchorPane {
         saleGrandTotal.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
         saleAmountPaid.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
 
-        saleOrders
-                .getTableColumns()
-                .addAll(
-                        saleCustomer,
-                        saleStatus,
-                        salePaymentStatus,
-                        saleGrandTotal,
-                        saleAmountPaid);
+        var columnList = new LinkedList<>(Stream.of(saleCustomer,
+                saleStatus,
+                salePaymentStatus,
+                saleGrandTotal,
+                saleAmountPaid).toList());
+        saleOrders.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        saleOrders.getColumns().addAll(columnList);
         styleSaleMasterTable();
 
         if (DashboardViewModel.getRecentOrders().isEmpty()) {
@@ -110,15 +93,13 @@ public class Orders extends AnchorPane {
 
     private void styleSaleMasterTable() {
         saleOrders.setPrefSize(1200, 1000);
-        saleOrders.features().enableBounceEffect();
-        saleOrders.features().enableSmoothScrolling(0.5);
 
-        saleOrders.setTableRowFactory(
+        saleOrders.setRowFactory(
                 t -> {
-                    MFXTableRow<SaleMaster> row = new MFXTableRow<>(saleOrders, t);
+                    TableRow<SaleMaster> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-//                                showContextMenu((MFXTableRow<SaleMaster>) event.getSource())
+//                                showContextMenu((TableRow<SaleMaster>) event.getSource())
 //                                        .show(
 //                                                saleOrders.getScene().getWindow(),
 //                                                event.getScreenX(),

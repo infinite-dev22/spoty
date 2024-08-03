@@ -1,20 +1,7 @@
-/*
- * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
- *
- * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
- *
- * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
- *
- * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
- *
- * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
- *
- * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
- */
-
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -24,7 +11,6 @@ import lombok.extern.java.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 @Log
 public class User {
     private Long id;
@@ -35,14 +21,18 @@ public class User {
     private Department department;
     private Role role;
     private String workShift;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String salary;
     private String email;
     private String avatar;
     private ArrayList<Branch> branches;
-    private boolean active;
-    private boolean locked;
-    private boolean accessAllBranches;
+    private Boolean active;
+    private Boolean locked;
+    private Boolean accessAllBranches;
+    private User createdBy;
+    private LocalDateTime createdAt;
+    private User updatedBy;
+    private LocalDateTime updatedAt;
 
     public String getName() {
         return userProfile.getFirstName() + " " + userProfile.getOtherName() + " " + userProfile.getLastName();
@@ -84,7 +74,7 @@ public class User {
         return userProfile.getPhone();
     }
 
-    public String getActive() {
+    public String isActive() {
         if (active) {
             return "Active";
         }

@@ -1,178 +1,146 @@
 package inc.nomard.spoty.core.views.settings.app_settings;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.core.viewModels.accounting.*;
+import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.layout.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.*;
-import java.io.*;
 import java.util.*;
-import javafx.collections.*;
+import java.util.stream.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
-public class EmailPage extends BorderPane {
-    private final Stage stage = new Stage();
-    private MFXStageDialog dialog;
+public class EmailPage extends OutlinePage {
+    private CustomTextField searchBar;
+    private TableView<Account> masterTable;
+    private MFXProgressSpinner progress;
+    private Button createBtn;
 
     public EmailPage() {
-        init();
+        addNode(init());
     }
 
-    private HBox buildBreadcrumbHolder() {
-        var breadCrumbHolder = new HBox();
-        breadCrumbHolder.setAlignment(Pos.CENTER);
-        breadCrumbHolder.setPadding(new Insets(0.0, 10.0, 0.0, 10.0));
-
-        AnchorPane.setTopAnchor(breadCrumbHolder, 0.0);
-        AnchorPane.setLeftAnchor(breadCrumbHolder, 0.0);
-        AnchorPane.setBottomAnchor(breadCrumbHolder, 0.0);
-
-        return breadCrumbHolder;
+    public BorderPane init() {
+        var pane = new BorderPane();
+        pane.setTop(buildTop());
+        pane.setCenter(buildCenter());
+//        setIcons();
+        setSearchBar();
+        setupTable();
+        return pane;
     }
 
-    private MFXTextField buildSearchField() {
-        var searchField = new MFXTextField();
-        searchField.setFloatMode(FloatMode.DISABLED);
-        searchField.setPromptText("Search");
-        searchField.setPrefWidth(300.0);
-
-        AnchorPane.setTopAnchor(searchField, 0.0);
-        AnchorPane.setLeftAnchor(searchField, 50.0);
-        AnchorPane.setBottomAnchor(searchField, 0.0);
-
-        return searchField;
+    private HBox buildLeftTop() {
+        progress = new MFXProgressSpinner();
+        progress.setMinSize(30d, 30d);
+        progress.setPrefSize(30d, 30d);
+        progress.setMaxSize(30d, 30d);
+        progress.setVisible(false);
+        progress.setManaged(false);
+        var hbox = new HBox(progress);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
     }
 
-    private HBox buildActions() {
-        var actions = new HBox();
-        actions.setAlignment(Pos.CENTER_RIGHT);
-        actions.setSpacing(20.0);
-        actions.setPadding(new Insets(0.0, 10.0, 0.0, 10.0));
-
-        var createBtn = new MFXButton();
-        createBtn.setText("Create");
-        createBtn.setVariants(ButtonVariants.FILLED);
-
-        actions.getChildren().add(createBtn);
-
-        AnchorPane.setTopAnchor(actions, 0.0);
-        AnchorPane.setRightAnchor(actions, 0.0);
-        AnchorPane.setBottomAnchor(actions, 0.0);
-
-        return actions;
+    private HBox buildCenterTop() {
+        searchBar = new CustomTextField();
+        searchBar.setPromptText("Search accounts");
+        searchBar.setMinWidth(300d);
+        searchBar.setPrefWidth(500d);
+        searchBar.setMaxWidth(700d);
+        var hbox = new HBox(searchBar);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
     }
 
-    private AnchorPane buildActionsPane() {
-        var anchorPane = new AnchorPane();
-        anchorPane.setPadding(new Insets(5.0));
-        anchorPane.getStyleClass().add("card-flat");
-
-        AnchorPane.setTopAnchor(anchorPane, 0.0);
-        AnchorPane.setLeftAnchor(anchorPane, 0.0);
-        AnchorPane.setRightAnchor(anchorPane, 0.0);
-
-        BorderPane.setAlignment(anchorPane, Pos.CENTER);
-
-        anchorPane.getChildren().addAll(
-                buildBreadcrumbHolder(),
-                buildSearchField(),
-                buildActions()
-        );
-
-        return anchorPane;
+    private HBox buildRightTop() {
+        createBtn = new Button("Create");
+        var hbox = new HBox(createBtn);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
+        HBox.setHgrow(hbox, Priority.ALWAYS);
+        return hbox;
     }
 
-    private void init() {
-        var anchorPane = new AnchorPane();
-        anchorPane.getChildren().addAll(
-                buildActionsPane(),
-                buildEmailsTable()
-        );
-
-        BorderPane.setAlignment(anchorPane, Pos.CENTER);
-
-        this.setPrefHeight(600.0);
-        this.setPrefWidth(600.0);
-        this.setCenter(anchorPane);
+    private HBox buildTop() {
+        var hbox = new HBox();
+        hbox.getStyleClass().add("card-flat-bottom");
+        BorderPane.setAlignment(hbox, Pos.CENTER);
+        hbox.setPadding(new Insets(5d));
+        hbox.getChildren().addAll(buildLeftTop(), buildCenterTop(), buildRightTop());
+        return hbox;
     }
 
-    private MFXTableView<Email> buildEmailsTable() {
-        var dataTable = new MFXTableView<Email>();
-
-        AnchorPane.setTopAnchor(dataTable, 50.0);
-        AnchorPane.setLeftAnchor(dataTable, 0.0);
-        AnchorPane.setRightAnchor(dataTable, 0.0);
-        AnchorPane.setBottomAnchor(dataTable, 0.0);
-
-        styleEmailTable(dataTable);
-
-        MFXTableColumn<Email> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Email::getName));
-        MFXTableColumn<Email> description =
-                new MFXTableColumn<>("Description", false, Comparator.comparing(Email::getDescription));
-        MFXTableColumn<Email> usage =
-                new MFXTableColumn<>("Template Usage", false, Comparator.comparing(Email::getUsage));
-
-        name.setRowCellFactory(customer -> new MFXTableRowCell<>(Email::getName));
-        description.setRowCellFactory(customer -> new MFXTableRowCell<>(Email::getDescription));
-        usage.setRowCellFactory(customer -> new MFXTableRowCell<>(Email::getUsage));
-
-        name.prefWidthProperty().bind(dataTable.widthProperty().multiply(.1));
-        description.prefWidthProperty().bind(dataTable.widthProperty().multiply(.3));
-        usage.prefWidthProperty().bind(dataTable.widthProperty().multiply(.3));
-
-        dataTable
-                .getTableColumns()
-                .addAll(name, description, usage);
-        dataTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Email Name", Email::getName),
-                        new StringFilter<>("A/C Name", Email::getDescription),
-                        new StringFilter<>("A/C Number", Email::getUsage));
-
-        if (EmailViewModel.getEmails().isEmpty()) {
-            EmailViewModel.getEmails().addListener(
-                    (ListChangeListener<Email>)
-                            c -> dataTable.setItems(EmailViewModel.emailsList));
-        } else {
-            dataTable.itemsProperty().bindBidirectional(EmailViewModel.emailsProperty());
-        }
-
-        return dataTable;
+    private AnchorPane buildCenter() {
+        masterTable = new TableView<>();
+        NodeUtils.setAnchors(masterTable, new Insets(0d));
+        return new AnchorPane(masterTable);
     }
 
-    private void styleEmailTable(MFXTableView<Email> dataTable) {
-        dataTable.setPrefSize(1000, 1000);
-        dataTable.features().enableBounceEffect();
-        dataTable.features().enableSmoothScrolling(0.5);
+    private void setupTable() {
+        TableColumn<Account, String> accountName = new TableColumn<>("Account Name");
+        TableColumn<Account, String> accountNumber = new TableColumn<>("Account Number");
+        TableColumn<Account, Double> credit = new TableColumn<>("Credit");
+        TableColumn<Account, Double> debit = new TableColumn<>("Debit");
+        TableColumn<Account, Double> balance = new TableColumn<>("Balance");
+        TableColumn<Account, String> description = new TableColumn<>("Description");
 
-        dataTable.setTableRowFactory(
+        accountName.setEditable(false);
+        accountNumber.setEditable(false);
+        credit.setEditable(false);
+        debit.setEditable(false);
+        balance.setEditable(false);
+        description.setEditable(false);
+
+        accountName.setSortable(true);
+        accountNumber.setSortable(true);
+        credit.setSortable(true);
+        debit.setSortable(true);
+        balance.setSortable(true);
+        description.setSortable(true);
+
+        accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        credit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        debit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+
+        var columnList = new LinkedList<>(Stream.of(accountName, accountNumber, credit, debit, balance, description).toList());
+        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        masterTable.getColumns().addAll(columnList);
+        styleAccountTable();
+
+        masterTable.setItems(AccountViewModel.accountsList);
+    }
+
+    private void styleAccountTable() {
+        masterTable.setPrefSize(1000, 1000);
+
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<Email> row = new MFXTableRow<>(dataTable, t);
+                    TableRow<Account> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu(dataTable, (MFXTableRow<Email>) event.getSource())
+                                showContextMenu((TableRow<Account>) event.getSource())
                                         .show(
-                                                dataTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -182,53 +150,48 @@ public class EmailPage extends BorderPane {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableView<Email> dataTable, MFXTableRow<Email> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(dataTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private MFXContextMenu showContextMenu(TableRow<Account> obj) {
+        var contextMenu = new MFXContextMenu(masterTable);
+        var delete = new MFXContextMenuItem("Delete");
+        var edit = new MFXContextMenuItem("Edit");
+        var deposit = new MFXContextMenuItem("Deposit");
 
         // Actions
         // Delete
-        delete.setOnAction(
-                e -> {
-                    EmailViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-                    e.consume();
-                });
-        // Edit
-        edit.setOnAction(
-                e -> {
-                    EmailViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
-                    e.consume();
-                });
-        contextMenu.addItems(edit, delete);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+            AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            event.consume();
+        }, obj.getItem().getAccountName(), this));
+
+        contextMenu.addItems(deposit, edit, delete);
+
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
-    private void customerFormDialogPane() throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/EmailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> EmailFormController.getInstance(stage));
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(this.getParent().getScene().getWindow())
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(this)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-    }
-
-    public void createBtnClicked() {
-        dialog.showAndWait();
-    }
-
     private void onSuccess() {
-        EmailViewModel.getAllEmails(null, null);
+        AccountViewModel.getAllAccounts(null, null);
+    }
+
+//    private void setIcons() {
+//        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
+//    }
+
+    public void setSearchBar() {
+        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+            if (Objects.equals(ov, nv)) {
+                return;
+            }
+            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
+                AccountViewModel.getAllAccounts(null, null);
+            }
+            progress.setManaged(true);
+            progress.setVisible(true);
+            AccountViewModel.searchItem(nv, () -> {
+                progress.setVisible(false);
+                progress.setManaged(false);
+            }, this::errorMessage);
+        });
     }
 
     private void successMessage(String message) {
@@ -250,10 +213,15 @@ public class EmailPage extends BorderPane {
         AnchorPane.setRightAnchor(notification, 5.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!BaseController.getInstance(stage).morphPane.getChildren().contains(notification)) {
-            BaseController.getInstance(stage).morphPane.getChildren().add(notification);
+        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
+            AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification, stage));
+            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    @Override
+    public Node getStyleableNode() {
+        return super.getStyleableNode();
     }
 }

@@ -6,9 +6,14 @@
 /**************************************************
  * Root
 **************************************************/
-.rootPane {
-    -fx-background-color: -mfx-app-background-light;
-    -fx-border-color: #ebebeb;
+.body {
+    /*-fx-background-color: transparent;*/
+    /*-fx-background-color: rgba(255, 255, 255, 0.5);*/
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+.content-view {
+    -fx-background-color: #ebebeb;
 }
 
 /**************************************************
@@ -25,26 +30,27 @@
 /**************************************************
  * Sidebar
 **************************************************/
-.rootPane .sidebar {
-    -fx-background-color: -mfx-charcoal;
+.body .sidebar {
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
 }
 
-.rootPane .sidebar .header {
+.body .sidebar .header {
     -fx-text-fill: white;
 }
 
-.rootPane .sidebar .header .mfx-font-icon {
+.body .sidebar .header .mfx-font-icon {
     -mfx-color: -mfx-black;
 }
 
-.rootPane .sidebar .mfx-scroll-pane {
+.body .sidebar .mfx-scroll-pane {
     -fx-background-color: transparent;
     -track-color: rgba(255, 255, 255, 0.3);
     -thumb-color: white;
     -thumb-hover-color: white;
 }
 
-.rootPane .sidebar .menu-label {
+.body .sidebar .menu-label {
     -fx-text-fill: white;
 }
 
@@ -57,14 +63,16 @@
 }
 
 /*TREE VIEW NAV STYLING.*/
-.rootPane .sidebar .navbar .tree-view {
-    -fx-background-color: -mfx-charcoal;
+.body .sidebar .navbar .tree-view {
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
     -fx-fill: #e3e7e9;
     -fx-text-fill: #e3e7e9;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell {
-    -fx-background-color: -mfx-charcoal;
+.body .sidebar .navbar .tree-view .tree-cell {
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
     -fx-fill: white;
     -fx-text-fill: white;
 }
@@ -74,7 +82,7 @@
     -fx-text-fill: white;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell:selected .container {
+.body .sidebar .navbar .tree-view .tree-cell:selected .container {
     -fx-background-color: -mfx-selected-nav;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
@@ -84,44 +92,45 @@
     -fx-text-fill: -mfx-nav-white-text;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:hover {
+.body .sidebar .navbar .tree-view .tree-cell .container:hover {
     -fx-background-color: -mfx-charcoal-disabled;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell .container {
+.body .sidebar .navbar .tree-view .tree-cell .container {
     -fx-fill: -mfx-charcoal;
     -fx-text-fill: -mfx-nav-white-text;
 }
 
 /*Style group*/
-/*.rootPane .sidebar .navbar .tree-view .tree-cell .container:group:selected,
-.rootPane .sidebar .navbar .tree-view .tree-cell:group:selected {
+/*.body .sidebar .navbar .tree-view .tree-cell .container:group:selected,
+.body .sidebar .navbar .tree-view .tree-cell:group:selected {
     -fx-background-color: -mfx-charcoal;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }*/
 
 /*Style expanded group.*/
-.rootPane .sidebar .navbar .tree-view .tree-cell:group:expanded {
-    -fx-background-color: -mfx-charcoal;
+.body .sidebar .navbar .tree-view .tree-cell:group:expanded {
+    /*-fx-background-color: -mfx-charcoal;*/
+    -fx-background-color: transparent;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }
 
 /*Style group sub item.*/
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
+.body .sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell:selected:sub-tree-item {
+.body .sidebar .navbar .tree-view .tree-cell:selected:sub-tree-item {
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:hover:sub-tree-item {
+.body .sidebar .navbar .tree-view .tree-cell .container:hover:sub-tree-item {
     -fx-background-color: -mfx-charcoal-disabled;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
@@ -174,54 +183,53 @@
 /*}*/
 
 /*NAV BUTTON STYLES*/
-.rootPane .sidebar .navbar .tree-view .tree-cell .mfx-icon-wrapper .mfx-font-icon {
+.body .sidebar .navbar .tree-view .tree-cell .mfx-icon-wrapper .mfx-font-icon {
     -mfx-color: white;
 }
 
-.rootPane .sidebar .navbar .mfx-button {
+.body .sidebar .navbar .mfx-button {
     -fx-background-color: -mfx-charcoal;
     -fx-border-color: transparent;
     -fx-fill: white;
     -fx-text-fill: white;
 }
 
-.rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
+.body .sidebar .navbar .mfx-button:focused .selection-rectangle {
     -fx-stroke: transparent;
     -fx-fill: #601cbe;
 }
 
-.rootPane .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
+.body .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
     -mfx-color: -mfx-charcoal;
 }
 
-.rootPane .sidebar .navbar .mfx-icon-wrapper .mfx-font-icon {
+.body .sidebar .navbar .mfx-icon-wrapper .mfx-font-icon {
     -mfx-color: -mfx-nav-white-text;
 }
 
-.rootPane .sidebar .navbar .mfx-button:hover {
+.body .sidebar .navbar .mfx-button:hover {
     -fx-background-color: -mfx-charcoal-disabled;
     -fx-fill: -mfx-charcoal;
 }
 
-.rootPane .sidebar .navbar .mfx-button:focused {
+.body .sidebar .navbar .mfx-button:focused {
     -fx-background-color: -mfx-selected-nav;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }
 
-.rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
+.body .sidebar .navbar .mfx-button:focused .selection-rectangle {
     -fx-stroke: transparent;
     -fx-fill: #601cbe;
 }
 
-.rootPane .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
+.body .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
     -mfx-color: -mfx-nav-white-text;
 }
 
 /*APPBAR STYLES*/
 .appBar {
-    -fx-background-color: -mfx-app-components-light;
-    -fx-border-color: -border-disabled;
+    -fx-background-color: transparent;
 }
 
 /*MESSAGE STYLES*/
@@ -334,8 +342,9 @@
     -fx-background-color: rgba(255, 255, 255, 1);
     -fx-border-color: -border-disabled;
 }
-.card-raised {
+.card-flat-1 {
     -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-border-color: -border-disabled;
 }
 .card-flat-no-border, .theme-item {
     -fx-background-color: -spoty-background-gray;
@@ -466,3 +475,9 @@
 .card-title{}
 .card-sub-title{}
 .username-label{}
+.icon {
+    -mfx-color: white;
+}
+.text {
+    -fx-text-fill: white;
+}

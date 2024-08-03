@@ -17,27 +17,34 @@ module spoty.core {
     requires spoty.network_bridge;
     requires spoty.utils;
     requires com.calendarfx.view;
-//    requires froxty;
     requires com.dlsc.gemsfx;
+    requires org.kordamp.ikonli.materialdesign;
 
-    opens inc.nomard.spoty.core.views;
+    opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;
     opens inc.nomard.spoty.core.views.dashboard;
-    opens inc.nomard.spoty.core.views.report;
     opens inc.nomard.spoty.core.views.settings.app_settings;
     opens inc.nomard.spoty.core.views.settings;
     opens inc.nomard.spoty.core.views.forms;
     opens inc.nomard.spoty.core.views.splash;
-    opens inc.nomard.spoty.core.components.navigation;
-    opens inc.nomard.spoty.core.components.message;
+    opens inc.nomard.spoty.core.views.layout.navigation;
+    opens inc.nomard.spoty.core.views.layout.message;
     opens inc.nomard.spoty.core.components.animations;
-    opens inc.nomard.spoty.core.components.glass_morphism;
-    opens inc.nomard.spoty.core.components;
     opens inc.nomard.spoty.core;
-    opens inc.nomard.spoty.core.components.message.enums;
+    opens inc.nomard.spoty.core.views.layout.message.enums;
     opens inc.nomard.spoty.core.components.title;
     opens inc.nomard.spoty.core.views.pos;
     opens inc.nomard.spoty.core.views.previews;
 
     exports inc.nomard.spoty.core;
+    opens inc.nomard.spoty.core.views.util;
+    opens inc.nomard.spoty.core.views.layout;
+    opens inc.nomard.spoty.core.views.layout.navigation.event;
+    opens inc.nomard.spoty.core.views.components.label_components.skins;
+    opens inc.nomard.spoty.core.views.components.label_components.controls;
+    opens inc.nomard.spoty.core.views.components.validatables;
+    opens inc.nomard.spoty.core.views.pages.purchase;
+    opens inc.nomard.spoty.core.views.pages.sale;
+    opens inc.nomard.spoty.core.views.pages.sale.tabs;
+    opens inc.nomard.spoty.core.views.pages.purchase.tabs;
 }
