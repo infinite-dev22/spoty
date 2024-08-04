@@ -118,7 +118,7 @@ public class ExpenseForm extends MFXGenericDialog {
         amount = new ValidatableNumberField();
         var label = new Label("Amount");
         amount.setPrefWidth(400d);
-        amount.setRight(new Label("UGX"));
+        amount.setLeft(new Label("UGX"));
         amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
         ExpensesViewModel.idProperty().addListener((observableValue, oV, nV) -> amount.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
         amountValidationLabel = Validators.buildValidationLabel();

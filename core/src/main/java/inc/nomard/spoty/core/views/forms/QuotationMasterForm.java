@@ -207,7 +207,7 @@ public class QuotationMasterForm extends VBox {
         var label = new Label("Shipping Fee");
         shippingFee = new ValidatableNumberField();
         shippingFee.setPrefWidth(1000d);
-        shippingFee.setRight(new Label("UGX"));
+        shippingFee.setLeft(new Label("UGX"));
         shippingFee.textProperty().bindBidirectional(QuotationMasterViewModel.shippingFeeProperty());
         return buildFieldHolder(label, shippingFee);
     }

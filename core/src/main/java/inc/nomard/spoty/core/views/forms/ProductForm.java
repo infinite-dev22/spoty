@@ -134,8 +134,8 @@ public class ProductForm extends ModalPage {
     }
 
     private void customizeFields() {
-        costPrice.setRight(new Label("UGX"));
-        salePrice.setRight(new Label("UGX"));
+        costPrice.setLeft(new Label("UGX"));
+        salePrice.setLeft(new Label("UGX"));
     }
 
     private ColumnConstraints createColumnConstraints(double prefWidth) {
