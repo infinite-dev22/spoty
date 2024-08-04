@@ -100,7 +100,7 @@ public class MainLayer extends BorderPane {
         initActions();
         sidebar.setProfileImage(getUserProfileImage());
         sidebar.setUsername(ProtectedGlobals.user.getName());
-        sidebar.setDesignation(ProtectedGlobals.user.getRole().getLabel());
+        sidebar.setDesignation(ProtectedGlobals.role.getLabel());
     }
 
     private Image getUserProfileImage() {

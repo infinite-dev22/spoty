@@ -73,12 +73,13 @@ public class LoginViewModel {
             if (loginResponse.getStatus() == 200) {
                 Platform.runLater(() -> {
                     ProtectedGlobals.authToken = loginResponse.getToken();
-                    ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
-                    ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
-                    ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
+                    ProtectedGlobals.trial = loginResponse.isTrial();
+                    ProtectedGlobals.canTry = loginResponse.isCanTry();
+                    ProtectedGlobals.newTenancy = loginResponse.isNewTenancy();
                     ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
                     ProtectedGlobals.message = loginResponse.getMessage();
                     ProtectedGlobals.user = loginResponse.getUser();
+                    ProtectedGlobals.role = loginResponse.getRole();
                     successMessage.showMessage("Authentication successful");
                     onSuccess.run();
                 });

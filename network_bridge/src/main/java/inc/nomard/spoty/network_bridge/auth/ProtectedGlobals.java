@@ -1,5 +1,6 @@
 package inc.nomard.spoty.network_bridge.auth;
 
+import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import lombok.extern.java.*;
 
@@ -12,6 +13,7 @@ public class ProtectedGlobals {
     public static boolean activeTenancy;
     public static String message;
     public static User user;
+    public static Role role;
     public static double loginSceneWidth;
     public static double loginSceneHeight;
 }

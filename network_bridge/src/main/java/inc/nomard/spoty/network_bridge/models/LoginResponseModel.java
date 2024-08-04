@@ -24,6 +24,8 @@ public class LoginResponseModel {
     private boolean canTry;
     private boolean newTenancy;
     private boolean activeTenancy;
+    private boolean activeTenancyWarning;
+    private boolean inActiveTenancyWarning;
     private User user;
     private Role role;
 }
