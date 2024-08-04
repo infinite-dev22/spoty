@@ -12,11 +12,14 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
+import java.text.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
@@ -31,8 +34,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
-import javafx.util.*;
 import javafx.util.Duration;
+import javafx.util.*;
 import lombok.extern.java.*;
 
 @Log
@@ -45,6 +48,8 @@ public class PurchaseMasterForm extends VBox {
     private TableView<PurchaseDetail> tableView;
     private ValidatableTextArea note;
     private Button saveBtn, cancelBtn, addBtn;
+    private TableColumn<PurchaseDetail, PurchaseDetail> product;
+    private TableColumn<PurchaseDetail, PurchaseDetail> quantity;
 
     public PurchaseMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -230,21 +235,13 @@ public class PurchaseMasterForm extends VBox {
     }
 
     private void setupTableColumns() {
-        var product = new TableColumn<PurchaseDetail, PurchaseDetail>("Product");
-        var quantity = new TableColumn<PurchaseDetail, String>("Quantity");
+        product = new TableColumn<>("Product");
+        quantity = new TableColumn<>("Quantity");
 
         product.prefWidthProperty().bind(tableView.widthProperty().multiply(.7));
         quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
 
-        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(PurchaseDetail item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : item.getProductName());
-            }
-        });
-        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        setupTableColumnData();
 
         var columnList = new LinkedList<>(Stream.of(product, quantity).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -354,6 +351,25 @@ public class PurchaseMasterForm extends VBox {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumnData() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
     }
 
     public void dispose() {

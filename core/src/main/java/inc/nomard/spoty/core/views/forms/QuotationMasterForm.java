@@ -13,12 +13,14 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.*;
 import java.util.function.*;
+import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
@@ -29,8 +31,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.util.*;
 import lombok.extern.java.*;
-import org.kordamp.ikonli.fontawesome5.*;
-import org.kordamp.ikonli.javafx.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -46,6 +46,7 @@ public class QuotationMasterForm extends VBox {
     private Button saveBtn,
             cancelBtn,
             addBtn;
+    private TableColumn<QuotationDetail, QuotationDetail> product, price, quantity;
 
     public QuotationMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -261,22 +262,22 @@ public class QuotationMasterForm extends VBox {
     }
 
     private void setupTable() {
-        TableColumn<QuotationDetail, String> productName = new TableColumn<>("Product");
-        TableColumn<QuotationDetail, String> productPrice = new TableColumn<>("Price");
-        TableColumn<QuotationDetail, String> productQuantity = new TableColumn<>("Quantity");
+        product = new TableColumn<>("Product");
+        price = new TableColumn<>("Price");
+        quantity = new TableColumn<>("Quantity");
 
-        productName.prefWidthProperty().bind(table.widthProperty().multiply(.4));
-        productPrice.prefWidthProperty().bind(table.widthProperty().multiply(.3));
-        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
+        product.prefWidthProperty().bind(table.widthProperty().multiply(.4));
+        price.prefWidthProperty().bind(table.widthProperty().multiply(.3));
+        quantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
 
-        table.getColumns().addAll(productName, productPrice, productQuantity);
+        setupTableColumnData();
+
+        table.getColumns().addAll(product, price, quantity);
         getQuotationDetailTable();
         table.setItems(QuotationDetailViewModel.getQuotationDetails());
     }
 
     private void getQuotationDetailTable() {
-//        table.setPrefSize(10000, 10000);
-
         table.setRowFactory(
                 quotationDetail -> {
                     TableRow<QuotationDetail> row = new TableRow<>();
@@ -391,6 +392,33 @@ public class QuotationMasterForm extends VBox {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumnData() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        price.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        price.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getProductPrice()));
+            }
+        });
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
     }
 
     public void dispose() {

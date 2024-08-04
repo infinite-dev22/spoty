@@ -12,7 +12,9 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
@@ -41,6 +43,8 @@ public class RequisitionMasterForm extends VBox {
     private TableView<RequisitionDetail> tableView;
     private ValidatableTextArea note;
     private Button saveBtn, cancelBtn, addBtn;
+    private TableColumn<RequisitionDetail, RequisitionDetail> product;
+    private TableColumn<RequisitionDetail, RequisitionDetail> quantity;
 
     public RequisitionMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -205,21 +209,13 @@ public class RequisitionMasterForm extends VBox {
     }
 
     private void setupTableColumns() {
-        var product = new TableColumn<RequisitionDetail, RequisitionDetail>("Product");
-        var quantity = new TableColumn<RequisitionDetail, String>("Quantity");
+        product = new TableColumn<>("Product");
+        quantity = new TableColumn<>("Quantity");
 
         product.prefWidthProperty().bind(tableView.widthProperty().multiply(.7));
         quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
 
-        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(RequisitionDetail item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : item.getProductName());
-            }
-        });
-        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        setupTableColumnData();
 
         var columnList = new LinkedList<>(Stream.of(product, quantity).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -311,6 +307,25 @@ public class RequisitionMasterForm extends VBox {
             in.playFromStart();
             in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
         }
+    }
+
+    private void setupTableColumnData() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
     }
 
     public void dispose() {

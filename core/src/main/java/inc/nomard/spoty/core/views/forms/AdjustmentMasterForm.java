@@ -32,8 +32,7 @@ public class AdjustmentMasterForm extends VBox {
     public ValidatableTextArea note;
     public Label title;
     public Button addBtn, saveBtn, cancelBtn;
-    private TableColumn<AdjustmentDetail, AdjustmentDetail> productName;
-    private TableColumn<AdjustmentDetail, String> productQuantity;
+    private TableColumn<AdjustmentDetail, AdjustmentDetail> product, quantity;
     private TableColumn<AdjustmentDetail, String> adjustmentType;
 
     public AdjustmentMasterForm(ModalPane modalPane) {
@@ -73,15 +72,15 @@ public class AdjustmentMasterForm extends VBox {
         HBox.setHgrow(tableView, Priority.ALWAYS);
         VBox.setVgrow(tableView, Priority.ALWAYS);
 
-        productName = new TableColumn<>("Product");
-        productQuantity = new TableColumn<>("Quantity");
+        product = new TableColumn<>("Product");
+        quantity = new TableColumn<>("Quantity");
         adjustmentType = new TableColumn<>("Adjustment Type");
 
-        productName.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
-        productQuantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        product.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
+        quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         adjustmentType.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
 
-        tableView.getColumns().addAll(productName, productQuantity, adjustmentType);
+        tableView.getColumns().addAll(product, quantity, adjustmentType);
         tableView.setItems(AdjustmentDetailViewModel.getAdjustmentDetails());
         setupTableColumns();
         configureTable();
@@ -218,15 +217,22 @@ public class AdjustmentMasterForm extends VBox {
     }
 
     private void setupTableColumns() {
-        productName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        productName.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(AdjustmentDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : item.getProductName());
             }
         });
-        productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
         adjustmentType.setCellValueFactory(new PropertyValueFactory<>("adjustmentType"));
     }
 

@@ -32,8 +32,7 @@ public class StockInMasterForm extends VBox {
     public ValidatableTextArea note;
     public Label title;
     public Button addBtn, saveBtn, cancelBtn;
-    private TableColumn<StockInDetail, StockInDetail> productName;
-    private TableColumn<StockInDetail, String> productQuantity;
+    private TableColumn<StockInDetail, StockInDetail> product, quantity;
     private TableColumn<StockInDetail, String> description;
 
     public StockInMasterForm(ModalPane modalPane) {
@@ -73,15 +72,15 @@ public class StockInMasterForm extends VBox {
         HBox.setHgrow(tableView, Priority.ALWAYS);
         VBox.setVgrow(tableView, Priority.ALWAYS);
 
-        productName = new TableColumn<>("Product");
-        productQuantity = new TableColumn<>("Quantity");
+        product = new TableColumn<>("Product");
+        quantity = new TableColumn<>("Quantity");
         description = new TableColumn<>("Description");
 
-        productName.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
-        productQuantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        product.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
+        quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         description.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
 
-        tableView.getColumns().addAll(productName, productQuantity, description);
+        tableView.getColumns().addAll(product, quantity, description);
         tableView.setItems(StockInDetailViewModel.getStockInDetails());
         setupTableColumns();
         configureTable();
@@ -218,15 +217,22 @@ public class StockInMasterForm extends VBox {
     }
 
     private void setupTableColumns() {
-        productName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        productName.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(StockInDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : item.getProductName());
             }
         });
-        productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(StockInDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
     }
 

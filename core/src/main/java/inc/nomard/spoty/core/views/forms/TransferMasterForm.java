@@ -26,7 +26,6 @@ import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
@@ -50,8 +49,7 @@ public class TransferMasterForm extends VBox {
             dateValidationLabel,
             toBranchValidationLabel,
             fromBranchValidationLabel;
-    private TableColumn<TransferDetail, TransferDetail> productName;
-    private TableColumn<TransferDetail, String> productQuantity;
+    private TableColumn<TransferDetail, TransferDetail> product, quantity;
 
     public TransferMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -243,12 +241,12 @@ public class TransferMasterForm extends VBox {
     }
 
     private void setupTable() {
-        productName = new TableColumn<>("Product");
-        productQuantity = new TableColumn<>("Quantity");
-        productName.prefWidthProperty().bind(table.widthProperty().multiply(.7));
-        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
+        product = new TableColumn<>("Product");
+        quantity = new TableColumn<>("Quantity");
+        product.prefWidthProperty().bind(table.widthProperty().multiply(.7));
+        quantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
 
-        table.getColumns().addAll(productName, productQuantity);
+        table.getColumns().addAll(product, quantity);
         table.setItems(TransferDetailViewModel.getTransferDetails());
         setupTableColumns();
         getTransferDetailTable();
@@ -432,15 +430,22 @@ public class TransferMasterForm extends VBox {
     }
 
     private void setupTableColumns() {
-        productName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        productName.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(TransferDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : item.getProductName());
             }
         });
-        productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(TransferDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
     }
 
     public void dispose() {
