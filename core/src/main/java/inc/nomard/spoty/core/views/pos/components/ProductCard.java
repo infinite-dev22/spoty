@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.pos.components;
 import atlantafx.base.theme.*;
 import inc.nomard.spoty.core.values.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.mfxcore.controls.*;
 import java.util.*;
@@ -38,8 +39,8 @@ public class ProductCard extends VBox {
         this.product = product;
 
         productNameLbl = new Label(product.getName());
-        productPriceLbl = new Label(String.valueOf(product.getSalePrice()));
-        productQuantityLbl = new Label(product.getQuantity() + " Pcs available");
+        productPriceLbl = new Label("UGX " + AppUtils.decimalFormatter().format(product.getSalePrice()));
+        productQuantityLbl = new Label(AppUtils.decimalFormatter().format(product.getQuantity()) + " Pcs available");
 
         var labelsHolder = new VBox(
                 productNameLbl,

@@ -14,7 +14,6 @@ import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -22,30 +21,27 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
 import javafx.util.*;
 import lombok.extern.java.*;
+import org.kordamp.ikonli.feather.*;
+import org.kordamp.ikonli.javafx.*;
 
 @Log
 public class PointOfSalePage extends OutlinePage {
-    private final ToggleGroup toggleGroup = new ToggleGroup();
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
-    private ComboBox<Customer> customer;
+    private ToggleGroup toggleGroup;
     private TableView<SaleDetail> cart;
     private TextField searchBar;
     private ComboBox<Discount> discount;
     private Button checkOutBtn, emptyCartBtn;
-    private HBox filterPane;
-    private ScrollPane productScrollPane;
     // @FXML
     // private BootstrapPane productHolder;
     private TableColumn<SaleDetail, SaleDetail> cartName;
-    private TableColumn<SaleDetail, Long> cartQuantity;
+    private TableColumn<SaleDetail, SaleDetail> cartQuantity;
     private TableColumn<SaleDetail, SaleDetail> productTax;
-    private TableColumn<SaleDetail, Double> cartSubTotal;
+    private TableColumn<SaleDetail, SaleDetail> cartSubTotal;
     private TableColumn<SaleDetail, SaleDetail> cartActions;
     private ComboBox<Tax> tax;
     private MFXProgressSpinner progress;
@@ -53,14 +49,11 @@ public class PointOfSalePage extends OutlinePage {
 
     public PointOfSalePage() {
         addNode(init());
-        configureProductScrollPane();
         setSearchBar();
         setPOSComboBoxes();
-        initializeCategoryFilters();
-        initializeProductsGridView();
         setCheckoutProductsTable();
-        bindTotalLabels();
         SaleMasterViewModel.setDefaultCustomer();
+        cartListeners();
         progress.setManaged(true);
         progress.setVisible(true);
         ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::displayErrorMessage);
@@ -130,27 +123,34 @@ public class PointOfSalePage extends OutlinePage {
 
     // Filter UI.
     private ScrollPane buildFilterUI() {
-        filterPane = new HBox();
+        var filterPane = new HBox();
         filterPane.setAlignment(Pos.CENTER_LEFT);
         filterPane.setSpacing(10d);
         filterPane.setPadding(new Insets(5d));
+        setCategoryFilters(filterPane);
+        updateCategoryFilters(filterPane);
+
         var scroll = new ScrollPane(filterPane);
         scroll.maxHeight(100d);
         scroll.minHeight(60d);
         scroll.prefHeight(80d);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        VBox.setVgrow(scroll, Priority.NEVER);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        configureFilterScrollPane(scroll);
         return scroll;
     }
 
     // Product Card Holder UI.
     private ScrollPane buildProductCardHolderUI() {
-        productScrollPane = new ScrollPane();
+        var productScrollPane = new ScrollPane();
         productScrollPane.setFitToHeight(true);
         productScrollPane.setFitToWidth(true);
         productScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         productScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        configureProductScrollPane(productScrollPane);
+        updateProductsGridView(productScrollPane);
+        setProductsGridView(productScrollPane);
         return productScrollPane;
     }
 
@@ -175,12 +175,14 @@ public class PointOfSalePage extends OutlinePage {
 
     // Customer UI.
     private VBox buildCustomerUI() {
-        customer = new ComboBox<>();
-        customer.setEditable(true);
-        customer.setPromptText("Customer");
-        customer.setPrefWidth(1000d);
-        HBox.setHgrow(customer, Priority.ALWAYS);
-        var vbox = new VBox(customer);
+        var customerComboBox = new ComboBox<Customer>();
+        customerComboBox.setEditable(true);
+        customerComboBox.setPromptText("Customer");
+        customerComboBox.setPrefWidth(1000d);
+        setupFilterComboBox(customerComboBox, CustomerViewModel.getCustomers(), SaleMasterViewModel.customerProperty(),
+                customer -> (customer == null) ? "" : customer.getName());
+        HBox.setHgrow(customerComboBox, Priority.ALWAYS);
+        var vbox = new VBox(customerComboBox);
         vbox.setPrefWidth(538d);
         vbox.setSpacing(10d);
         return vbox;
@@ -196,7 +198,7 @@ public class PointOfSalePage extends OutlinePage {
         cartQuantity = new TableColumn<>("Qnty");
         cartQuantity.setEditable(true);
         cartQuantity.setSortable(false);
-        cartQuantity.setPrefWidth(50d);
+        cartQuantity.setPrefWidth(45d);
         productTax = new TableColumn<>("Tax(%)");
         productTax.setEditable(false);
         productTax.setSortable(false);
@@ -208,11 +210,11 @@ public class PointOfSalePage extends OutlinePage {
         cartSubTotal = new TableColumn<>("Sub Total");
         cartSubTotal.setEditable(false);
         cartSubTotal.setSortable(false);
-        cartSubTotal.setPrefWidth(75d);
+        cartSubTotal.setPrefWidth(70d);
         cartActions = new TableColumn<>();
         cartActions.setEditable(false);
         cartActions.setSortable(false);
-        cartActions.setPrefWidth(20d);
+        cartActions.setPrefWidth(30d);
         var columnList = new LinkedList<>(Stream.of(cartName,
                 cartQuantity,
                 productTax,
@@ -245,14 +247,33 @@ public class PointOfSalePage extends OutlinePage {
         return pane;
     }
 
+    private void cartListeners() {
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<? super SaleDetail>) change -> {
+            if (SaleDetailViewModel.getSaleDetails().isEmpty()) {
+                checkOutBtn.setDisable(true);
+                emptyCartBtn.setDisable(true);
+                discount.setDisable(true);
+                tax.setDisable(true);
+            }
+            if (!SaleDetailViewModel.getSaleDetails().isEmpty()) {
+                checkOutBtn.setDisable(false);
+                emptyCartBtn.setDisable(false);
+                discount.setDisable(false);
+                tax.setDisable(false);
+            }
+        });
+    }
+
     // Deductions UI.
     private HBox buildDeductions() {
         discount = new ComboBox<>();
         discount.setPromptText("Discount(%)");
         discount.setPrefWidth(500d);
+        discount.setDisable(true);
         tax = new ComboBox<>();
         tax.setPromptText("Tax(%)");
         tax.setPrefWidth(500d);
+        tax.setDisable(true);
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER);
         hbox.setSpacing(10d);
@@ -265,13 +286,16 @@ public class PointOfSalePage extends OutlinePage {
         checkOutBtn = new Button("CheckOut $0.00");
         checkOutBtn.setOnAction(event -> savePOSSale());
         checkOutBtn.setPrefWidth(650d);
-        checkOutBtn.getStyleClass().add(Styles.SUCCESS);
+        checkOutBtn.setDefaultButton(true);
+        checkOutBtn.getStyleClass().add(Styles.ACCENT);
         checkOutBtn.setDisable(true);
+        bindTotalLabels();
         emptyCartBtn = new Button("Empty Cart");
         emptyCartBtn.setOnAction(event -> clearCart());
         emptyCartBtn.setPrefWidth(400d);
-        emptyCartBtn.getStyleClass().add(Styles.DANGER);
+        emptyCartBtn.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.DANGER);
         emptyCartBtn.setDisable(true);
+        emptyCartBtn.setCancelButton(true);
         var region = new Region();
         HBox.setHgrow(region, Priority.ALWAYS);
         var hbox = new HBox();
@@ -307,6 +331,7 @@ public class PointOfSalePage extends OutlinePage {
 
     // POS UI.
     private BorderPane init() {
+        toggleGroup = new ToggleGroup();
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
@@ -316,8 +341,6 @@ public class PointOfSalePage extends OutlinePage {
 
 
     private void setPOSComboBoxes() {
-        setupFilterComboBox(customer, CustomerViewModel.getCustomers(), SaleMasterViewModel.customerProperty(),
-                customer -> (customer == null) ? "" : customer.getName());
         setupComboBox(discount, DiscountViewModel.getDiscounts(), SaleMasterViewModel.discountProperty(), discount -> (discount == null) ? "" : discount.getName() + " (" + discount.getPercentage() + "%)");
         setupComboBox(tax, TaxViewModel.getTaxes(), SaleMasterViewModel.netTaxProperty(), tax -> (tax == null) ? "" : tax.getName() + " (" + tax.getPercentage() + "%)");
     }
@@ -354,22 +377,11 @@ public class PointOfSalePage extends OutlinePage {
         }
     }
 
-
-    private void initializeProductsGridView() {
-        updateProductsGridView();
-        setProductsGridView();
+    private void updateProductsGridView(ScrollPane scrollPane) {
+        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> setProductsGridView(scrollPane));
     }
 
-    private void initializeCategoryFilters() {
-        setCategoryFilters();
-        updateCategoryFilters();
-    }
-
-    private void updateProductsGridView() {
-        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> setProductsGridView());
-    }
-
-    private void setProductsGridView() {
+    private void setProductsGridView(ScrollPane scrollPane) {
         var productsGridView = new GridPane();
         var row = 1;
         var column = 0;
@@ -386,7 +398,7 @@ public class PointOfSalePage extends OutlinePage {
             productsGridView.add(productCard, column++, row);
             GridPane.setMargin(productsGridView, new Insets(10));
         }
-        productScrollPane.setContent(productsGridView);
+        scrollPane.setContent(productsGridView);
     }
 
     // private void setProductsGridView() {
@@ -418,9 +430,17 @@ public class PointOfSalePage extends OutlinePage {
     //     productHolder.setPadding(new Insets(10));
     // }
 
-    private void configureProductScrollPane() {
-        productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+    private void configureProductScrollPane(ScrollPane scrollPane) {
+        scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.getDeltaX() != 0) {
+                event.consume();
+            }
+        });
+    }
+
+    private void configureFilterScrollPane(ScrollPane scrollPane) {
+        scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaY() != 0) {
                 event.consume();
             }
         });
@@ -495,19 +515,19 @@ public class PointOfSalePage extends OutlinePage {
         return saleDetail.getQuantity() + 1;
     }
 
-    private void setCategoryFilters() {
+    private void setCategoryFilters(HBox node) {
         ProductCategoryViewModel.getCategories().forEach(productCategory -> {
             ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
-            filterPane.getChildren().add(toggleButton);
+            node.getChildren().add(toggleButton);
         });
     }
 
-    private void updateCategoryFilters() {
+    private void updateCategoryFilters(HBox node) {
         ProductCategoryViewModel.getCategories().addListener((ListChangeListener<ProductCategory>) c -> {
-            filterPane.getChildren().clear();
+            node.getChildren().clear();
             ProductCategoryViewModel.getCategories().forEach(productCategory -> {
                 ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
-                filterPane.getChildren().add(toggleButton);
+                node.getChildren().add(toggleButton);
             });
         });
     }
@@ -527,7 +547,7 @@ public class PointOfSalePage extends OutlinePage {
 
         SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) c -> {
             cart.setItems(SaleDetailViewModel.getSaleDetails());
-            enableButtonsOnSaleDetailsChange();
+            enableUIOnSaleDetailsChange();
         });
     }
 
@@ -541,12 +561,26 @@ public class PointOfSalePage extends OutlinePage {
             }
         });
 
-        cartQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        cartSubTotal.setCellValueFactory(new PropertyValueFactory<>("subTotalPrice"));
+        cartQuantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        cartQuantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
+        cartSubTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        cartSubTotal.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getSubTotalPrice()));
+            }
+        });
 
         cartActions.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
         cartActions.setCellFactory(param -> new TableCell<>() {
-            final MFXFontIcon delete = new MFXFontIcon("fas-trash", Color.RED);
+            final Button deleteIcon = new Button(null, new FontIcon(Feather.TRASH));
 
             @Override
             protected void updateItem(SaleDetail item, boolean empty) {
@@ -554,8 +588,9 @@ public class PointOfSalePage extends OutlinePage {
                 if (item == null) {
                     setGraphic(null);
                 } else {
-                    setGraphic(delete);
-                    delete.setOnMouseClicked(event -> removeItemFromCart(item));
+                    deleteIcon.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT, Styles.DANGER);
+                    setGraphic(deleteIcon);
+                    deleteIcon.setOnAction(event -> removeItemFromCart(item));
                 }
             }
         });
@@ -606,18 +641,24 @@ public class PointOfSalePage extends OutlinePage {
         availableProductQuantity = 0L;
     }
 
-    private void enableButtonsOnSaleDetailsChange() {
+    private void enableUIOnSaleDetailsChange() {
         if (checkOutBtn.isDisabled()) {
             checkOutBtn.setDisable(false);
         }
         if (emptyCartBtn.isDisabled()) {
             emptyCartBtn.setDisable(false);
         }
+        if (discount.isDisabled()) {
+            discount.setDisable(false);
+        }
+        if (tax.isDisabled()) {
+            tax.setDisable(false);
+        }
     }
 
     private void bindTotalLabels() {
         SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) listener ->
-                checkOutBtn.setText("CheckOut $" + calculateTotal(SaleDetailViewModel.getSaleDetails()))
+                checkOutBtn.setText("CheckOut: UGX " + AppUtils.decimalFormatter().format(calculateTotal(SaleDetailViewModel.getSaleDetails())))
         );
     }
 
@@ -626,6 +667,8 @@ public class PointOfSalePage extends OutlinePage {
         availableProductQuantity = 0L;
         checkOutBtn.setDisable(true);
         emptyCartBtn.setDisable(true);
+        discount.setDisable(true);
+        tax.setDisable(true);
     }
 
     public void savePOSSale() {

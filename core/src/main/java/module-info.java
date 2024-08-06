@@ -19,6 +19,7 @@ module spoty.core {
     requires com.calendarfx.view;
     requires com.dlsc.gemsfx;
     requires org.kordamp.ikonli.materialdesign;
+    requires org.kordamp.ikonli.feather;
 
     opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;
