@@ -44,3 +44,11 @@ app-root {
 .shade-app {
     -fx-background-color: rgba(240, 240, 240, .9);
 }
+
+.pos-product-card {
+    -fx-background-color: rgb(255, 255, 255);
+ }
+
+.pos-product-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.12, -1.0, 2.0);
+}
