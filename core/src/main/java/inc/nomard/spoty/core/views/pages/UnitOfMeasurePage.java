@@ -1,27 +1,38 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.UOMViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.UOMForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
+import inc.nomard.spoty.utils.AppUtils;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.util.Duration;
+import lombok.extern.java.Log;
+
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -34,7 +45,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     private TableColumn<UnitOfMeasure, String> uomShortName;
     private TableColumn<UnitOfMeasure, UnitOfMeasure> uomBaseUnit;
     private TableColumn<UnitOfMeasure, String> uomOperator;
-    private TableColumn<UnitOfMeasure, String> uomOperationValue;
+    private TableColumn<UnitOfMeasure, UnitOfMeasure> uomOperationValue;
     private TableColumn<UnitOfMeasure, UnitOfMeasure> createdBy;
     private TableColumn<UnitOfMeasure, UnitOfMeasure> createdAt;
     private TableColumn<UnitOfMeasure, UnitOfMeasure> updatedBy;
@@ -256,7 +267,14 @@ public class UnitOfMeasurePage extends OutlinePage {
             }
         });
         uomOperator.setCellValueFactory(new PropertyValueFactory<>("operator"));
-        uomOperationValue.setCellValueFactory(new PropertyValueFactory<>("operatorValue"));
+        uomOperationValue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        uomOperationValue.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(UnitOfMeasure item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getOperatorValue()));
+            }
+        });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override

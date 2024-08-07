@@ -1,33 +1,46 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.previews.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.ProductForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.previews.ProductPreviewController;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.utils.AppUtils;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.stage.Screen;
+import javafx.util.Duration;
+import lombok.extern.java.Log;
+
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -41,9 +54,9 @@ public class ProductPage extends OutlinePage {
     private TableColumn<Product, String> productName;
     private TableColumn<Product, Product> productCategory;
     private TableColumn<Product, Product> productBrand;
-    private TableColumn<Product, String> costPrice;
-    private TableColumn<Product, String> salePrice;
-    private TableColumn<Product, String> productQuantity;
+    private TableColumn<Product, Product> costPrice;
+    private TableColumn<Product, Product> salePrice;
+    private TableColumn<Product, Product> productQuantity;
     private TableColumn<Product, Product> tax;
     private TableColumn<Product, Product> discount;
     private TableColumn<Product, Product> createdBy;
@@ -320,15 +333,36 @@ public class ProductPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getBrandName());
             }
         });
-        costPrice.setCellValueFactory(new PropertyValueFactory<>("costPrice"));
-        salePrice.setCellValueFactory(new PropertyValueFactory<>("salePrice"));
-        productQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        costPrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        costPrice.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Product item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCostPrice()));
+            }
+        });
+        salePrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        salePrice.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Product item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getSalePrice()));
+            }
+        });
+        productQuantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        productQuantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Product item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
         tax.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         tax.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getTax()) ? null : String.valueOf(item.getTax().getPercentage()));
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getTax()) ? null : AppUtils.decimalFormatter().format(item.getTax().getPercentage()));
             }
         });
         discount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
@@ -336,7 +370,7 @@ public class ProductPage extends OutlinePage {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDiscount()) ? null : String.valueOf(item.getDiscount().getPercentage()));
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDiscount()) ? null : AppUtils.decimalFormatter().format(item.getDiscount().getPercentage()));
             }
         });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));

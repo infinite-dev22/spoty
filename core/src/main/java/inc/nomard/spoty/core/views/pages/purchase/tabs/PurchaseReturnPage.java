@@ -10,6 +10,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
@@ -38,9 +39,9 @@ public class PurchaseReturnPage extends OutlinePage {
     private MFXStageDialog viewDialog;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> supplier;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseDate;
-    private TableColumn<PurchaseReturnMaster, String> purchaseTotalPrice;
-    private TableColumn<PurchaseReturnMaster, String> purchaseAmountPaid;
-    private TableColumn<PurchaseReturnMaster, String> purchaseAmountDue;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseTotalPrice;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseAmountPaid;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseAmountDue;
     private TableColumn<PurchaseReturnMaster, String> purchaseStatus;
     private TableColumn<PurchaseReturnMaster, String> masterPaymentStatus;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdBy;
@@ -169,7 +170,9 @@ public class PurchaseReturnPage extends OutlinePage {
                 purchaseDate,
                 purchaseTotalPrice,
                 purchaseAmountPaid,
-                purchaseAmountDue).toList());
+                purchaseAmountDue,
+                createdBy,
+                createdAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getTable();
@@ -308,9 +311,30 @@ public class PurchaseReturnPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getDate().format(dtf));
             }
         });
-        purchaseTotalPrice.setCellValueFactory(new PropertyValueFactory<>("total"));
-        purchaseAmountPaid.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
-        purchaseAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        purchaseTotalPrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseTotalPrice.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
+        purchaseAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
+            }
+        });
+        purchaseAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountDue()));
+            }
+        });
         purchaseStatus.setCellValueFactory(new PropertyValueFactory<>("purchaseStatus"));
         masterPaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));

@@ -11,6 +11,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
@@ -40,9 +41,9 @@ public class PurchasePage extends OutlinePage {
     private MFXStageDialog viewDialog;
     private TableColumn<PurchaseMaster, PurchaseMaster> supplier;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseDate;
-    private TableColumn<PurchaseMaster, String> purchaseTotalPrice;
-    private TableColumn<PurchaseMaster, String> purchaseAmountPaid;
-    private TableColumn<PurchaseMaster, String> purchaseAmountDue;
+    private TableColumn<PurchaseMaster, PurchaseMaster> purchaseTotalPrice;
+    private TableColumn<PurchaseMaster, PurchaseMaster> purchaseAmountPaid;
+    private TableColumn<PurchaseMaster, PurchaseMaster> purchaseAmountDue;
     private TableColumn<PurchaseMaster, String> purchaseStatus;
     private TableColumn<PurchaseMaster, String> masterPaymentStatus;
     private TableColumn<PurchaseMaster, PurchaseMaster> createdBy;
@@ -189,10 +190,10 @@ public class PurchasePage extends OutlinePage {
                 .bind(masterTable.widthProperty().multiply(.25));
         purchaseStatus
                 .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.2));
         masterPaymentStatus
                 .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.2));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
@@ -206,7 +207,9 @@ public class PurchasePage extends OutlinePage {
                 purchaseDate,
                 purchaseTotalPrice,
                 purchaseAmountPaid,
-                purchaseAmountDue).toList());
+                purchaseAmountDue,
+                createdBy,
+                createdAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getTable();
@@ -353,9 +356,30 @@ public class PurchasePage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getDate().format(dtf));
             }
         });
-        purchaseTotalPrice.setCellValueFactory(new PropertyValueFactory<>("total"));
-        purchaseAmountPaid.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
-        purchaseAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        purchaseTotalPrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseTotalPrice.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
+        purchaseAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
+            }
+        });
+        purchaseAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountDue()));
+            }
+        });
         purchaseStatus.setCellValueFactory(new PropertyValueFactory<>("purchaseStatus"));
         masterPaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));

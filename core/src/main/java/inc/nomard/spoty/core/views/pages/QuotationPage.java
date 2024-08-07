@@ -1,34 +1,50 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.previews.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.quotations.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.accounting.AccountTransactionViewModel;
+import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.QuotationMasterForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.previews.QuotationPreviewController;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationMaster;
+import inc.nomard.spoty.utils.AppUtils;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.stage.Screen;
+import javafx.util.Duration;
+import lombok.extern.java.Log;
+
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -42,7 +58,7 @@ public class QuotationPage extends OutlinePage {
     private MFXStageDialog viewDialog;
     private TableColumn<QuotationMaster, String> reference;
     private TableColumn<QuotationMaster, QuotationMaster> customer;
-    private TableColumn<QuotationMaster, String> total;
+    private TableColumn<QuotationMaster, QuotationMaster> total;
     private TableColumn<QuotationMaster, String> status;
     private TableColumn<QuotationMaster, QuotationMaster> createdBy;
     private TableColumn<QuotationMaster, QuotationMaster> createdAt;
@@ -315,7 +331,14 @@ public class QuotationPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getCustomerName());
             }
         });
-        total.setCellValueFactory(new PropertyValueFactory<>("total"));
+        total.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        total.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {

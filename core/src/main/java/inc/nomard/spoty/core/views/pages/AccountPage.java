@@ -9,9 +9,11 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.util.*;
 import java.util.stream.*;
+import javafx.beans.property.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Node;
@@ -30,9 +32,9 @@ public class AccountPage extends OutlinePage {
     private Button createBtn;
     private TableColumn<Account, String> accountName;
     private TableColumn<Account, String> accountNumber;
-    private TableColumn<Account, Double> credit;
-    private TableColumn<Account, Double> debit;
-    private TableColumn<Account, Double> balance;
+    private TableColumn<Account, Account> credit;
+    private TableColumn<Account, Account> debit;
+    private TableColumn<Account, Account> balance;
     private TableColumn<Account, String> description;
 
     public AccountPage() {
@@ -236,9 +238,30 @@ public class AccountPage extends OutlinePage {
     private void setupTableColumns() {
         accountName.setCellValueFactory(new PropertyValueFactory<>("accountName"));
         accountNumber.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
-        credit.setCellValueFactory(new PropertyValueFactory<>("credit"));
-        debit.setCellValueFactory(new PropertyValueFactory<>("debit"));
-        balance.setCellValueFactory(new PropertyValueFactory<>("balance"));
+        credit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        credit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Account item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCredit()));
+            }
+        });
+        debit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        debit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Account item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getDebit()));
+            }
+        });
+        balance.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        balance.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Account item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getBalance()));
+            }
+        });
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
     }
 

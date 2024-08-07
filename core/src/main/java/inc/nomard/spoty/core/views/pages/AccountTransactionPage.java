@@ -7,6 +7,8 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
+import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.time.format.*;
 import java.util.*;
@@ -26,9 +28,9 @@ public class AccountTransactionPage extends OutlinePage {
     private MFXProgressSpinner progress;
     private TableColumn<AccountTransaction, AccountTransaction> accountName;
     private TableColumn<AccountTransaction, String> transactionType;
-    private TableColumn<AccountTransaction, Double> credit;
-    private TableColumn<AccountTransaction, Double> debit;
-    private TableColumn<AccountTransaction, Double> amount;
+    private TableColumn<AccountTransaction, AccountTransaction> credit;
+    private TableColumn<AccountTransaction, AccountTransaction> debit;
+    private TableColumn<AccountTransaction, AccountTransaction> amount;
     private TableColumn<AccountTransaction, String> note;
     private TableColumn<AccountTransaction, AccountTransaction> transactionDate;
 
@@ -184,9 +186,30 @@ public class AccountTransactionPage extends OutlinePage {
             }
         });
         transactionType.setCellValueFactory(new PropertyValueFactory<>("transactionType"));
-        credit.setCellValueFactory(new PropertyValueFactory<>("credit"));
-        debit.setCellValueFactory(new PropertyValueFactory<>("debit"));
-        amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        credit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        credit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AccountTransaction item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCredit()));
+            }
+        });
+        debit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        debit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AccountTransaction item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getDebit()));
+            }
+        });
+        amount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        amount.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AccountTransaction item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmount()));
+            }
+        });
         note.setCellValueFactory(new PropertyValueFactory<>("note"));
         transactionDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         transactionDate.setCellFactory(tableColumn -> new TableCell<>() {

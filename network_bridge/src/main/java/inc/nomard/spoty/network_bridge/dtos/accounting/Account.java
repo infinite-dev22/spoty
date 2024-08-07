@@ -14,8 +14,8 @@ public class Account {
     private Long id;
     private String accountName;
     private String accountNumber;
-    private String credit;
-    private String debit;
+    private Double credit;
+    private Double debit;
     private Double balance;
     private String description;
 }

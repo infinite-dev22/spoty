@@ -10,6 +10,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
@@ -38,9 +39,9 @@ public class SaleReturnPage extends OutlinePage {
     private FXMLLoader viewFxmlLoader;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleCustomer;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleDate;
-    private TableColumn<SaleReturnMaster, String> saleGrandTotal;
-    private TableColumn<SaleReturnMaster, String> saleAmountPaid;
-    private TableColumn<SaleReturnMaster, String> saleAmountDue;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> saleGrandTotal;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> saleAmountPaid;
+    private TableColumn<SaleReturnMaster, SaleReturnMaster> saleAmountDue;
     private TableColumn<SaleReturnMaster, String> saleStatus;
     private TableColumn<SaleReturnMaster, String> salePaymentStatus;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> createdBy;
@@ -159,9 +160,7 @@ public class SaleReturnPage extends OutlinePage {
                 saleStatus,
                 salePaymentStatus,
                 createdBy,
-                createdAt,
-                updatedBy,
-                updatedAt).toList());
+                createdAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleSaleReturnMasterTable();
@@ -302,9 +301,30 @@ public class SaleReturnPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
             }
         });
-        saleGrandTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-        saleAmountPaid.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
-        saleAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        saleGrandTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleGrandTotal.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
+        saleAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
+            }
+        });
+        saleAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountDue()));
+            }
+        });
         saleStatus.setCellValueFactory(new PropertyValueFactory<>("saleStatus"));
         salePaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));

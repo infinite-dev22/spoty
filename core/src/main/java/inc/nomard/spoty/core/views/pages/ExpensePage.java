@@ -9,6 +9,7 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.time.format.*;
 import java.util.*;
@@ -33,7 +34,7 @@ public class ExpensePage extends OutlinePage {
     private TableColumn<Expense, Expense> accountName;
     private TableColumn<Expense, String> expenseName;
     private TableColumn<Expense, Expense> date;
-    private TableColumn<Expense, Double> amount;
+    private TableColumn<Expense, Expense> amount;
     private TableColumn<Expense, String> note;
     private TableColumn<Expense, Expense> createdBy;
     private TableColumn<Expense, Expense> createdAt;
@@ -259,7 +260,14 @@ public class ExpensePage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDate()) ? null : item.getDate().format(dtf));
             }
         });
-        amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        amount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        amount.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmount()));
+            }
+        });
         note.setCellValueFactory(new PropertyValueFactory<>("note"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {

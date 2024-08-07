@@ -9,7 +9,9 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.network_bridge.dtos.accounting.Account;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
+import inc.nomard.spoty.utils.AppUtils;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
@@ -39,7 +41,7 @@ public class StockInPage extends OutlinePage {
     private MFXStageDialog viewDialog;
     private TableColumn<StockInMaster, String> reference;
     private TableColumn<StockInMaster, String> note;
-    private TableColumn<StockInMaster, String> totalCost;
+    private TableColumn<StockInMaster, StockInMaster> totalCost;
     private TableColumn<StockInMaster, StockInMaster> createdBy;
     private TableColumn<StockInMaster, StockInMaster> createdAt;
     private TableColumn<StockInMaster, StockInMaster> updatedBy;
@@ -266,7 +268,14 @@ public class StockInPage extends OutlinePage {
 
     private void setupTableColumns() {
         reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
-        totalCost.setCellValueFactory(new PropertyValueFactory<>("total"));
+        totalCost.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        totalCost.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(StockInMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
         note.setCellValueFactory(new PropertyValueFactory<>("notes"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {

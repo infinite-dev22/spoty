@@ -34,9 +34,9 @@ public class AccountViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty accountName = new SimpleStringProperty("");
     private static final StringProperty accountNumber = new SimpleStringProperty("");
-    private static final StringProperty credit = new SimpleStringProperty("");
-    private static final StringProperty debit = new SimpleStringProperty("");
-    private static final DoubleProperty balance = new SimpleDoubleProperty();
+    private static final DoubleProperty credit = new SimpleDoubleProperty(0);
+    private static final DoubleProperty debit = new SimpleDoubleProperty(0);
+    private static final DoubleProperty balance = new SimpleDoubleProperty(0);
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<Account> account = new SimpleObjectProperty<>();
     public static ObservableList<Account> accountsList = FXCollections.observableArrayList();
@@ -79,27 +79,27 @@ public class AccountViewModel {
         return accountNumber;
     }
 
-    public static String getCredit() {
+    public static Double getCredit() {
         return credit.get();
     }
 
-    public static void setCredit(String credit) {
+    public static void setCredit(Double credit) {
         AccountViewModel.credit.set(credit);
     }
 
-    public static StringProperty creditProperty() {
+    public static DoubleProperty creditProperty() {
         return credit;
     }
 
-    public static String getDebit() {
+    public static Double getDebit() {
         return debit.get();
     }
 
-    public static void setDebit(String debit) {
+    public static void setDebit(Double debit) {
         AccountViewModel.debit.set(debit);
     }
 
-    public static StringProperty debitProperty() {
+    public static DoubleProperty debitProperty() {
         return debit;
     }
 
@@ -198,8 +198,8 @@ public class AccountViewModel {
         setAccountNumber("");
         setAccountName("");
         setBalance(0d);
-        setCredit("");
-        setDebit("");
+        setCredit(0d);
+        setDebit(0d);
     }
 
     public static void getAllAccounts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
