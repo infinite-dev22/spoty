@@ -6,6 +6,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -30,7 +31,8 @@ import lombok.extern.java.*;
 public class PurchaseDetailForm extends MFXGenericDialog {
     public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
-    public Button saveBtn, cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label quantityValidationLabel, productValidationLabel;
 
     public PurchaseDetailForm() {
@@ -83,9 +85,9 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -186,7 +188,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         quantityValidationLabel.setManaged(false);
     }
 
-    private void saveForm(ActionEvent event) {
+    private void saveForm(Event event) {
         List<Constraint> productConstraints = product.validate();
         List<Constraint> quantityConstraints = quantity.validate();
 
@@ -211,7 +213,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         dialog.sizeToScene();
     }
 
-    private void processSave(ActionEvent event) {
+    private void processSave(Event event) {
         String message;
 
         if (tempIdProperty().get() > -1) {

@@ -42,7 +42,8 @@ public class RequisitionMasterForm extends VBox {
     private ValidatableComboBox<Supplier> supplier;
     private TableView<RequisitionDetail> tableView;
     private ValidatableTextArea note;
-    private Button saveBtn, cancelBtn, addBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;;
     private TableColumn<RequisitionDetail, RequisitionDetail> product;
     private TableColumn<RequisitionDetail, RequisitionDetail> quantity;
 
@@ -127,9 +128,9 @@ public class RequisitionMasterForm extends VBox {
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (!tableView.isDisabled() && RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");

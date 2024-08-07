@@ -26,9 +26,9 @@ public class CustomButton extends HBox {
 
         this.progressSpinnerProperties();
 
-        this.setMinHeight(40d);
-        this.setPrefHeight(40d);
-        this.setMaxHeight(40d);
+//        this.setMinHeight(40d);
+//        this.setPrefHeight(40d);
+//        this.setMaxHeight(40d);
 
         HBox.setHgrow(this, Priority.NEVER);
         VBox.setVgrow(this, Priority.NEVER);
@@ -50,9 +50,11 @@ public class CustomButton extends HBox {
     }
 
     private void progressSpinnerProperties() {
-        this.progressSpinner.setMinSize(30d, 30d);
-        this.progressSpinner.setPrefSize(30d, 30d);
-        this.progressSpinner.setMaxSize(30d, 30d);
+        this.progressSpinner.setMinSize(22d, 22d);
+        this.progressSpinner.setPrefSize(22d, 22d);
+        this.progressSpinner.setMaxSize(22d, 22d);
+
+        this.progressSpinner.setRadius(1);
 
         this.progressSpinner.setColor1(Color.WHITE);
         this.progressSpinner.setColor2(Color.WHITE);

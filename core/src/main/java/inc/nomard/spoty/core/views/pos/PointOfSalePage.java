@@ -293,7 +293,7 @@ public class PointOfSalePage extends OutlinePage {
         emptyCartBtn = new Button("Empty Cart");
         emptyCartBtn.setOnAction(event -> clearCart());
         emptyCartBtn.setPrefWidth(400d);
-        emptyCartBtn.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.DANGER);
+        emptyCartBtn.getStyleClass().addAll(Styles.DANGER);
         emptyCartBtn.setDisable(true);
         emptyCartBtn.setCancelButton(true);
         var region = new Region();

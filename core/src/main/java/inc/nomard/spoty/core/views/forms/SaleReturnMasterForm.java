@@ -6,6 +6,7 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -32,7 +33,8 @@ public class SaleReturnMasterForm extends VBox {
     private ValidatableComboBox<Customer> customer;
     private TableView<SaleDetail> tableView;
     private ValidatableTextArea note;
-    private Button saveBtn, cancelBtn, addBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;;
 
     public SaleReturnMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -114,9 +116,9 @@ public class SaleReturnMasterForm extends VBox {
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             processProducts();
             if (!tableView.isDisabled() && SaleReturnDetailViewModel.getSaleReturnDetails().isEmpty()) {

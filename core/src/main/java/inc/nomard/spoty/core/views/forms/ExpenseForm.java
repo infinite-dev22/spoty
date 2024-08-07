@@ -4,6 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -31,8 +32,8 @@ public class ExpenseForm extends MFXGenericDialog {
     public ValidatableNumberField amount;
     public ValidatableTextField name;
     public ValidatableTextArea note;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public ValidatableDatePicker date;
     public ValidatableComboBox<Account> account;
     public Label nameValidationLabel,
@@ -43,7 +44,7 @@ public class ExpenseForm extends MFXGenericDialog {
             dateConstraints,
             categoryConstraints,
             amountConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public ExpenseForm() {
         init();
@@ -151,9 +152,9 @@ public class ExpenseForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

@@ -4,6 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -24,8 +25,8 @@ import lombok.extern.java.*;
 
 @Log
 public class SupplierForm extends ModalPage {
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public ValidatableTextField name,
             email,
             phone,
@@ -39,7 +40,7 @@ public class SupplierForm extends ModalPage {
     private List<Constraint> nameConstraints,
             emailConstraints,
             phoneConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public SupplierForm() {
         initializeComponents();
@@ -60,8 +61,8 @@ public class SupplierForm extends ModalPage {
         address = createTextField();
         taxNumber = createTextField();
 
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
 
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
@@ -191,7 +192,7 @@ public class SupplierForm extends ModalPage {
         cancelBtn.setOnAction(this::onCancel);
     }
 
-    private void onSave(ActionEvent event) {
+    private void onSave(Event event) {
         nameConstraints = name.validate();
         emailConstraints = email.validate();
         phoneConstraints = phone.validate();

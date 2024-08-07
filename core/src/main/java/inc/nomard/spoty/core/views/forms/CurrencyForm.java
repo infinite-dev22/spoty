@@ -5,6 +5,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.CurrencyViewModel.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -26,15 +27,15 @@ public class CurrencyForm extends MFXGenericDialog {
     public ValidatableTextField name,
             code,
             symbol;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label codeValidationLabel,
             nameValidationLabel,
             symbolValidationLabel;
     private List<Constraint> currencyFormNameConstraints,
             colorConstraints,
             currencyFormCodeConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public CurrencyForm() {
         init();
@@ -99,9 +100,9 @@ public class CurrencyForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

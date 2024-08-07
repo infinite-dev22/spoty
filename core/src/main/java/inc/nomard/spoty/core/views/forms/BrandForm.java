@@ -5,6 +5,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.BrandViewModel.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -25,11 +26,11 @@ import lombok.extern.java.*;
 public class BrandForm extends MFXGenericDialog {
     public ValidatableTextField name;
     public ValidatableTextArea description;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label nameValidationLabel;
     private List<Constraint> nameConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public BrandForm() {
         init();
@@ -79,9 +80,9 @@ public class BrandForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

@@ -4,6 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -14,7 +15,6 @@ import io.github.palexdev.materialfx.validation.*;
 import java.util.*;
 import javafx.css.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -24,20 +24,13 @@ import lombok.extern.java.*;
 @Log
 public class DesignationForm extends MFXGenericDialog {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
-    @FXML
     public ValidatableTextField name;
-    @FXML
     public Label nameValidationLabel;
-    @FXML
     public ValidatableTextArea description;
-    @FXML
-    public Button saveBtn;
-    @FXML
+    public CustomButton saveBtn;
     public Button cancelBtn;
-    @FXML
-    public StackPane contentPane;
     private List<Constraint> constraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public DesignationForm() {
         init();
@@ -87,9 +80,9 @@ public class DesignationForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

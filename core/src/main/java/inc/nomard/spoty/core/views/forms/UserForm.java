@@ -6,6 +6,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -33,7 +34,8 @@ import lombok.extern.java.*;
 
 @Log
 public class UserForm extends ModalPage {
-    private Button saveBtn, cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     private ValidatableTextField email, phone, firstname, lastname, username;
     private ValidatableComboBox<Role> role;
     private ToggleSwitch status;
@@ -48,7 +50,7 @@ public class UserForm extends ModalPage {
     private ValidatableComboBox<String> workShift;
     private List<Constraint> firstNameConstraints, lastNameConstraints,
             userNameConstraints, userRoleConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public UserForm() {
         initializeComponents();
@@ -83,8 +85,8 @@ public class UserForm extends ModalPage {
 
         status = new ToggleSwitch();
 
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
 
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
@@ -299,7 +301,7 @@ public class UserForm extends ModalPage {
         cancelBtn.setOnAction(this::onCancel);
     }
 
-    private void onSave(ActionEvent event) {
+    private void onSave(Event event) {
         firstNameConstraints = firstname.validate();
         lastNameConstraints = lastname.validate();
         userNameConstraints = username.validate();

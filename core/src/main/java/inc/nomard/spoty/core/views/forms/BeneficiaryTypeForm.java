@@ -4,6 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -22,7 +23,8 @@ import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryTypeForm extends MFXGenericDialog {
-    public Button saveBtn, cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label nameValidationLabel,
             colorPickerValidationLabel;
     public ValidatableTextField name;
@@ -30,7 +32,7 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
     public ValidatableComboBox<String> colorPicker;
     private List<Constraint> nameConstraints,
             colorConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public BeneficiaryTypeForm() {
         init();
@@ -95,9 +97,9 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

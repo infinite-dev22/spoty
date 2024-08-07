@@ -31,7 +31,8 @@ public class AdjustmentMasterForm extends VBox {
     public TableView<AdjustmentDetail> tableView;
     public ValidatableTextArea note;
     public Label title;
-    public Button addBtn, saveBtn, cancelBtn;
+    public CustomButton saveBtn;
+    public Button addBtn, cancelBtn;
     private TableColumn<AdjustmentDetail, AdjustmentDetail> product, quantity;
     private TableColumn<AdjustmentDetail, String> adjustmentType;
 
@@ -119,9 +120,9 @@ public class AdjustmentMasterForm extends VBox {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10.0));
 
-        saveBtn = new Button("Save");
+        saveBtn = new CustomButton("Save");
         saveBtn.setId("saveBtn");
-        saveBtn.setDefaultButton(true);
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
                 showErrorMessage("Table can't be Empty");

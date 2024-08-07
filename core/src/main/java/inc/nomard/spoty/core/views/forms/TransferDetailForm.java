@@ -6,6 +6,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -28,8 +29,8 @@ import lombok.extern.java.*;
 public class TransferDetailForm extends ModalPage {
     public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label quantityValidationLabel,
             productValidationLabel;
     private List<Constraint> productConstraints,
@@ -93,9 +94,9 @@ public class TransferDetailForm extends ModalPage {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

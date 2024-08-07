@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
@@ -15,7 +16,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
-import javafx.event.ActionEvent;
+import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -41,11 +42,11 @@ public class AccountForm extends MFXGenericDialog {
     public ValidatableTextArea description;
     public Label accountNameValidationLabel,
             accountNumberValidationLabel;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     private List<Constraint> accountNameConstraints,
             accountNumberConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public AccountForm() {
         init();
@@ -137,9 +138,9 @@ public class AccountForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

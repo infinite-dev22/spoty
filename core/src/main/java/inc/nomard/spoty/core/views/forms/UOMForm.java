@@ -4,6 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -35,8 +36,8 @@ public class UOMForm extends ModalPage {
     public ValidatableTextField name,
             shortName;
     public ValidatableNumberField operatorValue;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public ValidatableComboBox<UnitOfMeasure> baseUnit;
     public ValidatableComboBox<String> operator;
     public VBox formsHolder;
@@ -46,7 +47,7 @@ public class UOMForm extends ModalPage {
     private List<Constraint> nameConstraints,
             operatorConstraints,
             operatorValueConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public UOMForm() {
         init();
@@ -183,9 +184,9 @@ public class UOMForm extends ModalPage {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

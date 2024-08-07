@@ -4,6 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -31,10 +32,10 @@ public class DepartmentForm extends MFXGenericDialog {
     public ValidatableComboBox<Department> parentDepartment;
     public Label nameValidationLabel;
     public ValidatableTextArea description;
-    public Button saveBtn;
+    public CustomButton saveBtn;
     public Button cancelBtn;
     private List<Constraint> constraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public DepartmentForm() {
         init();
@@ -124,9 +125,9 @@ public class DepartmentForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

@@ -6,6 +6,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -53,8 +54,8 @@ public class ProductForm extends ModalPage {
     public ValidatableComboBox<Discount> discount;
     public ValidatableComboBox<Tax> tax;
     public Rectangle productImageView;
-    public Button saveButton,
-            cancelButton;
+    public CustomButton saveButton;
+    public Button cancelButton;
     public Image productImage;
     public Label barcodeTypeValidationLabel,
             unitOfMeasureValidationLabel,
@@ -72,7 +73,7 @@ public class ProductForm extends ModalPage {
             categoryConstraints,
             unitOfMeasureConstraints,
             barcodeTypeConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public ProductForm() {
         init();
@@ -251,8 +252,8 @@ public class ProductForm extends ModalPage {
         box.setAlignment(Pos.CENTER_RIGHT);
         box.setPadding(new Insets(10.0));
 
-        saveButton = new Button("Create");
-        saveButton.setDefaultButton(true);
+        saveButton = new CustomButton("Create");
+        saveButton.getStyleClass().add(Styles.ACCENT);
 
         cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().add(Styles.BUTTON_OUTLINED);

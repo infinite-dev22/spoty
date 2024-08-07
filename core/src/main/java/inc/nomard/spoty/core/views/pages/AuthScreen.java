@@ -17,6 +17,7 @@ import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.viewModels.transfers.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -67,10 +68,9 @@ public class AuthScreen extends BorderPane {
             confirmPasswordValidationLabel,
             signUpPasswordValidationLabel,
             signUpLink;
-    public Button loginBtn,
-            nextBtn,
+    public CustomButton loginBtn, registerBtn;
+    public Button nextBtn,
             backBtn,
-            registerBtn,
             signUpBack;
     public MFXFontIcon closeLoginIcon,
             closeSignupIcon;
@@ -160,9 +160,9 @@ public class AuthScreen extends BorderPane {
 
     // Login button.
     private HBox buildLoginButton() {
-        loginBtn = new Button("Login");
+        loginBtn = new CustomButton("Login");
         loginBtn.setPrefWidth(352d);
-        loginBtn.setDefaultButton(true);
+        loginBtn.getStyleClass().add(Styles.ACCENT);
         loginBtn.setOnAction(actionEvent -> onLoginPressed());
         var hbox = new HBox(loginBtn);
         hbox.setAlignment(Pos.CENTER);
@@ -407,9 +407,9 @@ public class AuthScreen extends BorderPane {
 
     // Register button.
     private HBox buildRegisterButton() {
-        registerBtn = new Button("Register");
+        registerBtn = new CustomButton("Register");
         registerBtn.setPrefWidth(150d);
-        registerBtn.setDefaultButton(true);
+        registerBtn.getStyleClass().add(Styles.ACCENT);
         registerBtn.setOnAction(event -> registerUser());
         var hbox = new HBox(registerBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -675,6 +675,7 @@ public class AuthScreen extends BorderPane {
 
     public void onLoginSuccess() {
         initData();
+        loginBtn.stopLoading();
     }
 
     private void loadMainView() {
@@ -706,7 +707,7 @@ public class AuthScreen extends BorderPane {
                 && passwordConstraints.isEmpty()) {
             email.setDisable(true);
             password.setDisable(true);
-            loginBtn.setDisable(true);
+            loginBtn.startLoading();
             LoginViewModel.login(this::onLoginSuccess, this::successMessage, this::errorMessage);
         }
     }
@@ -733,7 +734,8 @@ public class AuthScreen extends BorderPane {
     private void errorMessage(String message) {
         email.setDisable(false);
         password.setDisable(false);
-        loginBtn.setDisable(false);
+        loginBtn.stopLoading();
+        registerBtn.stopLoading();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
@@ -741,7 +743,12 @@ public class AuthScreen extends BorderPane {
                         .type(MessageVariants.ERROR)
                         .height(60)
                         .build();
-        AnchorPane.setRightAnchor(notification, 40.0);
+        if (loginScreen.isVisible()) {
+            AnchorPane.setRightAnchor(notification, 40.0);
+        }
+        if (!loginScreen.isVisible()) {
+            AnchorPane.setLeftAnchor(notification, 40.0);
+        }
         AnchorPane.setTopAnchor(notification, 10.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
@@ -753,6 +760,7 @@ public class AuthScreen extends BorderPane {
     }
 
     private void onSignupSuccess() {
+        registerBtn.stopLoading();
         SignupViewModel.resetProperties();
         backToLogin();
     }
@@ -1041,6 +1049,7 @@ public class AuthScreen extends BorderPane {
         }
         if (signUpPasswordConstraints.isEmpty()
                 && confirmPasswordConstraints.isEmpty()) {
+            registerBtn.startLoading();
             SignupViewModel.registerUser(this::onSignupSuccess, this::successMessage, this::errorMessage);
         }
     }

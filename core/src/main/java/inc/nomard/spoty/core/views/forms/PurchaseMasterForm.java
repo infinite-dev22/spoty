@@ -12,14 +12,12 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.text.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
@@ -31,7 +29,6 @@ import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.util.Duration;
@@ -41,13 +38,15 @@ import lombok.extern.java.*;
 @Log
 public class PurchaseMasterForm extends VBox {
     private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
     private Label dateValidationLabel;
     private ValidatableDatePicker date;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
     private ValidatableTextArea note;
-    private Button saveBtn, cancelBtn, addBtn;
+    ;
     private TableColumn<PurchaseDetail, PurchaseDetail> product;
     private TableColumn<PurchaseDetail, PurchaseDetail> quantity;
 
@@ -141,9 +140,9 @@ public class PurchaseMasterForm extends VBox {
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (!tableView.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");

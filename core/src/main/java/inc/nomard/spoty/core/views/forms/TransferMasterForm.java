@@ -42,8 +42,8 @@ public class TransferMasterForm extends VBox {
     public TableView<TransferDetail> table;
     public ValidatableTextArea note;
     public BorderPane contentPane;
+    public CustomButton saveBtn;
     public Button addBtn,
-            saveBtn,
             cancelBtn;
     public Label title,
             dateValidationLabel,
@@ -203,9 +203,9 @@ public class TransferMasterForm extends VBox {
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (!table.isDisabled() && TransferDetailViewModel.getTransferDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");

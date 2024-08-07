@@ -31,7 +31,8 @@ public class StockInMasterForm extends VBox {
     public TableView<StockInDetail> tableView;
     public ValidatableTextArea note;
     public Label title;
-    public Button addBtn, saveBtn, cancelBtn;
+    public CustomButton saveBtn;
+    public Button addBtn, cancelBtn;
     private TableColumn<StockInDetail, StockInDetail> product, quantity;
     private TableColumn<StockInDetail, String> description;
 
@@ -119,9 +120,9 @@ public class StockInMasterForm extends VBox {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10.0));
 
-        saveBtn = new Button("Save");
+        saveBtn = new CustomButton("Save");
         saveBtn.setId("saveBtn");
-        saveBtn.setDefaultButton(true);
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (StockInDetailViewModel.stockInDetailsList.isEmpty()) {
                 showErrorMessage("Table can't be Empty");

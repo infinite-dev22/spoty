@@ -5,6 +5,7 @@ import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.*;
 import static inc.nomard.spoty.core.viewModels.ProductCategoryViewModel.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -24,17 +25,13 @@ import lombok.extern.java.*;
 
 @Log
 public class ProductCategoryForm extends MFXGenericDialog {
-    @FXML
     public ValidatableTextField name;
-    @FXML
-    public Button saveBtn,
-            cancelBtn;
-    @FXML
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label nameValidationLabel;
-    @FXML
     public ValidatableTextArea description;
     private List<Constraint> nameConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public ProductCategoryForm() {
         init();
@@ -84,9 +81,9 @@ public class ProductCategoryForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 

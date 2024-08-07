@@ -6,6 +6,7 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -30,7 +31,8 @@ import lombok.extern.java.*;
 public class StockInDetailForm extends ModalPage {
     private ValidatableNumberField quantity;
     private ValidatableComboBox<Product> product;
-    private Button saveBtn, cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     private Label productValidationLabel, quantityValidationLabel;
     private List<Constraint> productConstraints, quantityConstraints;
 
@@ -105,9 +107,9 @@ public class StockInDetailForm extends ModalPage {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -138,7 +140,7 @@ public class StockInDetailForm extends ModalPage {
         saveBtn.setOnAction(this::handleSaveAction);
     }
 
-    private void resetForm(ActionEvent event) {
+    private void resetForm(Event event) {
         closeDialog(event);
         StockInDetailViewModel.resetProperties();
         clearSelections();
@@ -158,7 +160,7 @@ public class StockInDetailForm extends ModalPage {
         quantityValidationLabel.setManaged(false);
     }
 
-    private void handleSaveAction(ActionEvent event) {
+    private void handleSaveAction(Event event) {
         validateInputs();
         if (productConstraints.isEmpty() && quantityConstraints.isEmpty()) {
             if (tempIdProperty().get() > -1) {

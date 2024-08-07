@@ -214,7 +214,7 @@ public class CompanyDetailPage extends OutlinePage {
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         // Save button.
         saveBtn = new Button("_Save Changes");
-        saveBtn.setDefaultButton(true);
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setMnemonicParsing(true);
         var hbox1 = new HBox();
         hbox1.setAlignment(Pos.CENTER_RIGHT);

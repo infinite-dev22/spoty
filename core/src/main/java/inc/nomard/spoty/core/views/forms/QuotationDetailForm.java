@@ -5,6 +5,7 @@ import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -31,17 +32,12 @@ import lombok.extern.java.*;
 
 @Log
 public class QuotationDetailForm extends MFXGenericDialog {
-    @FXML
     public ValidatableNumberField quantity;
-    @FXML
     public ValidatableComboBox<Product> product;
-    @FXML
-    public Button saveBtn, cancelBtn;
-    @FXML
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label productValidationLabel, quantityValidationLabel;
-    @FXML
     public ValidatableComboBox<Discount> discount;
-    @FXML
     public ValidatableComboBox<Tax> tax;
 
     public QuotationDetailForm() {
@@ -120,9 +116,9 @@ public class QuotationDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -236,7 +232,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         saveBtn.setOnAction(this::saveForm);
     }
 
-    private void resetForm(ActionEvent event) {
+    private void resetForm(Event event) {
         GlobalActions.closeDialog(event);
         QuotationDetailViewModel.resetProperties();
         hideValidationLabels();
@@ -251,7 +247,7 @@ public class QuotationDetailForm extends MFXGenericDialog {
         quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
     }
 
-    private void saveForm(ActionEvent event) {
+    private void saveForm(Event event) {
 
         List<Constraint> productConstraints = product.validate();
         List<Constraint> quantityConstraints = quantity.validate();

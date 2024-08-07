@@ -28,8 +28,8 @@ public class RoleFormController implements Initializable {
     @FXML
     public ValidatableTextArea description;
     @FXML
-    public Button saveBtn,
-            cancelBtn;
+    public Button saveBtn;
+    public Button cancelBtn;
     // <editor-fold desc="Lots of CheckBoxes here 👇️">
     @FXML
     private CheckBox dashboardCheckbox,

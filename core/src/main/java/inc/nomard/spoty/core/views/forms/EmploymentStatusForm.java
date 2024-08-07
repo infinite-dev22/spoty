@@ -4,6 +4,7 @@ import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.core.views.layout.message.*;
@@ -26,12 +27,12 @@ public class EmploymentStatusForm extends MFXGenericDialog {
     public Label nameValidationLabel;
     public ValidatableComboBox<String> colorPicker;
     public ValidatableTextArea description;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label colorPickerValidationLabel;
     private List<Constraint> nameConstraints,
             colorConstraints;
-    private ActionEvent actionEvent = null;
+    private Event actionEvent = null;
 
     public EmploymentStatusForm() {
         init();
@@ -99,9 +100,9 @@ public class EmploymentStatusForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
