@@ -81,7 +81,6 @@ public class CustomButton extends HBox {
                     false, false, false, false, false, null // other parameters
             );
             Event.fireEvent(this, mouseClickedEvent);
-            startLoading();
         }
     }
 }
