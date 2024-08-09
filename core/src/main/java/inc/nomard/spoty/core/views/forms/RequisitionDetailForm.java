@@ -21,7 +21,6 @@ import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.collections.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;

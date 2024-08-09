@@ -142,7 +142,7 @@ public class DesignationForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         DesignationViewModel.clearDesignationData();
-        DesignationViewModel.getAllDesignations(null, null);
+        DesignationViewModel.getAllDesignations(null, null, null, null);
     }
 
     public void requiredValidator() {

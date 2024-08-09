@@ -261,7 +261,7 @@ public class LeaveRequestForm extends ModalPage {
     private void onSuccess() {
         closeDialog(actionEvent);
         LeaveStatusViewModel.resetProperties();
-        LeaveStatusViewModel.getAllLeaveStatuses(null, null);
+        LeaveStatusViewModel.getAllLeaveStatuses(null, null, null, null);
         this.dispose();
     }
 

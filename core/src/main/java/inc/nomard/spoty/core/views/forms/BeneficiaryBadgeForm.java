@@ -228,7 +228,7 @@ public class BeneficiaryBadgeForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         BeneficiaryBadgeViewModel.resetProperties();
-        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null);
+        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null, null);
     }
 
     public void requiredValidator() {

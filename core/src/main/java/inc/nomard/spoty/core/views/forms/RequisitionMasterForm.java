@@ -12,7 +12,6 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -29,7 +28,6 @@ import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.util.*;
@@ -38,12 +36,12 @@ import lombok.extern.java.*;
 @Log
 public class RequisitionMasterForm extends VBox {
     private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<RequisitionDetail> tableView;
     private ValidatableTextArea note;
-    public CustomButton saveBtn;
-    public Button cancelBtn, addBtn;;
     private TableColumn<RequisitionDetail, RequisitionDetail> product;
     private TableColumn<RequisitionDetail, RequisitionDetail> quantity;
 
@@ -259,8 +257,7 @@ public class RequisitionMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        RequisitionMasterViewModel.getAllRequisitionMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null, null);
     }
 
     private void requiredValidator() {

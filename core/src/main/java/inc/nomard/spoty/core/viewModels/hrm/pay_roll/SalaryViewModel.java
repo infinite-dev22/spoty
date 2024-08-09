@@ -5,6 +5,7 @@ import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -42,6 +43,9 @@ public class SalaryViewModel {
     private static final DoubleProperty salary = new SimpleDoubleProperty(0);
     private static final DoubleProperty netSalary = new SimpleDoubleProperty(0);
     private static final SalariesRepositoryImpl salariesRepository = new SalariesRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -127,6 +131,42 @@ public class SalaryViewModel {
         return salaryAdvances;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        SalaryViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        SalaryViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        SalaryViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void saveSalary(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
@@ -192,16 +232,20 @@ public class SalaryViewModel {
     }
 
     public static void getAllSalaries(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                      SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.fetchAll();
+                                      SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = salariesRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Salary>>() {
+                    Type type = new TypeToken<ResponseModel<Salary>>() {
                     }.getType();
-                    ArrayList<Salary> salaryAdvanceList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Salary> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Salary> salaryAdvanceList = responseModel.getContent();
                     salaryAdvancesList.clear();
                     salaryAdvancesList.addAll(salaryAdvanceList);
                     if (Objects.nonNull(onSuccess)) {

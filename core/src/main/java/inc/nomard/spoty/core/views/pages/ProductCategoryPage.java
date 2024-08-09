@@ -9,11 +9,13 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
+import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -41,7 +43,7 @@ public class ProductCategoryPage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        ProductCategoryViewModel.getAllProductCategories(this::onDataInitializationSuccess, this::errorMessage);
+        ProductCategoryViewModel.getAllProductCategories(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -104,10 +106,33 @@ public class ProductCategoryPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (ProductCategoryViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        ProductCategoryViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (ProductCategoryViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -131,13 +156,10 @@ public class ProductCategoryPage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getProductCategoryTable();
-
         masterTable.setItems(ProductCategoryViewModel.getCategories());
     }
 
     private void getProductCategoryTable() {
-        masterTable.setPrefSize(1000, 1000);
-
         masterTable.setRowFactory(
                 t -> {
                     TableRow<ProductCategory> row = new TableRow<>();
@@ -181,7 +203,7 @@ public class ProductCategoryPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        ProductCategoryViewModel.getAllProductCategories(null, null);
+        ProductCategoryViewModel.getAllProductCategories(null, null, null, null);
     }
 
     private void successMessage(String message) {
@@ -218,7 +240,7 @@ public class ProductCategoryPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                ProductCategoryViewModel.getAllProductCategories(null, null);
+                ProductCategoryViewModel.getAllProductCategories(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -270,5 +292,44 @@ public class ProductCategoryPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(ProductCategoryViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(ProductCategoryViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            ProductCategoryViewModel.getAllProductCategories(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, ProductCategoryViewModel.getPageSize());
+            ProductCategoryViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(ProductCategoryViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    ProductCategoryViewModel
+                            .getAllProductCategories(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    ProductCategoryViewModel.getPageNumber(),
+                                    t1);
+                    ProductCategoryViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

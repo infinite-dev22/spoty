@@ -2,7 +2,10 @@ package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -42,6 +45,9 @@ public class BeneficiaryTypeViewModel {
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<BeneficiaryType> beneficiaryType = new SimpleObjectProperty<>();
     private static final BeneficiaryTypeRepositoryImpl beneficiaryTypeRepository = new BeneficiaryTypeRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -115,6 +121,42 @@ public class BeneficiaryTypeViewModel {
         return beneficiaryTypes;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        BeneficiaryTypeViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        BeneficiaryTypeViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        BeneficiaryTypeViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
         setName("");
@@ -173,16 +215,20 @@ public class BeneficiaryTypeViewModel {
     }
 
     public static void getAllBeneficiaryTypes(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                              SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryTypeRepository.fetchAll();
+                                              SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryTypeRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<BeneficiaryType>>() {
+                    Type type = new TypeToken<ResponseModel<BeneficiaryType>>() {
                     }.getType();
-                    ArrayList<BeneficiaryType> beneficiaryTypeList = gson.fromJson(response.body(), listType);
+                    ResponseModel<BeneficiaryType> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<BeneficiaryType> beneficiaryTypeList = responseModel.getContent();
                     beneficiaryTypesList.clear();
                     beneficiaryTypesList.addAll(beneficiaryTypeList);
                     if (Objects.nonNull(onSuccess)) {

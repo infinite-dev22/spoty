@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.viewModels.accounting;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.accounting.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
@@ -33,6 +34,9 @@ public class AccountTransactionViewModel {
     public static ObservableList<AccountTransaction> transactionsList = FXCollections.observableArrayList();
     private static final ListProperty<AccountTransaction> TRANSACTIONS = new SimpleListProperty<>(transactionsList);
     public static AccountRepositoryImplAccount transactionsRepository = new AccountRepositoryImplAccount();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static ObservableList<AccountTransaction> getTransactions() {
         return TRANSACTIONS.get();
@@ -46,17 +50,57 @@ public class AccountTransactionViewModel {
         return TRANSACTIONS;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        AccountTransactionViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        AccountTransactionViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        AccountTransactionViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void getAllTransactions(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                          SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = transactionsRepository.fetchAllTransactions();
+                                          SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = transactionsRepository.fetchAllTransactions(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<AccountTransaction>>() {
+                    Type type = new TypeToken<ResponseModel<AccountTransaction>>() {
                     }.getType();
-                    ArrayList<AccountTransaction> transactionList = gson.fromJson(response.body(), listType);
+                    ResponseModel<AccountTransaction> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<AccountTransaction> transactionList = responseModel.getContent();
                     transactionsList.clear();
                     transactionsList.addAll(transactionList);
                     if (Objects.nonNull(onSuccess)) {

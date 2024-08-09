@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -53,6 +54,9 @@ public class ProductViewModel {
     private static final StringProperty serial = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ProductsRepositoryImpl productsRepository = new ProductsRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -280,6 +284,42 @@ public class ProductViewModel {
         return products;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        ProductViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        ProductViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        ProductViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void saveProduct(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                    SpotyGotFunctional.MessageConsumer successMessage,
                                    SpotyGotFunctional.MessageConsumer errorMessage) {
@@ -366,14 +406,18 @@ public class ProductViewModel {
     }
 
     public static void getAllProducts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                      SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.fetchAll();
+                                      SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Product>>() {
+                    Type type = new TypeToken<ResponseModel<Product>>() {
                     }.getType();
-                    ArrayList<Product> productList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Product> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Product> productList = responseModel.getContent();
                     productsList.clear();
                     productsList.addAll(productList);
                     if (Objects.nonNull(onSuccess)) {

@@ -252,7 +252,7 @@ public class CustomerForm extends ModalPage {
     private void onSuccess() {
         closeDialog(actionEvent);
         CustomerViewModel.resetProperties();
-        CustomerViewModel.getAllCustomers(null, null);
+        CustomerViewModel.getAllCustomers(null, null, null, null);
         this.dispose();
     }
 

@@ -226,7 +226,7 @@ public class BranchForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         BranchViewModel.clearBranchData();
-        BranchViewModel.getAllBranches(null, null);
+        BranchViewModel.getAllBranches(null, null, null, null);
     }
 
     public void requiredValidator() {

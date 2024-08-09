@@ -239,7 +239,7 @@ public class SupplierForm extends ModalPage {
 
     private void onSuccess() {
         closeDialog(actionEvent);
-        SupplierViewModel.getAllSuppliers(null, null);
+        SupplierViewModel.getAllSuppliers(null, null, null, null);
         this.dispose();
     }
 

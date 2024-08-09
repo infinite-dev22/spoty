@@ -29,10 +29,10 @@ import lombok.extern.java.*;
 
 @Log
 public class StockInDetailForm extends ModalPage {
-    private ValidatableNumberField quantity;
-    private ValidatableComboBox<Product> product;
     public CustomButton saveBtn;
     public Button cancelBtn;
+    private ValidatableNumberField quantity;
+    private ValidatableComboBox<Product> product;
     private Label productValidationLabel, quantityValidationLabel;
     private List<Constraint> productConstraints, quantityConstraints;
 

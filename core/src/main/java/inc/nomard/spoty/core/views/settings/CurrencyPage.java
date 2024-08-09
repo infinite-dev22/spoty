@@ -10,6 +10,7 @@ import inc.nomard.spoty.core.views.layout.message.*;
 import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.Currency;
+import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.filter.*;
@@ -28,7 +29,7 @@ import lombok.extern.java.*;
 @Log
 public class CurrencyPage extends OutlinePage {
     private CustomTextField searchBar;
-    private MFXTableView<Currency> masterTable;
+    private TableView<Currency> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
 
@@ -93,35 +94,38 @@ public class CurrencyPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+    private VBox buildCenter() {
+        masterTable = new TableView<>();
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new inc.nomard.spoty.utils.navigation.Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        CurrencyViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (!(oldNum != null && (Integer) oldNum > 1) || !(newNum != null && (Integer) newNum > 1)) {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            } else {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
-        MFXTableColumn<Currency> currencyName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Currency::getName));
-        MFXTableColumn<Currency> currencyCode =
-                new MFXTableColumn<>("Code", false, Comparator.comparing(Currency::getCode));
-        MFXTableColumn<Currency> currencySymbol =
-                new MFXTableColumn<>("Symbol", false, Comparator.comparing(Currency::getSymbol));
-
-        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getName));
-        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
-        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
+        TableColumn<Currency, String> currencyName = new TableColumn<>("Name");
+        TableColumn<Currency, String> currencyCode = new TableColumn<>("Code");
+        TableColumn<Currency, String> currencySymbol = new TableColumn<>("Symbol");
 
         currencyName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
         currencyCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
         currencySymbol.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
 
-        masterTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", Currency::getName),
-                        new StringFilter<>("Code", Currency::getCode),
-                        new StringFilter<>("Symbol", Currency::getSymbol));
+        masterTable.getColumns().addAll(currencyName, currencyCode, currencySymbol);
 
         getCurrencyTable();
 
@@ -136,16 +140,12 @@ public class CurrencyPage extends OutlinePage {
     }
 
     private void getCurrencyTable() {
-        masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
-
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<Currency> row = new MFXTableRow<>(masterTable, t);
+                    var row = new TableRow<Currency>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event ->
-                                    showContextMenu((MFXTableRow<Currency>) event.getSource())
+                                    showContextMenu((TableRow<Currency>) event.getSource())
                                             .show(
                                                     this.getScene().getWindow(),
                                                     event.getScreenX(),
@@ -155,24 +155,24 @@ public class CurrencyPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
-        var contextMenu = new MFXContextMenu(masterTable);
-        var delete = new MFXContextMenuItem("Delete");
-        var edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<Currency> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            CurrencyViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            CurrencyViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    CurrencyViewModel.getItem(obj.getData().getId(), this::createBtnAction, this::errorMessage);
+                    CurrencyViewModel.getItem(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
 
                     e.consume();
                 });
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
         return contextMenu;
     }
 
@@ -181,7 +181,7 @@ public class CurrencyPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        CurrencyViewModel.getAllCurrencies(null, null);
+        CurrencyViewModel.getAllCurrencies(null, null, null, null);
     }
 
     private void successMessage(String message) {
@@ -220,7 +220,7 @@ public class CurrencyPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                CurrencyViewModel.getAllCurrencies(null, null);
+                CurrencyViewModel.getAllCurrencies(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -229,5 +229,44 @@ public class CurrencyPage extends OutlinePage {
                 progress.setManaged(false);
             }, this::errorMessage);
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(CurrencyViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(CurrencyViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            CurrencyViewModel.getAllCurrencies(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, CurrencyViewModel.getPageSize());
+            CurrencyViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(CurrencyViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    CurrencyViewModel
+                            .getAllCurrencies(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    CurrencyViewModel.getPageNumber(),
+                                    t1);
+                    CurrencyViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

@@ -2,14 +2,12 @@ package inc.nomard.spoty.network_bridge.repositories.interfaces;
 
 import inc.nomard.spoty.network_bridge.models.*;
 import java.net.http.*;
-import java.time.*;
 
-import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 
 public interface AccountTransactionRepository {
-    CompletableFuture<HttpResponse<String>> fetchAll();
+    CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize);
 
     CompletableFuture<HttpResponse<String>> fetch(FindModel findModel);
 
@@ -23,5 +21,5 @@ public interface AccountTransactionRepository {
 
     CompletableFuture<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList);
 
-    CompletableFuture<HttpResponse<String>> fetchAllTransactions();
+    CompletableFuture<HttpResponse<String>> fetchAllTransactions(Integer pageNo, Integer pageSize);
 }

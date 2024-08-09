@@ -166,7 +166,7 @@ public class TaxForm extends ModalPage {
     private void onSuccess() {
         closeDialog(actionEvent);
         TaxViewModel.resetProperties();
-        TaxViewModel.getTaxes(null, null);
+        TaxViewModel.getTaxes(null, null, null, null);
     }
 
     public void requiredValidator() {

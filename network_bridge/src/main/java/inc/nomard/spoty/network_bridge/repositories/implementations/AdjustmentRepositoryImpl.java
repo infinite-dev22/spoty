@@ -28,9 +28,16 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Simple
             .create();
 
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAll() {
+    public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 50;
+        }
+
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Adjustments.allAdjustments))
+                .uri(URI.create(EndPoints.Adjustments.allAdjustments + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

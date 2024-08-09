@@ -3,7 +3,6 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
@@ -176,15 +175,14 @@ public class AdjustmentMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null, null);
     }
 
     private void onRequiredFieldsMissing() {
         showErrorMessage("Required fields can't be null");
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null, null);
     }
 
     private void showErrorMessage(String message) {

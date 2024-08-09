@@ -30,11 +30,11 @@ import lombok.extern.java.*;
 @Log
 public class SaleReturnMasterForm extends VBox {
     private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;
     private ValidatableComboBox<Customer> customer;
     private TableView<SaleDetail> tableView;
     private ValidatableTextArea note;
-    public CustomButton saveBtn;
-    public Button cancelBtn, addBtn;;
 
     public SaleReturnMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -262,8 +262,7 @@ public class SaleReturnMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        SaleMasterViewModel.getAllSaleMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
     }
 
     private void successMessage(String message) {

@@ -25,7 +25,7 @@ public class PaySlipPage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        PaySlipViewModel.getAllPaySlips(this::onDataInitializationSuccess, this::errorMessage);
+        PaySlipViewModel.getAllPaySlips(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -128,7 +128,7 @@ public class PaySlipPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                PaySlipViewModel.getAllPaySlips(null, null);
+                PaySlipViewModel.getAllPaySlips(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);

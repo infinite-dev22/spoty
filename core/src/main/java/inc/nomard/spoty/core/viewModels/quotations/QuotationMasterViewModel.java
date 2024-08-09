@@ -5,6 +5,7 @@ import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -48,6 +49,9 @@ public class QuotationMasterViewModel {
     private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final QuotationsRepositoryImpl quotationRepository = new QuotationsRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -157,6 +161,42 @@ public class QuotationMasterViewModel {
         return quotations;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        QuotationMasterViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        QuotationMasterViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        QuotationMasterViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0L);
         setCustomer(null);
@@ -227,21 +267,26 @@ public class QuotationMasterViewModel {
     }
 
     public static void getAllQuotationMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                              SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.fetchAll();
+                                              SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = quotationRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             Platform.runLater(() -> {
                 // Handle successful response
                 if (response.statusCode() == 200) {
-                    // Process the successful response
-                    Type listType = new TypeToken<ArrayList<QuotationMaster>>() {
-                    }.getType();
-                    ArrayList<QuotationMaster> quotationMasterList = gson.fromJson(response.body(), listType);
-                    quotationsList.clear();
-                    quotationsList.addAll(quotationMasterList);
-                    if (Objects.nonNull(onSuccess)) {
-                        onSuccess.run();
-                    }
+                    Platform.runLater(() -> {
+                        Type type = new TypeToken<ResponseModel<QuotationMaster>>() {
+                        }.getType();
+                        ResponseModel<QuotationMaster> responseModel = gson.fromJson(response.body(), type);
+                        setTotalPages(responseModel.getTotalPages());
+                        setPageNumber(responseModel.getPageable().getPageNumber());
+                        setPageSize(responseModel.getPageable().getPageSize());
+                        ArrayList<QuotationMaster> quotationMasterList = responseModel.getContent();
+                        quotationsList.clear();
+                        quotationsList.addAll(quotationMasterList);
+                        if (Objects.nonNull(onSuccess)) {
+                            onSuccess.run();
+                        }
+                    });
                 } else if (response.statusCode() == 401) {
                     // Handle non-200 status codes
                     if (Objects.nonNull(errorMessage)) {

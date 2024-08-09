@@ -187,7 +187,7 @@ public class DepartmentForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         DepartmentViewModel.clearDepartmentData();
-        DepartmentViewModel.getAllDepartments(null, null);
+        DepartmentViewModel.getAllDepartments(null, null, null, null);
     }
 
     public void requiredValidator() {

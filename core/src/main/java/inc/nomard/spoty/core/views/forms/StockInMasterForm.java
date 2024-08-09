@@ -3,7 +3,6 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.components.validatables.*;
@@ -176,15 +175,14 @@ public class StockInMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        StockInMasterViewModel.getAllStockInMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        StockInMasterViewModel.getAllStockInMasters(null, null, null, null);
     }
 
     private void onRequiredFieldsMissing() {
         showErrorMessage("Required fields can't be null");
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        StockInMasterViewModel.getAllStockInMasters(null, null);
+        StockInMasterViewModel.getAllStockInMasters(null, null, null, null);
     }
 
     private void showErrorMessage(String message) {

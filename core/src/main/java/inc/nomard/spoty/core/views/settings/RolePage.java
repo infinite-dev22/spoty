@@ -193,7 +193,7 @@ public class RolePage extends OutlinePage {
     }
 
     private void onSuccess() {
-        RoleViewModel.getAllRoles(null, null);
+        RoleViewModel.getAllRoles(null, null, null, null);
     }
 
     private void successMessage(String message) {

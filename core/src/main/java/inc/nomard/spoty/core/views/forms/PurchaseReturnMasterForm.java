@@ -35,14 +35,14 @@ import lombok.extern.java.*;
 @Log
 public class PurchaseReturnMasterForm extends VBox {
     private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
     private Label dateValidationLabel;
     private ValidatableDatePicker date;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
     private ValidatableTextArea note;
-    public CustomButton saveBtn;
-    public Button cancelBtn, addBtn;;
 
     public PurchaseReturnMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -145,7 +145,7 @@ public class PurchaseReturnMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
-                    PurchaseReturnMasterViewModel.savePurchaseReturnMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                PurchaseReturnMasterViewModel.savePurchaseReturnMaster(this::onSuccess, this::successMessage, this::errorMessage);
             }
         });
         return saveBtn;
@@ -307,8 +307,7 @@ public class PurchaseReturnMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null, null);
     }
 
     private void requiredValidator() {

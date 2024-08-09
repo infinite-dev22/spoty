@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
@@ -50,6 +51,9 @@ public class PurchaseReturnMasterViewModel {
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
     private static final PurchaseReturnsRepositoryImpl purchaseReturnsRepository = new PurchaseReturnsRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -147,6 +151,42 @@ public class PurchaseReturnMasterViewModel {
         return purchaseReturns;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        PurchaseReturnMasterViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        PurchaseReturnMasterViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        PurchaseReturnMasterViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         Platform.runLater(() -> {
             setId(0L);
@@ -183,14 +223,18 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void getAllPurchaseReturnMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.fetchAll();
+                                                   SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<PurchaseReturnMaster>>() {
+                    Type type = new TypeToken<ResponseModel<PurchaseReturnMaster>>() {
                     }.getType();
-                    ArrayList<PurchaseReturnMaster> purchaseList = gson.fromJson(response.body(), listType);
+                    ResponseModel<PurchaseReturnMaster> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<PurchaseReturnMaster> purchaseList = responseModel.getContent();
                     purchaseReturnsList.clear();
                     purchaseReturnsList.addAll(purchaseList);
                     if (onSuccess != null) {

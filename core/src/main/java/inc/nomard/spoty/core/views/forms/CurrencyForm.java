@@ -185,7 +185,7 @@ public class CurrencyForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         CurrencyViewModel.clearCurrencyData();
-        CurrencyViewModel.getAllCurrencies(null, null);
+        CurrencyViewModel.getAllCurrencies(null, null, null, null);
     }
 
     public void requiredValidator() {

@@ -1,38 +1,30 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.Animations;
-import inc.nomard.spoty.core.viewModels.UOMViewModel;
-import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
-import inc.nomard.spoty.core.views.forms.UOMForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
-import inc.nomard.spoty.core.views.util.NodeUtils;
-import inc.nomard.spoty.core.views.util.OutlinePage;
-import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
-import inc.nomard.spoty.utils.AppUtils;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import atlantafx.base.util.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.navigation.*;
+import io.github.palexdev.materialfx.controls.*;
+import java.time.format.*;
+import java.util.*;
+import java.util.stream.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.util.Duration;
-import lombok.extern.java.Log;
-
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Stream;
+import javafx.scene.control.cell.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -55,7 +47,7 @@ public class UnitOfMeasurePage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        UOMViewModel.getAllUOMs(this::onDataInitializationSuccess, this::errorMessage);
+        UOMViewModel.getAllUOMs(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -118,10 +110,33 @@ public class UnitOfMeasurePage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (UOMViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        UOMViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (UOMViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -207,7 +222,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     private void onSuccess() {
-        UOMViewModel.getAllUOMs(null, null);
+        UOMViewModel.getAllUOMs(null, null, null, null);
     }
 
     private void successMessage(String message) {
@@ -244,7 +259,7 @@ public class UnitOfMeasurePage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                UOMViewModel.getAllUOMs(null, null);
+                UOMViewModel.getAllUOMs(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -316,5 +331,44 @@ public class UnitOfMeasurePage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(UOMViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(UOMViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            UOMViewModel.getAllUOMs(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, UOMViewModel.getPageSize());
+            UOMViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(UOMViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    UOMViewModel
+                            .getAllUOMs(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    UOMViewModel.getPageNumber(),
+                                    t1);
+                    UOMViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

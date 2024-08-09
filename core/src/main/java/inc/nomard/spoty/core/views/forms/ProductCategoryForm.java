@@ -16,7 +16,6 @@ import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import java.util.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -145,7 +144,7 @@ public class ProductCategoryForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         ProductCategoryViewModel.clearProductCategoryData();
-        ProductCategoryViewModel.getAllProductCategories(null, null);
+        ProductCategoryViewModel.getAllProductCategories(null, null, null, null);
     }
 
     public void requiredValidator() {

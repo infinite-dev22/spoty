@@ -1477,7 +1477,7 @@ public class RoleFormController implements Initializable {
     private void onSuccess() {
         resetCheckboxes();
         closeDialog(actionEvent);
-        RoleViewModel.getAllRoles(null, null);
+        RoleViewModel.getAllRoles(null, null, null, null);
     }
 
     public void requiredValidator() {

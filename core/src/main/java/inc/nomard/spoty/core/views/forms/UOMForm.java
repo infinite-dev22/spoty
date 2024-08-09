@@ -288,7 +288,7 @@ public class UOMForm extends ModalPage {
         formsHolder.setManaged(false);
         formsHolder.setVisible(false);
         UOMViewModel.resetUOMProperties();
-        UOMViewModel.getAllUOMs(null, null);
+        UOMViewModel.getAllUOMs(null, null, null, null);
     }
 
     public void requiredValidator() {

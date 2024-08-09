@@ -5,6 +5,7 @@ import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -43,6 +44,9 @@ public class RequisitionMasterViewModel {
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
     private static final StringProperty note = new SimpleStringProperty("");
     private static final RequisitionsRepositoryImpl requisitionsRepository = new RequisitionsRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -90,6 +94,42 @@ public class RequisitionMasterViewModel {
 
     public static ListProperty<RequisitionMaster> requisitionsProperty() {
         return requisitions;
+    }
+
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        RequisitionMasterViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        RequisitionMasterViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        RequisitionMasterViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
     }
 
     public static void resetProperties() {
@@ -151,16 +191,20 @@ public class RequisitionMasterViewModel {
     }
 
     public static void getAllRequisitionMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                                SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.fetchAll();
+                                                SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+                    Type type = new TypeToken<ResponseModel<RequisitionMaster>>() {
                     }.getType();
-                    ArrayList<RequisitionMaster> requisitionList = gson.fromJson(response.body(), listType);
+                    ResponseModel<RequisitionMaster> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<RequisitionMaster> requisitionList = responseModel.getContent();
                     requisitionsList.clear();
                     requisitionsList.addAll(requisitionList);
                     if (Objects.nonNull(onSuccess)) {

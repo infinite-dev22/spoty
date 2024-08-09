@@ -7,21 +7,24 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
 import java.net.*;
 import java.net.http.*;
-import java.time.*;
 
-import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import lombok.extern.java.*;
 
-import javafx.util.Duration;
-
 @Log
 public class EmailsRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAll() {
+    public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 50;
+        }
+
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Email.allEmails))
+                .uri(URI.create(EndPoints.Email.allEmails + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

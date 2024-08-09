@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.viewModels.accounting;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.accounting.*;
 import inc.nomard.spoty.utils.*;
@@ -39,6 +40,9 @@ public class AccountViewModel {
     private static final DoubleProperty balance = new SimpleDoubleProperty(0);
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<Account> account = new SimpleObjectProperty<>();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
     public static ObservableList<Account> accountsList = FXCollections.observableArrayList();
     private static final ListProperty<Account> ACCOUNTS = new SimpleListProperty<>(accountsList);
     public static AccountRepositoryImplAccount accountsRepository = new AccountRepositoryImplAccount();
@@ -139,6 +143,42 @@ public class AccountViewModel {
         return ACCOUNTS;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        AccountViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        AccountViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        AccountViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void saveAccount(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                    SpotyGotFunctional.MessageConsumer successMessage,
                                    SpotyGotFunctional.MessageConsumer errorMessage) {
@@ -203,16 +243,20 @@ public class AccountViewModel {
     }
 
     public static void getAllAccounts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                      SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.fetchAll();
+                                      SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Account>>() {
+                    Type type = new TypeToken<ResponseModel<Account>>() {
                     }.getType();
-                    ArrayList<Account> accountList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Account> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Account> accountList = responseModel.getContent();
                     accountsList.clear();
                     accountsList.addAll(accountList);
                     if (Objects.nonNull(onSuccess)) {

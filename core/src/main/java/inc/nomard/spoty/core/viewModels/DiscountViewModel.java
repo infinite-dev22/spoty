@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.viewModels;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -39,6 +40,9 @@ public class DiscountViewModel {
     private static final StringProperty name = new SimpleStringProperty("");
     private static final DoubleProperty percentage = new SimpleDoubleProperty();
     private static final DiscountsRepositoryImpl discountsRepository = new DiscountsRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -86,6 +90,42 @@ public class DiscountViewModel {
 
     public static ListProperty<Discount> discountsProperty() {
         return discounts;
+    }
+
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        DiscountViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        DiscountViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        DiscountViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
     }
 
     public static void resetProperties() {
@@ -143,16 +183,20 @@ public class DiscountViewModel {
     }
 
     public static void getDiscounts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                    SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = discountsRepository.fetchAll();
+                                    SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = discountsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Discount>>() {
+                    Type type = new TypeToken<ResponseModel<Discount>>() {
                     }.getType();
-                    ArrayList<Discount> discountList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Discount> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Discount> discountList = responseModel.getContent();
                     discountsList.clear();
                     discountsList.addAll(discountList);
                     if (Objects.nonNull(onSuccess)) {

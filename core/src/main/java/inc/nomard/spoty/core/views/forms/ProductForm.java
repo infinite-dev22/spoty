@@ -528,7 +528,7 @@ public class ProductForm extends ModalPage {
     private void onSuccess() {
         closeDialog(actionEvent);
         ProductViewModel.resetProperties();
-        ProductViewModel.getAllProducts(null, null);
+        ProductViewModel.getAllProducts(null, null, null, null);
         this.dispose();
     }
 

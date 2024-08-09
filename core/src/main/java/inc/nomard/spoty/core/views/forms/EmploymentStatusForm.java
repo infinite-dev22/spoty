@@ -179,7 +179,7 @@ public class EmploymentStatusForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         EmploymentStatusViewModel.clearEmploymentStatusData();
-        EmploymentStatusViewModel.getAllEmploymentStatuses(null, null);
+        EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null, null);
     }
 
     public void requiredValidator() {

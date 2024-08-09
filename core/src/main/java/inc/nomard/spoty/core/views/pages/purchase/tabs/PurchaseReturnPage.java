@@ -11,6 +11,7 @@ import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
@@ -18,6 +19,7 @@ import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
+import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -58,7 +60,7 @@ public class PurchaseReturnPage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(this::onDataInitializationSuccess, this::errorMessage);
+        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -119,10 +121,33 @@ public class PurchaseReturnPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (PurchaseReturnMasterViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        PurchaseReturnMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (PurchaseReturnMasterViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -224,7 +249,7 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null);
+        PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null, null, null);
     }
 
     private void viewDialogPane() throws IOException {
@@ -280,7 +305,7 @@ public class PurchaseReturnPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null);
+                PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -378,5 +403,44 @@ public class PurchaseReturnPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(PurchaseReturnMasterViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(PurchaseReturnMasterViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, PurchaseReturnMasterViewModel.getPageSize());
+            PurchaseReturnMasterViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(PurchaseReturnMasterViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    PurchaseReturnMasterViewModel
+                            .getAllPurchaseReturnMasters(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    PurchaseReturnMasterViewModel.getPageNumber(),
+                                    t1);
+                    PurchaseReturnMasterViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

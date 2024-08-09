@@ -383,7 +383,7 @@ public class UserForm extends ModalPage {
     private void onSuccess() {
         closeDialog(actionEvent);
         UserViewModel.resetProperties();
-        UserViewModel.getAllUsers(null, null);
+        UserViewModel.getAllUsers(null, null, null, null);
         this.dispose();
     }
 

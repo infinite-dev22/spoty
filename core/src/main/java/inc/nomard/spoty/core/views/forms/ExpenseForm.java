@@ -257,7 +257,7 @@ public class ExpenseForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         ExpensesViewModel.resetProperties();
-        ExpensesViewModel.getAllExpenses(null, null);
+        ExpensesViewModel.getAllExpenses(null, null, null, null);
     }
 
     public void requiredValidator() {

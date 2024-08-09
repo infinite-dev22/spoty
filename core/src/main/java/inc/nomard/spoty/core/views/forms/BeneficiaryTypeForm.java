@@ -177,7 +177,7 @@ public class BeneficiaryTypeForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         BeneficiaryTypeViewModel.resetProperties();
-        BeneficiaryTypeViewModel.getAllBeneficiaryTypes(null, null);
+        BeneficiaryTypeViewModel.getAllBeneficiaryTypes(null, null, null, null);
     }
 
     public void requiredValidator() {

@@ -11,6 +11,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
@@ -18,6 +19,7 @@ import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
+import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -51,7 +53,7 @@ public class SalaryPage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        SalaryViewModel.getAllSalaries(this::onDataInitializationSuccess, this::errorMessage);
+        SalaryViewModel.getAllSalaries(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -113,10 +115,33 @@ public class SalaryPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (SalaryViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        SalaryViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (SalaryViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void salaryViewDialogPane() throws IOException {
@@ -203,7 +228,7 @@ public class SalaryPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        SalaryViewModel.getAllSalaries(null, null);
+        SalaryViewModel.getAllSalaries(null, null, null, null);
     }
 
     public void salaryViewShow(Salary salary) {
@@ -249,7 +274,7 @@ public class SalaryPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                SalaryViewModel.getAllSalaries(null, null);
+                SalaryViewModel.getAllSalaries(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -292,5 +317,44 @@ public class SalaryPage extends OutlinePage {
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
         salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
         netSalary.setCellValueFactory(new PropertyValueFactory<>("netSalary"));
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(SalaryViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(SalaryViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            SalaryViewModel.getAllSalaries(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, SalaryViewModel.getPageSize());
+            SalaryViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(SalaryViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    SalaryViewModel
+                            .getAllSalaries(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    SalaryViewModel.getPageNumber(),
+                                    t1);
+                    SalaryViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

@@ -46,7 +46,6 @@ public class PurchaseMasterForm extends VBox {
     private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
     private ValidatableTextArea note;
-    ;
     private TableColumn<PurchaseDetail, PurchaseDetail> product;
     private TableColumn<PurchaseDetail, PurchaseDetail> quantity;
 
@@ -283,8 +282,7 @@ public class PurchaseMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null, null);
     }
 
     private void requiredValidator() {

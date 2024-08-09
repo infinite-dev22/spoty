@@ -341,8 +341,7 @@ public class QuotationMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        QuotationMasterViewModel.getAllQuotationMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null);
     }
 
     public void requiredValidator() {

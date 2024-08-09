@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -49,6 +50,9 @@ public class LeaveStatusViewModel {
     private static final StringProperty attachment = new SimpleStringProperty("");
     private static final CharProperty status = new CharProperty();
     private static final LeaveStatusRepositoryImpl leaveStatusRepository = new LeaveStatusRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
     @Getter
     private static final ObservableList<String> leaveTypeList = FXCollections.observableArrayList(
             "Adoption Leave",
@@ -208,6 +212,42 @@ public class LeaveStatusViewModel {
         return leaveStatuses;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        LeaveStatusViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        LeaveStatusViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        LeaveStatusViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
         setEmployee(null);
@@ -277,16 +317,20 @@ public class LeaveStatusViewModel {
     }
 
     public static void getAllLeaveStatuses(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                           SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = leaveStatusRepository.fetchAll();
+                                           SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = leaveStatusRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<LeaveStatus>>() {
+                    Type type = new TypeToken<ResponseModel<LeaveStatus>>() {
                     }.getType();
-                    ArrayList<LeaveStatus> leaveStatusList = gson.fromJson(response.body(), listType);
+                    ResponseModel<LeaveStatus> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<LeaveStatus> leaveStatusList = responseModel.getContent();
                     leaveStatusesList.clear();
                     leaveStatusesList.addAll(leaveStatusList);
                     if (Objects.nonNull(onSuccess)) {

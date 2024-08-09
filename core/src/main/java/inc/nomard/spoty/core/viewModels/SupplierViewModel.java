@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.viewModels;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -42,6 +43,9 @@ public class SupplierViewModel {
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -151,6 +155,42 @@ public class SupplierViewModel {
         return suppliers;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        SupplierViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        SupplierViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        SupplierViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
         setName("");
@@ -217,16 +257,20 @@ public class SupplierViewModel {
     }
 
     public static void getAllSuppliers(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                       SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = suppliersRepository.fetchAll();
+                                       SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = suppliersRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Supplier>>() {
+                    Type type = new TypeToken<ResponseModel<Supplier>>() {
                     }.getType();
-                    ArrayList<Supplier> supplierList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Supplier> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Supplier> supplierList = responseModel.getContent();
                     suppliersList.clear();
                     suppliersList.addAll(supplierList);
                     if (Objects.nonNull(onSuccess)) {

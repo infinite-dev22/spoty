@@ -56,7 +56,7 @@ public class PointOfSalePage extends OutlinePage {
         cartListeners();
         progress.setManaged(true);
         progress.setVisible(true);
-        ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::displayErrorMessage);
+        ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::displayErrorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -691,8 +691,8 @@ public class PointOfSalePage extends OutlinePage {
     private void onSuccess() {
         clearCart();
         SaleMasterViewModel.setDefaultCustomer();
-        SaleMasterViewModel.getAllSaleMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
+        ProductViewModel.getAllProducts(null, null, null, null);
     }
 
     private void displaySuccessMessage(String message) {
@@ -729,7 +729,7 @@ public class PointOfSalePage extends OutlinePage {
                 return;
             }
             if (oldValue.isBlank() && newValue.isBlank()) {
-                ProductViewModel.getAllProducts(null, null);
+                ProductViewModel.getAllProducts(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);

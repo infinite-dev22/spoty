@@ -25,9 +25,16 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
             .create();
 
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAll() {
+    public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 50;
+        }
+
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Designations.allDesignations))
+                .uri(URI.create(EndPoints.Designations.allDesignations + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

@@ -10,12 +10,9 @@ import java.net.*;
 import java.net.http.*;
 import java.time.*;
 
-import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import lombok.extern.java.*;
-
-import javafx.util.Duration;
 
 @Log
 public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
@@ -31,9 +28,16 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAll() {
+    public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 50;
+        }
+
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Expense.allExpense))
+                .uri(URI.create(EndPoints.Expense.allExpense + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

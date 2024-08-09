@@ -1,50 +1,37 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.Animations;
-import inc.nomard.spoty.core.viewModels.accounting.AccountTransactionViewModel;
-import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
-import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
-import inc.nomard.spoty.core.views.forms.QuotationMasterForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.ModalContentHolder;
-import inc.nomard.spoty.core.views.layout.SideModalPane;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
-import inc.nomard.spoty.core.views.previews.QuotationPreviewController;
-import inc.nomard.spoty.core.views.util.NodeUtils;
-import inc.nomard.spoty.core.views.util.OutlinePage;
-import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationMaster;
-import inc.nomard.spoty.utils.AppUtils;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.Side;
+import atlantafx.base.util.*;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.viewModels.accounting.*;
+import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.layout.*;
+import inc.nomard.spoty.core.views.layout.message.*;
+import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.previews.*;
+import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.network_bridge.dtos.quotations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.navigation.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import java.io.*;
+import java.time.format.*;
+import java.util.*;
+import java.util.stream.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.stage.Screen;
-import javafx.util.Duration;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Stream;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import javafx.scene.control.cell.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -77,7 +64,7 @@ public class QuotationPage extends OutlinePage {
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        AccountTransactionViewModel.getAllTransactions(this::onDataInitializationSuccess, this::errorMessage);
+        AccountTransactionViewModel.getAllTransactions(this::onDataInitializationSuccess, this::errorMessage, null, null);
 
         modalPane.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
@@ -147,10 +134,33 @@ public class QuotationPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (QuotationMasterViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        QuotationMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (QuotationMasterViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -253,7 +263,7 @@ public class QuotationPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        QuotationMasterViewModel.getAllQuotationMasters(null, null);
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null);
     }
 
     private void viewDialogPane() throws IOException {
@@ -309,7 +319,7 @@ public class QuotationPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                QuotationMasterViewModel.getAllQuotationMasters(null, null);
+                QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -381,5 +391,44 @@ public class QuotationPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(QuotationMasterViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(QuotationMasterViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            QuotationMasterViewModel.getAllQuotationMasters(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, QuotationMasterViewModel.getPageSize());
+            QuotationMasterViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(QuotationMasterViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    QuotationMasterViewModel
+                            .getAllQuotationMasters(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    QuotationMasterViewModel.getPageNumber(),
+                                    t1);
+                    QuotationMasterViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

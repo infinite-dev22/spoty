@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.viewModels.hrm.employee;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -38,6 +39,9 @@ public class EmploymentStatusViewModel {
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty color = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
     public static ObservableList<EmploymentStatus> employmentStatusesList = FXCollections.observableArrayList();
     private static final ListProperty<EmploymentStatus> employmentStatuses = new SimpleListProperty<>(employmentStatusesList);
     public static ObservableList<EmploymentStatus> employmentStatusesComboBoxList = FXCollections.observableArrayList();
@@ -103,6 +107,42 @@ public class EmploymentStatusViewModel {
         return employmentStatuses;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        EmploymentStatusViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        EmploymentStatusViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        EmploymentStatusViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void saveEmploymentStatus(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                             SpotyGotFunctional.MessageConsumer successMessage,
                                             SpotyGotFunctional.MessageConsumer errorMessage) {
@@ -160,16 +200,20 @@ public class EmploymentStatusViewModel {
     }
 
     public static void getAllEmploymentStatuses(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                                SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = employmentStatusesRepository.fetchAll();
+                                                SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = employmentStatusesRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<EmploymentStatus>>() {
+                    Type type = new TypeToken<ResponseModel<EmploymentStatus>>() {
                     }.getType();
-                    ArrayList<EmploymentStatus> employmentStatusList = gson.fromJson(response.body(), listType);
+                    ResponseModel<EmploymentStatus> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<EmploymentStatus> employmentStatusList = responseModel.getContent();
                     employmentStatusesList.clear();
                     employmentStatusesList.addAll(employmentStatusList);
                     if (Objects.nonNull(onSuccess)) {

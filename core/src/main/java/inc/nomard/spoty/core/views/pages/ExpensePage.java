@@ -10,11 +10,13 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.accounting.*;
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
+import javafx.collections.*;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -45,7 +47,7 @@ public class ExpensePage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        ExpensesViewModel.getAllExpenses(this::onDataInitializationSuccess, this::errorMessage);
+        ExpensesViewModel.getAllExpenses(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -108,10 +110,33 @@ public class ExpensePage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         tableView = new TableView<>();
-        NodeUtils.setAnchors(tableView, new Insets(0d));
-        return new AnchorPane(tableView);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+        HBox.setHgrow(tableView, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (ExpensesViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        ExpensesViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (ExpensesViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(tableView, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -190,7 +215,7 @@ public class ExpensePage extends OutlinePage {
     }
 
     private void onSuccess() {
-        ExpensesViewModel.getAllExpenses(null, null);
+        ExpensesViewModel.getAllExpenses(null, null, null, null);
     }
 
     public void setSearchBar() {
@@ -199,7 +224,7 @@ public class ExpensePage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                ExpensesViewModel.getAllExpenses(null, null);
+                ExpensesViewModel.getAllExpenses(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -310,5 +335,44 @@ public class ExpensePage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(ExpensesViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(ExpensesViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            ExpensesViewModel.getAllExpenses(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, ExpensesViewModel.getPageSize());
+            ExpensesViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(ExpensesViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    ExpensesViewModel
+                            .getAllExpenses(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    ExpensesViewModel.getPageNumber(),
+                                    t1);
+                    ExpensesViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

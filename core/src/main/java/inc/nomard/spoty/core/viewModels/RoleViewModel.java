@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.viewModels;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -43,6 +44,9 @@ public class RoleViewModel {
     private static final StringProperty label = new SimpleStringProperty();
     private static final StringProperty description = new SimpleStringProperty();
     private static final RolesRepositoryImpl rolesRepository = new RolesRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -116,6 +120,42 @@ public class RoleViewModel {
         return permissions;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        RoleViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        RoleViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        RoleViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void saveRole(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                 SpotyGotFunctional.MessageConsumer successMessage,
                                 SpotyGotFunctional.MessageConsumer errorMessage) {
@@ -176,16 +216,20 @@ public class RoleViewModel {
     }
 
     public static void getAllRoles(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.fetchAllRoles();
+                                   SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.fetchAllRoles(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             // Process the successful response
             if (Objects.nonNull(onSuccess)) {
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Role>>() {
+                    Type type = new TypeToken<ResponseModel<Role>>() {
                     }.getType();
-                    ArrayList<Role> roleList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Role> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Role> roleList = responseModel.getContent();
                     rolesList.clear();
                     rolesList.addAll(roleList);
                     if (response.statusCode() == 200) {

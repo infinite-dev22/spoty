@@ -170,7 +170,7 @@ public class EmailPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        AccountViewModel.getAllAccounts(null, null);
+        AccountViewModel.getAllAccounts(null, null, null, null);
     }
 
 //    private void setIcons() {
@@ -183,7 +183,7 @@ public class EmailPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                AccountViewModel.getAllAccounts(null, null);
+                AccountViewModel.getAllAccounts(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);

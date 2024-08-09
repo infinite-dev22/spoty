@@ -158,7 +158,7 @@ public class DiscountForm extends ModalPage {
     private void onSuccess() {
         closeDialog(actionEvent);
         DiscountViewModel.resetProperties();
-        DiscountViewModel.getDiscounts(null, null);
+        DiscountViewModel.getDiscounts(null, null, null, null);
         dispose();
     }
 

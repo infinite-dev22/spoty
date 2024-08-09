@@ -7,25 +7,27 @@ import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.SimpleRepository;
 import java.util.concurrent.*;
-import javafx.concurrent.Task;
-import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
-import javafx.util.Duration;
-
 @Log
 public class CurrenciesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAll() {
+    public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 50;
+        }
+
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Currencies.allCurrencies))
+                .uri(URI.create(EndPoints.Currencies.allCurrencies + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

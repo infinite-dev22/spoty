@@ -5,6 +5,7 @@ import com.google.gson.reflect.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.dtos.response.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
@@ -48,6 +49,9 @@ public class BeneficiaryBadgeViewModel {
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<BeneficiaryType> beneficiaryType = new SimpleObjectProperty<>();
     private static final BeneficiaryBadgeRepositoryImpl beneficiaryBadgeRepository = new BeneficiaryBadgeRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -121,6 +125,42 @@ public class BeneficiaryBadgeViewModel {
         return beneficiaryBadges;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        BeneficiaryBadgeViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        BeneficiaryBadgeViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        BeneficiaryBadgeViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
         setName("");
@@ -180,16 +220,20 @@ public class BeneficiaryBadgeViewModel {
     }
 
     public static void getAllBeneficiaryBadges(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                               SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.fetchAll();
+                                               SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<BeneficiaryBadge>>() {
+                    Type type = new TypeToken<ResponseModel<BeneficiaryBadge>>() {
                     }.getType();
-                    ArrayList<BeneficiaryBadge> beneficiaryBadgeList = gson.fromJson(response.body(), listType);
+                    ResponseModel<BeneficiaryBadge> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<BeneficiaryBadge> beneficiaryBadgeList = responseModel.getContent();
                     beneficiaryBadgesList.clear();
                     beneficiaryBadgesList.addAll(beneficiaryBadgeList);
                     if (Objects.nonNull(onSuccess)) {

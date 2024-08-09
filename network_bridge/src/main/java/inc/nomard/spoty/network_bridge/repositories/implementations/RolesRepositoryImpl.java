@@ -10,14 +10,19 @@ import java.net.http.*;
 import java.util.concurrent.*;
 import lombok.extern.java.*;
 
-import javafx.util.Duration;
-
 @Log
 public class RolesRepositoryImpl extends ProtectedGlobals implements RoleRepository {
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAllRoles() {
+    public CompletableFuture<HttpResponse<String>> fetchAllRoles(Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 50;
+        }
+
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Roles.allRoles))
+                .uri(URI.create(EndPoints.Roles.allRoles + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

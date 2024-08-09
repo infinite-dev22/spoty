@@ -143,7 +143,7 @@ public class BrandForm extends MFXGenericDialog {
     private void onSuccess() {
         closeDialog(actionEvent);
         BrandViewModel.clearBrandData();
-        BrandViewModel.getAllBrands(null, null);
+        BrandViewModel.getAllBrands(null, null, null, null);
     }
 
     public void requiredValidator() {

@@ -6,7 +6,7 @@ import java.util.concurrent.*;
 
 public interface RoleRepository {
     // Roles
-    CompletableFuture<HttpResponse<String>> fetchAllRoles();
+    CompletableFuture<HttpResponse<String>> fetchAllRoles(Integer pageNo, Integer pageSize);
 
     CompletableFuture<HttpResponse<String>> fetchRole(FindModel findModel);
 

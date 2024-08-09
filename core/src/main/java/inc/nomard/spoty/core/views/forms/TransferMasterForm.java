@@ -339,8 +339,7 @@ public class TransferMasterForm extends VBox {
     }
 
     private void onSuccess() {
-        TransferMasterViewModel.getAllTransferMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        TransferMasterViewModel.getAllTransferMasters(null, null, null, null);
         this.dispose();
     }
 
