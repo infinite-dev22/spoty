@@ -24,9 +24,7 @@ public class ProductCard extends VBox {
     private static final double ARC_SIZE = 20;
     private static final double SPACING = 10;
     private static final double LABEL_WIDTH = 150;
-
     private static final Map<String, Image> IMAGE_CACHE = new HashMap<>();
-
     private final Rectangle productImageHolder = new Rectangle();
     @Getter
     private final Product product;
@@ -78,7 +76,7 @@ public class ProductCard extends VBox {
     }
 
     private Rectangle getProductImage() {
-        productImage = PreloadedData.productPlaceholderImage/*getCachedImage(image)*/;
+        productImage = PreloadedData.productPlaceholderImage;
         updateProductImageHolder();
         return productImageHolder;
     }
@@ -128,8 +126,13 @@ public class ProductCard extends VBox {
             @Override
             protected Image call() {
                 try {
-                    return new Image(imagePath, IMAGE_SIZE, IMAGE_SIZE, true, false);
-                } catch (IllegalArgumentException e) {
+                    Image image = new Image(imagePath, IMAGE_SIZE, IMAGE_SIZE, true, false);
+                    if (image.isError()) {
+                        log.warning("Error loading image from URL: " + imagePath);
+                        return PreloadedData.imageErrorPlaceholderImage;
+                    }
+                    return image;
+                } catch (Exception e) {
                     log.warning("Invalid image URL: " + imagePath);
                     return PreloadedData.imageErrorPlaceholderImage;
                 }
@@ -138,11 +141,16 @@ public class ProductCard extends VBox {
 
         loadImageTask.setOnSucceeded(event -> {
             productImage = loadImageTask.getValue();
-            IMAGE_CACHE.put(imagePath, productImage);
-            Platform.runLater(() -> {
-                productImageHolder.setFill(new ImagePattern(productImage));
-                centerImage();
-            });
+            if (productImage != null) {
+                IMAGE_CACHE.put(imagePath, productImage);
+                Platform.runLater(() -> {
+                    productImageHolder.setFill(new ImagePattern(productImage));
+                    centerImage();
+                });
+            } else {
+                log.warning("Image is null, using placeholder.");
+                Platform.runLater(this::updateProductImageHolderWithPlaceholder);
+            }
         });
 
         loadImageTask.setOnFailed(event -> {
