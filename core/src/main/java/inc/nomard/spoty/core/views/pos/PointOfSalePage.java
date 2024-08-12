@@ -20,6 +20,7 @@ import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.geometry.*;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -30,6 +31,9 @@ import org.kordamp.ikonli.javafx.*;
 
 @Log
 public class PointOfSalePage extends OutlinePage {
+    private static final int BATCH_SIZE = 96;
+    private static final int BUFFER_SIZE = 48; // Number of products to keep above and below the visible area
+    private static final double IMAGE_SIZE = 160;
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
     private ToggleGroup toggleGroup;
     private TableView<SaleDetail> cart;
@@ -46,22 +50,25 @@ public class PointOfSalePage extends OutlinePage {
     private ComboBox<Tax> tax;
     private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
+    private int currentIndex = 0;
+    private boolean loading = false;
+
 
     public PointOfSalePage() {
         addNode(init());
         setSearchBar();
         setPOSComboBoxes();
         setCheckoutProductsTable();
-        SaleMasterViewModel.setDefaultCustomer();
-        cartListeners();
         progress.setManaged(true);
         progress.setVisible(true);
-        ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::displayErrorMessage, null, null);
+        ProductViewModel.getAllProductsNonPaged(this::onDataInitializationSuccess, this::displayErrorMessage);
     }
 
     private void onDataInitializationSuccess() {
         progress.setManaged(false);
         progress.setVisible(false);
+        SaleMasterViewModel.setDefaultCustomer();
+        cartListeners();
     }
 
     // Top UI.
@@ -123,6 +130,8 @@ public class PointOfSalePage extends OutlinePage {
 
     // Filter UI.
     private ScrollPane buildFilterUI() {
+        toggleGroup = new ToggleGroup();
+
         var filterPane = new HBox();
         filterPane.setAlignment(Pos.CENTER_LEFT);
         filterPane.setSpacing(10d);
@@ -131,9 +140,9 @@ public class PointOfSalePage extends OutlinePage {
         updateCategoryFilters(filterPane);
 
         var scroll = new ScrollPane(filterPane);
-        scroll.maxHeight(100d);
-        scroll.minHeight(60d);
-        scroll.prefHeight(80d);
+        scroll.maxHeight(120d);
+        scroll.prefHeight(100d);
+        scroll.minHeight(80d);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         VBox.setVgrow(scroll, Priority.ALWAYS);
@@ -141,7 +150,7 @@ public class PointOfSalePage extends OutlinePage {
         return scroll;
     }
 
-    // Product Card Holder UI.
+    // Product CardHolder UI.
     private ScrollPane buildProductCardHolderUI() {
         var productScrollPane = new ScrollPane();
         productScrollPane.setFitToHeight(true);
@@ -150,6 +159,7 @@ public class PointOfSalePage extends OutlinePage {
         productScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         configureProductScrollPane(productScrollPane);
         updateProductsGridView(productScrollPane);
+        initializeProductGrid(productScrollPane);
         setProductsGridView(productScrollPane);
         return productScrollPane;
     }
@@ -160,7 +170,13 @@ public class PointOfSalePage extends OutlinePage {
         vbox.getStyleClass().add("card-flat-top");
         vbox.setPadding(new Insets(2.5d));
         VBox.setVgrow(vbox, Priority.ALWAYS);
-        vbox.getChildren().addAll(buildFilterUI(), buildProductCardHolderUI());
+
+        var vbox1 = new VBox(buildFilterUI());
+        vbox1.maxHeight(120d);
+        vbox1.prefHeight(100d);
+        vbox1.minHeight(80d);
+
+        vbox.getChildren().addAll(vbox1, buildProductCardHolderUI());
         return vbox;
     }
 
@@ -316,10 +332,9 @@ public class PointOfSalePage extends OutlinePage {
     // Right UI.
     private VBox buildRight() {
         var vbox = new VBox();
-        vbox.setPrefHeight(584d);
+        vbox.setMaxWidth(508d);
+        vbox.setPrefWidth(508d);
         vbox.setMinWidth(338d);
-        vbox.setPrefWidth(538d);
-        vbox.setMinWidth(538d);
         vbox.getStyleClass().add("card-flat");
         vbox.setSpacing(10d);
         vbox.setPadding(new Insets(10d, 5d, 5d, 5d));
@@ -331,7 +346,6 @@ public class PointOfSalePage extends OutlinePage {
 
     // POS UI.
     private BorderPane init() {
-        toggleGroup = new ToggleGroup();
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
@@ -383,52 +397,114 @@ public class PointOfSalePage extends OutlinePage {
 
     private void setProductsGridView(ScrollPane scrollPane) {
         var productsGridView = new GridPane();
-        var row = 1;
-        var column = 0;
-        productsGridView.setHgap(15);
-        productsGridView.setVgap(15);
+        productsGridView.setHgap(5);
+        productsGridView.setVgap(5);
         productsGridView.setPadding(new Insets(5));
-        for (Product product : ProductViewModel.getProducts()) {
-            ProductCard productCard = new ProductCard(product);
-            configureProductCardAction(productCard);
-            if (column == 6) {
-                column = 0;
-                ++row;
+
+        productsGridView.widthProperty().addListener((obs, oldWidth, newWidth) -> {
+            if (!loading) {
+                progress.setManaged(true);
+                progress.setVisible(true);
+                productsGridView.getChildren().clear();
+                lazyLoadProducts(productsGridView); // Reload or rearrange items based on new width
+                progress.setManaged(false);
+                progress.setVisible(false);
             }
-            productsGridView.add(productCard, column++, row);
-            GridPane.setMargin(productsGridView, new Insets(10));
-        }
+        });
+
+        // Set up the scroll listener for lazy loading
+        setupScrollListener(scrollPane, productsGridView);
+
+        // Load the first batch of products
+        lazyLoadProducts(productsGridView);
+
         scrollPane.setContent(productsGridView);
     }
 
-    // private void setProductsGridView() {
-    //     var row = new BootstrapRow();
-    //     for (Product product : ProductViewModel.getProducts()) {
-    //         ProductCard productCard = new ProductCard(product);
-    //         configureProductCardAction(productCard);
-    //         var column = new BootstrapColumn(productCard);
-    //         column.setBreakpointColumnWidth(Breakpoint.LARGE, 2);
-    //         column.setBreakpointColumnWidth(Breakpoint.SMALL, 4);
-    //         column.setBreakpointColumnWidth(Breakpoint.XSMALL, 8);
-    //         row.addColumn(column);
-    //     }
-    //     productHolder.addRow(row);
-    // }
+    private void addProductToGridPane(GridPane productsGridView, Product product) {
+        ProductCard productCard = new ProductCard(product);
+        configureProductCardAction(productCard);
 
-    // private void configureProductScrollPane() {
-    //     productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-    //         if (event.getDeltaX() != 0) {
-    //             event.consume();
-    //         }
-    //     });
-    //     productScrollPane.widthProperty().addListener((obs, oV, nV) -> {
-    //         productHolder.setMaxWidth(nV.doubleValue() - 10);
-    //         productHolder.setPrefWidth(nV.doubleValue() - 10);
-    //         productHolder.setMinWidth(nV.doubleValue() - 10);
-    //     });
-    //     productHolder.setAlignment(Pos.CENTER_LEFT);
-    //     productHolder.setPadding(new Insets(10));
-    // }
+        // Dynamically calculate the position
+        int itemIndex = productsGridView.getChildren().size();
+        int numColumns = 6; // Fixed number of columns, adjust as needed
+
+        int column = itemIndex % numColumns;
+        int row = itemIndex / numColumns;
+
+        productsGridView.add(productCard, column, row);
+        GridPane.setMargin(productCard, new Insets(10));
+    }
+
+    private void loadAllProducts(GridPane productsGridView) {
+        for (Product product : ProductViewModel.getProducts()) {
+            addProductToGridPane(productsGridView, product);
+        }
+    }
+
+    private void lazyLoadProducts(GridPane productsGridView) {
+        // Load products starting from the currentIndex in batches
+        int startIndex = currentIndex;
+        int endIndex = Math.min(currentIndex + BATCH_SIZE, ProductViewModel.getProducts().size());
+
+        System.out.println("START: " + startIndex + "\nEND: " + endIndex + "\nSIZE: " + ProductViewModel.getProducts().size());
+
+        for (int i = startIndex; i < endIndex && i < ProductViewModel.getProducts().size(); i++) {
+            Product product = ProductViewModel.getProducts().get(i);
+            addProductToGridPane(productsGridView, product);
+        }
+
+        currentIndex = endIndex;
+    }
+
+    private void setupScrollListener(ScrollPane scrollPane, GridPane productsGridView) {
+        // Trigger lazy load based on scroll position
+        scrollPane.vvalueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue.doubleValue() > 0.8 && !loading) { // 80% scrolled down
+                if (currentIndex < ProductViewModel.getProducts().size()) {
+                    loading = true;
+                    scrollPane.setDisable(true);
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    lazyLoadProducts(productsGridView);
+                    progress.setManaged(false);
+                    progress.setVisible(false);
+                    loading = false;
+                    scrollPane.setDisable(false);
+                }
+            }
+        });
+    }
+
+    // Call this in your initialization code
+    private void initializeProductGrid(ScrollPane scrollPane) {
+        GridPane productsGridView = new GridPane();
+        productsGridView.setHgap(15);
+        productsGridView.setVgap(15);
+        productsGridView.setPadding(new Insets(5));
+        scrollPane.setContent(productsGridView);
+
+        // Load the first batch
+        lazyLoadProducts(productsGridView);
+    }
+
+    private void clearNonVisibleProducts(GridPane productsGridView, double yOffset, double viewportHeight) {
+        double lowerBound = yOffset - BUFFER_SIZE * IMAGE_SIZE;
+        double upperBound = yOffset + viewportHeight + BUFFER_SIZE * IMAGE_SIZE;
+
+        List<Node> toRemove = new ArrayList<>();
+
+        for (Node node : productsGridView.getChildren()) {
+            if (node instanceof ProductCard) {
+                double nodeY = node.getBoundsInParent().getMinY();
+                if (nodeY < lowerBound || nodeY > upperBound) {
+                    toRemove.add(node);
+                }
+            }
+        }
+
+        productsGridView.getChildren().removeAll(toRemove);
+    }
 
     private void configureProductScrollPane(ScrollPane scrollPane) {
         scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
@@ -692,7 +768,7 @@ public class PointOfSalePage extends OutlinePage {
         clearCart();
         SaleMasterViewModel.setDefaultCustomer();
         SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
-        ProductViewModel.getAllProducts(null, null, null, null);
+        ProductViewModel.getAllProductsNonPaged(null, this::displayErrorMessage);
     }
 
     private void displaySuccessMessage(String message) {
@@ -729,7 +805,7 @@ public class PointOfSalePage extends OutlinePage {
                 return;
             }
             if (oldValue.isBlank() && newValue.isBlank()) {
-                ProductViewModel.getAllProducts(null, null, null, null);
+                ProductViewModel.getAllProductsNonPaged(null, this::displayErrorMessage);
             }
             progress.setManaged(true);
             progress.setVisible(true);

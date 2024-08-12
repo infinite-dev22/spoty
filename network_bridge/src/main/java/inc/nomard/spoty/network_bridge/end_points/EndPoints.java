@@ -150,6 +150,7 @@ public class EndPoints {
     public static final class Products {
         public static final String productsUrl = apiUrl + "/products";
         public static final String allProducts = productsUrl + "/all";
+        public static final String allProductsNonPaged = productsUrl + "/all/non_paged";
         public static final String productById = productsUrl + "/single";
         public static final String searchProducts = productsUrl + "/search";
         public static final String productsStockAlert = productsUrl + "/stock_alert";

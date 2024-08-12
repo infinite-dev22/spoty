@@ -56,6 +56,19 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
     }
 
     @Override
+    public CompletableFuture<HttpResponse<String>> fetchAllNonPaged() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.allProductsNonPaged))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
     public CompletableFuture<HttpResponse<String>> fetch(FindModel findModel) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Products.productById))

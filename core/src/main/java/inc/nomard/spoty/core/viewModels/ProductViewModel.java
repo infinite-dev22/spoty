@@ -407,8 +407,7 @@ public class ProductViewModel {
 
     public static void getAllProducts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                       SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
-        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.fetchAll(pageNo, pageSize);
-        responseFuture.thenAccept(response -> {
+        productsRepository.fetchAll(pageNo, pageSize).thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
                     Type type = new TypeToken<ResponseModel<Product>>() {
@@ -418,6 +417,48 @@ public class ProductViewModel {
                     setPageNumber(responseModel.getPageable().getPageNumber());
                     setPageSize(responseModel.getPageable().getPageSize());
                     ArrayList<Product> productList = responseModel.getContent();
+                    productsList.clear();
+                    productsList.addAll(productList);
+                    if (Objects.nonNull(onSuccess)) {
+                        onSuccess.run();
+                    }
+                });
+            } else if (response.statusCode() == 401) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
+            } else if (response.statusCode() == 404) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
+            } else if (response.statusCode() == 500) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
+            }
+        }).exceptionally(throwable -> {
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
+            SpotyLogger.writeToFile(throwable, ProductViewModel.class);
+            return null;
+        });
+    }
+
+    public static void getAllProductsNonPaged(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                      SpotyGotFunctional.MessageConsumer errorMessage) {
+        productsRepository.fetchAllNonPaged().thenAccept(response -> {
+            if (response.statusCode() == 200) {
+                Type type = new TypeToken<ArrayList<Product>>() {
+                }.getType();
+                ArrayList<Product> productList = gson.fromJson(response.body(), type);
+                Platform.runLater(() -> {
                     productsList.clear();
                     productsList.addAll(productList);
                     if (Objects.nonNull(onSuccess)) {

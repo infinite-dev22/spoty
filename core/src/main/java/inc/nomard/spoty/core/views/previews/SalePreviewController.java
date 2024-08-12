@@ -127,8 +127,6 @@ public class SalePreviewController implements Initializable {
 
     private void styleTable() {
         itemsTable.setPrefSize(1000, 1000);
-        itemsTable.features().enableBounceEffect();
-        itemsTable.features().enableSmoothScrolling(0.5);
         itemsTable.setFooterVisible(false);
     }
 

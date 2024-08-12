@@ -3,12 +3,13 @@ package inc.nomard.spoty.network_bridge.repositories.interfaces;
 import inc.nomard.spoty.network_bridge.models.*;
 import java.io.*;
 import java.net.http.*;
-
 import java.util.*;
 import java.util.concurrent.*;
 
 public interface ProductRepository {
     CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize);
+
+    CompletableFuture<HttpResponse<String>> fetchAllNonPaged();
 
     CompletableFuture<HttpResponse<String>> fetch(FindModel findModel);
 

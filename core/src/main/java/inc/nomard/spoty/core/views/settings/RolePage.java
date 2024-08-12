@@ -139,23 +139,21 @@ public class RolePage extends OutlinePage {
 
     private void getRoleTable() {
         masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
         masterTable.autosizeColumnsOnInitialization();
-        masterTable.features().enableSmoothScrolling(0.5);
 
-        masterTable.setTableRowFactory(
-                t -> {
-                    MFXTableRow<Role> row = new MFXTableRow<>(masterTable, t);
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event ->
-                                    showContextMenu((MFXTableRow<Role>) event.getSource())
-                                            .show(
-                                                    this.getScene().getWindow(),
-                                                    event.getScreenX(),
-                                                    event.getScreenY());
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
-                });
+//        masterTable.setTableRowFactory(
+//                t -> {
+//                    MFXTableRow<Role> row = new MFXTableRow<>(masterTable, t);
+//                    EventHandler<ContextMenuEvent> eventHandler =
+//                            event ->
+//                                    showContextMenu((MFXTableRow<Role>) event.getSource())
+//                                            .show(
+//                                                    this.getScene().getWindow(),
+//                                                    event.getScreenX(),
+//                                                    event.getScreenY());
+//                    row.setOnContextMenuRequested(eventHandler);
+//                    return row;
+//                });
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Role> obj) {
@@ -164,16 +162,16 @@ public class RolePage extends OutlinePage {
         var edit = new MFXContextMenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            RoleViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
-            event.consume();
-        }, obj.getData().getName(), this));
-        // Edit
-        edit.setOnAction(
-                e -> {
-                    RoleViewModel.getItem(obj.getData().getId(), this::createBtnAction, this::errorMessage);
-                    e.consume();
-                });
+//        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+//            RoleViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+//            event.consume();
+//        }, obj.getData().getName(), this));
+//        // Edit
+//        edit.setOnAction(
+//                e -> {
+//                    RoleViewModel.getItem(obj.getData().getId(), this::createBtnAction, this::errorMessage);
+//                    e.consume();
+//                });
         contextMenu.addItems(edit, delete);
         return contextMenu;
     }
