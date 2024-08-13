@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages.sale.tabs;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.sales.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -15,15 +14,12 @@ import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
@@ -42,8 +38,6 @@ public class OrderPage extends OutlinePage {
     private TextField searchBar;
     private TableView<SaleMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXStageDialog dialog;
-    private FXMLLoader viewFxmlLoader;
     private TableColumn<SaleMaster, SaleMaster> saleCustomer;
     private TableColumn<SaleMaster, SaleMaster> saleDate;
     private TableColumn<SaleMaster, SaleMaster> saleGrandTotal;
@@ -57,11 +51,6 @@ public class OrderPage extends OutlinePage {
     private TableColumn<SaleMaster, SaleMaster> updatedAt;
 
     public OrderPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         modalPane = new SideModalPane();
 
         getChildren().addAll(modalPane, init());
@@ -270,26 +259,14 @@ public class OrderPage extends OutlinePage {
         SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/OrderPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new SalePreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-    }
-
     public void viewShow(SaleMaster saleMaster) {
-        SalePreviewController controller = viewFxmlLoader.getController();
-        controller.init(saleMaster);
-        dialog.showAndWait();
+        var scrollPane = new ScrollPane(new SalePreview(saleMaster));
+        scrollPane.setMaxHeight(10_000);
+
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void successMessage(String message) {
