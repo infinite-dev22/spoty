@@ -1,15 +1,13 @@
 package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.scene.control.*;
 import lombok.extern.java.*;
 
@@ -29,7 +27,7 @@ public class SaleReturnsPreviewController implements Initializable {
     @FXML
     public Label customerEmail;
     @FXML
-    public MFXTableView<SaleReturnDetail> itemsTable;
+    public TableView<SaleReturnDetail> itemsTable;
     @FXML
     public Label subTotal;
     @FXML
@@ -64,42 +62,10 @@ public class SaleReturnsPreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<SaleReturnDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(SaleReturnDetail::getProductName));
-        MFXTableColumn<SaleReturnDetail> quantity =
-                new MFXTableColumn<>("Qnty", false, Comparator.comparing(SaleReturnDetail::getQuantity));
-        MFXTableColumn<SaleReturnDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(SaleReturnDetail::getPrice));
-        MFXTableColumn<SaleReturnDetail> totalPrice =
-                new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(SaleReturnDetail::getSubTotalPrice));
-
-        // Set table column data.
-        product.setRowCellFactory(saleReturnDetail -> {
-            var cell = new MFXTableRowCell<>(SaleReturnDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(saleReturnDetail -> {
-            var cell = new MFXTableRowCell<>(SaleReturnDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        price.setRowCellFactory(saleReturnDetail -> {
-            var cell = new MFXTableRowCell<>(SaleReturnDetail::getPrice);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        totalPrice.setRowCellFactory(
-                saleReturnDetail -> {
-                    var cell = new MFXTableRowCell<>(SaleReturnDetail::getSubTotalPrice);
-                    cell.setAlignment(Pos.CENTER_RIGHT);
-                    cell.getStyleClass().add("table-cell-border");
-                    return cell;
-                });
+        TableColumn<SaleReturnDetail, String> product = new TableColumn<>("Name");
+        TableColumn<SaleReturnDetail, String> quantity = new TableColumn<>("Qnty");
+        TableColumn<SaleReturnDetail, String> price = new TableColumn<>("Price");
+        TableColumn<SaleReturnDetail, String> totalPrice = new TableColumn<>("Total Price");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
@@ -107,12 +73,10 @@ public class SaleReturnsPreviewController implements Initializable {
         price.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
         totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
 
-        // Set table filter.
+        var columnList = new LinkedList<>(Stream.of(product, quantity, price, totalPrice).toList());
         itemsTable
-                .getTableColumns()
-                .addAll(product, quantity, price, totalPrice);
-
-        styleTable();
+                .getColumns()
+                .addAll(columnList);
 
         // Populate table.
         if (getSaleReturnDetails().isEmpty()) {
@@ -123,11 +87,6 @@ public class SaleReturnsPreviewController implements Initializable {
         } else {
             itemsTable.itemsProperty().bindBidirectional(saleReturnDetailsProperty());
         }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
     }
 
     public void init(SaleReturnMaster saleReturn) {

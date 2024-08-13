@@ -1,15 +1,13 @@
 package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.scene.control.*;
 import lombok.extern.java.*;
 
@@ -29,7 +27,7 @@ public class SalePreviewController implements Initializable {
     @FXML
     public Label customerEmail;
     @FXML
-    public MFXTableView<SaleDetail> itemsTable;
+    public TableView<SaleDetail> itemsTable;
     @FXML
     public Label subTotal;
     @FXML
@@ -64,42 +62,10 @@ public class SalePreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<SaleDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(SaleDetail::getProductName));
-        MFXTableColumn<SaleDetail> quantity =
-                new MFXTableColumn<>("Qnty", false, Comparator.comparing(SaleDetail::getQuantity));
-        MFXTableColumn<SaleDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(SaleDetail::getProductPrice));
-        MFXTableColumn<SaleDetail> totalPrice =
-                new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(SaleDetail::getSubTotalPrice));
-
-        // Set table column data.
-        product.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(SaleDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(SaleDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        price.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(SaleDetail::getProductPrice);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        totalPrice.setRowCellFactory(
-                saleDetail -> {
-                    var cell = new MFXTableRowCell<>(SaleDetail::getSubTotalPrice);
-                    cell.setAlignment(Pos.CENTER_RIGHT);
-                    cell.getStyleClass().add("table-cell-border");
-                    return cell;
-                });
+        TableColumn<SaleDetail, String> product = new TableColumn<>("Name");
+        TableColumn<SaleDetail, String> quantity = new TableColumn<>("Qnty");
+        TableColumn<SaleDetail, String> price = new TableColumn<>("Price");
+        TableColumn<SaleDetail, String> totalPrice = new TableColumn<>("Total Price");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
@@ -107,27 +73,13 @@ public class SalePreviewController implements Initializable {
         price.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
         totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
 
-        // Set table filter.
+        var columnList = new LinkedList<>(Stream.of(product, quantity, price, totalPrice).toList());
         itemsTable
-                .getTableColumns()
-                .addAll(product, quantity, price, totalPrice);
-
-        styleTable();
+                .getColumns()
+                .addAll(columnList);
 
         // Populate table.
-        if (getSaleDetails().isEmpty()) {
-            getSaleDetails()
-                    .addListener(
-                            (ListChangeListener<SaleDetail>)
-                                    change -> itemsTable.setItems(getSaleDetails()));
-        } else {
-            itemsTable.itemsProperty().bindBidirectional(saleDetailsProperty());
-        }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
+        itemsTable.setItems(getSaleDetails());
     }
 
     public void init(SaleMaster sale) {

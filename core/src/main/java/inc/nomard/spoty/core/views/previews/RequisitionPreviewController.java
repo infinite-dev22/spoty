@@ -1,15 +1,12 @@
 package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.scene.control.*;
 import lombok.extern.java.*;
 
@@ -29,7 +26,7 @@ public class RequisitionPreviewController implements Initializable {
     @FXML
     public Label supplierEmail;
     @FXML
-    public MFXTableView<RequisitionDetail> itemsTable;
+    public TableView<RequisitionDetail> itemsTable;
     @FXML
     public Label subTotal;
     @FXML
@@ -66,24 +63,8 @@ public class RequisitionPreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<RequisitionDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(RequisitionDetail::getProductName));
-        MFXTableColumn<RequisitionDetail> quantity =
-                new MFXTableColumn<>("Qnty", false, Comparator.comparing(RequisitionDetail::getQuantity));
-
-        // Set table column data.
-        product.setRowCellFactory(requisitionDetail -> {
-            var cell = new MFXTableRowCell<>(RequisitionDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(requisitionDetail -> {
-            var cell = new MFXTableRowCell<>(RequisitionDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
+        TableColumn<RequisitionDetail, String> product = new TableColumn<>("Name");
+        TableColumn<RequisitionDetail, String> quantity = new TableColumn<>("Qnty");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
@@ -91,10 +72,8 @@ public class RequisitionPreviewController implements Initializable {
 
         // Set table filter.
         itemsTable
-                .getTableColumns()
+                .getColumns()
                 .addAll(product, quantity);
-
-        styleTable();
 
         // Populate table.
         if (getRequisitionDetails().isEmpty()) {
@@ -105,11 +84,6 @@ public class RequisitionPreviewController implements Initializable {
         } else {
             itemsTable.itemsProperty().bindBidirectional(requisitionDetailsProperty());
         }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
     }
 
     public void init(RequisitionMaster requisition) {

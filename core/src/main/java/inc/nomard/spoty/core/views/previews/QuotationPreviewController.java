@@ -2,14 +2,12 @@ package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.scene.control.*;
 import lombok.extern.java.*;
 
@@ -29,7 +27,7 @@ public class QuotationPreviewController implements Initializable {
     @FXML
     public Label customerEmail;
     @FXML
-    public MFXTableView<QuotationDetail> itemsTable;
+    public TableView<QuotationDetail> itemsTable;
     @FXML
     public Label discount;
     @FXML
@@ -56,42 +54,10 @@ public class QuotationPreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<QuotationDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(QuotationDetail::getProductName));
-        MFXTableColumn<QuotationDetail> quantity =
-                new MFXTableColumn<>("Qnty", false, Comparator.comparing(QuotationDetail::getQuantity));
-        MFXTableColumn<QuotationDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getProductPrice));
-        MFXTableColumn<QuotationDetail> totalPrice =
-                new MFXTableColumn<>(
-                        "Sub Total Price", false, Comparator.comparing(QuotationDetail::getSubTotal));
-
-        // Set table column data.
-        product.setRowCellFactory(quotationDetail -> {
-            var cell = new MFXTableRowCell<>(QuotationDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(quotationDetail -> {
-            var cell = new MFXTableRowCell<>(QuotationDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        price.setRowCellFactory(quotationDetail -> {
-            var cell = new MFXTableRowCell<>(QuotationDetail::getProductPrice);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        totalPrice.setRowCellFactory(
-                quotationDetail -> {
-                    var cell = new MFXTableRowCell<>(QuotationDetail::getSubTotal);
-                    cell.setAlignment(Pos.CENTER_RIGHT);
-                    cell.getStyleClass().add("table-cell-border");
-                    return cell;
-                });
+        TableColumn<QuotationDetail, String> product = new TableColumn<>("Name");
+        TableColumn<QuotationDetail, String> quantity = new TableColumn<>("Qnty");
+        TableColumn<QuotationDetail, String> price = new TableColumn<>("Price");
+        TableColumn<QuotationDetail, String> totalPrice = new TableColumn<>("Sub Total Price");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
@@ -101,10 +67,8 @@ public class QuotationPreviewController implements Initializable {
 
         // Set table filter.
         itemsTable
-                .getTableColumns()
+                .getColumns()
                 .addAll(product, quantity, price, totalPrice);
-
-        styleTable();
 
         // Populate table.
         if (getQuotationDetails().isEmpty()) {
@@ -115,11 +79,6 @@ public class QuotationPreviewController implements Initializable {
         } else {
             itemsTable.itemsProperty().bindBidirectional(quotationDetailsProperty());
         }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
     }
 
     public void init(QuotationMaster quotation) {

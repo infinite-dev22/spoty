@@ -70,7 +70,7 @@
                     <VBox.margin>
                         <Insets bottom="10.0" top="30.0"/>
                     </VBox.margin>
-                    <MFXTableView fx:id="itemsTable" prefWidth="200.0"/>
+                    <TableView fx:id="itemsTable" prefWidth="200.0"/>
                 </VBox>
                 <Separator/>
                 <HBox spacing="20.0">

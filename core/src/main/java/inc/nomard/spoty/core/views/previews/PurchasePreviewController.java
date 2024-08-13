@@ -1,15 +1,13 @@
 package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.scene.control.*;
 import lombok.extern.java.*;
 
@@ -29,7 +27,7 @@ public class PurchasePreviewController implements Initializable {
     @FXML
     public Label supplierEmail;
     @FXML
-    public MFXTableView<PurchaseDetail> itemsTable;
+    public TableView<PurchaseDetail> itemsTable;
     @FXML
     public Label grandTotal;
     @FXML
@@ -64,61 +62,28 @@ public class PurchasePreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<PurchaseDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(PurchaseDetail::getProductName));
-        MFXTableColumn<PurchaseDetail> quantity =
-                new MFXTableColumn<>("Qty", false, Comparator.comparing(PurchaseDetail::getQuantity));
-        MFXTableColumn<PurchaseDetail> totalPrice =
-                new MFXTableColumn<>(
-                        "Cost", false, Comparator.comparing(PurchaseDetail::getSubTotalCost));
-
-        // Set table column data.
-        product.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        totalPrice.setRowCellFactory(
-                purchaseDetail -> {
-                    var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalCost);
-                    cell.setAlignment(Pos.CENTER_RIGHT);
-                    cell.getStyleClass().add("table-cell-border");
-                    return cell;
-                });
+        TableColumn<PurchaseDetail, String> product = new TableColumn<>("Product");
+        TableColumn<PurchaseDetail, String> totalPrice = new TableColumn<>("Unit Cost");
+        TableColumn<PurchaseDetail, String> quantity = new TableColumn<>("Quantity");
+        TableColumn<PurchaseDetail, String> discount = new TableColumn<>("Discount");
+        TableColumn<PurchaseDetail, String> tax = new TableColumn<>("Tax");
+        TableColumn<PurchaseDetail, String> subTotal = new TableColumn<>("Sub Total");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
-        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
         totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        discount.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        tax.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        subTotal.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
 
-        // Set table filter.
+        var columnList = new LinkedList<>(Stream.of(product, totalPrice, quantity, discount, tax, subTotal).toList());
         itemsTable
-                .getTableColumns()
-                .addAll(product, quantity, totalPrice);
-
-        styleTable();
+                .getColumns()
+                .addAll(columnList);
 
         // Populate table.
-        if (getPurchaseDetails().isEmpty()) {
-            getPurchaseDetails()
-                    .addListener(
-                            (ListChangeListener<PurchaseDetail>)
-                                    change -> itemsTable.setItems(getPurchaseDetails()));
-        } else {
-            itemsTable.itemsProperty().bindBidirectional(purchaseDetailsProperty());
-        }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
+        itemsTable.setItems(getPurchaseDetails());
     }
 
     public void init(PurchaseMaster purchase) {

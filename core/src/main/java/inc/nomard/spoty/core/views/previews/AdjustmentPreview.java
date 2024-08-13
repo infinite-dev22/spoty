@@ -3,8 +3,8 @@ package inc.nomard.spoty.core.views.previews;
 import inc.nomard.spoty.core.views.layout.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
@@ -20,9 +20,12 @@ public class AdjustmentPreview extends ModalPage {
             new SimpleListProperty<>(adjustmentDetailsList);
     public Label adjustmentDate;
     public Label adjustmentRef;
-    public MFXTableView<AdjustmentDetail> itemsTable;
+    public TableView<AdjustmentDetail> itemsTable;
     public Label doneBy;
     public Label adjustmentNote;
+    private TableColumn<AdjustmentDetail, String> product;
+    private TableColumn<AdjustmentDetail, String> type;
+    private TableColumn<AdjustmentDetail, String> quantity;
 
     public AdjustmentPreview(AdjustmentMaster adjustment) {
         setPadding(new Insets(10, 10, 10, 10));
@@ -100,7 +103,7 @@ public class AdjustmentPreview extends ModalPage {
         VBox vBox2 = new VBox();
         VBox.setMargin(vBox2, new Insets(30, 0, 10, 0));
 
-        itemsTable = new MFXTableView<>();
+        itemsTable = new TableView<>();
         itemsTable.setPrefWidth(200.0);
         vBox2.getChildren().add(itemsTable);
 
@@ -131,58 +134,22 @@ public class AdjustmentPreview extends ModalPage {
         adjustmentDetailsList.addAll(adjustment.getAdjustmentDetails());
     }
 
-    public static ObservableList<AdjustmentDetail> getAdjustmentDetails() {
-        return adjustmentDetails.get();
-    }
-
-    public static ListProperty<AdjustmentDetail> adjustmentDetailsProperty() {
-        return adjustmentDetails;
-    }
-
     private void setupTable() {
-        // Set table column titles.
-        MFXTableColumn<AdjustmentDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(AdjustmentDetail::getProductName));
-        MFXTableColumn<AdjustmentDetail> quantity =
-                new MFXTableColumn<>("Quantity", false, Comparator.comparing(AdjustmentDetail::getQuantity));
-
-        // Set table column data.
-        product.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(AdjustmentDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(AdjustmentDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
+        product = new TableColumn<>("Name");
+        type = new TableColumn<>("Type");
+        quantity = new TableColumn<>("Quantity");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
+        type.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
         quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
-        // Set table filter.
-        itemsTable
-                .getTableColumns()
-                .addAll(product, quantity);
 
-        styleTable();
+        var columnList = new LinkedList<>(Stream.of(product, type, quantity).toList());
+        itemsTable
+                .getColumns()
+                .addAll(columnList);
 
         // Populate table.
-        if (getAdjustmentDetails().isEmpty()) {
-            getAdjustmentDetails()
-                    .addListener(
-                            (ListChangeListener<AdjustmentDetail>)
-                                    change -> itemsTable.setItems(getAdjustmentDetails()));
-        } else {
-            itemsTable.itemsProperty().bindBidirectional(adjustmentDetailsProperty());
-        }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
+        itemsTable.setItems(adjustmentDetails.get());
     }
 }

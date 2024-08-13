@@ -2,15 +2,13 @@ package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
 import java.util.*;
+import java.util.stream.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.scene.control.*;
 import lombok.extern.java.*;
 
@@ -30,23 +28,21 @@ public class PurchaseReturnsPreviewController implements Initializable {
     @FXML
     public Label supplierEmail;
     @FXML
-    public MFXTableView<PurchaseDetail> itemsTable;
+    public TableView<PurchaseDetail> itemsTable;
     @FXML
-    public Label subTotal;
+    public Label grandTotal;
     @FXML
     public Label discount;
     @FXML
     public Label tax;
     @FXML
-    public Label shipping;
-    @FXML
     public Label netCost;
-    @FXML
-    public Label paidAmount;
-    @FXML
-    public Label changeDue;
-    @FXML
-    public Label balance;
+    //    @FXML
+//    public Label paidAmount;
+//    @FXML
+//    public Label changeDue;
+//    @FXML
+//    public Label balance;
     @FXML
     public Label purchaseNote;
     @FXML
@@ -67,80 +63,44 @@ public class PurchaseReturnsPreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<PurchaseDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(PurchaseDetail::getProductName));
-        MFXTableColumn<PurchaseDetail> quantity =
-                new MFXTableColumn<>("Qty", false, Comparator.comparing(PurchaseDetail::getQuantity));
-        MFXTableColumn<PurchaseDetail> subTotalCost =
-                new MFXTableColumn<>(
-                        "Total", false, Comparator.comparing(PurchaseDetail::getSubTotalCost));
-
-        // Set table column data.
-        product.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        subTotalCost.setRowCellFactory(
-                purchaseDetail -> {
-                    var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalCost);
-                    cell.setAlignment(Pos.CENTER_RIGHT);
-                    cell.getStyleClass().add("table-cell-border");
-                    return cell;
-                });
+        TableColumn<PurchaseDetail, String> product = new TableColumn<>("Product");
+        TableColumn<PurchaseDetail, String> totalPrice = new TableColumn<>("Unit Cost");
+        TableColumn<PurchaseDetail, String> quantity = new TableColumn<>("Quantity");
+        TableColumn<PurchaseDetail, String> discount = new TableColumn<>("Discount");
+        TableColumn<PurchaseDetail, String> tax = new TableColumn<>("Tax");
+        TableColumn<PurchaseDetail, String> subTotal = new TableColumn<>("Sub Total");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
         quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
-        subTotalCost.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        discount.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        tax.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
+        subTotal.prefWidthProperty().bind(itemsTable.widthProperty().multiply(1));
 
-        // Set table filter.
+        var columnList = new LinkedList<>(Stream.of(product, totalPrice, quantity, discount, tax, subTotal).toList());
         itemsTable
-                .getTableColumns()
-                .addAll(product, quantity, subTotalCost);
-
-        styleTable();
+                .getColumns()
+                .addAll(columnList);
 
         // Populate table.
-        if (getPurchaseDetails().isEmpty()) {
-            getPurchaseDetails()
-                    .addListener(
-                            (ListChangeListener<PurchaseDetail>)
-                                    change -> itemsTable.setItems(getPurchaseDetails()));
-        } else {
-            itemsTable.itemsProperty().bindBidirectional(purchaseDetailsProperty());
-        }
+        itemsTable.setItems(getPurchaseDetails());
     }
 
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
-    }
-
-    public void init(PurchaseReturnMaster purchaseMaster) {
+    public void init(PurchaseReturnMaster purchase) {
         purchaseDetailsList.clear();
-        purchaseDate.setText(purchaseMaster.getLocaleDate());
-        purchaseRef.setText(purchaseMaster.getRef());
-        supplierName.setText(purchaseMaster.getSupplier().getName());
-        supplierNumber.setText(purchaseMaster.getSupplier().getPhone());
-        supplierEmail.setText(purchaseMaster.getSupplier().getEmail());
-//        purchaseDetailsList.addAll(purchaseMaster.getPurchaseDetails());
-        subTotal.setText(String.valueOf(purchaseMaster.getSubTotal()));
-        discount.setText(String.valueOf(purchaseMaster.getDiscount()));
-//        tax.setText(String.valueOf(purchaseMaster.getTaxRate()));
-//        shipping.setText(String.valueOf(purchaseMaster.getShippingFee()));
-        netCost.setText(String.valueOf(purchaseMaster.getTotal()));
-        paidAmount.setText(String.valueOf(purchaseMaster.getAmountPaid()));
-//        changeDue.setText(String.valueOf(purchaseMaster.getChangeAmount()));
-//        balance.setText(String.valueOf(purchaseMaster.getBalanceAmount()));
-        purchaseNote.setText(purchaseMaster.getNotes());
+        purchaseDate.setText(purchase.getLocaleDate());
+        purchaseRef.setText(purchase.getRef());
+        supplierName.setText(purchase.getSupplier().getName());
+        supplierNumber.setText(purchase.getSupplier().getPhone());
+        supplierEmail.setText(purchase.getSupplier().getEmail());
+        purchaseDetailsList.addAll(purchase.getPurchaseReturnDetails());
+        grandTotal.setText(String.valueOf(purchase.getSubTotal()));
+        discount.setText(String.valueOf(purchase.getDiscount()));
+        tax.setText(String.valueOf(purchase.getTax().getPercentage()));
+        netCost.setText(String.valueOf(purchase.getTotal()));
+//        paidAmount.setText(String.valueOf(purchase.getAmountPaid()));
+        purchaseNote.setText(purchase.getNotes());
 //        doneBy.setText(purchase.doneBy());
     }
 }

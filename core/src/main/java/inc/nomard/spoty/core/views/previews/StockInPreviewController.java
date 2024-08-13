@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
-import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import java.net.*;
 import java.util.*;
@@ -23,7 +22,7 @@ public class StockInPreviewController implements Initializable {
     @FXML
     public Label stockInRef;
     @FXML
-    public MFXTableView<StockInDetail> itemsTable;
+    public TableView<StockInDetail> itemsTable;
     @FXML
     public Label stockInNote;
     @FXML
@@ -44,24 +43,8 @@ public class StockInPreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<StockInDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(StockInDetail::getProductName));
-        MFXTableColumn<StockInDetail> quantity =
-                new MFXTableColumn<>("Qnty", false, Comparator.comparing(StockInDetail::getQuantity));
-
-        // Set table column data.
-        product.setRowCellFactory(stockInDetail -> {
-            var cell = new MFXTableRowCell<>(StockInDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(stockInDetail -> {
-            var cell = new MFXTableRowCell<>(StockInDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
+        TableColumn<StockInDetail, String> product = new TableColumn<>("Name");
+        TableColumn<StockInDetail, String> quantity = new TableColumn<>("Qnty");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
@@ -69,10 +52,8 @@ public class StockInPreviewController implements Initializable {
 
         // Set table filter.
         itemsTable
-                .getTableColumns()
+                .getColumns()
                 .addAll(product, quantity);
-
-        styleTable();
 
         // Populate table.
         if (getStockInDetails().isEmpty()) {
@@ -83,11 +64,6 @@ public class StockInPreviewController implements Initializable {
         } else {
             itemsTable.itemsProperty().bindBidirectional(stockInDetailsProperty());
         }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.setFooterVisible(false);
     }
 
     public void init(StockInMaster stockIn) {
