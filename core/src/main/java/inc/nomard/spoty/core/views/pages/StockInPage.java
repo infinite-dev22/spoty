@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.layout.*;
@@ -10,11 +9,9 @@ import inc.nomard.spoty.core.views.layout.message.enums.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.util.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
-import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
@@ -27,7 +24,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
@@ -42,18 +38,12 @@ public class StockInPage extends OutlinePage {
     private MFXStageDialog viewDialog;
     private TableColumn<StockInMaster, String> reference;
     private TableColumn<StockInMaster, String> note;
-    private TableColumn<StockInMaster, StockInMaster> totalCost;
     private TableColumn<StockInMaster, StockInMaster> createdBy;
     private TableColumn<StockInMaster, StockInMaster> createdAt;
     private TableColumn<StockInMaster, StockInMaster> updatedBy;
     private TableColumn<StockInMaster, StockInMaster> updatedAt;
 
     public StockInPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
@@ -169,7 +159,6 @@ public class StockInPage extends OutlinePage {
 
     private void setupTable() {
         reference = new TableColumn<>("Ref");
-        totalCost = new TableColumn<>("Total Amount");
         note = new TableColumn<>("Note");
         createdBy = new TableColumn<>("Created By");
         createdAt = new TableColumn<>("Created At");
@@ -177,8 +166,7 @@ public class StockInPage extends OutlinePage {
         updatedAt = new TableColumn<>("Updated At");
 
         reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        totalCost.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
@@ -186,7 +174,7 @@ public class StockInPage extends OutlinePage {
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(reference, totalCost, note, createdBy, createdAt, updatedBy, updatedAt).toList());
+        var columnList = new LinkedList<>(Stream.of(reference, note, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getStockInMasterTable();
@@ -230,23 +218,11 @@ public class StockInPage extends OutlinePage {
         return contextMenu;
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/StockInPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new StockInPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
-    public void viewShow(StockInMaster stockInMaster) {
-        StockInPreviewController controller = viewFxmlLoader.getController();
-        controller.init(stockInMaster);
-        viewDialog.showAndWait();
+    public void viewShow(StockInMaster stockIn) {
+        var dialog = new ModalContentHolder(700, 700);
+        dialog.getChildren().add(new StockInPreview(stockIn));
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void errorMessage(String message) {
@@ -292,14 +268,6 @@ public class StockInPage extends OutlinePage {
 
     private void setupTableColumns() {
         reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
-        totalCost.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        totalCost.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(StockInMaster item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
-            }
-        });
         note.setCellValueFactory(new PropertyValueFactory<>("notes"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
