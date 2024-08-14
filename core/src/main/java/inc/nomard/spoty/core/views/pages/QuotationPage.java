@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.accounting.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.core.views.components.*;
@@ -16,7 +15,6 @@ import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
@@ -29,7 +27,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
@@ -41,8 +38,6 @@ public class QuotationPage extends OutlinePage {
     private TableView<QuotationMaster> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
     private TableColumn<QuotationMaster, String> reference;
     private TableColumn<QuotationMaster, QuotationMaster> customer;
     private TableColumn<QuotationMaster, QuotationMaster> total;
@@ -54,13 +49,6 @@ public class QuotationPage extends OutlinePage {
 
     public QuotationPage() {
         modalPane = new SideModalPane();
-
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
@@ -266,23 +254,11 @@ public class QuotationPage extends OutlinePage {
         QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/QuotationPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new QuotationPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
     public void viewShow(QuotationMaster quotationMaster) {
-        QuotationPreviewController controller = viewFxmlLoader.getController();
-        controller.init(quotationMaster);
-        viewDialog.showAndWait();
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(new QuotationPreview(quotationMaster));
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void successMessage(String message) {

@@ -437,6 +437,7 @@ public class QuotationMasterViewModel {
                 .id(getId())
                 .customer(getCustomer())
                 .status(getStatus())
+                .tax(getTax())
                 .discount(getDiscount())
                 .notes(getNote())
                 .shippingFee(Double.parseDouble(getShippingFee()))

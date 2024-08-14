@@ -18,7 +18,7 @@ public class QuotationMaster {
     private String ref;
     private Customer customer;
     private List<QuotationDetail> quotationDetails;
-    private Tax netTax;
+    private Tax tax;
     private Discount discount;
     private double shippingFee;
     private double total;
