@@ -114,7 +114,7 @@ public class AdjustmentPreview extends BorderPane {
             @Override
             public void updateItem(AdjustmentDetail item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAdjustmentType()));
+                setText(empty || Objects.isNull(item) ? null : item.getAdjustmentType());
             }
         });
 
