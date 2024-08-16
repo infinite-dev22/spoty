@@ -52,12 +52,10 @@ public class OrderPage extends OutlinePage {
 
     public OrderPage() {
         modalPane = new SideModalPane();
-
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         SaleMasterViewModel.getAllSaleMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
-
         modalPane.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);

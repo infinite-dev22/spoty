@@ -21,6 +21,7 @@ public class StockInPreview extends BorderPane {
     private static final ListProperty<StockInDetail> stockInDetails = new SimpleListProperty<>(stockInDetailsList);
     private static final StringProperty orderDateProperty = new SimpleStringProperty();
     private static final StringProperty orderRefProperty = new SimpleStringProperty();
+    private static final StringProperty noteProperty = new SimpleStringProperty();
     private static final StringProperty servedByProperty = new SimpleStringProperty();
 
     public StockInPreview(StockInMaster stockIn) {
@@ -45,6 +46,7 @@ public class StockInPreview extends BorderPane {
         stockInDetailsList.addAll(stockIn.getStockInDetails());
         orderDateProperty.set(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault()).format(stockIn.getCreatedAt()));
         orderRefProperty.set(stockIn.getRef());
+        noteProperty.set(stockIn.getNotes());
         servedByProperty.set(stockIn.getCreatedBy().getUserProfile().getName());
     }
 
@@ -143,8 +145,12 @@ public class StockInPreview extends BorderPane {
         return vbox;
     }
 
-    private HBox buildServedBy() {
-        return new HBox(buildSpacedTitledText("Made By", servedByProperty));
+    private HBox buildNote() {
+        return new HBox(buildSpacedTitledText("Note", noteProperty));
+    }
+
+    private HBox buildDoneBy() {
+        return new HBox(buildSpacedTitledText("Done By", servedByProperty));
     }
 
     private VBox assembleBody() {
@@ -152,7 +158,9 @@ public class StockInPreview extends BorderPane {
                 buildHeader(),
                 buildReference(),
                 buildSaleProductDetails(),
-                buildServedBy()
+                buildNote(),
+                new Separator(),
+                buildDoneBy()
         );
         vbox.setMaxHeight(900d);
         vbox.setPrefHeight(800d);

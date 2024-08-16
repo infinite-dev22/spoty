@@ -1,155 +1,186 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.core.views.layout.*;
+import atlantafx.base.theme.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
-import io.github.palexdev.materialfx.controls.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.navigation.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
-import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.*;
 import lombok.extern.java.*;
 
 @Log
-public class AdjustmentPreview extends ModalPage {
+public class AdjustmentPreview extends BorderPane {
     static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<AdjustmentDetail> adjustmentDetails =
-            new SimpleListProperty<>(adjustmentDetailsList);
-    public Label adjustmentDate;
-    public Label adjustmentRef;
-    public TableView<AdjustmentDetail> itemsTable;
-    public Label doneBy;
-    public Label adjustmentNote;
-    private TableColumn<AdjustmentDetail, String> product;
-    private TableColumn<AdjustmentDetail, String> type;
-    private TableColumn<AdjustmentDetail, String> quantity;
+    private static final ListProperty<AdjustmentDetail> adjustmentDetails = new SimpleListProperty<>(adjustmentDetailsList);
+    private static final StringProperty adjustmentDateProperty = new SimpleStringProperty();
+    private static final StringProperty adjustmentRefProperty = new SimpleStringProperty();
+    private static final StringProperty noteProperty = new SimpleStringProperty();
+    private static final StringProperty doneByProperty = new SimpleStringProperty();
 
     public AdjustmentPreview(AdjustmentMaster adjustment) {
-        setPadding(new Insets(10, 10, 10, 10));
-
-        var vBox = new VBox();
-        vBox.setMaxHeight(900.0);
-        vBox.setMaxWidth(1000.0);
-        vBox.setMinHeight(600.0);
-        vBox.setMinWidth(500.0);
-        vBox.setPrefHeight(800.0);
-        vBox.setPrefWidth(700.0);
-        vBox.setPadding(new Insets(20, 10, 20, 10));
-
-        var hBox1 = new HBox();
-        hBox1.setMaxHeight(150.0);
-        hBox1.setMinHeight(50.0);
-        hBox1.setPrefHeight(100.0);
-
-        var vBox1 = new VBox();
-        vBox1.setAlignment(Pos.BOTTOM_LEFT);
-        vBox1.setPrefHeight(80.0);
-
-        var headerLabel = new Label("Inventory Adjustment");
-        headerLabel.getStyleClass().add("preview-header");
-        vBox1.getChildren().add(headerLabel);
-
-        var region = new Region();
-        HBox.setHgrow(region, Priority.ALWAYS);
-
-        var hBox2 = new HBox();
-        hBox2.setAlignment(Pos.TOP_RIGHT);
-        hBox2.setLayoutX(10.0);
-        hBox2.setLayoutY(10.0);
-        hBox2.setPrefHeight(80.0);
-
-        var dateLabel = new Label("Date: ");
-        dateLabel.getStyleClass().add("preview-header");
-        adjustmentDate = new Label();
-
-        hBox2.getChildren().addAll(dateLabel, adjustmentDate);
-        hBox1.getChildren().addAll(vBox1, region, hBox2);
-
-        var hBox3 = new HBox();
-        hBox3.setAlignment(Pos.CENTER_RIGHT);
-        hBox3.setLayoutX(10.0);
-        hBox3.setLayoutY(10.0);
-        hBox3.setPrefHeight(50.0);
-        hBox3.setSpacing(20.0);
-
-        var invoiceLabel = new Label("Invoice ID");
-        invoiceLabel.getStyleClass().add("preview-header");
-        adjustmentRef = new Label();
-        adjustmentRef.setLayoutX(10.0);
-        adjustmentRef.setLayoutY(10.0);
-
-        hBox3.getChildren().addAll(invoiceLabel, adjustmentRef);
-
-        var hBox4 = new HBox();
-        hBox4.setLayoutX(10.0);
-        hBox4.setLayoutY(10.0);
-        hBox4.setPrefHeight(50.0);
-        hBox4.setSpacing(20.0);
-
-        var noteLabel = new Label("Note: ");
-        noteLabel.getStyleClass().add("preview-header");
-        adjustmentNote = new Label();
-        adjustmentNote.setLayoutX(10.0);
-        adjustmentNote.setLayoutY(10.0);
-        adjustmentNote.setWrapText(true);
-
-        hBox4.getChildren().addAll(noteLabel, adjustmentNote);
-
-        Separator separator = new Separator();
-
-        VBox vBox2 = new VBox();
-        VBox.setMargin(vBox2, new Insets(30, 0, 10, 0));
-
-        itemsTable = new TableView<>();
-        itemsTable.setPrefWidth(200.0);
-        vBox2.getChildren().add(itemsTable);
-
-        var hBox5 = new HBox();
-        hBox5.setSpacing(20.0);
-        hBox5.setPadding(new Insets(0, 50, 0, 0));
-
-        VBox.setMargin(hBox5, new Insets(30, 0, 30, 0));
-
-        var doneByLabel = new Label("Done By:");
-        doneBy = new Label("Jonathan Mark");
-
-        hBox5.getChildren().addAll(doneByLabel, doneBy);
-
-        vBox.getChildren().addAll(hBox1, hBox3, hBox4, separator, vBox2, hBox5);
-
-        MFXScrollPane scrollPane = new MFXScrollPane();
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setContent(vBox);
-
-        setCenter(scrollPane);
-        Platform.runLater(this::setupTable);
-        adjustmentDetailsList.clear();
-        adjustmentRef.setText(adjustment.getRef());
-        adjustmentNote.setText(adjustment.getNotes());
-//        doneBy.setText(adjustment.getCreatedBy().getName());
-        adjustmentDetailsList.addAll(adjustment.getAdjustmentDetails());
+        initUI();
+        initData(adjustment);
     }
 
-    private void setupTable() {
-        product = new TableColumn<>("Name");
-        type = new TableColumn<>("Type");
-        quantity = new TableColumn<>("Quantity");
+    public static ObservableList<AdjustmentDetail> getAdjustmentDetails() {
+        return adjustmentDetails.get();
+    }
+
+    public void initUI() {
+        this.setCenter(assembleBody());
+        this.setPadding(new Insets(10d));
+        this.setMaxWidth(1000d);
+        this.setPrefWidth(700d);
+        this.setMinWidth(400d);
+    }
+
+    public void initData(AdjustmentMaster adjustment) {
+        adjustmentDetailsList.clear();
+        adjustmentDetailsList.addAll(adjustment.getAdjustmentDetails());
+        adjustmentDateProperty.set(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault()).format(adjustment.getCreatedAt()));
+        adjustmentRefProperty.set(adjustment.getRef());
+        noteProperty.set(adjustment.getNotes());
+        doneByProperty.set(adjustment.getCreatedBy().getUserProfile().getName());
+    }
+
+    private Text buildHeaderText(String txt) {
+        var text = new Text(txt);
+        text.getStyleClass().addAll(Styles.TITLE_2, Styles.TEXT_SUBTLE, Styles.TEXT_ITALIC);
+        return text;
+    }
+
+    private HBox buildTitledText(String title, StringProperty property) {
+        var text1 = new Text(title + ":");
+        text1.getStyleClass().add(Styles.TEXT_SUBTLE);
+        var text2 = new Text();
+        text2.getStyleClass().addAll(Styles.TEXT_BOLD);
+        text2.textProperty().bind(property);
+        return new HBox(20d, text1, text2);
+    }
+
+    private HBox buildSpacedTitledText(String title, StringProperty property) {
+        var text1 = new Text(title + ":");
+        text1.getStyleClass().add(Styles.TEXT_SUBTLE);
+        var text2 = new Text();
+        text2.getStyleClass().addAll(Styles.TEXT_BOLD);
+        text2.textProperty().bind(property);
+        return new HBox(20d, text1, new Spacer(), text2);
+    }
+
+    private TableView<AdjustmentDetail> buildTable() {
+        TableView<AdjustmentDetail> table = new TableView<>();
+        table.getColumns().addAll(buildColumns(table));
+        table.setItems(getAdjustmentDetails());
+        return table;
+    }
+
+    private ArrayList<TableColumn<AdjustmentDetail, AdjustmentDetail>> buildColumns(TableView<AdjustmentDetail> table) {
+        // Set table column titles.
+        TableColumn<AdjustmentDetail, AdjustmentDetail> product = new TableColumn<>("Product");
+        TableColumn<AdjustmentDetail, AdjustmentDetail> quantity = new TableColumn<>("Quantity");
+        TableColumn<AdjustmentDetail, AdjustmentDetail> type = new TableColumn<>("Type");
 
         // Set table column width.
-        product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
-        type.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
-        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
+        product.prefWidthProperty().bind(table.widthProperty().multiply(.5));
+        quantity.prefWidthProperty().bind(table.widthProperty().multiply(.25));
+        type.prefWidthProperty().bind(table.widthProperty().multiply(.25));
 
-        var columnList = new LinkedList<>(Stream.of(product, type, quantity).toList());
-        itemsTable
-                .getColumns()
-                .addAll(columnList);
+        // Set column data.
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
+        type.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        type.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AdjustmentDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAdjustmentType()));
+            }
+        });
 
-        // Populate table.
-        itemsTable.setItems(adjustmentDetails.get());
+        return new ArrayList<>(Stream.of(product, quantity, type).toList());
+    }
+
+    private HBox buildHeader() {
+        var vbox1 = new VBox(buildHeaderText("Inventory Adjustment"));
+        vbox1.setAlignment(Pos.BOTTOM_LEFT);
+        var vbox2 = new VBox(buildTitledText("Date", adjustmentDateProperty));
+        vbox2.setAlignment(Pos.TOP_RIGHT);
+        vbox2.setMaxHeight(80d);
+        vbox2.setPrefHeight(80d);
+        vbox2.setMinHeight(80d);
+        var hbox = new HBox(
+                vbox1,
+                new Spacer(),
+                vbox2
+        );
+        hbox.setMaxHeight(150d);
+        hbox.setPrefHeight(100d);
+        hbox.setMinHeight(50d);
+        return hbox;
+    }
+
+    private HBox buildReference() {
+        var hbox = new HBox(20d, buildTitledText("Receipt No.", adjustmentRefProperty)
+        );
+        hbox.setMaxHeight(50d);
+        hbox.setPrefHeight(50d);
+        hbox.setMinHeight(50d);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        return hbox;
+    }
+
+    private VBox buildAdjustmentProductDetails() {
+        var vbox = new VBox(buildTable());
+        VBox.setMargin(vbox, new Insets(2.5d, 0d, 2.5d, 0d));
+        return vbox;
+    }
+
+    private HBox buildNote() {
+        return new HBox(buildSpacedTitledText("Note", noteProperty));
+    }
+
+    private HBox buildDoneBy() {
+        return new HBox(buildSpacedTitledText("Done By", doneByProperty));
+    }
+
+    private VBox assembleBody() {
+        var vbox = new VBox(10d,
+                buildHeader(),
+                buildReference(),
+                buildAdjustmentProductDetails(),
+                buildNote(),
+                new Separator(),
+                buildDoneBy()
+        );
+        vbox.setMaxHeight(900d);
+        vbox.setPrefHeight(800d);
+        vbox.setMinHeight(600d);
+        vbox.setMaxWidth(1000d);
+        vbox.setPrefWidth(700d);
+        vbox.setMinWidth(500d);
+        vbox.setPadding(new Insets(20d, 10d, 20d, 10d));
+        vbox.setAlignment(Pos.CENTER_RIGHT);
+        return vbox;
     }
 }

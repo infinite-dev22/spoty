@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages.purchase.tabs;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -14,21 +13,17 @@ import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
@@ -39,8 +34,6 @@ public class PurchasePage extends OutlinePage {
     private TextField searchBar;
     private TableView<PurchaseMaster> masterTable;
     private MFXProgressSpinner progress;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
     private TableColumn<PurchaseMaster, PurchaseMaster> supplier;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseDate;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseTotalPrice;
@@ -54,18 +47,11 @@ public class PurchasePage extends OutlinePage {
     private TableColumn<PurchaseMaster, PurchaseMaster> updatedAt;
 
     public PurchasePage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         modalPane = new SideModalPane();
-
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         PurchaseMasterViewModel.getAllPurchaseMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
-
         modalPane.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
@@ -294,23 +280,14 @@ public class PurchasePage extends OutlinePage {
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/PurchasePreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new PurchasePreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
     public void viewShow(PurchaseMaster purchaseMaster) {
-        PurchasePreviewController controller = viewFxmlLoader.getController();
-        controller.init(purchaseMaster);
-        viewDialog.showAndWait();
+        var scrollPane = new ScrollPane(new PurchasePreview(purchaseMaster));
+        scrollPane.setMaxHeight(10_000);
+
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void successMessage(String message) {

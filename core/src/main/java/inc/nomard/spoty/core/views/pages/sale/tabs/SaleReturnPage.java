@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages.sale.tabs;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
@@ -14,7 +13,6 @@ import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
@@ -27,18 +25,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class SaleReturnPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<SaleReturnMaster> masterTable;
     private MFXProgressSpinner progress;
-    private MFXStageDialog dialog;
-    private FXMLLoader viewFxmlLoader;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleCustomer;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleDate;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleGrandTotal;
@@ -52,15 +48,17 @@ public class SaleReturnPage extends OutlinePage {
     private TableColumn<SaleReturnMaster, SaleReturnMaster> updatedAt;
 
     public SaleReturnPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         SaleReturnMasterViewModel.getSaleReturnMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -239,26 +237,14 @@ public class SaleReturnPage extends OutlinePage {
         SaleReturnMasterViewModel.getSaleReturnMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/SaleReturnsPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new SaleReturnsPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
+    public void viewShow(SaleReturnMaster saleReturnMaster) {
+        var scrollPane = new ScrollPane(new SaleReturnPreview(saleReturnMaster));
+        scrollPane.setMaxHeight(10_000);
 
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-    }
-
-    public void viewShow(SaleReturnMaster saleMaster) {
-        SaleReturnsPreviewController controller = viewFxmlLoader.getController();
-        controller.init(saleMaster);
-        dialog.showAndWait();
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void successMessage(String message) {

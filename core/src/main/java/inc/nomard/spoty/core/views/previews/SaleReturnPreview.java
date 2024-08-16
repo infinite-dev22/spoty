@@ -1,10 +1,10 @@
 package inc.nomard.spoty.core.views.previews;
 
 import atlantafx.base.theme.*;
-import inc.nomard.spoty.network_bridge.dtos.quotations.*;
+import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
-import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
@@ -17,28 +17,29 @@ import javafx.util.converter.*;
 import lombok.extern.java.*;
 
 @Log
-public class QuotationPreview extends BorderPane {
-    static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<QuotationDetail> quotationDetails = new SimpleListProperty<>(quotationDetailsList);
+public class SaleReturnPreview extends BorderPane {
+    static final ObservableList<SaleDetail> saleDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<SaleDetail> saleDetails = new SimpleListProperty<>(saleDetailsList);
     private static final StringProperty orderDateProperty = new SimpleStringProperty();
     private static final StringProperty orderRefProperty = new SimpleStringProperty();
     private static final StringProperty customerNameProperty = new SimpleStringProperty();
     private static final StringProperty customerPhoneProperty = new SimpleStringProperty();
     private static final StringProperty customerEmailProperty = new SimpleStringProperty();
+    private static final DoubleProperty subTotalProperty = new SimpleDoubleProperty();
     private static final DoubleProperty discountProperty = new SimpleDoubleProperty();
     private static final DoubleProperty taxProperty = new SimpleDoubleProperty();
     private static final DoubleProperty shippingProperty = new SimpleDoubleProperty();
     private static final DoubleProperty netCostProperty = new SimpleDoubleProperty();
-    private static final StringProperty noteProperty = new SimpleStringProperty();
+    private static final DoubleProperty paidAmountProperty = new SimpleDoubleProperty();
     private static final StringProperty servedByProperty = new SimpleStringProperty();
 
-    public QuotationPreview(QuotationMaster quotation) {
+    public SaleReturnPreview(SaleReturnMaster saleReturn) {
         initUI();
-        initData(quotation);
+        initData(saleReturn);
     }
 
-    public static ObservableList<QuotationDetail> getQuotationDetails() {
-        return quotationDetails.get();
+    public static ObservableList<SaleDetail> getSaleReturnDetails() {
+        return saleDetails.get();
     }
 
     public void initUI() {
@@ -49,20 +50,21 @@ public class QuotationPreview extends BorderPane {
         this.setMinWidth(400d);
     }
 
-    public void initData(QuotationMaster quotation) {
-        quotationDetailsList.clear();
-        quotationDetailsList.addAll(quotation.getQuotationDetails());
-        orderDateProperty.set(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault()).format(quotation.getCreatedAt()));
-        orderRefProperty.set(quotation.getRef());
-        customerNameProperty.set(quotation.getCustomer().getName());
-        customerPhoneProperty.set(quotation.getCustomer().getPhone());
-        customerEmailProperty.set(quotation.getCustomer().getEmail());
-        discountProperty.set(Objects.nonNull(quotation.getDiscount()) ? quotation.getDiscount().getPercentage() : 0d);
-        taxProperty.set(Objects.nonNull(quotation.getTax()) ? quotation.getTax().getPercentage() : 0d);
-        shippingProperty.set(quotation.getShippingFee());
-        netCostProperty.set(quotation.getTotal());
-        noteProperty.set(quotation.getNotes());
-        servedByProperty.set(quotation.getCreatedBy().getUserProfile().getName());
+    public void initData(SaleReturnMaster saleReturn) {
+        saleDetailsList.clear();
+        saleDetailsList.addAll(saleReturn.getSaleReturnDetails());
+        orderDateProperty.set(saleReturn.getLocaleDate());
+        orderRefProperty.set(saleReturn.getRef());
+        customerNameProperty.set(saleReturn.getCustomer().getName());
+        customerPhoneProperty.set(saleReturn.getCustomer().getPhone());
+        customerEmailProperty.set(saleReturn.getCustomer().getEmail());
+        subTotalProperty.set(saleReturn.getSubTotal());
+        discountProperty.set(Objects.nonNull(saleReturn.getDiscount()) ? saleReturn.getDiscount().getPercentage() : 0d);
+        taxProperty.set(Objects.nonNull(saleReturn.getTax()) ? saleReturn.getTax().getPercentage() : 0d);
+        shippingProperty.set(saleReturn.getShippingFee());
+        netCostProperty.set(saleReturn.getTotal());
+        paidAmountProperty.set(saleReturn.getAmountPaid());
+        servedByProperty.set(saleReturn.getCreatedBy().getUserProfile().getName());
     }
 
     private Text buildHeaderText(String txt) {
@@ -98,19 +100,19 @@ public class QuotationPreview extends BorderPane {
         return new HBox(20d, text1, new Spacer(), text2);
     }
 
-    private TableView<QuotationDetail> buildTable() {
-        TableView<QuotationDetail> table = new TableView<>();
+    private TableView<SaleDetail> buildTable() {
+        TableView<SaleDetail> table = new TableView<>();
         table.getColumns().addAll(buildColumns(table));
-        table.setItems(getQuotationDetails());
+        table.setItems(getSaleReturnDetails());
         return table;
     }
 
-    private ArrayList<TableColumn<QuotationDetail, QuotationDetail>> buildColumns(TableView<QuotationDetail> table) {
+    private ArrayList<TableColumn<SaleDetail, SaleDetail>> buildColumns(TableView<SaleDetail> table) {
         // Set table column titles.
-        TableColumn<QuotationDetail, QuotationDetail> product = new TableColumn<>("Product");
-        TableColumn<QuotationDetail, QuotationDetail> quantity = new TableColumn<>("Qnty");
-        TableColumn<QuotationDetail, QuotationDetail> price = new TableColumn<>("Price");
-        TableColumn<QuotationDetail, QuotationDetail> subTotalPrice = new TableColumn<>("SubTotal Price");
+        TableColumn<SaleDetail, SaleDetail> product = new TableColumn<>("Product");
+        TableColumn<SaleDetail, SaleDetail> quantity = new TableColumn<>("Quantity");
+        TableColumn<SaleDetail, SaleDetail> price = new TableColumn<>("Price");
+        TableColumn<SaleDetail, SaleDetail> subTotalPrice = new TableColumn<>("SubTotal Price");
 
         // Set table column width.
         product.prefWidthProperty().bind(table.widthProperty().multiply(.4));
@@ -122,7 +124,7 @@ public class QuotationPreview extends BorderPane {
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         product.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(QuotationDetail item, boolean empty) {
+            public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : item.getProductName());
             }
@@ -130,7 +132,7 @@ public class QuotationPreview extends BorderPane {
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         quantity.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(QuotationDetail item, boolean empty) {
+            public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
             }
@@ -138,7 +140,7 @@ public class QuotationPreview extends BorderPane {
         price.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         price.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(QuotationDetail item, boolean empty) {
+            public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getProductPrice()));
             }
@@ -146,9 +148,9 @@ public class QuotationPreview extends BorderPane {
         subTotalPrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         subTotalPrice.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(QuotationDetail item, boolean empty) {
+            public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getSubTotal()));
+                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getSubTotalPrice()));
             }
         });
 
@@ -156,7 +158,7 @@ public class QuotationPreview extends BorderPane {
     }
 
     private HBox buildHeader() {
-        var vbox1 = new VBox(buildHeaderText("Quotation Receipt"));
+        var vbox1 = new VBox(buildHeaderText("Sale Return Receipt"));
         vbox1.setAlignment(Pos.BOTTOM_LEFT);
         var vbox2 = new VBox(buildTitledText("Date", orderDateProperty));
         vbox2.setAlignment(Pos.TOP_RIGHT);
@@ -175,7 +177,7 @@ public class QuotationPreview extends BorderPane {
     }
 
     private HBox buildReference() {
-        var hbox = new HBox(20d, buildTitledText("Reference No.", orderRefProperty)
+        var hbox = new HBox(20d, buildTitledText("Receipt No.", orderRefProperty)
         );
         hbox.setMaxHeight(50d);
         hbox.setPrefHeight(50d);
@@ -195,7 +197,7 @@ public class QuotationPreview extends BorderPane {
         return vbox;
     }
 
-    private VBox buildQuotationProductDetails() {
+    private VBox buildSaleReturnProductDetails() {
         var vbox = new VBox(buildTable());
         VBox.setMargin(vbox, new Insets(2.5d, 0d, 2.5d, 0d));
         return vbox;
@@ -203,6 +205,7 @@ public class QuotationPreview extends BorderPane {
 
     private VBox buildMoneyDetails() {
         var vbox1 = new VBox(10d,
+                buildSpacedTitledText("Sub Total", subTotalProperty),
                 buildSpacedTitledText("Discount(%)", discountProperty),
                 buildSpacedTitledText("Tax(%)", taxProperty),
                 buildSpacedTitledText("Shipping", shippingProperty)
@@ -218,20 +221,24 @@ public class QuotationPreview extends BorderPane {
         vbox2.setMinWidth(250d);
         VBox.setMargin(vbox2, new Insets(2.5d, 0d, 2.5d, 0d));
         vbox2.setAlignment(Pos.CENTER_RIGHT);
+        var vbox3 = new VBox(buildSpacedTitledText("Paid Amount", paidAmountProperty));
+        vbox3.setMaxWidth(350d);
+        vbox3.setPrefWidth(300d);
+        vbox3.setMinWidth(250d);
+        VBox.setMargin(vbox3, new Insets(2.5d, 0d, 5d, 0d));
+        vbox3.setAlignment(Pos.CENTER_RIGHT);
         var vbox = new VBox(vbox1,
                 new Separator(),
                 vbox2,
+                new Separator(),
+                vbox3,
                 new Separator());
         vbox.setAlignment(Pos.CENTER_RIGHT);
         return vbox;
     }
 
-    private HBox buildNote() {
-        return new HBox(buildSpacedTitledText("Note", noteProperty));
-    }
-
-    private HBox buildDoneBy() {
-        return new HBox(buildSpacedTitledText("Done By", servedByProperty));
+    private HBox buildServedBy() {
+        return new HBox(buildSpacedTitledText("Served By", servedByProperty));
     }
 
     private VBox assembleBody() {
@@ -239,11 +246,9 @@ public class QuotationPreview extends BorderPane {
                 buildHeader(),
                 buildReference(),
                 buildCustomerDetails(),
-                buildQuotationProductDetails(),
+                buildSaleReturnProductDetails(),
                 buildMoneyDetails(),
-                buildNote(),
-                new Separator(),
-                buildDoneBy()
+                buildServedBy()
         );
         vbox.setMaxHeight(900d);
         vbox.setPrefHeight(800d);

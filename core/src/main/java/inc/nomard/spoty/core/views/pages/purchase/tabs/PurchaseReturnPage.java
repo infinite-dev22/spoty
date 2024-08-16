@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages.purchase.tabs;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.returns.purchases.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.layout.*;
@@ -13,32 +12,27 @@ import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class PurchaseReturnPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<PurchaseReturnMaster> masterTable;
     private MFXProgressSpinner progress;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> supplier;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseDate;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseTotalPrice;
@@ -52,15 +46,17 @@ public class PurchaseReturnPage extends OutlinePage {
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> updatedAt;
 
     public PurchaseReturnPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -252,23 +248,14 @@ public class PurchaseReturnPage extends OutlinePage {
         PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/PurchaseReturnsPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new PurchaseReturnsPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
+    public void viewShow(PurchaseReturnMaster purchaseReturnMaster) {
+        var scrollPane = new ScrollPane(new PurchaseReturnPreview(purchaseReturnMaster));
+        scrollPane.setMaxHeight(10_000);
 
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
-    public void viewShow(PurchaseReturnMaster purchaseMaster) {
-        PurchaseReturnsPreviewController controller = viewFxmlLoader.getController();
-        controller.init(purchaseMaster);
-        viewDialog.showAndWait();
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void successMessage(String message) {
