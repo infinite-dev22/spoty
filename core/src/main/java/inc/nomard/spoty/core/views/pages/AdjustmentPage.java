@@ -349,12 +349,13 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     public void viewShow(AdjustmentMaster adjustmentMaster) {
-        var scrollPane = new ScrollPane(new AdjustmentPreview(adjustmentMaster));
+        var scrollPane = new ScrollPane(new AdjustmentPreview(adjustmentMaster, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, -1);
         dialog.getChildren().add(scrollPane);
-        dialog.setPadding(new Insets(5d));
         modalPane.show(dialog);
+        modalPane.setAlignment(Pos.TOP_CENTER);
+        modalPane.setPersistent(true);
     }
 }

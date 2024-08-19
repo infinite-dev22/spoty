@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 public class ModalContentHolder extends VBox {
     private String name;
-        public ModalContentHolder(int width, int height) {
+        public ModalContentHolder(double width, double height) {
             super();
             setSpacing(10);
             setMinSize(width, height);

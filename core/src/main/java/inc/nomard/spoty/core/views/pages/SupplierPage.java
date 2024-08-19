@@ -235,13 +235,14 @@ public class SupplierPage extends OutlinePage {
     }
 
     public void viewShow(Supplier supplier) {
-        var scrollPane = new ScrollPane(new SupplierPreview(supplier));
+        var scrollPane = new ScrollPane(new SupplierPreview(supplier, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, 800);
         dialog.getChildren().add(scrollPane);
         dialog.setPadding(new Insets(5d));
         modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     public void setSearchBar() {

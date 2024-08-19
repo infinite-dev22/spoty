@@ -249,7 +249,7 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     public void viewShow(PurchaseReturnMaster purchaseReturnMaster) {
-        var scrollPane = new ScrollPane(new PurchaseReturnPreview(purchaseReturnMaster));
+        var scrollPane = new ScrollPane(new PurchaseReturnPreview(purchaseReturnMaster, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, -1);

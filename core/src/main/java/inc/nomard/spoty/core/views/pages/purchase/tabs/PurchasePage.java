@@ -281,7 +281,7 @@ public class PurchasePage extends OutlinePage {
     }
 
     public void viewShow(PurchaseMaster purchaseMaster) {
-        var scrollPane = new ScrollPane(new PurchasePreview(purchaseMaster));
+        var scrollPane = new ScrollPane(new PurchasePreview(purchaseMaster, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, -1);

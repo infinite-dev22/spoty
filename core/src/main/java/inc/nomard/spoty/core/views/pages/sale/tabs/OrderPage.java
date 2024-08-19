@@ -258,7 +258,7 @@ public class OrderPage extends OutlinePage {
     }
 
     public void viewShow(SaleMaster saleMaster) {
-        var scrollPane = new ScrollPane(new SalePreview(saleMaster));
+        var scrollPane = new ScrollPane(new SalePreview(saleMaster, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, -1);

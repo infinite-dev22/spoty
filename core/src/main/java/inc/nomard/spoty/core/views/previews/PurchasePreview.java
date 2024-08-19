@@ -1,9 +1,12 @@
 package inc.nomard.spoty.core.views.previews;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import inc.nomard.spoty.utils.navigation.*;
+import inc.nomard.spoty.utils.navigation.Spacer;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
@@ -14,6 +17,8 @@ import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.util.converter.*;
 import lombok.extern.java.*;
+import org.kordamp.ikonli.fontawesome5.*;
+import org.kordamp.ikonli.javafx.*;
 
 @Log
 public class PurchasePreview extends BorderPane {
@@ -31,8 +36,10 @@ public class PurchasePreview extends BorderPane {
     private static final DoubleProperty paidAmountProperty = new SimpleDoubleProperty();
     private static final StringProperty noteProperty = new SimpleStringProperty();
     private static final StringProperty servedByProperty = new SimpleStringProperty();
+    private final ModalPane modalPane;
 
-    public PurchasePreview(PurchaseMaster purchase) {
+    public PurchasePreview(PurchaseMaster purchase, ModalPane modalPane) {
+        this.modalPane = modalPane;
         initUI();
         initData(purchase);
     }
@@ -42,6 +49,7 @@ public class PurchasePreview extends BorderPane {
     }
 
     public void initUI() {
+        this.setTop(buildTop());
         this.setCenter(assembleBody());
         this.setPadding(new Insets(10d));
         this.setMaxWidth(1000d);
@@ -253,5 +261,25 @@ public class PurchasePreview extends BorderPane {
         vbox.setPadding(new Insets(20d, 10d, 20d, 10d));
         vbox.setAlignment(Pos.CENTER_RIGHT);
         return vbox;
+    }
+
+    private FontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
+        var icon = new FontIcon(FontAwesomeSolid.CIRCLE);
+        icon.setOnMouseClicked(event -> onAction.run());
+        icon.getStyleClass().addAll(styleClass, Styles.DANGER);
+        return icon;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox(buildFontIcon(this::dispose, "close-icon"));
+        hbox.setMaxHeight(20d);
+        hbox.setMinHeight(20d);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
+    }
+
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
     }
 }

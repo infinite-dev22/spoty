@@ -256,9 +256,10 @@ public class QuotationPage extends OutlinePage {
 
     public void viewShow(QuotationMaster quotationMaster) {
         var dialog = new ModalContentHolder(710, -1);
-        dialog.getChildren().add(new QuotationPreview(quotationMaster));
+        dialog.getChildren().add(new QuotationPreview(quotationMaster, modalPane));
         dialog.setPadding(new Insets(5d));
         modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void successMessage(String message) {

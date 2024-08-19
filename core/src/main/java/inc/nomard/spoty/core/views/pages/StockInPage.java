@@ -220,9 +220,10 @@ public class StockInPage extends OutlinePage {
 
     public void viewShow(StockInMaster stockIn) {
         var dialog = new ModalContentHolder(700, 700);
-        dialog.getChildren().add(new StockInPreview(stockIn));
+        dialog.getChildren().add(new StockInPreview(stockIn, modalPane));
         dialog.setPadding(new Insets(5d));
         modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void errorMessage(String message) {

@@ -256,13 +256,14 @@ public class ProductPage extends OutlinePage {
     }
 
     public void viewShow(Product product) {
-        var scrollPane = new ScrollPane(new ProductPreview(product));
+        var scrollPane = new ScrollPane(new ProductPreview(product, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, -1);
         dialog.getChildren().add(scrollPane);
         dialog.setPadding(new Insets(5d));
         modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {

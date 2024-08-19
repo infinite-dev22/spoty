@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.views.previews;
 
+import atlantafx.base.controls.*;
 import atlantafx.base.theme.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
+import inc.nomard.spoty.utils.functional_paradigm.*;
+import inc.nomard.spoty.utils.navigation.Spacer;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
@@ -14,6 +16,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import lombok.extern.java.*;
+import org.kordamp.ikonli.fontawesome5.*;
+import org.kordamp.ikonli.javafx.*;
 
 @Log
 public class AdjustmentPreview extends BorderPane {
@@ -23,8 +27,10 @@ public class AdjustmentPreview extends BorderPane {
     private static final StringProperty adjustmentRefProperty = new SimpleStringProperty();
     private static final StringProperty noteProperty = new SimpleStringProperty();
     private static final StringProperty doneByProperty = new SimpleStringProperty();
+    private final ModalPane modalPane;
 
-    public AdjustmentPreview(AdjustmentMaster adjustment) {
+    public AdjustmentPreview(AdjustmentMaster adjustment, ModalPane modalPane) {
+        this.modalPane = modalPane;
         initUI();
         initData(adjustment);
     }
@@ -34,7 +40,8 @@ public class AdjustmentPreview extends BorderPane {
     }
 
     public void initUI() {
-        this.setCenter(assembleBody());
+        this.setTop(buildTop());
+        this.setCenter(assembleCenter());
         this.setPadding(new Insets(10d));
         this.setMaxWidth(1000d);
         this.setPrefWidth(700d);
@@ -164,7 +171,7 @@ public class AdjustmentPreview extends BorderPane {
         return new HBox(buildSpacedTitledText("Done By", doneByProperty));
     }
 
-    private VBox assembleBody() {
+    private VBox assembleCenter() {
         var vbox = new VBox(10d,
                 buildHeader(),
                 buildReference(),
@@ -178,9 +185,28 @@ public class AdjustmentPreview extends BorderPane {
         vbox.setMinHeight(600d);
         vbox.setMaxWidth(1000d);
         vbox.setPrefWidth(700d);
-        vbox.setMinWidth(500d);
-        vbox.setPadding(new Insets(20d, 10d, 20d, 10d));
+        vbox.setMinWidth(400d);
         vbox.setAlignment(Pos.CENTER_RIGHT);
         return vbox;
+    }
+
+    private FontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
+        var icon = new FontIcon(FontAwesomeSolid.CIRCLE);
+        icon.setOnMouseClicked(event -> onAction.run());
+        icon.getStyleClass().addAll(styleClass, Styles.DANGER);
+        return icon;
+    }
+
+    private HBox buildTop() {
+        var hbox = new HBox(buildFontIcon(this::dispose, "close-icon"));
+        hbox.setMaxHeight(20d);
+        hbox.setMinHeight(20d);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
+    }
+
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
     }
 }

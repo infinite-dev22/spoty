@@ -235,13 +235,14 @@ public class CustomerPage extends OutlinePage {
     }
 
     public void viewShow(Customer customer) {
-        var scrollPane = new ScrollPane(new CustomerPreview(customer));
+        var scrollPane = new ScrollPane(new CustomerPreview(customer, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, 800);
         dialog.getChildren().add(scrollPane);
         dialog.setPadding(new Insets(5d));
         modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     public void setSearchBar() {

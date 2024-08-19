@@ -238,7 +238,7 @@ public class SaleReturnPage extends OutlinePage {
     }
 
     public void viewShow(SaleReturnMaster saleReturnMaster) {
-        var scrollPane = new ScrollPane(new SaleReturnPreview(saleReturnMaster));
+        var scrollPane = new ScrollPane(new SaleReturnPreview(saleReturnMaster, modalPane));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, -1);
