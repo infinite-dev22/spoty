@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -14,33 +13,28 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.event.*;
-import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import javafx.util.*;
 import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
 public class ProductPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<Product> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
-    private MFXStageDialog viewDialog;
-    private FXMLLoader viewFxmlLoader;
     private TableColumn<Product, String> productName;
     private TableColumn<Product, Product> productCategory;
     private TableColumn<Product, Product> productBrand;
@@ -55,15 +49,17 @@ public class ProductPage extends OutlinePage {
     private TableColumn<Product, Product> updatedAt;
 
     public ProductPage() {
-        try {
-            productViewDialogPane();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -155,20 +151,6 @@ public class ProductPage extends OutlinePage {
         return centerHolder;
     }
 
-    private void productViewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/ProductPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new ProductPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
     private void setupTable() {
         productName = new TableColumn<>("Name");
         productCategory = new TableColumn<>("Category");
@@ -247,7 +229,7 @@ public class ProductPage extends OutlinePage {
         // View
         view.setOnAction(event -> {
             try {
-                productViewShow(obj.getItem());
+                viewShow(obj.getItem());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -273,10 +255,14 @@ public class ProductPage extends OutlinePage {
         createBtn.setOnAction(event -> SpotyDialog.createDialog(new ProductForm(), this).showAndWait());
     }
 
-    public void productViewShow(Product product) {
-        ProductPreviewController controller = viewFxmlLoader.getController();
-        controller.init(product);
-        viewDialog.showAndWait();
+    public void viewShow(Product product) {
+        var scrollPane = new ScrollPane(new ProductPreview(product));
+        scrollPane.setMaxHeight(10_000);
+
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void onSuccess() {

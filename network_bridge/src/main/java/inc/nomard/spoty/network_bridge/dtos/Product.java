@@ -26,6 +26,7 @@ public class Product {
     private long stockAlert;
     private String serialNumber;
     private String image;
+    private String description;
     private User createdBy;
     private LocalDateTime createdAt;
     private User updatedBy;

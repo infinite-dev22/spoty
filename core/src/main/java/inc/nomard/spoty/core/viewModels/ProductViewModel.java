@@ -337,6 +337,7 @@ public class ProductViewModel {
                 .stockAlert(getStockAlert())
                 .serialNumber(getSerialNumber())
                 .image(getImage())
+                .description(getDescription())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.post(product, getImageFile());
         responseFuture.thenAccept(response -> {
