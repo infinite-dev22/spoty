@@ -15,7 +15,6 @@ import java.net.http.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
 import java.time.*;
-
 import java.util.*;
 import java.util.concurrent.*;
 import lombok.*;
@@ -35,6 +34,7 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
+
     @Override
     public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
         if (pageNo == null) {
@@ -108,7 +108,6 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
     }
 
     @Override
-    @SneakyThrows
     public CompletableFuture<HttpResponse<String>> post(Object object, File imageFile) {
         /*
          * Create a Multipart request body with MultipartEntityBuilder.
@@ -117,37 +116,41 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
                 .addPart("product", new StringBody(gson.toJson(object), ContentType.APPLICATION_JSON))
                 .addBinaryBody("file", imageFile)
                 .build();
-        /*
-         * Use pipeline streams to write the encoded data directly to the network
-         * instead of caching it in memory. Because Multipart request bodies contain
-         * files, they can cause memory overflows if cached in memory.
-         */
-        Pipe pipe = Pipe.open();
-        /* Pipeline streams must be used in a multi-threaded environment. Using one
-         * thread for simultaneous reads and writes can lead to deadlocks.
-         */
-        new Thread(() -> {
-            try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
-                // Write the encoded data to the pipeline.
-                httpEntity.writeTo(outputStream);
-            } catch (IOException e) {
-                SpotyLogger.writeToFile(e, ProductsRepositoryImpl.class);
-            }
 
-        }).start();
+        try {
+            /*
+             * Use pipeline streams to write the encoded data directly to the network
+             * instead of caching it in memory. Because Multipart request bodies contain
+             * files, they can cause memory overflows if cached in memory.
+             */
+            var pipe = Pipe.open();
+            /* Pipeline streams must be used in a multi-threaded environment. Using one
+             * thread for simultaneous reads and writes can lead to deadlocks.
+             */
+            new Thread(() -> {
+                try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
+                    // Write the encoded data to the pipeline.
+                    httpEntity.writeTo(outputStream);
+                } catch (IOException e) {
+                    SpotyLogger.writeToFile(e, ProductsRepositoryImpl.class);
+                }
 
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Products.addProduct))
-                .header("Authorization", authToken)
-                .header("Content-Type", httpEntity.getContentType().getValue())
-                .method("POST", HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source())))
-                .build();
+            }).start();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create(EndPoints.Products.addProduct))
+                    .header("Authorization", authToken)
+                    .header("Content-Type", httpEntity.getContentType().getValue())
+                    .method("POST", HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source())))
+                    .build();
+
+            return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    @SneakyThrows
     public CompletableFuture<HttpResponse<String>> put(Object object, File imageFile) {
         /*
          * Create a Multipart request body with MultipartEntityBuilder.
@@ -156,6 +159,8 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
                 .addPart("product", new StringBody(gson.toJson(object), ContentType.APPLICATION_JSON))
                 .addBinaryBody("file", imageFile)
                 .build();
+
+        try {
         /*
          * Use pipeline streams to write the encoded data directly to the network
          * instead of caching it in memory. Because Multipart request bodies contain
@@ -183,6 +188,9 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
                 .build();
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
