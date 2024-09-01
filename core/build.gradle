@@ -174,7 +174,7 @@ jlink {
         if (os.linux) {
             installerOptions += [
                     "--icon", linux_icon,
-                    "--type", linux_installer_type,
+                    "--type", deb_linux_installer_type  /*rpm_linux_installer_type*/,
                     "--linux-app-release", spoty_release,
                     "--linux-package-name", app_installer_name,
                     "--linux-deb-maintainer", app_deb_maintainer,
