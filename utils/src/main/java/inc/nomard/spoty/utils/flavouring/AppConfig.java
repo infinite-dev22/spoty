@@ -1,8 +1,10 @@
 package inc.nomard.spoty.utils.flavouring;
 
 import inc.nomard.spoty.utils.*;
+
 import java.io.*;
 import java.util.*;
+
 import lombok.extern.java.*;
 
 @Log
@@ -24,13 +26,21 @@ public class AppConfig {
         }
     }
 
-    ;
-
     public static String getAppVersion() {
         try {
             properties.load(AppConfig.class.getClassLoader().getResourceAsStream(APP_VERSION_FILE));
             String versionString = properties.getProperty("app.version");
             return "v" + versionString;
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, AppConfig.class);
+            return "";
+        }
+    }
+
+    public static String getVersionReleaseNotes() {
+        try {
+            properties.load(AppConfig.class.getClassLoader().getResourceAsStream(APP_VERSION_FILE));
+            return properties.getProperty("app.release-notes");
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, AppConfig.class);
             return "";
