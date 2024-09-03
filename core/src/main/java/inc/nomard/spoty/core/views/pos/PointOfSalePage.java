@@ -1,33 +1,45 @@
 package inc.nomard.spoty.core.views.pos;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pos.components.*;
-import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.core.viewModels.sales.SaleDetailViewModel;
+import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.pos.components.ProductCard;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.geometry.*;
-import javafx.scene.Node;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.SpotyThreader;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.feather.*;
-import org.kordamp.ikonli.javafx.*;
+import javafx.util.Duration;
+import javafx.util.StringConverter;
+import lombok.extern.java.Log;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Log
 public class PointOfSalePage extends OutlinePage {
@@ -50,8 +62,6 @@ public class PointOfSalePage extends OutlinePage {
     private ComboBox<Tax> tax;
     private MFXProgressSpinner progress;
     private Long availableProductQuantity = 0L;
-    private int currentIndex = 0;
-    private boolean loading = false;
 
 
     public PointOfSalePage() {
@@ -159,7 +169,6 @@ public class PointOfSalePage extends OutlinePage {
         productScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         configureProductScrollPane(productScrollPane);
         updateProductsGridView(productScrollPane);
-        initializeProductGrid(productScrollPane);
         setProductsGridView(productScrollPane);
         return productScrollPane;
     }
@@ -402,21 +411,15 @@ public class PointOfSalePage extends OutlinePage {
         productsGridView.setPadding(new Insets(5));
 
         productsGridView.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-            if (!loading) {
-                progress.setManaged(true);
-                progress.setVisible(true);
-                productsGridView.getChildren().clear();
-                lazyLoadProducts(productsGridView); // Reload or rearrange items based on new width
-                progress.setManaged(false);
-                progress.setVisible(false);
-            }
+            progress.setManaged(true);
+            progress.setVisible(true);
+            productsGridView.getChildren().clear();
+            loadAllProducts(productsGridView);
+            progress.setManaged(false);
+            progress.setVisible(false);
         });
 
-        // Set up the scroll listener for lazy loading
-        setupScrollListener(scrollPane, productsGridView);
-
-        // Load the first batch of products
-        lazyLoadProducts(productsGridView);
+        loadAllProducts(productsGridView);
 
         scrollPane.setContent(productsGridView);
     }
@@ -440,70 +443,6 @@ public class PointOfSalePage extends OutlinePage {
         for (Product product : ProductViewModel.getProducts()) {
             addProductToGridPane(productsGridView, product);
         }
-    }
-
-    private void lazyLoadProducts(GridPane productsGridView) {
-        // Load products starting from the currentIndex in batches
-        int startIndex = currentIndex;
-        int endIndex = Math.min(currentIndex + BATCH_SIZE, ProductViewModel.getProducts().size());
-
-        System.out.println("START: " + startIndex + "\nEND: " + endIndex + "\nSIZE: " + ProductViewModel.getProducts().size());
-
-        for (int i = startIndex; i < endIndex && i < ProductViewModel.getProducts().size(); i++) {
-            Product product = ProductViewModel.getProducts().get(i);
-            addProductToGridPane(productsGridView, product);
-        }
-
-        currentIndex = endIndex;
-    }
-
-    private void setupScrollListener(ScrollPane scrollPane, GridPane productsGridView) {
-        // Trigger lazy load based on scroll position
-        scrollPane.vvalueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.doubleValue() > 0.8 && !loading) { // 80% scrolled down
-                if (currentIndex < ProductViewModel.getProducts().size()) {
-                    loading = true;
-                    scrollPane.setDisable(true);
-                    progress.setManaged(true);
-                    progress.setVisible(true);
-                    lazyLoadProducts(productsGridView);
-                    progress.setManaged(false);
-                    progress.setVisible(false);
-                    loading = false;
-                    scrollPane.setDisable(false);
-                }
-            }
-        });
-    }
-
-    // Call this in your initialization code
-    private void initializeProductGrid(ScrollPane scrollPane) {
-        GridPane productsGridView = new GridPane();
-        productsGridView.setHgap(15);
-        productsGridView.setVgap(15);
-        productsGridView.setPadding(new Insets(5));
-        scrollPane.setContent(productsGridView);
-
-        // Load the first batch
-        lazyLoadProducts(productsGridView);
-    }
-
-    private void clearNonVisibleProducts(GridPane productsGridView, double yOffset, double viewportHeight) {
-        double lowerBound = yOffset - BUFFER_SIZE * IMAGE_SIZE;
-        double upperBound = yOffset + viewportHeight + BUFFER_SIZE * IMAGE_SIZE;
-
-        List<Node> toRemove = new ArrayList<>();
-
-        for (Node node : productsGridView.getChildren()) {
-            if (node instanceof ProductCard) {
-                double nodeY = node.getBoundsInParent().getMinY();
-                if (nodeY < lowerBound || nodeY > upperBound) {
-                    toRemove.add(node);
-                }
-            }
-        }
-
-        productsGridView.getChildren().removeAll(toRemove);
     }
 
     private void configureProductScrollPane(ScrollPane scrollPane) {

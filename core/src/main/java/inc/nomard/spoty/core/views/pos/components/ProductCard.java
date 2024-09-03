@@ -1,23 +1,29 @@
 package inc.nomard.spoty.core.views.pos.components;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.values.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.mfxcore.controls.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
-import javafx.concurrent.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.values.PreloadedData;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import io.github.palexdev.mfxcore.controls.Label;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import lombok.Getter;
+import lombok.extern.java.Log;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Log
 public class ProductCard extends VBox {
@@ -25,18 +31,11 @@ public class ProductCard extends VBox {
     private static final double ARC_SIZE = 20;
     private static final double SPACING = 10;
     private static final double LABEL_WIDTH = 150;
-    private static final Map<String, Image> IMAGE_CACHE = new ConcurrentHashMap<>();
-    private static final int MAX_CONCURRENT_TASKS = 10;
-    private static final ExecutorService imageLoaderExecutor = Executors.newFixedThreadPool(MAX_CONCURRENT_TASKS);
-    //    private final ImageView productImageHolder = new ImageView();
-    private final Rectangle productImageHolder = new Rectangle();
     @Getter
     private final Product product;
     private final Label productNameLbl;
     private final Label productPriceLbl;
     private final Label productQuantityLbl;
-    private Image productImage;
-    private boolean imageLoaded = false; // Flag to track if image is loaded
 
     public ProductCard(Product product) {
         this.product = product;
@@ -55,39 +54,16 @@ public class ProductCard extends VBox {
 
         initializeLabels();
 
-        productImageHolder.setCache(true);
-        productImageHolder.setCacheHint(CacheHint.SPEED);
-
         this.getStyleClass().add("pos-product-card");
 
         getChildren().addAll(
-                getProductImage(),
+                getProductImage(new Image(product.getImage(), IMAGE_SIZE, IMAGE_SIZE, true, true, true)),
                 labelsHolder,
                 createSpacer()
         );
 
         this.setCache(true);
         this.setCacheHint(CacheHint.SPEED);
-
-        // Set up lazy loading listener
-        this.boundsInParentProperty().addListener((obs, oldBounds, newBounds) -> {
-            if (!imageLoaded && isVisibleInParent()) {
-                // Delay loading slightly to handle rapid scrolling
-                Platform.runLater(() -> {
-                    if (!imageLoaded && isVisibleInParent()) {
-                        imageLoaded = true;
-                        loadImageAsync(product.getImage());
-                    }
-                });
-            }
-        });
-    }
-
-    private boolean isVisibleInParent() {
-        if (getParent() == null) return false;
-        var parentBounds = getParent().getBoundsInLocal();
-        var nodeBounds = getBoundsInParent();
-        return parentBounds.intersects(nodeBounds);
     }
 
     private void initializeLabels() {
@@ -105,99 +81,28 @@ public class ProductCard extends VBox {
         setSpacing(SPACING);
     }
 
-    private Rectangle getProductImage() {
-        productImage = PreloadedData.productPlaceholderImage;
-        updateProductImageHolder();
-        return productImageHolder;
-    }
+    private ImageView getProductImage(Image image) {
+        var clip = new Rectangle(IMAGE_SIZE, IMAGE_SIZE);
+        clip.setArcWidth(ARC_SIZE);
+        clip.setArcHeight(ARC_SIZE);
 
-    private void updateProductImageHolder() {
-        if (productImage != null) {
-            productImageHolder.setFill(new ImagePattern(productImage));
-            productImageHolder.setWidth(IMAGE_SIZE);
-            productImageHolder.setHeight(IMAGE_SIZE);
-            productImageHolder.setCache(true);
-            productImageHolder.setCacheHint(CacheHint.SPEED);
-            productImageHolder.setArcWidth(ARC_SIZE);
-            productImageHolder.setArcHeight(ARC_SIZE);
-            centerImage();
-        }
-    }
+        var imageView = new ImageView(PreloadedData.productPlaceholderImage);
+        imageView.setFitWidth(IMAGE_SIZE);
+        imageView.setFitHeight(IMAGE_SIZE);
+        imageView.setClip(clip);
 
-    private void centerImage() {
-        if (productImage != null) {
-            double ratioX = productImageHolder.getWidth() / productImage.getWidth();
-            double ratioY = productImageHolder.getHeight() / productImage.getHeight();
-            double reduceCoeff = Math.min(ratioX, ratioY);
-            double w = productImage.getWidth() * reduceCoeff;
-            double h = productImage.getHeight() * reduceCoeff;
-            productImageHolder.setX((productImageHolder.getWidth() - w) / 2);
-            productImageHolder.setY((productImageHolder.getHeight() - h) / 2);
-        }
+        image.progressProperty().addListener((obs, oldProgress, newProgress) -> {
+            if (newProgress.doubleValue() >= 1.0 && !image.isError()) {
+                imageView.setImage(image); // Set the loaded image
+            } else if (image.isError()) {
+                imageView.setImage(PreloadedData.imageErrorPlaceholderImage);
+            }
+        });
+
+        return imageView;
     }
 
     private Region createSpacer() {
         return new Spacer(Orientation.VERTICAL);
-    }
-
-    private void loadImageAsync(String imagePath) {
-        if (imagePath.isEmpty()) {
-            // No image URL, use placeholder
-            Platform.runLater(this::updateProductImageHolderWithPlaceholder);
-            return;
-        }
-
-        if (IMAGE_CACHE.containsKey(imagePath)) {
-            productImage = IMAGE_CACHE.get(imagePath);
-            Platform.runLater(this::updateProductImageHolder);
-            return;
-        }
-
-        Task<Image> loadImageTask = new Task<>() {
-            @Override
-            protected Image call() {
-                return loadImage(imagePath);
-            }
-        };
-
-        loadImageTask.setOnSucceeded(event -> {
-            productImage = loadImageTask.getValue();
-            if (productImage != null) {
-                IMAGE_CACHE.put(imagePath, productImage);
-                Platform.runLater(() -> {
-                    productImageHolder.setFill(new ImagePattern(productImage));
-                    centerImage();
-                });
-            } else {
-                log.warning("Image is null, using placeholder.");
-                Platform.runLater(this::updateProductImageHolderWithPlaceholder);
-            }
-        });
-
-        loadImageTask.setOnFailed(event -> {
-            log.warning("Failed to load image from URL: " + imagePath + ". " + loadImageTask.getException());
-            Platform.runLater(this::updateProductImageHolderWithPlaceholder);
-        });
-
-        imageLoaderExecutor.submit(loadImageTask);
-    }
-
-    private Image loadImage(String imagePath) {
-        try {
-            Image image = new Image(imagePath, IMAGE_SIZE, IMAGE_SIZE, true, false);
-            if (image.isError()) {
-                SpotyLogger.writeToFile(new Exception("Error loading image from URL: " + imagePath), ProductCard.class);
-                return PreloadedData.imageErrorPlaceholderImage;
-            }
-            return image;
-        } catch (Exception e) {
-            SpotyLogger.writeToFile(new Exception("Invalid image URL: " + imagePath), ProductCard.class);
-            return PreloadedData.imageErrorPlaceholderImage;
-        }
-    }
-
-    private void updateProductImageHolderWithPlaceholder() {
-        productImage = PreloadedData.noImagePlaceholderImage;
-        updateProductImageHolder();
     }
 }
