@@ -21,7 +21,7 @@ public class UpdateScheduler {
                     }
 
                     private Void onFailure(Throwable throwable) {
-                        SpotyLogger.writeToFile(throwable, AuthScreen.class);
+                        SpotyLogger.writeToFile(throwable, UpdateScheduler.class);
                         return null;
                     }
                 };
