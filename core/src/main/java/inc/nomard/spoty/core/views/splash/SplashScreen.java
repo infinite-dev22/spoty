@@ -110,6 +110,8 @@ public class SplashScreen extends BorderPane {
         ProtectedGlobals.loginSceneHeight = scene.getHeight();
 
         applyFadeTransition(root);
+
+        AppManager.setScene(scene);
     }
 
     private static void applyFadeTransition(Parent root) {
