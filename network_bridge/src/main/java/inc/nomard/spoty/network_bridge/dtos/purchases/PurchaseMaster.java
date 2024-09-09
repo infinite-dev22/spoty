@@ -22,7 +22,8 @@ public class PurchaseMaster {
     private List<PurchaseDetail> purchaseDetails;
     private Tax tax;
     private Discount discount;
-    private double amountPaid;
+    private double paidAmount;
+    private double shippingFee;
     private double total;
     private double amountDue;
     private double subTotal;

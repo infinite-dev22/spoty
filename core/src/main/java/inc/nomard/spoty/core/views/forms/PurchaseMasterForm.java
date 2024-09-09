@@ -1,39 +1,66 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.DiscountViewModel;
+import inc.nomard.spoty.core.viewModels.SupplierViewModel;
+import inc.nomard.spoty.core.viewModels.TaxViewModel;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
+import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.utils.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.time.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
+import inc.nomard.spoty.utils.AppUtils;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
+import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
+import lombok.extern.java.Log;
+
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
 public class PurchaseMasterForm extends VBox {
@@ -41,8 +68,16 @@ public class PurchaseMasterForm extends VBox {
     public CustomButton saveBtn;
     public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
+    private Label paidAmountValidationLabel;
+    private Label shippingValidationLabel;
+    private Label discountValidationLabel;
+    private Label taxValidationLabel;
     private Label dateValidationLabel;
+    private ValidatableComboBox<Discount> discount;
+    private ValidatableComboBox<Tax> tax;
     private ValidatableDatePicker date;
+    private ValidatableTextField paidAmount;
+    private ValidatableTextField shipping;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
     private ValidatableTextArea note;
@@ -56,6 +91,7 @@ public class PurchaseMasterForm extends VBox {
     }
 
     public void initializeComponentProperties() {
+        setPurchaseComboBoxes();
         bindProperties();
         configureSupplierComboBox();
         requiredValidator();
@@ -71,6 +107,8 @@ public class PurchaseMasterForm extends VBox {
                 createDatePicker(),
                 buildAddButton(),
                 buildTable(),
+                buildDeductions(),
+                buildFees(),
                 buildNote(),
                 createButtonBox());
     }
@@ -178,10 +216,84 @@ public class PurchaseMasterForm extends VBox {
         return buttonBox;
     }
 
+    // Deductions UI.
+    private HBox buildDeductions() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setSpacing(10d);
+        hbox.getChildren().addAll(buildDiscount(), buildTax());
+        return hbox;
+    }
+
+    private VBox buildDiscount() {
+        var label = new Label("Discount");
+        discount = new ValidatableComboBox<>();
+        discount.setPrefWidth(10000d);
+        discountValidationLabel = Validators.buildValidationLabel();
+        return buildFieldHolder(label, discount, discountValidationLabel);
+    }
+
+    private VBox buildTax() {
+        var label = new Label("Tax");
+        tax = new ValidatableComboBox<>();
+        tax.setPrefWidth(10000d);
+        taxValidationLabel = Validators.buildValidationLabel();
+        return buildFieldHolder(label, tax, taxValidationLabel);
+    }
+
+    private void setPurchaseComboBoxes() {
+        setupComboBox(discount, DiscountViewModel.getDiscounts(), PurchaseMasterViewModel.discountProperty(), discount -> (discount == null) ? "" : discount.getName() + " (" + discount.getPercentage() + "%)");
+        setupComboBox(tax, TaxViewModel.getTaxes(), PurchaseMasterViewModel.netTaxProperty(), tax -> (tax == null) ? "" : tax.getName() + " (" + tax.getPercentage() + "%)");
+    }
+
+    private <T> void setupComboBox(ComboBox<T> comboBox, ObservableList<T> items,
+                                   Property<T> property, Function<T, String> converter) {
+        if (property != null) {
+            comboBox.valueProperty().bindBidirectional(property);
+        }
+        if (converter != null) {
+            StringConverter<T> itemConverter = FunctionalStringConverter.to(converter);
+            comboBox.setConverter(itemConverter);
+        }
+        if (items.isEmpty()) {
+            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+        } else {
+            comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
+        }
+    }
+
+    private VBox buildShipping() {
+        var label = new Label("Shipping");
+        shipping = new ValidatableTextField();
+        shipping.setLeft(new Text("UGX"));
+        shipping.setPrefWidth(10000d);
+        shippingValidationLabel = Validators.buildValidationLabel();
+        return buildFieldHolder(label, shipping, shippingValidationLabel);
+    }
+
+    private VBox buildPaidAmount() {
+        var label = new Label("Paid Amount");
+        paidAmount = new ValidatableTextField();
+        paidAmount.setLeft(new Text("UGX"));
+        paidAmount.setPrefWidth(10000d);
+        paidAmountValidationLabel = Validators.buildValidationLabel();
+        return buildFieldHolder(label, paidAmount, paidAmountValidationLabel);
+    }
+
+    private HBox buildFees() {
+        var hbox = new HBox();
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setSpacing(10d);
+        hbox.getChildren().addAll(buildShipping(), buildPaidAmount());
+        return hbox;
+    }
+
     private void bindProperties() {
         date.valueProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
         supplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
         note.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
+        paidAmount.textProperty().bindBidirectional(PurchaseMasterViewModel.paidAmountProperty(), new NumberStringConverter());
+        shipping.textProperty().bindBidirectional(PurchaseMasterViewModel.shippingFeeProperty(), new NumberStringConverter());
     }
 
     private void configureSupplierComboBox() {
@@ -200,6 +312,10 @@ public class PurchaseMasterForm extends VBox {
     private void validateFields() {
         validateField(supplier, supplierValidationLabel);
         validateField(date, dateValidationLabel);
+        validateField(paidAmount, paidAmountValidationLabel);
+        validateField(shipping, shippingValidationLabel);
+        validateField(discount, discountValidationLabel);
+        validateField(tax, taxValidationLabel);
     }
 
     private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
@@ -213,6 +329,16 @@ public class PurchaseMasterForm extends VBox {
     }
 
     private void validateField(ValidatableDatePicker field, Label validationLabel) {
+        List<Constraint> constraints = field.validate();
+        if (!constraints.isEmpty()) {
+            validationLabel.setManaged(true);
+            validationLabel.setVisible(true);
+            validationLabel.setText(constraints.getFirst().getMessage());
+            field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+    }
+
+    private void validateField(ValidatableTextField field, Label validationLabel) {
         List<Constraint> constraints = field.validate();
         if (!constraints.isEmpty()) {
             validationLabel.setManaged(true);
@@ -247,7 +373,9 @@ public class PurchaseMasterForm extends VBox {
     }
 
     private void styleTable() {
-        tableView.setPrefSize(10000, 10000);
+        tableView.setMinSize(10000, 200);
+        tableView.setPrefSize(10000, 500);
+        tableView.setMaxSize(10000, 1000);
         tableView.setRowFactory(t -> {
             TableRow<PurchaseDetail> row = new TableRow<>();
             row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
@@ -288,6 +416,10 @@ public class PurchaseMasterForm extends VBox {
     private void requiredValidator() {
         setupValidation(supplier, "Supplier is required", supplierValidationLabel);
         setupValidation(date, "Date is required", dateValidationLabel);
+        setupValidation(paidAmount, "Paid Amount is required", paidAmountValidationLabel);
+        setupValidation(shipping, "Shipping is required", shippingValidationLabel);
+        setupValidation(discount, "Discount is required", discountValidationLabel);
+        setupValidation(tax, "Tax is required", taxValidationLabel);
     }
 
     private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
@@ -312,6 +444,23 @@ public class PurchaseMasterForm extends VBox {
                 .setSeverity(Severity.ERROR)
                 .setMessage(message)
                 .setCondition(field.valueProperty().isNotNull())
+                .get();
+
+        field.getValidator().constraint(constraint);
+        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                validationLabel.setManaged(false);
+                validationLabel.setVisible(false);
+                field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+            }
+        });
+    }
+
+    private void setupValidation(ValidatableTextField field, String message, Label validationLabel) {
+        Constraint constraint = Constraint.Builder.build()
+                .setSeverity(Severity.ERROR)
+                .setMessage(message)
+                .setCondition(field.textProperty().isNotNull())
                 .get();
 
         field.getValidator().constraint(constraint);

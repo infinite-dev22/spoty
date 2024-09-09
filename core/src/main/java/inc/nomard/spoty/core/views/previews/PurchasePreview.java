@@ -69,7 +69,7 @@ public class PurchasePreview extends BorderPane {
         discountProperty.set(Objects.nonNull(purchase.getDiscount()) ? purchase.getDiscount().getPercentage() : 0d);
         taxProperty.set(Objects.nonNull(purchase.getTax()) ? purchase.getTax().getPercentage() : 0d);
         netCostProperty.set(purchase.getTotal());
-        paidAmountProperty.set(purchase.getAmountPaid());
+        paidAmountProperty.set(purchase.getPaidAmount());
         noteProperty.set(purchase.getNotes());
         servedByProperty.set(purchase.getCreatedBy().getUserProfile().getName());
     }

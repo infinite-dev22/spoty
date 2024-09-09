@@ -1,27 +1,40 @@
 package inc.nomard.spoty.core.viewModels.purchases;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import inc.nomard.spoty.network_bridge.dtos.response.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.PurchasesRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.java.Log;
+
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.CompletableFuture;
+
+import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
 
 @Log
 public class PurchaseMasterViewModel {
@@ -50,6 +63,8 @@ public class PurchaseMasterViewModel {
     private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
+    private static final DoubleProperty paidAmount = new SimpleDoubleProperty(0d);
+    private static final DoubleProperty shippingFee = new SimpleDoubleProperty(0d);
     private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
@@ -139,6 +154,30 @@ public class PurchaseMasterViewModel {
         return note;
     }
 
+    public static Double getShippingFee() {
+        return shippingFee.get();
+    }
+
+    public static void setShippingFee(Double shippingFee) {
+        PurchaseMasterViewModel.shippingFee.set(shippingFee);
+    }
+
+    public static DoubleProperty shippingFeeProperty() {
+        return shippingFee;
+    }
+
+    public static Double getPaidAmount() {
+        return paidAmount.get();
+    }
+
+    public static void setPaidAmount(Double paidAmount) {
+        PurchaseMasterViewModel.paidAmount.set(paidAmount);
+    }
+
+    public static DoubleProperty paidAmountProperty() {
+        return paidAmount;
+    }
+
     public static ObservableList<PurchaseMaster> getPurchases() {
         return purchases.get();
     }
@@ -196,6 +235,8 @@ public class PurchaseMasterViewModel {
             setDiscount(null);
             setStatus("");
             setNote("");
+            setShippingFee(0d);
+            setPaidAmount(0d);
             PENDING_DELETES.clear();
             PurchaseDetailViewModel.getPurchaseDetails().clear();
         });
@@ -209,9 +250,10 @@ public class PurchaseMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .amountPaid(0)
-                .total(0)
-                .amountDue(0)
+                .paidAmount(getPaidAmount())
+                .shippingFee(getShippingFee())
+                .purchaseStatus(getStatus())
+                .paymentStatus("")
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
@@ -302,9 +344,10 @@ public class PurchaseMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .amountPaid(0)
-                .total(0)
-                .amountDue(0)
+                .paidAmount(getPaidAmount())
+                .shippingFee(getShippingFee())
+                .purchaseStatus(getStatus())
+                .paymentStatus("")
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {

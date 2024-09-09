@@ -368,7 +368,7 @@ public class PurchasePage extends OutlinePage {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getPaidAmount()));
             }
         });
         purchaseAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
