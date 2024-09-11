@@ -24,7 +24,6 @@ import inc.nomard.spoty.core.values.PreloadedData;
 import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.pages.AuthScreen;
-import inc.nomard.spoty.core.views.splash.SplashScreen;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
@@ -66,7 +65,7 @@ public class Main extends Application {
             sysPathCreator.join();
             startApp();
         } catch (InterruptedException e) {
-            SpotyLogger.writeToFile(e, SplashScreen.class);
+            SpotyLogger.writeToFile(e, Main.class);
         }
     }
 
@@ -77,7 +76,7 @@ public class Main extends Application {
                     try {
                         SpotyPaths.createPaths();
                     } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, SplashScreen.class);
+                        SpotyLogger.writeToFile(e, Main.class);
                     }
                 });
     }
@@ -101,7 +100,7 @@ public class Main extends Application {
                 // Initialize and show the main application scene
                 initializePrimaryStage(primaryStage, screenBounds);
             } catch (IOException e) {
-                SpotyLogger.writeToFile(e, SplashScreen.class);
+                SpotyLogger.writeToFile(e, Main.class);
             }
         });
     }

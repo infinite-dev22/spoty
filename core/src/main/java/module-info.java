@@ -27,7 +27,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.settings.app_settings;
     opens inc.nomard.spoty.core.views.settings;
     opens inc.nomard.spoty.core.views.forms;
-    opens inc.nomard.spoty.core.views.splash;
     opens inc.nomard.spoty.core.views.layout.navigation;
     opens inc.nomard.spoty.core.views.layout.message;
     opens inc.nomard.spoty.core.components.animations;
