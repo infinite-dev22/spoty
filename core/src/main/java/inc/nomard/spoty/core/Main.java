@@ -14,59 +14,172 @@
 
 package inc.nomard.spoty.core;
 
-import inc.nomard.spoty.core.auto_updater.v2.*;
-import inc.nomard.spoty.core.views.splash.*;
-import javafx.animation.*;
-import javafx.application.*;
-import javafx.concurrent.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.CupertinoDark;
+import atlantafx.base.theme.CupertinoLight;
+import fr.brouillard.oss.cssfx.CSSFX;
+import inc.nomard.spoty.core.auto_updater.v2.AutoUpdater;
+import inc.nomard.spoty.core.auto_updater.v2.UpdateScheduler;
+import inc.nomard.spoty.core.startup.SpotyPaths;
+import inc.nomard.spoty.core.values.PreloadedData;
+import inc.nomard.spoty.core.values.strings.Labels;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.pages.AuthScreen;
+import inc.nomard.spoty.core.views.splash.SplashScreen;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.SpotyThreader;
+import io.github.palexdev.materialfx.theming.JavaFXThemes;
+import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
+import io.github.palexdev.materialfx.theming.UserAgentBuilder;
+import io.github.palexdev.mfxcomponents.theming.MaterialThemes;
+import javafx.animation.FadeTransition;
+import javafx.application.Application;
+import javafx.application.ColorScheme;
+import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
+import lombok.extern.java.Log;
+
+import java.io.IOException;
 
 @Log
 public class Main extends Application {
-
+    private static final String lightThemeCSS = SpotyCoreResourceLoader.load("styles/theming/light-theme.css");
+    private static final String darkThemeCSS = SpotyCoreResourceLoader.load("styles/theming/dark-theme.css");
     public static Stage primaryStage = null;
 
     public static void main(String... args) {
-        System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
         AutoUpdater.applyUpdateIfAvailable();
         UpdateScheduler.startUpdateChecker();
         Application.launch(Main.class, args);
     }
 
-    @Override
-    public void init() {
-        delaySplashScreen();
-        SplashScreen.checkFunctions();
-    }
-
-    private void delaySplashScreen() {
-        // Notify pre-loader that application initialization is about to start
-        notifyPreloader(new Preloader.ProgressNotification(0));
-
-        // Simulate some long startup process
-        var task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                Thread.sleep(2000); // Delay for 3 seconds
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                // Notify pre-loader that initialization is complete
-                notifyPreloader(new Preloader.StateChangeNotification(
-                        Preloader.StateChangeNotification.Type.BEFORE_START));
-            }
-        };
-        new Thread(task).start();
+    public static void checkFunctions() {
+        var sysPathCreator = createSysPathThread();
 
         try {
-            task.get(); // Wait for the task to complete
-        } catch (Exception e) {
-            e.printStackTrace();
+            sysPathCreator.join();
+            startApp();
+        } catch (InterruptedException e) {
+            SpotyLogger.writeToFile(e, SplashScreen.class);
         }
+    }
+
+    private static Thread createSysPathThread() {
+        return SpotyThreader.singleThreadCreator(
+                "paths-creator",
+                () -> {
+                    try {
+                        SpotyPaths.createPaths();
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, SplashScreen.class);
+                    }
+                });
+    }
+
+    private static void startApp() {
+        UserAgentBuilder.builder()
+                .themes(JavaFXThemes.MODENA)
+                .themes(MaterialFXStylesheets.forAssemble(true))
+                .setDeploy(true)
+                .setResolveAssets(true)
+                .build()
+                .setGlobal();
+
+        Platform.runLater(() -> {
+            var screenBounds = Screen.getPrimary().getVisualBounds();
+            try {
+                CSSFX.start();
+                var primaryStage = new Stage();
+                AppManager.setPrimaryStage(primaryStage);
+
+                // Initialize and show the main application scene
+                initializePrimaryStage(primaryStage, screenBounds);
+            } catch (IOException e) {
+                SpotyLogger.writeToFile(e, SplashScreen.class);
+            }
+        });
+    }
+
+    private static void initializePrimaryStage(Stage primaryStage, Rectangle2D screenBounds) throws IOException {
+        var root = new AuthScreen(primaryStage);
+        var scene = new Scene(root);
+        scene.getStylesheets().add(lightThemeCSS);
+        getSystemTheme(scene);
+        MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+        scene.setFill(null);
+
+        primaryStage.setScene(scene);
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        primaryStage.setTitle(Labels.APP_NAME);
+        primaryStage.getIcons().addAll(
+                PreloadedData.icon16,
+                PreloadedData.icon32,
+                PreloadedData.icon64,
+                PreloadedData.icon128,
+                PreloadedData.icon256,
+                PreloadedData.icon512
+        );
+        primaryStage.show();
+        primaryStage.setX((screenBounds.getWidth() - primaryStage.getWidth()) / 2);
+        primaryStage.setY((screenBounds.getHeight() - primaryStage.getHeight()) / 2);
+
+        ProtectedGlobals.loginSceneWidth = scene.getWidth();
+        ProtectedGlobals.loginSceneHeight = scene.getHeight();
+
+        applyFadeTransition(root);
+
+        AppManager.setScene(scene);
+    }
+
+    private static void applyFadeTransition(Parent root) {
+        var fadeIn = new FadeTransition(Duration.seconds(1), root);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+    }
+
+    private static void getSystemTheme(Scene scene) {
+        // Apply platform color scheme preferences
+        Platform.Preferences preferences = Platform.getPreferences();
+        if (preferences == null) {
+            return;
+        }
+
+        ColorScheme colorScheme = preferences.getColorScheme();
+        updateTheme(colorScheme, scene);
+
+        // Add a listener to update on color scheme changes
+        preferences.colorSchemeProperty().addListener((observable, oldValue, newValue) -> updateTheme(newValue, scene));
+    }
+
+    // Instantiate the css files and hold them in a variable which you add to or remove from style sheets.
+    // the styles are held in memory and easily referenced.
+    private static void updateTheme(ColorScheme colorScheme, Scene scene) {
+        if (colorScheme == ColorScheme.DARK) {
+            // Remove light stylesheet, add dark stylesheet
+//            scene.getStylesheets().remove(lightThemeCSS);
+            scene.getStylesheets().set(0, darkThemeCSS);
+            Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+            MaterialThemes.PURPLE_DARK.applyOn(scene);
+        } else {
+            // Remove dark stylesheet, add light stylesheet
+//            scene.getStylesheets().remove(darkThemeCSS);
+            scene.getStylesheets().set(0, lightThemeCSS);
+            Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
+            MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+        }
+    }
+
+    @Override
+    public void init() {
+        PreloadedData.preloadImages();
+        checkFunctions();
     }
 
     @Override
