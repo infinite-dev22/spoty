@@ -5,7 +5,6 @@ plugins {
     id "org.openjfx.javafxplugin" version "$jfx_plugin"
     id "org.beryx.jlink" version "$jlink_plugin"
     id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
-//    maven { url "https://jitpack.io" }
     id "io.freefair.lombok" version "$lombok_plugin"
     id "com.github.mrcjkb.module-finder" version "$module_finder_plugin"
 }
@@ -27,46 +26,47 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-//graalvmNative {
-//    toolchainDetection = true
-//    agent {
-//        defaultMode = "standard"
-//        enabled = true
-//        modes {
-//            standard {
-//            }
-//        }
-//        callerFilterFiles.from("filter.json")
-//        accessFilterFiles.from("filter.json")
-//        builtinCallerFilter = true
-//        builtinHeuristicFilter = true
-//        enableExperimentalPredefinedClasses = false
-//        enableExperimentalUnsafeAllocationTracing = false
-//        trackReflectionMetadata = true
-//        metadataCopy {
-//            inputTaskNames.add("test")
-//            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
-//            mergeWithExisting = true
-//        }
-//    }
-//    binaries {
-//        main {
-//            imageName = "OpenSale-ERP"
-//            mainClass = "inc.nomard.spoty.core.Main"
-//            debug = true
-//            verbose = true
-//            fallback = false
-//            sharedLibrary = false
-//            quickBuild = false
-//            richOutput = false
-//            buildArgs.add("-O4")
-//        }
-//    }
-//    binaries.configureEach {
-//        buildArgs.add("--verbose")
-//        resources.autodetect()
-//    }
-//}
+graalvmNative {
+    binaries.all {
+        resources.autodetect()
+    }
+    toolchainDetection = true
+    agent {
+        defaultMode = "standard"
+        enabled = true
+        modes {
+            standard {
+            }
+        }
+        builtinCallerFilter = true
+        builtinHeuristicFilter = true
+        enableExperimentalPredefinedClasses = false
+        enableExperimentalUnsafeAllocationTracing = false
+        trackReflectionMetadata = true
+        metadataCopy {
+            inputTaskNames.add("test")
+            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
+            mergeWithExisting = true
+        }
+    }
+    binaries {
+        main {
+            imageName = "OpenSale-ERP"
+            mainClass = "inc.nomard.spoty.core.Main"
+            debug = true
+            verbose = true
+            fallback = false
+            sharedLibrary = false
+            quickBuild = false
+            richOutput = false
+            buildArgs.add("-O4")
+        }
+    }
+    binaries.configureEach {
+        buildArgs.add("--verbose")
+        resources.autodetect()
+    }
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
@@ -216,7 +216,6 @@ jlink {
 }
 
 dependencies {
-    // implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.9.1'
     implementation project(":network_bridge")
     implementation project(":utils")
     implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"
