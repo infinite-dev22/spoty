@@ -2,11 +2,15 @@ package inc.nomard.spoty.core.views.layout.navigation;
 
 import inc.nomard.spoty.core.views.dashboard.DashboardPage;
 import inc.nomard.spoty.core.views.pages.*;
+import inc.nomard.spoty.core.views.pages.leave.LeaveMainPage;
 import inc.nomard.spoty.core.views.pages.purchase.PurchaseMainPage;
 import inc.nomard.spoty.core.views.pages.sale.SalesMainPage;
 import inc.nomard.spoty.core.views.pages.sale.tabs.SaleReturnPage;
 import inc.nomard.spoty.core.views.pos.PointOfSalePage;
-import inc.nomard.spoty.core.views.settings.*;
+import inc.nomard.spoty.core.views.settings.AppSettingPage;
+import inc.nomard.spoty.core.views.settings.BranchPage;
+import inc.nomard.spoty.core.views.settings.CompanyDetailPage;
+import inc.nomard.spoty.core.views.settings.RolePage;
 import inc.nomard.spoty.core.views.util.Page;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.flavouring.AppFlavor;
@@ -62,10 +66,6 @@ public class Navigation {
         map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", DesignationPage.class));
         map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", EmployeePage.class));
         map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", EmploymentStatusPage.class));
-        // Leave
-        map.put("LEAVE", NavTree.NavTreeItem.page("Leave", LeaveRequestPage.class));
-        map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", CalendarPage.class));       // PayRoll
-        map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", PaySlipPage.class));
         // Purchases
         map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", PurchaseMainPage.class));
         // SETTINGS
@@ -144,18 +144,9 @@ public class Navigation {
                         NAV_TREE.get("EMPLOYMENT_STATUS"),
                         NAV_TREE.get("EMPLOYEES"));
 
-        var leave = NavTree.NavTreeItem.group("Leave");
-        leave
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("LEAVE"),
-                        NAV_TREE.get("CALENDAR"));
+        var leave = NavTree.NavTreeItem.page("Leave", LeaveMainPage.class);
 
-        var payRoll = NavTree.NavTreeItem.group("PayRoll");
-        payRoll
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("PAY_SLIPS"));
+        var payRoll = NavTree.NavTreeItem.page("PayRoll", PaySlipPage.class);
 
         var humanResource = NavTree.NavTreeItem.group("Human Resource", FontAwesomeSolid.USER_TIE);
         if (flavor == AppFlavor.TRACTION) {

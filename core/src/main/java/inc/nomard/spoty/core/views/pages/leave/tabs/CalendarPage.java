@@ -1,14 +1,16 @@
-package inc.nomard.spoty.core.views.pages;
+package inc.nomard.spoty.core.views.pages.leave.tabs;
 
-import com.calendarfx.model.*;
-import com.calendarfx.model.Calendar.*;
-import com.calendarfx.view.*;
-import inc.nomard.spoty.core.views.util.*;
-import java.time.*;
-import javafx.application.*;
-import javafx.fxml.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import com.calendarfx.model.Calendar;
+import com.calendarfx.model.CalendarSource;
+import com.calendarfx.view.CalendarView;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
+import lombok.extern.java.Log;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -33,8 +35,8 @@ public class CalendarPage extends OutlinePage {
         var birthdays = new Calendar("Birthdays"); // (2)
         var holidays = new Calendar("Holidays");
 
-        birthdays.setStyle(Style.STYLE1); // (3)
-        holidays.setStyle(Style.STYLE2);
+        birthdays.setStyle(Calendar.Style.STYLE1); // (3)
+        holidays.setStyle(Calendar.Style.STYLE2);
 
         CalendarSource myCalendarSource = new CalendarSource("My Calendars"); // (4)
         myCalendarSource.getCalendars().addAll(birthdays, holidays);
