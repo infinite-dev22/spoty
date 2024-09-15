@@ -63,11 +63,9 @@ public class Navigation {
         map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", EmployeePage.class));
         map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", EmploymentStatusPage.class));
         // Leave
-        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Requests", LeaveRequestPage.class));
+        map.put("LEAVE", NavTree.NavTreeItem.page("Leave", LeaveRequestPage.class));
         map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", CalendarPage.class));       // PayRoll
         map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", PaySlipPage.class));
-        map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", BeneficiaryBadgePage.class));
-        map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", BeneficiaryTypePage.class));
         // Purchases
         map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", PurchaseMainPage.class));
         // SETTINGS
@@ -150,16 +148,14 @@ public class Navigation {
         leave
                 .getChildren()
                 .setAll(
-                        NAV_TREE.get("LEAVE_REQUEST"),
+                        NAV_TREE.get("LEAVE"),
                         NAV_TREE.get("CALENDAR"));
 
         var payRoll = NavTree.NavTreeItem.group("PayRoll");
         payRoll
                 .getChildren()
                 .setAll(
-                        NAV_TREE.get("PAY_SLIPS"),
-                        NAV_TREE.get("BENEFICIARY_TYPE"),
-                        NAV_TREE.get("BENEFICIARY_BADGE"));
+                        NAV_TREE.get("PAY_SLIPS"));
 
         var humanResource = NavTree.NavTreeItem.group("Human Resource", FontAwesomeSolid.USER_TIE);
         if (flavor == AppFlavor.TRACTION) {
