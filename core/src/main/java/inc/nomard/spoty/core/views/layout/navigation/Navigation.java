@@ -1,20 +1,27 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
-import inc.nomard.spoty.core.views.dashboard.*;
-import static inc.nomard.spoty.core.views.layout.navigation.Navigation.SubLayer.*;
+import inc.nomard.spoty.core.views.dashboard.DashboardPage;
 import inc.nomard.spoty.core.views.pages.*;
-import inc.nomard.spoty.core.views.pages.purchase.*;
-import inc.nomard.spoty.core.views.pages.sale.*;
-import inc.nomard.spoty.core.views.pages.sale.tabs.*;
-import inc.nomard.spoty.core.views.pos.*;
+import inc.nomard.spoty.core.views.pages.purchase.PurchaseMainPage;
+import inc.nomard.spoty.core.views.pages.sale.SalesMainPage;
+import inc.nomard.spoty.core.views.pages.sale.tabs.SaleReturnPage;
+import inc.nomard.spoty.core.views.pos.PointOfSalePage;
 import inc.nomard.spoty.core.views.settings.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.utils.flavouring.*;
-import java.util.*;
-import javafx.beans.property.*;
-import javafx.scene.control.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.fontawesome5.*;
+import inc.nomard.spoty.core.views.util.Page;
+import inc.nomard.spoty.utils.flavouring.AppConfig;
+import inc.nomard.spoty.utils.flavouring.AppFlavor;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.scene.control.TreeView;
+import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static inc.nomard.spoty.core.views.layout.navigation.Navigation.SubLayer.PAGE;
 
 @Log
 public class Navigation {
@@ -67,7 +74,6 @@ public class Navigation {
         map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", AppSettingPage.class));
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", BranchPage.class));
         map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", CompanyDetailPage.class));
-        map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", CurrencyPage.class));
         map.put("ROLES", NavTree.NavTreeItem.page("Roles", RolePage.class));
 
         return map;
@@ -103,23 +109,12 @@ public class Navigation {
         var dashboard =
                 NavTree.NavTreeItem.mainPage("Dashboard", FontAwesomeSolid.CHART_BAR, DashboardPage.class);
 
-        NavTree.NavTreeItem sale;
-        if (flavor == AppFlavor.TRACTION) {
-            sale = NavTree.NavTreeItem.group("Sale", FontAwesomeSolid.BALANCE_SCALE);
-            sale
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("POINT_OF_SALE"),
-                            NAV_TREE.get("ORDERS"),
-                            NAV_TREE.get("SALE_RETURN"));
-        } else {
-            sale = NavTree.NavTreeItem.group("Sale", FontAwesomeSolid.BALANCE_SCALE);
-            sale
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("POINT_OF_SALE"),
-                            NAV_TREE.get("ORDERS"));
-        }
+        var sale = NavTree.NavTreeItem.group("Sale", FontAwesomeSolid.BALANCE_SCALE);
+        sale
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("POINT_OF_SALE"),
+                        NAV_TREE.get("ORDERS"));
 
         var people = NavTree.NavTreeItem.group("People", FontAwesomeSolid.USERS);
         people
@@ -129,31 +124,18 @@ public class Navigation {
                         NAV_TREE.get("CUSTOMERS"));
 
         var inventory = NavTree.NavTreeItem.group("Inventory", FontAwesomeSolid.CUBES);
-        if (flavor == AppFlavor.TRACTION || flavor == AppFlavor.DEV) {
-            inventory
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("CATEGORY"),
-                            NAV_TREE.get("BRAND"),
-                            NAV_TREE.get("UNIT"),
-                            NAV_TREE.get("PRODUCTS"),
-                            NAV_TREE.get("REQUISITIONS"),
-                            NAV_TREE.get("PURCHASES"),
-                            NAV_TREE.get("STOCK_INS"),
-                            NAV_TREE.get("TRANSFERS"),
-                            NAV_TREE.get("ADJUSTMENTS"));
-        } else {
-            inventory
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("CATEGORY"),
-                            NAV_TREE.get("BRAND"),
-                            NAV_TREE.get("UNIT"),
-                            NAV_TREE.get("PRODUCTS"),
-                            NAV_TREE.get("PURCHASES"),
-                            NAV_TREE.get("STOCK_INS"),
-                            NAV_TREE.get("ADJUSTMENTS"));
-        }
+        inventory
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("CATEGORY"),
+                        NAV_TREE.get("BRAND"),
+                        NAV_TREE.get("UNIT"),
+                        NAV_TREE.get("PRODUCTS"),
+                        NAV_TREE.get("REQUISITIONS"),
+                        NAV_TREE.get("PURCHASES"),
+                        NAV_TREE.get("STOCK_INS"),
+                        NAV_TREE.get("TRANSFERS"),
+                        NAV_TREE.get("ADJUSTMENTS"));
 
         var humanResourceManagement = NavTree.NavTreeItem.group("HRM");
         humanResourceManagement
@@ -216,7 +198,6 @@ public class Navigation {
                     .getChildren()
                     .setAll(
                             NAV_TREE.get("BRANCHES"),
-                            NAV_TREE.get("CURRENCIES"),
                             NAV_TREE.get("APP_SETTINGS"),
                             NAV_TREE.get("COMPANY"),
                             NAV_TREE.get("ROLES"));
@@ -225,52 +206,22 @@ public class Navigation {
                     .getChildren()
                     .setAll(
                             NAV_TREE.get("APP_SETTINGS"),
-                            NAV_TREE.get("COMPANY"));
+                            NAV_TREE.get("COMPANY"),
+                            NAV_TREE.get("ROLES"));
         }
 
         var root = NavTree.NavTreeItem.root();
-        if (flavor == AppFlavor.PROD) {
-            root.getChildren()
-                    .addAll(
-                            dashboard,
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale,
-                            accounts);
-        } else if (flavor == AppFlavor.DEV) {
-            root.getChildren()
-                    .addAll(
-                            dashboard,
-                            humanResource,
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale,
-                            accounts,
-                            settings);
-        } else if (flavor == AppFlavor.TRACTION) {
-            root.getChildren()
-                    .addAll(dashboard,
-                            humanResource,
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale,
-                            accounts,
-                            settings);
-        } else if (flavor == AppFlavor.MVP) {
-            root.getChildren()
-                    .addAll(
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale);
-        }
+        root.getChildren()
+                .addAll(
+                        dashboard,
+                        humanResource,
+                        people,
+                        deductions,
+                        inventory,
+                        quotation,
+                        sale,
+                        accounts,
+                        settings);
         return root;
     }
 

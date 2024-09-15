@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.viewModels.settings.system_settings;
 
 import com.google.gson.*;
-import inc.nomard.spoty.network_bridge.dtos.Currency;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;

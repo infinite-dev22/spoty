@@ -70,17 +70,6 @@ public class EndPoints {
         public static final String deleteBrands = brandsUrl + "/delete/multiple";
     }
 
-    public static final class Currencies {
-        public static final String currenciesUrl = apiUrl + "/currencies";
-        public static final String allCurrencies = currenciesUrl + "/all";
-        public static final String currencyById = currenciesUrl + "/single";
-        public static final String searchCurrencies = currenciesUrl + "/search";
-        public static final String addCurrency = currenciesUrl + "/add";
-        public static final String updateCurrency = currenciesUrl + "/update";
-        public static final String deleteCurrency = currenciesUrl + "/delete/single";
-        public static final String deleteCurrencies = currenciesUrl + "/delete/multiple";
-    }
-
     public static final class Customers {
         public static final String customersUrl = apiUrl + "/customers";
         public static final String allCustomers = customersUrl + "/all";

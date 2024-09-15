@@ -1,34 +1,44 @@
 package inc.nomard.spoty.core.views.settings;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.settings.system_settings.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
+import inc.nomard.spoty.core.viewModels.settings.system_settings.CompanyDetailsViewModel;
+import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
+import inc.nomard.spoty.core.views.components.label_components.controls.LabeledTextField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.util.NodeUtils;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.Currency;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.utils.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import java.util.function.*;
-import javafx.collections.*;
-import javafx.geometry.*;
-import javafx.scene.*;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.utils.UIUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.mfxresources.fonts.IconsProviders;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.input.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import lombok.extern.java.Log;
+
+import java.util.Currency;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Log
 public class CompanyDetailPage extends OutlinePage {
@@ -488,7 +498,7 @@ public class CompanyDetailPage extends OutlinePage {
     private void setupComboBoxes() {
         // Combo box Converter.
         StringConverter<Currency> currencyConverter =
-                FunctionalStringConverter.to(currency -> (currency == null) ? "" : currency.getName());
+                FunctionalStringConverter.to(currency -> (currency == null) ? "" : currency.getDisplayName() + " (" + currency.getSymbol() + ")");
 
         // Combo box Filter Function.
         Function<String, Predicate<Currency>> currencyFilterFunction =

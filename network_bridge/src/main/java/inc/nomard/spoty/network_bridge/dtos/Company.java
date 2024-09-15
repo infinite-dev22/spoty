@@ -3,6 +3,8 @@ package inc.nomard.spoty.network_bridge.dtos;
 import lombok.*;
 import lombok.extern.java.*;
 
+import java.util.Currency;
+
 @Getter
 @Setter
 @AllArgsConstructor
