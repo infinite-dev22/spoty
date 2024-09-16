@@ -30,9 +30,9 @@ public class PurchaseMaster {
     private String purchaseStatus;
     private String paymentStatus;
     private String notes;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getSupplierName() {

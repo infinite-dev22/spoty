@@ -15,8 +15,8 @@ public class Discount {
     private Long id;
     private String name;
     private double percentage;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

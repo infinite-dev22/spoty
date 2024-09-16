@@ -14,7 +14,7 @@ import lombok.extern.java.*;
 @Log
 public class LeaveStatus {
     private Long id;
-    private User employee;
+    private Employee employee;
     private Designation designation;
     private String description;
     private LocalDate startDate;
@@ -23,9 +23,9 @@ public class LeaveStatus {
     private String leaveType;
     private String attachment;
     private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getLocaleEndDate() {

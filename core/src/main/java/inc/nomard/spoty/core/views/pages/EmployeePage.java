@@ -28,18 +28,18 @@ import lombok.extern.java.*;
 @Log
 public class EmployeePage extends OutlinePage {
     private TextField searchBar;
-    private TableView<User> masterTable;
+    private TableView<Employee> masterTable;
     private MFXProgressSpinner progress;
     private Button createBtn;
-    private TableColumn<User, User> employeeName;
-    private TableColumn<User, User> phone;
-    private TableColumn<User, String> email;
-    private TableColumn<User, User> employmentStatus;
-    private TableColumn<User, User> department;
-    private TableColumn<User, User> status;
-    private TableColumn<User, String> workShift;
-    private TableColumn<User, String> salary;
-    private TableColumn<User, User> role;
+    private TableColumn<Employee, Employee> employeeName;
+    private TableColumn<Employee, Employee> phone;
+    private TableColumn<Employee, String> email;
+    private TableColumn<Employee, Employee> employmentStatus;
+    private TableColumn<Employee, Employee> department;
+    private TableColumn<Employee, Employee> status;
+    private TableColumn<Employee, String> workShift;
+    private TableColumn<Employee, String> salary;
+    private TableColumn<Employee, Employee> role;
 
     public EmployeePage() {
         super();
@@ -175,7 +175,7 @@ public class EmployeePage extends OutlinePage {
         masterTable.getColumns().addAll(columnList);
         styleUserTable();
 
-        masterTable.setItems(UserViewModel.getUsers());
+        masterTable.setItems(UserViewModel.getEMPLOYEES());
     }
 
     private void styleUserTable() {
@@ -183,10 +183,10 @@ public class EmployeePage extends OutlinePage {
 
         masterTable.setRowFactory(
                 t -> {
-                    TableRow<User> row = new TableRow<>();
+                    TableRow<Employee> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((TableRow<User>) event.getSource())
+                                showContextMenu((TableRow<Employee>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -198,7 +198,7 @@ public class EmployeePage extends OutlinePage {
                 });
     }
 
-    private ContextMenu showContextMenu(TableRow<User> obj) {
+    private ContextMenu showContextMenu(TableRow<Employee> obj) {
         var contextMenu = new ContextMenu();
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
@@ -277,7 +277,7 @@ public class EmployeePage extends OutlinePage {
         employeeName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employeeName.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getDesignationName())) {
                     var employeeName = new Label(item.getName());
@@ -295,16 +295,16 @@ public class EmployeePage extends OutlinePage {
         phone.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         phone.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty && Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getUserProfile().getPhone());
+                setText(empty && Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getPhone());
             }
         });
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
         employmentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employmentStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getEmploymentStatusColor()) && !Objects.isNull(item.getEmploymentStatusName())) {
                     this.setAlignment(Pos.CENTER);
@@ -328,19 +328,19 @@ public class EmployeePage extends OutlinePage {
         status.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         status.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
 
-                    var chip = new Label(item.isActive());
+                    var chip = new Label(item.getIsActive());
                     chip.setAlignment(Pos.CENTER);
                     chip.setPadding(new Insets(5, 10, 5, 10));
                     chip.setPrefWidth(150);
                     chip.setStyle("-fx-foreground-color: white;"
                             + "-fx-background-radius: 50;"
                             + "-fx-border-radius: 50;");
-                    if (item.getActive()) {
+                    if (item.isActive()) {
                         chip.getStyleClass().add(Styles.SUCCESS);
                     } else {
                         chip.getStyleClass().add(Styles.DANGER);
@@ -358,7 +358,7 @@ public class EmployeePage extends OutlinePage {
         role.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         role.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
@@ -372,7 +372,7 @@ public class EmployeePage extends OutlinePage {
         department.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         department.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);

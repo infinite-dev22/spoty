@@ -2,10 +2,9 @@ package inc.nomard.spoty.network_bridge.dtos.requisitions;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.text.*;
-import java.time.*;
 
 import java.time.*;
+
 import java.util.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -23,9 +22,9 @@ public class RequisitionMaster {
     private List<RequisitionDetail> requisitionDetails;
     private String notes;
     private String status;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getSupplierName() {
@@ -33,6 +32,6 @@ public class RequisitionMaster {
     }
 
     public String doneBy() {
-        return createdBy.getUserProfile().getName();
+        return createdBy.getName();
     }
 }

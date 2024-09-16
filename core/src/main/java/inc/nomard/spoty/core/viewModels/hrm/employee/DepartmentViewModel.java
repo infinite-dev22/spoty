@@ -34,7 +34,7 @@ public class DepartmentViewModel {
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
-    private static final ObjectProperty<User> manager = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Employee> manager = new SimpleObjectProperty<>();
     private static final ObjectProperty<Department> parentDepartment = new SimpleObjectProperty<>();
     private static final StringProperty location = new SimpleStringProperty("");
     private static final BooleanProperty active = new SimpleBooleanProperty();
@@ -71,15 +71,15 @@ public class DepartmentViewModel {
         return name;
     }
 
-    public static User getManager() {
+    public static Employee getManager() {
         return manager.get();
     }
 
-    public static void setManager(User manager) {
+    public static void setManager(Employee manager) {
         DepartmentViewModel.manager.set(manager);
     }
 
-    public static ObjectProperty<User> managerProperty() {
+    public static ObjectProperty<Employee> managerProperty() {
         return manager;
     }
 

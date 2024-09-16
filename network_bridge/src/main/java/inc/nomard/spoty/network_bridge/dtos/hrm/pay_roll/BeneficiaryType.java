@@ -19,8 +19,8 @@ public class BeneficiaryType {
     private String name;
     private String color;
     private String description;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

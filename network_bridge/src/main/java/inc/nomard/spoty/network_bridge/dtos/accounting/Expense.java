@@ -24,9 +24,9 @@ public class Expense implements Serializable {
     private ArrayList<Branch> branches;
     private String note;
     private double amount;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getAccountName() {

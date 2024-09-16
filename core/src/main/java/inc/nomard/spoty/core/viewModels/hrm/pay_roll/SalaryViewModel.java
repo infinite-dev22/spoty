@@ -37,7 +37,7 @@ public class SalaryViewModel {
             .create();
     private static final ListProperty<Salary> salaryAdvances = new SimpleListProperty<>(salaryAdvancesList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<User> employee = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Employee> employee = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<PaySlip> paySlip = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final DoubleProperty salary = new SimpleDoubleProperty(0);
@@ -59,15 +59,15 @@ public class SalaryViewModel {
         return id;
     }
 
-    public static User getEmployee() {
+    public static Employee getEmployee() {
         return employee.get();
     }
 
-    public static void setEmployee(User employee) {
+    public static void setEmployee(Employee employee) {
         SalaryViewModel.employee.set(employee);
     }
 
-    public static ObjectProperty<User> employeeProperty() {
+    public static ObjectProperty<Employee> employeeProperty() {
         return employee;
     }
 

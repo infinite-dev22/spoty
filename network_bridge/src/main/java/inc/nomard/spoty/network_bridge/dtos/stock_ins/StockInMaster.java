@@ -18,13 +18,13 @@ public class StockInMaster {
     private List<StockInDetail> stockInDetails;
     private String shipping;
     private Double total;
-    private User approvedBy;
-    private User recordedBy;
+    private Employee approvedBy;
+    private Employee recordedBy;
     private LocalDateTime approvalDate;
     private LocalDateTime recordDate;
     private String notes;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

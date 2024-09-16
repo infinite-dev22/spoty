@@ -21,8 +21,8 @@ public class AdjustmentMaster {
     private String notes;
     private String status;
     private Double Total;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

@@ -27,7 +27,7 @@ import lombok.extern.java.*;
 public class LeaveStatusViewModel {
     public static final ObservableList<LeaveStatus> leaveStatusesList = FXCollections.observableArrayList();
     public static final ListProperty<LeaveStatus> leaveStatuses = new SimpleListProperty<>(leaveStatusesList);
-    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
+    public static final ObservableList<Employee> USERS_LIST = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
@@ -40,7 +40,7 @@ public class LeaveStatusViewModel {
             .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<User> employee = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Employee> employee = new SimpleObjectProperty<>();
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>();
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();
@@ -92,15 +92,15 @@ public class LeaveStatusViewModel {
         return id;
     }
 
-    public static User getEmployee() {
+    public static Employee getEmployee() {
         return employee.get();
     }
 
-    public static void setEmployee(User employee) {
+    public static void setEmployee(Employee employee) {
         LeaveStatusViewModel.employee.set(employee);
     }
 
-    public static ObjectProperty<User> employeeProperty() {
+    public static ObjectProperty<Employee> employeeProperty() {
         return employee;
     }
 

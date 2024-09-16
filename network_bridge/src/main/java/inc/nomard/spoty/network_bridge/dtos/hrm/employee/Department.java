@@ -15,14 +15,14 @@ import lombok.extern.java.*;
 public class Department {
     private Long id;
     private String name;
-    private User manager;
+    private Employee manager;
     private String description;
     private ArrayList<Branch> branches;
     private Department parentDepartment;
     private String location;
     private boolean active;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

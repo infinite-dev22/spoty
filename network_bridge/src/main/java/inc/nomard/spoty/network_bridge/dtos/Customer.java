@@ -22,8 +22,8 @@ public class Customer {
     private String taxNumber;
     private String country;
     private String imageUrl;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

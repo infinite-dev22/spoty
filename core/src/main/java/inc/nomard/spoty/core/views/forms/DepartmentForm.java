@@ -28,7 +28,7 @@ import lombok.extern.java.*;
 public class DepartmentForm extends MFXGenericDialog {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     public ValidatableTextField name, location;
-    public ValidatableComboBox<User> manager;
+    public ValidatableComboBox<Employee> manager;
     public ValidatableComboBox<Department> parentDepartment;
     public Label nameValidationLabel;
     public ValidatableTextArea description;
@@ -240,15 +240,15 @@ public class DepartmentForm extends MFXGenericDialog {
     }
 
     private void setupManagerComboBox() {
-        StringConverter<User> managerConverter = FunctionalStringConverter.to(
+        StringConverter<Employee> managerConverter = FunctionalStringConverter.to(
                 managerDetail -> (managerDetail == null) ? "" : managerDetail.getName());
 
         manager.setConverter(managerConverter);
 
-        UserViewModel.getUsers().addListener((ListChangeListener<User>) c ->
-                manager.setItems(UserViewModel.getUsers())
+        UserViewModel.getEMPLOYEES().addListener((ListChangeListener<Employee>) c ->
+                manager.setItems(UserViewModel.getEMPLOYEES())
         );
-        if (!UserViewModel.getUsers().isEmpty()) {
+        if (!UserViewModel.getEMPLOYEES().isEmpty()) {
             manager.itemsProperty().bindBidirectional(UserViewModel.usersProperty());
         }
     }

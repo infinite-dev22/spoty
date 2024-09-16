@@ -12,7 +12,7 @@ import lombok.extern.java.*;
 @Log
 public class Salary {
     private Long id;
-    private User employee;
+    private Employee employee;
     private PaySlip paySlip;
     private String status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed, G - Generated, S - Sent
     private Double salary;

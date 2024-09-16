@@ -20,9 +20,9 @@ public class UnitOfMeasure {
     private UnitOfMeasure baseUnit;
     private String operator;
     private double operatorValue;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getBaseUnitName() {

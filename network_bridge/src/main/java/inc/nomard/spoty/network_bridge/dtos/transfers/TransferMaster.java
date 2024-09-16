@@ -22,9 +22,9 @@ public class TransferMaster {
     private Branch toBranch;
     private List<TransferDetail> transferDetails;
     private String notes;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getToBranchName() {

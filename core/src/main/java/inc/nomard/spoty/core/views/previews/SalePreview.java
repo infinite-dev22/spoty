@@ -71,7 +71,7 @@ public class SalePreview extends BorderPane {
         shippingProperty.set(sale.getShippingFee());
         netCostProperty.set(sale.getTotal());
         paidAmountProperty.set(sale.getAmountPaid());
-        servedByProperty.set(sale.getCreatedBy().getUserProfile().getName());
+        servedByProperty.set(sale.getCreatedBy().getName());
     }
 
     private Text buildHeaderText(String txt) {

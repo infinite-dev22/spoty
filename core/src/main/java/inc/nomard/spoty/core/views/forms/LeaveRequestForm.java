@@ -35,7 +35,7 @@ import lombok.extern.java.*;
 public class LeaveRequestForm extends ModalPage {
     public CustomButton saveButton;
     public Button cancelButton;
-    public ValidatableComboBox<User> employee;
+    public ValidatableComboBox<Employee> employee;
     public ValidatableComboBox<String> leaveType;
     public ValidatableDatePicker fromDate, toDate;
     public TimePicker fromTime, toTime;
@@ -94,12 +94,12 @@ public class LeaveRequestForm extends ModalPage {
         reason.textProperty().bindBidirectional(LeaveStatusViewModel.descriptionProperty());
         // Combo box properties.
 
-        StringConverter<User> employeeConverter = FunctionalStringConverter.to(
+        StringConverter<Employee> employeeConverter = FunctionalStringConverter.to(
                 employeeDetail -> employeeDetail == null ? "" : employeeDetail.getName());
         employee.setConverter(employeeConverter);
 
-        if (UserViewModel.getUsers().isEmpty()) {
-            UserViewModel.getUsers().addListener((ListChangeListener<User>) c -> employee.setItems(UserViewModel.getUsers()));
+        if (UserViewModel.getEMPLOYEES().isEmpty()) {
+            UserViewModel.getEMPLOYEES().addListener((ListChangeListener<Employee>) c -> employee.setItems(UserViewModel.getEMPLOYEES()));
         } else {
             employee.itemsProperty().bindBidirectional(UserViewModel.usersProperty());
         }

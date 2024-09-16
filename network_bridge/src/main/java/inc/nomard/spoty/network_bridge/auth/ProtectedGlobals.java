@@ -12,7 +12,7 @@ public class ProtectedGlobals {
     public static boolean newTenancy;
     public static boolean activeTenancy;
     public static String message;
-    public static User user;
+    public static Employee user;
     public static Role role;
     public static double loginSceneWidth;
     public static double loginSceneHeight;

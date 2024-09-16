@@ -26,8 +26,8 @@ import lombok.extern.java.*;
 public class PaySlipViewModel {
     public static final ObservableList<PaySlip> paySlipsList = FXCollections.observableArrayList();
     public static final ListProperty<PaySlip> paySlips = new SimpleListProperty<>(paySlipsList);
-    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
-    public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
+    public static final ObservableList<Employee> USERS_LIST = FXCollections.observableArrayList();
+    public static final ListProperty<Employee> EMPLOYEES = new SimpleListProperty<>(USERS_LIST);
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())

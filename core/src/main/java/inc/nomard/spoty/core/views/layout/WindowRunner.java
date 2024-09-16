@@ -25,7 +25,7 @@ public class WindowRunner extends ApplicationWindowImpl {
         super();
 
         addNode(new MainLayer());
-        clubBouncer();
+//        clubBouncer();
     }
 
     private void clubBouncer() {

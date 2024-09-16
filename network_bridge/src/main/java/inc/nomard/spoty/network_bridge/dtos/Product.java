@@ -27,9 +27,9 @@ public class Product {
     private String serialNumber;
     private String image;
     private String description;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getBrandName() {

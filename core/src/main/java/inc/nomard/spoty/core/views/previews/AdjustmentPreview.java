@@ -54,7 +54,7 @@ public class AdjustmentPreview extends BorderPane {
         adjustmentDateProperty.set(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault()).format(adjustment.getCreatedAt()));
         adjustmentRefProperty.set(adjustment.getRef());
         noteProperty.set(adjustment.getNotes());
-        doneByProperty.set(adjustment.getCreatedBy().getUserProfile().getName());
+        doneByProperty.set(adjustment.getCreatedBy().getName());
     }
 
     private Text buildHeaderText(String txt) {

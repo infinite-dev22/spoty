@@ -32,9 +32,6 @@ public class DepartmentPage extends OutlinePage {
     private MFXProgressSpinner progress;
     private Button createBtn;
     private TableColumn<Department, String> name;
-    private TableColumn<Department, Department> manager;
-    private TableColumn<Department, Department> parentDepartment;
-    private TableColumn<Department, String> location;
     private TableColumn<Department, String> description;
     private TableColumn<Department, Department> createdBy;
     private TableColumn<Department, Department> createdAt;
@@ -80,7 +77,7 @@ public class DepartmentPage extends OutlinePage {
 
     private HBox buildCenterTop() {
         searchBar = new TextField();
-        searchBar.setPromptText("Search designations");
+        searchBar.setPromptText("Search departments");
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -141,9 +138,6 @@ public class DepartmentPage extends OutlinePage {
 
     private void setupTable() {
         name = new TableColumn<>("Name");
-        manager = new TableColumn<>("Manager");
-        parentDepartment = new TableColumn<>("Base Department");
-        location = new TableColumn<>("Location");
         description = new TableColumn<>("Description");
         createdBy = new TableColumn<>("Created By");
         createdAt = new TableColumn<>("Created At");
@@ -151,9 +145,6 @@ public class DepartmentPage extends OutlinePage {
         updatedAt = new TableColumn<>("Updated At");
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        manager.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        parentDepartment.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        location.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
@@ -163,9 +154,6 @@ public class DepartmentPage extends OutlinePage {
         setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(name,
-                manager,
-                parentDepartment,
-                location,
                 description,
                 createdBy,
                 createdAt,
@@ -275,23 +263,6 @@ public class DepartmentPage extends OutlinePage {
 
     private void setupTableColumns() {
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        manager.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        manager.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Department item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getManager()) ? null : item.getManager().getName());
-            }
-        });
-        parentDepartment.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        parentDepartment.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Department item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getParentDepartment()) ? null : item.getParentDepartment().getName());
-            }
-        });
-        location.setCellValueFactory(new PropertyValueFactory<>("location"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {

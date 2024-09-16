@@ -55,7 +55,7 @@ public class StockInPreview extends BorderPane {
         orderDateProperty.set(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault()).format(stockIn.getCreatedAt()));
         orderRefProperty.set(stockIn.getRef());
         noteProperty.set(stockIn.getNotes());
-        servedByProperty.set(stockIn.getCreatedBy().getUserProfile().getName());
+        servedByProperty.set(stockIn.getCreatedBy().getName());
     }
 
     private Text buildHeaderText(String txt) {

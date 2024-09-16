@@ -499,7 +499,7 @@ public class PaymentsViewModel {
     public static void startTrial(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        var findModel = new FindModel(ProtectedGlobals.user.getUserProfile().getTenant().getId());
+        var findModel = new FindModel(ProtectedGlobals.user.getTenant().getId());
         CompletableFuture<HttpResponse<String>> responseFuture = paymentsRepository.startTrial(findModel);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {

@@ -70,7 +70,7 @@ public class QuotationPreview extends BorderPane {
         shippingProperty.set(quotation.getShippingFee());
         netCostProperty.set(quotation.getTotal());
         noteProperty.set(quotation.getNotes());
-        servedByProperty.set(quotation.getCreatedBy().getUserProfile().getName());
+        servedByProperty.set(quotation.getCreatedBy().getName());
     }
 
     private Text buildHeaderText(String txt) {

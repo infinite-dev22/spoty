@@ -24,9 +24,9 @@ public class QuotationMaster {
     private double total;
     private String status;
     private String notes;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getCustomerName() {

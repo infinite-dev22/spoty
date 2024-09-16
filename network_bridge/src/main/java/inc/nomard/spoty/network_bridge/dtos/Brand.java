@@ -16,8 +16,8 @@ public class Brand {
     private String name;
     private String description;
     private String image;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

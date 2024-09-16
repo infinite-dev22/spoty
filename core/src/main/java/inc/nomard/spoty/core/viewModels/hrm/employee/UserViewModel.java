@@ -24,8 +24,8 @@ import lombok.extern.java.*;
 
 @Log
 public class UserViewModel {
-    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
-    public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
+    public static final ObservableList<Employee> USERS_LIST = FXCollections.observableArrayList();
+    public static final ListProperty<Employee> EMPLOYEES = new SimpleListProperty<>(USERS_LIST);
     @Getter
     private static final ObservableList<String> workShiftsList = FXCollections.observableArrayList("Day", "Evening", "Full");
     private static final Gson gson = new GsonBuilder()
@@ -153,16 +153,16 @@ public class UserViewModel {
         return phone;
     }
 
-    public static ObservableList<User> getUsers() {
-        return users.get();
+    public static ObservableList<Employee> getEMPLOYEES() {
+        return EMPLOYEES.get();
     }
 
-    public static void setUsers(ObservableList<User> users) {
-        UserViewModel.users.set(users);
+    public static void setEMPLOYEES(ObservableList<Employee> employees) {
+        UserViewModel.EMPLOYEES.set(employees);
     }
 
-    public static ListProperty<User> usersProperty() {
-        return users;
+    public static ListProperty<Employee> usersProperty() {
+        return EMPLOYEES;
     }
 
     public static String getAvatar() {
@@ -356,15 +356,15 @@ public class UserViewModel {
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type type = new TypeToken<ResponseModel<User>>() {
+                    Type type = new TypeToken<ResponseModel<Employee>>() {
                     }.getType();
-                    ResponseModel<User> responseModel = gson.fromJson(response.body(), type);
+                    ResponseModel<Employee> responseModel = gson.fromJson(response.body(), type);
                     setTotalPages(responseModel.getTotalPages());
                     setPageNumber(responseModel.getPageable().getPageNumber());
                     setPageSize(responseModel.getPageable().getPageSize());
-                    ArrayList<User> userList = responseModel.getContent();
-                    usersList.clear();
-                    usersList.addAll(userList);
+                    ArrayList<Employee> employeeList = responseModel.getContent();
+                    USERS_LIST.clear();
+                    USERS_LIST.addAll(employeeList);
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
@@ -411,19 +411,18 @@ public class UserViewModel {
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    var user = gson.fromJson(response.body(), User.class);
+                    var user = gson.fromJson(response.body(), Employee.class);
                     setId(user.getId());
-                    setFirstName(user.getUserProfile().getFirstName());
-                    setLastName(user.getUserProfile().getLastName());
-                    setOtherName(user.getUserProfile().getOtherName());
-                    setDateOfBirth(user.getDateOfBirth());
+                    setFirstName(user.getFirstName());
+                    setLastName(user.getLastName());
+                    setOtherName(user.getOtherName());
                     setEmail(user.getEmail());
                     setPhone(user.getPhone());
                     setDepartment(user.getDepartment());
                     setDesignation(user.getDesignation());
                     setEmploymentStatus(user.getEmploymentStatus());
                     setWorkShift(user.getWorkShift());
-                    setActive(user.getActive());
+                    setActive(user.isActive());
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {
@@ -468,12 +467,12 @@ public class UserViewModel {
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<User>>() {
+                    Type listType = new TypeToken<ArrayList<Employee>>() {
                     }.getType();
-                    ArrayList<User> userList = gson.fromJson(
+                    ArrayList<Employee> employeeList = gson.fromJson(
                             response.body(), listType);
-                    usersList.clear();
-                    usersList.addAll(userList);
+                    USERS_LIST.clear();
+                    USERS_LIST.addAll(employeeList);
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {

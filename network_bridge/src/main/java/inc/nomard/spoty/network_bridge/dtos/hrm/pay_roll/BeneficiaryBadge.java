@@ -20,8 +20,8 @@ public class BeneficiaryBadge {
     private BeneficiaryType beneficiaryType;
     private String color;
     private String description;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

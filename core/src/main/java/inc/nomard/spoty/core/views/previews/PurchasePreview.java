@@ -71,7 +71,7 @@ public class PurchasePreview extends BorderPane {
         netCostProperty.set(purchase.getTotal());
         paidAmountProperty.set(purchase.getPaidAmount());
         noteProperty.set(purchase.getNotes());
-        servedByProperty.set(purchase.getCreatedBy().getUserProfile().getName());
+        servedByProperty.set(purchase.getCreatedBy().getName());
     }
 
     private Text buildHeaderText(String txt) {

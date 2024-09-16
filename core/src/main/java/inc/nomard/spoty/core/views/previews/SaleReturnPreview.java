@@ -72,7 +72,7 @@ public class SaleReturnPreview extends BorderPane {
         shippingProperty.set(saleReturn.getShippingFee());
         netCostProperty.set(saleReturn.getTotal());
         paidAmountProperty.set(saleReturn.getAmountPaid());
-        servedByProperty.set(saleReturn.getCreatedBy().getUserProfile().getName());
+        servedByProperty.set(saleReturn.getCreatedBy().getName());
     }
 
     private Text buildHeaderText(String txt) {

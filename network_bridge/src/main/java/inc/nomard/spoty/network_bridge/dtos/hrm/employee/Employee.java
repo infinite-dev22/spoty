@@ -12,30 +12,33 @@ import lombok.extern.java.*;
 @NoArgsConstructor
 @Builder
 @Log
-public class User {
+public class Employee {
     private Long id;
-    private UserProfile userProfile;
+    private Branch branch;
     private Tenant tenant;
-    private EmploymentStatus employmentStatus;
-    private Designation designation;
     private Department department;
+    private Designation designation;
+    private EmploymentStatus employmentStatus;
     private Role role;
-    private String workShift;
-    private LocalDate dateOfBirth;
-    private String salary;
-    private String email;
+    private String firstName;
+    private String lastName;
+    private String otherName;
+    private String phone;
     private String avatar;
-    private ArrayList<Branch> branches;
-    private Boolean active;
-    private Boolean locked;
-    private Boolean accessAllBranches;
-    private User createdBy;
+    private String email;
+    private String salary;
+    private String workShift;
+    @Builder.Default
+    private boolean active = true;
+    @Builder.Default
+    private boolean locked = false;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee createdBy;
     private LocalDateTime updatedAt;
+    private Employee updatedBy;
 
     public String getName() {
-        return userProfile.getFirstName() + " " + userProfile.getOtherName() + " " + userProfile.getLastName();
+        return this.getFirstName() + " " + this.getOtherName() + " " + this.getLastName();
     }
 
     public String getEmploymentStatusName() {
@@ -70,11 +73,7 @@ public class User {
         }
     }
 
-    public String getPhone() {
-        return userProfile.getPhone();
-    }
-
-    public String isActive() {
+    public String getIsActive() {
         if (active) {
             return "Active";
         }

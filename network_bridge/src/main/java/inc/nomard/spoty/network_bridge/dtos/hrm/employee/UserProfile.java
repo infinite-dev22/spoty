@@ -13,7 +13,7 @@ import lombok.extern.java.*;
 @Log
 public class UserProfile {
     private Long id;
-    private User user;
+    private Employee employee;
     private String firstName;
     private String lastName;
     private String otherName;

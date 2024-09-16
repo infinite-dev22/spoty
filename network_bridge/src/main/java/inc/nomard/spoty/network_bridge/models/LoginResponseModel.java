@@ -26,6 +26,6 @@ public class LoginResponseModel {
     private boolean activeTenancy;
     private boolean activeTenancyWarning;
     private boolean inActiveTenancyWarning;
-    private User user;
+    private Employee user;
     private Role role;
 }

@@ -70,7 +70,7 @@ public class PurchaseReturnPreview extends BorderPane {
         taxProperty.set(Objects.nonNull(purchaseReturn.getTax()) ? purchaseReturn.getTax().getPercentage() : 0d);
         netCostProperty.set(purchaseReturn.getTotal());
         paidAmountProperty.set(purchaseReturn.getAmountPaid());
-        servedByProperty.set(purchaseReturn.getCreatedBy().getUserProfile().getName());
+        servedByProperty.set(purchaseReturn.getCreatedBy().getName());
     }
 
     private Text buildHeaderText(String txt) {
