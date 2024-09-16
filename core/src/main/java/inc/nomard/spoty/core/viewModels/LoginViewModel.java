@@ -70,22 +70,22 @@ public class LoginViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = authRepository.login(loginDetails);
         responseFuture.thenAccept(response -> {
             var loginResponse = gson.fromJson(response.body(), LoginResponseModel.class);
-            if (loginResponse.getStatus() == 200) {
+            if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
                     ProtectedGlobals.authToken = loginResponse.getToken();
-                    ProtectedGlobals.trial = loginResponse.isTrial();
+                    /*ProtectedGlobals.trial = loginResponse.isTrial();
                     ProtectedGlobals.canTry = loginResponse.isCanTry();
                     ProtectedGlobals.newTenancy = loginResponse.isNewTenancy();
                     ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
-                    ProtectedGlobals.message = loginResponse.getMessage();
+                    ProtectedGlobals.message = loginResponse.getMessage();*/
                     ProtectedGlobals.user = loginResponse.getUser();
                     ProtectedGlobals.role = loginResponse.getRole();
                     successMessage.showMessage("Authentication successful");
                     onSuccess.run();
                 });
-            } else if (loginResponse.getStatus() == 401) {
+            } else if (response.statusCode() == 401) {
                 Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-            } else if (loginResponse.getStatus() == 404) {
+            } else if (response.statusCode() == 404) {
                 Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
             } else if (response.statusCode() == 500 && loginResponse.getMessage().toLowerCase().contains("bad credentials")) {
                 Platform.runLater(() -> errorMessage.showMessage("Wrong email or password"));

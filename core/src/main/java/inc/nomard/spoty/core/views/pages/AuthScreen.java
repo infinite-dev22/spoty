@@ -681,7 +681,7 @@ public class AuthScreen extends BorderPane {
                 CompletableFuture.runAsync(() -> DashboardViewModel.getStockAlerts(null, null))
         );
 
-        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+        allDataInitialization.thenRun(this::loadMainView)
                 .exceptionally(this::onDataInitializationFailure);
     }
 
@@ -690,15 +690,9 @@ public class AuthScreen extends BorderPane {
         return null;
     }
 
-    private void onDataInitializationSuccess() {
-        Platform.runLater(() -> {
-            Timeline timeline = new Timeline(new KeyFrame(Duration.millis(3500), event -> loadMainView()));
-            timeline.play();
-        });
-    }
-
     public void onLoginSuccess() {
-        initData();
+//        initData();
+        this.loadMainView();
         loginBtn.stopLoading();
     }
 
