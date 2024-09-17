@@ -1,28 +1,36 @@
 package inc.nomard.spoty.core.views.settings;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import atlantafx.base.controls.CustomTextField;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.values.strings.Labels;
+import inc.nomard.spoty.core.viewModels.BranchViewModel;
+import inc.nomard.spoty.core.viewModels.BrandViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.BranchForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.java.Log;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+
+import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -192,14 +200,14 @@ public class BranchPage extends OutlinePage {
     }
 
     private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)

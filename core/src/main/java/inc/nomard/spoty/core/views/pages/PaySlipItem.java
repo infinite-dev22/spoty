@@ -1,14 +1,19 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXIconButton;
+import io.github.palexdev.mfxresources.fonts.IconsProviders;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import lombok.extern.java.Log;
 
 @Log
 public class PaySlipItem extends HBox {

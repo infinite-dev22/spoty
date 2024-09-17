@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
-import java.util.*;
+import java.util.Objects;
 
 public class ValidatableNumberField extends ValidatableTextField {
     private static int MAX_CHARACTERS = 15;

@@ -1,14 +1,21 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.network_bridge.dtos.transfers.*;
-import java.net.*;
-import java.util.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.network_bridge.dtos.transfers.TransferDetail;
+import inc.nomard.spoty.network_bridge.dtos.transfers.TransferMaster;
+import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import lombok.extern.java.Log;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 @Log
 public class TransferPreviewController implements Initializable {

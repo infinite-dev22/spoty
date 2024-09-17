@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.values.strings;
 
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 @Log
 public class Labels {

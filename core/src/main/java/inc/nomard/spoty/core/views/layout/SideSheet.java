@@ -1,16 +1,21 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import javafx.animation.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXIconButton;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.util.*;
-import lombok.*;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
+import lombok.Getter;
+import lombok.Setter;
 
 public class SideSheet extends StackPane {
     private final Pane owner;

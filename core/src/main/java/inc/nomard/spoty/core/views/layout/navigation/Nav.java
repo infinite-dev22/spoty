@@ -1,8 +1,11 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
-import inc.nomard.spoty.core.views.util.*;
-import java.util.*;
-import javafx.scene.*;
+import inc.nomard.spoty.core.views.util.Page;
+import javafx.scene.Node;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 record Nav(
         String title, String tag, Node graphic, Class<? extends Page> view, List<String> searchKeywords) {

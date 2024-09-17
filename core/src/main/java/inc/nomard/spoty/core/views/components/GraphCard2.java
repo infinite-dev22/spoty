@@ -1,21 +1,29 @@
 package inc.nomard.spoty.core.views.components;
 
 import eu.hansolo.fx.charts.*;
-import eu.hansolo.fx.charts.data.*;
-import eu.hansolo.fx.charts.series.*;
-import inc.nomard.spoty.core.viewModels.dashboard.*;
-import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
-import java.text.*;
-import java.util.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import eu.hansolo.fx.charts.data.XYChartItem;
+import eu.hansolo.fx.charts.data.XYItem;
+import eu.hansolo.fx.charts.series.XYSeries;
+import eu.hansolo.fx.charts.series.XYSeriesBuilder;
+import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.LineChartModel;
+import inc.nomard.spoty.utils.UIUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import javafx.util.StringConverter;
+import lombok.extern.java.Log;
+
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.LinkedList;
 
 @Log
 public class GraphCard2 extends AnchorPane {

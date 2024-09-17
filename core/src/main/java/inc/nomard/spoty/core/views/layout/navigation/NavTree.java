@@ -1,19 +1,26 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.utils.navigation.*;
-import java.util.*;
-import javafx.beans.property.*;
-import javafx.beans.value.*;
-import javafx.css.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.*;
-import org.kordamp.ikonli.javafx.*;
+import inc.nomard.spoty.core.views.util.Page;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
+import lombok.extern.java.Log;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.List;
+import java.util.Objects;
 
 @Log
 public class NavTree extends TreeView<Nav> {

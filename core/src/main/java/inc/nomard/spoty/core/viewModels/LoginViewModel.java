@@ -1,20 +1,28 @@
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.*;
-import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.concurrent.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import lombok.extern.java.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.models.LoginModel;
+import inc.nomard.spoty.network_bridge.models.LoginResponseModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.AuthRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import lombok.extern.java.Log;
+
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.concurrent.CompletableFuture;
 
 @Log
 public class LoginViewModel {
@@ -73,11 +81,6 @@ public class LoginViewModel {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
                     ProtectedGlobals.authToken = loginResponse.getToken();
-                    /*ProtectedGlobals.trial = loginResponse.isTrial();
-                    ProtectedGlobals.canTry = loginResponse.isCanTry();
-                    ProtectedGlobals.newTenancy = loginResponse.isNewTenancy();
-                    ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
-                    ProtectedGlobals.message = loginResponse.getMessage();*/
                     ProtectedGlobals.user = loginResponse.getUser();
                     ProtectedGlobals.role = loginResponse.getRole();
                     successMessage.showMessage("Authentication successful");

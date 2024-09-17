@@ -2,6 +2,7 @@ package inc.nomard.spoty.core;
 
 import java.io.*;
 import java.net.*;
+
 import javafx.fxml.*;
 import lombok.extern.java.*;
 

@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.components.animations;
 
-import javafx.animation.*;
-import javafx.scene.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
+import javafx.scene.Node;
+import javafx.util.Duration;
+import lombok.extern.java.Log;
 
 @Log
 public class SpotyAnimations {

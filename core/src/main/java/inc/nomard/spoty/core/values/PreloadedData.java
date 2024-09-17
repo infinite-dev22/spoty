@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.values;
 
-import inc.nomard.spoty.core.*;
-import javafx.scene.image.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import javafx.scene.image.Image;
 
 public class PreloadedData {
     private static final String PLACEHOLDER_IMAGE = SpotyCoreResourceLoader.load("images/product-image-placeholder.png");

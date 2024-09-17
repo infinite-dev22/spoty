@@ -1,18 +1,26 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.viewModels.dashboard.*;
-import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
-import javafx.collections.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.chart.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.LineChartModel;
+import inc.nomard.spoty.utils.UIUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import lombok.extern.java.Log;
 
 @Log
 public class GraphCard extends AnchorPane {

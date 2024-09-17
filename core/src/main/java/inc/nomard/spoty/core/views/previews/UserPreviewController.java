@@ -1,15 +1,18 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import io.github.palexdev.mfxcore.controls.*;
-import java.net.*;
-import java.util.*;
-import javafx.fxml.*;
-import javafx.scene.image.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.UserProfile;
+import io.github.palexdev.mfxcore.controls.Label;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import lombok.extern.java.Log;
+
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 @Log
 public class UserPreviewController implements Initializable {

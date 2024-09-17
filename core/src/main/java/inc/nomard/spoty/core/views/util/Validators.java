@@ -1,13 +1,19 @@
 package inc.nomard.spoty.core.views.util;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.regex.*;
-import javafx.beans.binding.*;
-import javafx.scene.control.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
+import inc.nomard.spoty.core.views.components.label_components.controls.LabeledDatePicker;
+import inc.nomard.spoty.core.views.components.validatables.ValidatablePasswordField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
+import javafx.beans.binding.Bindings;
+import javafx.scene.control.Label;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class Validators {
     private static final String EMAIL_REGEX =

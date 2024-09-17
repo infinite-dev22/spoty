@@ -1,24 +1,34 @@
 package inc.nomard.spoty.core.views.previews;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import inc.nomard.spoty.utils.navigation.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInDetail;
+import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInMaster;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.fontawesome5.*;
-import org.kordamp.ikonli.javafx.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Log
 public class StockInPreview extends BorderPane {

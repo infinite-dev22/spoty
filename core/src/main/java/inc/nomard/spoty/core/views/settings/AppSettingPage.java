@@ -1,11 +1,16 @@
 package inc.nomard.spoty.core.views.settings;
 
-import inc.nomard.spoty.core.views.settings.app_settings.*;
-import inc.nomard.spoty.core.views.util.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.views.settings.app_settings.Appearance;
+import inc.nomard.spoty.core.views.settings.app_settings.EmailPage;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import lombok.extern.java.Log;
 
 @Log
 public class AppSettingPage extends OutlinePage {

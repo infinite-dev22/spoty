@@ -1,9 +1,13 @@
 package inc.nomard.spoty.core.views.components;
 
-import javafx.collections.*;
-import javafx.collections.transformation.*;
-import javafx.scene.control.*;
-import javafx.util.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.util.Callback;
 
 public class FilterComboBox<T> extends ComboBox<T> {
 

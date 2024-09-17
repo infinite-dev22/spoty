@@ -1,8 +1,10 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
-import io.github.palexdev.materialfx.validation.*;
-import java.util.*;
-import javafx.scene.control.*;
+import io.github.palexdev.materialfx.validation.MFXValidator;
+import io.github.palexdev.materialfx.validation.Validated;
+import javafx.scene.control.PasswordField;
+
+import java.util.Objects;
 
 public class ValidatablePasswordField extends PasswordField implements Validated {
     private static int MAX_CHARACTERS = 20;

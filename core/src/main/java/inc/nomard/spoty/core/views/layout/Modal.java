@@ -1,10 +1,14 @@
 package inc.nomard.spoty.core.views.layout;
 
-import io.github.palexdev.mfxcore.controls.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import lombok.*;
+import io.github.palexdev.mfxcore.controls.Label;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import lombok.Setter;
 
 public interface Modal {
     int HGAP_20 = 20;

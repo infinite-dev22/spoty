@@ -1,11 +1,14 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.wrappers.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import javafx.beans.property.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.wrappers.DashboardKPIModelWrapper;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 
 public class KPICard extends AnchorPane {
     private final StringProperty name = new SimpleStringProperty();

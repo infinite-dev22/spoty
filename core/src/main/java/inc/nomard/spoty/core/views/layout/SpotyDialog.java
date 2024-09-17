@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.views.layout;
 
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 
 public class SpotyDialog extends MFXStageDialog {
     public static MFXStageDialog createDialog(MFXGenericDialog content, Pane owner) {

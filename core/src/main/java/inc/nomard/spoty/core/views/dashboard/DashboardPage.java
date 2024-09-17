@@ -1,18 +1,24 @@
 package inc.nomard.spoty.core.views.dashboard;
 
-import inc.nomard.spoty.core.viewModels.dashboard.*;
+import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
 import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.core.wrappers.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.responsiveness.layouts.*;
-import io.github.palexdev.materialfx.controls.*;
-import javafx.collections.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.wrappers.DashboardKPIModelWrapper;
+import inc.nomard.spoty.utils.UIUtils;
+import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapColumn;
+import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapPane;
+import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapRow;
+import inc.nomard.spoty.utils.responsiveness.layouts.Breakpoint;
+import io.github.palexdev.materialfx.controls.MFXScrollPane;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import lombok.extern.java.Log;
 
 @Log
 public class DashboardPage extends OutlinePage {

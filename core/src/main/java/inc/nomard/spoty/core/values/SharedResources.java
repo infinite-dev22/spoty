@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.values;
 
 
-import java.util.*;
-import javafx.beans.property.*;
-import lombok.extern.java.*;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
+import lombok.extern.java.Log;
+
+import java.util.LinkedList;
 
 @Log
 public class SharedResources {

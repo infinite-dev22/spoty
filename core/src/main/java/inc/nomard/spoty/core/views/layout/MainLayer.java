@@ -1,20 +1,26 @@
 package inc.nomard.spoty.core.views.layout;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.values.*;
-import inc.nomard.spoty.core.views.layout.navigation.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import java.util.*;
-import javafx.animation.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import org.kordamp.ikonli.fontawesome5.*;
-import org.kordamp.ikonli.javafx.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.values.PreloadedData;
+import inc.nomard.spoty.core.views.layout.navigation.Navigation;
+import inc.nomard.spoty.core.views.layout.navigation.SideBar;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.Page;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import javafx.animation.FadeTransition;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.util.Duration;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Objects;
 
 public class MainLayer extends BorderPane {
     static final int PAGE_TRANSITION_DURATION = 500;

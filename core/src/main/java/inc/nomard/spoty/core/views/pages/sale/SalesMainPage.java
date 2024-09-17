@@ -1,10 +1,15 @@
 package inc.nomard.spoty.core.views.pages.sale;
 
-import inc.nomard.spoty.core.views.pages.sale.tabs.*;
-import inc.nomard.spoty.core.views.util.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import inc.nomard.spoty.core.views.pages.sale.tabs.OrderPage;
+import inc.nomard.spoty.core.views.pages.sale.tabs.SaleReturnPage;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 
 public class SalesMainPage extends OutlinePage {
     public SalesMainPage() {

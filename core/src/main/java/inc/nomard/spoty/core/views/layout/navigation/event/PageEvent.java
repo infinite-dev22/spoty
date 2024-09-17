@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.layout.navigation.event;
 
 
-import java.util.*;
+import java.util.Objects;
 
 public final class PageEvent extends Event {
 

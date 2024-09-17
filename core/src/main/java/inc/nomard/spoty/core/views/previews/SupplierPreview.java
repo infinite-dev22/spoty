@@ -1,27 +1,30 @@
 package inc.nomard.spoty.core.views.previews;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import inc.nomard.spoty.utils.navigation.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import java.util.*;
 import javafx.beans.property.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.scene.text.*;
-import javafx.util.converter.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.fontawesome5.*;
-import org.kordamp.ikonli.javafx.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Text;
+import javafx.util.converter.NumberStringConverter;
+import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Objects;
 
 @Log
 public class SupplierPreview extends BorderPane {

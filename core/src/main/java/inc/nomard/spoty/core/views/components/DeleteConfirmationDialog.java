@@ -1,18 +1,23 @@
 package inc.nomard.spoty.core.views.components;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.GlobalActions;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
+import io.github.palexdev.mfxresources.fonts.IconsProviders;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
 
 public class DeleteConfirmationDialog extends MFXStageDialog {
 

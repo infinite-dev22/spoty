@@ -1,8 +1,9 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.core.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import javafx.scene.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 
 public abstract class ModalPage extends MFXGenericDialog implements Modal {
     public ModalPage() {

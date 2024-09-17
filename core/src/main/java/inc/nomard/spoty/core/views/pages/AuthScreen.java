@@ -60,6 +60,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -734,7 +735,7 @@ public class AuthScreen extends BorderPane {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
+                        .icon(FontAwesomeSolid.CHECK_CIRCLE)
                         .type(MessageVariants.SUCCESS)
                         .height(60)
                         .build();
@@ -757,7 +758,7 @@ public class AuthScreen extends BorderPane {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
+                        .icon(FontAwesomeSolid.EXCLAMATION_TRIANGLE)
                         .type(MessageVariants.ERROR)
                         .height(60)
                         .build();

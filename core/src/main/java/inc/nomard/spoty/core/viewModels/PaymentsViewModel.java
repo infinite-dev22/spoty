@@ -7,9 +7,11 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
+
 import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.application.*;
 import javafx.beans.property.*;
 import lombok.extern.java.*;

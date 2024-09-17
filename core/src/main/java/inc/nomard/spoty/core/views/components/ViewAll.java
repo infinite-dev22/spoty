@@ -1,10 +1,10 @@
 package inc.nomard.spoty.core.views.components;
 
-import atlantafx.base.theme.*;
-import io.github.palexdev.mfxcore.controls.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.Styles;
+import io.github.palexdev.mfxcore.controls.Label;
+import javafx.scene.Cursor;
+import javafx.scene.layout.VBox;
+import lombok.extern.java.Log;
 
 @Log
 public class ViewAll extends VBox {

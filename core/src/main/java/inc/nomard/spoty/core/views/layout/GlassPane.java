@@ -1,11 +1,14 @@
 package inc.nomard.spoty.core.views.layout;
 
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.effect.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import lombok.extern.java.*;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import lombok.extern.java.Log;
 
 @Log
 public class GlassPane extends AnchorPane {

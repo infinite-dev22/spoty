@@ -1,8 +1,9 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.core.views.util.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
+import inc.nomard.spoty.core.views.util.Page;
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 public abstract class OutlineFormPage extends StackPane implements Page {
 

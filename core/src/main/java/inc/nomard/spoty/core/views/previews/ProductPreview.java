@@ -1,32 +1,39 @@
 package inc.nomard.spoty.core.views.previews;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.values.*;
-import inc.nomard.spoty.core.views.pos.components.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import inc.nomard.spoty.utils.navigation.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.values.PreloadedData;
+import inc.nomard.spoty.core.views.pos.components.ProductCard;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.concurrent.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.scene.text.*;
-import javafx.util.converter.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.fontawesome5.*;
-import org.kordamp.ikonli.javafx.*;
+import javafx.concurrent.Task;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.util.converter.NumberStringConverter;
+import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Log
 public class ProductPreview extends BorderPane {
@@ -48,8 +55,8 @@ public class ProductPreview extends BorderPane {
     private static final StringProperty descriptionProperty = new SimpleStringProperty();
     private static final ObjectProperty<ImagePattern> barcodeProperty = new SimpleObjectProperty<>();
     private final Rectangle productImageHolder = new Rectangle();
-    private Image productImage;
     private final ModalPane modalPane;
+    private Image productImage;
 
     public ProductPreview(Product product, ModalPane modalPane) {
         this.modalPane = modalPane;

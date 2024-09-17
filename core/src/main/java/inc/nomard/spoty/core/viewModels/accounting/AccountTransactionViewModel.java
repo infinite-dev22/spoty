@@ -1,23 +1,36 @@
 package inc.nomard.spoty.core.viewModels.accounting;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.accounting.*;
-import inc.nomard.spoty.network_bridge.dtos.response.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.accounting.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.accounting.AccountTransaction;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.accounting.AccountRepositoryImplAccount;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.java.Log;
+
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Log
 public class AccountTransactionViewModel {
@@ -31,12 +44,12 @@ public class AccountTransactionViewModel {
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
-    public static ObservableList<AccountTransaction> transactionsList = FXCollections.observableArrayList();
-    private static final ListProperty<AccountTransaction> TRANSACTIONS = new SimpleListProperty<>(transactionsList);
-    public static AccountRepositoryImplAccount transactionsRepository = new AccountRepositoryImplAccount();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
+    public static ObservableList<AccountTransaction> transactionsList = FXCollections.observableArrayList();
+    private static final ListProperty<AccountTransaction> TRANSACTIONS = new SimpleListProperty<>(transactionsList);
+    public static AccountRepositoryImplAccount transactionsRepository = new AccountRepositoryImplAccount();
 
     public static ObservableList<AccountTransaction> getTransactions() {
         return TRANSACTIONS.get();

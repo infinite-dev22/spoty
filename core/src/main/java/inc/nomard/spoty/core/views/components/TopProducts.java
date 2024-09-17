@@ -1,19 +1,24 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.viewModels.dashboard.*;
-import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.values.strings.Labels;
+import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.ProductSalesModel;
+import inc.nomard.spoty.utils.UIUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import lombok.extern.java.Log;
+
+import java.util.LinkedList;
+import java.util.stream.Stream;
 
 @Log
 public class TopProducts extends AnchorPane {

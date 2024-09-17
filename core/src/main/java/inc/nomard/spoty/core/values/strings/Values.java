@@ -1,9 +1,11 @@
 package inc.nomard.spoty.core.values.strings;
 
 
-import java.util.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.java.Log;
+
+import java.util.Arrays;
 
 @Log
 public class Values {

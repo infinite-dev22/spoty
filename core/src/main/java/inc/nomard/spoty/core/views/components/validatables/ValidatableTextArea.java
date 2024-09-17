@@ -1,9 +1,10 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
-import atlantafx.base.controls.*;
-import io.github.palexdev.materialfx.validation.*;
-import java.util.*;
-import javafx.scene.control.*;
+import io.github.palexdev.materialfx.validation.MFXValidator;
+import io.github.palexdev.materialfx.validation.Validated;
+import javafx.scene.control.TextArea;
+
+import java.util.Objects;
 
 public class ValidatableTextArea extends TextArea implements Validated {
     private static int MAX_CHARACTERS = 350;

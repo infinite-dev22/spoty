@@ -1,15 +1,20 @@
 package inc.nomard.spoty.core.viewModels.quotations;
 
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.quotations.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import java.util.*;
-import javafx.application.*;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
+import inc.nomard.spoty.network_bridge.repositories.implementations.QuotationsRepositoryImpl;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.java.Log;
+
+import java.util.Objects;
+
+import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
 
 @Log
 public class QuotationDetailViewModel {

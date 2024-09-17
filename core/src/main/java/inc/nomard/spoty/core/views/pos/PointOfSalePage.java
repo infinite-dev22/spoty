@@ -32,7 +32,9 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
+import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.LinkedList;
@@ -482,7 +484,7 @@ public class PointOfSalePage extends OutlinePage {
                 SaleDetailViewModel.getCartSale(saleDetail);
                 updateSaleDetail(saleDetail, productCard, quantity);
             } else {
-                displayNotification("Product out of stock", MessageVariants.ERROR, "fas-triangle-exclamation");
+                displayNotification("Product out of stock", MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
             }
         } catch (Exception e) {
             SpotyLogger.writeToFile(e, this.getClass());
@@ -506,7 +508,7 @@ public class PointOfSalePage extends OutlinePage {
             SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
             SaleDetailViewModel.addSaleDetail();
         } else {
-            displayNotification("Product out of stock", MessageVariants.ERROR, "fas-triangle-exclamation");
+            displayNotification("Product out of stock", MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
         }
     }
 
@@ -711,16 +713,16 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private void displaySuccessMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void displayErrorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
         progress.setManaged(false);
         progress.setVisible(false);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)

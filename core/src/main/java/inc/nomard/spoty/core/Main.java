@@ -35,31 +35,6 @@ public class Main extends Application {
     private static final String LIGHT_THEME_CSS = SpotyCoreResourceLoader.load("styles/theming/light-theme.css");
     private static final String DARK_THEME_CSS = SpotyCoreResourceLoader.load("styles/theming/dark-theme.css");
 
-    @Override
-    public void init() {
-        PreloadedData.preloadImages();
-        try {
-            SpotyThreader.singleThreadCreator(
-                    "paths-creator",
-                    () -> {
-                        try {
-                            SpotyPaths.createPaths();
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, Main.class);
-                        }
-                    }).join();
-        } catch (InterruptedException e) {
-            SpotyLogger.writeToFile(e, Main.class);
-        }
-        AutoUpdater.applyUpdateIfAvailable();
-        UpdateScheduler.startUpdateChecker();
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        initializePrimaryStage(primaryStage);
-    }
-
     private static void initializePrimaryStage(Stage primaryStage) {
         configureUserAgent();
         CSSFX.start();
@@ -140,5 +115,30 @@ public class Main extends Application {
             Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
             MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         }
+    }
+
+    @Override
+    public void init() {
+        PreloadedData.preloadImages();
+        try {
+            SpotyThreader.singleThreadCreator(
+                    "paths-creator",
+                    () -> {
+                        try {
+                            SpotyPaths.createPaths();
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, Main.class);
+                        }
+                    }).join();
+        } catch (InterruptedException e) {
+            SpotyLogger.writeToFile(e, Main.class);
+        }
+        AutoUpdater.applyUpdateIfAvailable();
+        UpdateScheduler.startUpdateChecker();
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        initializePrimaryStage(primaryStage);
     }
 }

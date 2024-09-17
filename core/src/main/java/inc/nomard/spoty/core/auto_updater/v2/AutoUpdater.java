@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.auto_updater.v2;
 import inc.nomard.spoty.core.startup.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.flavouring.*;
+
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;

@@ -1,14 +1,21 @@
 package inc.nomard.spoty.core.views.util;
 
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.util.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import lombok.*;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import lombok.Setter;
+
+import java.util.Objects;
 
 public interface Page {
     int MAX_WIDTH = 1053;

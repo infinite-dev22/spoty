@@ -1,8 +1,10 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
-import atlantafx.base.controls.*;
-import io.github.palexdev.materialfx.validation.*;
-import java.util.*;
+import atlantafx.base.controls.CustomTextField;
+import io.github.palexdev.materialfx.validation.MFXValidator;
+import io.github.palexdev.materialfx.validation.Validated;
+
+import java.util.Objects;
 
 public class ValidatableTextField extends CustomTextField implements Validated {
     private static int MAX_CHARACTERS = 40;

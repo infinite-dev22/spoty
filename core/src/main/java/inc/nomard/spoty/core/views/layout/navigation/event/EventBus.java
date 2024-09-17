@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.layout.navigation.event;
 
-import java.util.function.*;
+import java.util.function.Consumer;
 
 public interface EventBus {
 

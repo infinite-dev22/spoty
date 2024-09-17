@@ -1,21 +1,35 @@
 package inc.nomard.spoty.core.views.layout;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.utils.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import javafx.application.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.stage.*;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.GlobalActions;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.viewModels.PaymentsViewModel;
+import inc.nomard.spoty.core.viewModels.SubscriptionViewModel;
+import inc.nomard.spoty.core.views.components.InformativeDialog;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.pages.AuthScreen;
+import inc.nomard.spoty.network_bridge.auth.SubscriptionProbe;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.SpotyThreader;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 public class WindowRunner extends ApplicationWindowImpl {
     final VBox vBox = new VBox();
@@ -23,13 +37,13 @@ public class WindowRunner extends ApplicationWindowImpl {
 
     public WindowRunner() {
         super();
-
         addNode(new MainLayer());
-//        clubBouncer();
+        CompletableFuture.runAsync(() -> SubscriptionViewModel.troll(this::clubBouncer, null))
+                .exceptionally(this::onDataInitializationFailure);
     }
 
     private void clubBouncer() {
-        if (!ProtectedGlobals.activeTenancy) {
+        if (SubscriptionProbe.blockAccess) {
             var hBox1 = new HBox();
             var hBox2 = new HBox();
             var close = new Button("Close");
@@ -47,7 +61,7 @@ public class WindowRunner extends ApplicationWindowImpl {
                     trialPlanDetails,
                     "Try It Now",
                     Color.web("#C44900"),
-                    ProtectedGlobals.canTry,
+                    SubscriptionProbe.canTry,
                     () -> PaymentsViewModel.startTrial(this::onSuccess, this::successMessage, this::errorMessage));
             regularPlanDetails.add("Comprehensive reporting and analytics.");
             regularPlanDetails.add("Dedicated customer support.");
@@ -105,13 +119,45 @@ public class WindowRunner extends ApplicationWindowImpl {
         }
     }
 
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, AuthScreen.class);
+        return null;
+    }
+
     private void successMessage(String message) {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon(FontAwesomeSolid.CHECK_CIRCLE)
+                        .type(MessageVariants.SUCCESS)
                         .build();
+        notification.setMinWidth(300);
+        notification.setMinHeight(60);
+        notification.setPrefWidth(400);
+        notification.setPrefHeight(60);
+        notification.setMaxWidth(500);
+        notification.setMaxHeight(60);
+        StackPane.setAlignment(notification, Pos.TOP_CENTER);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!this.getChildren().contains(notification)) {
+            this.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> delay(notification));
+        }
+    }
+
+    private void delay(SpotyMessage message) {
+        Duration delay = Duration.seconds(4);
+
+        KeyFrame keyFrame = new KeyFrame(delay, event -> {
+            var out = Animations.slideOutUp(message, Duration.millis(250));
+            out.playFromStart();
+            out.setOnFinished(actionEvent -> this.getChildren().remove(message));
+        });
+
+        Timeline timeline = new Timeline(keyFrame);
+        timeline.play();
     }
 
     private void onSuccess() {
@@ -123,8 +169,22 @@ public class WindowRunner extends ApplicationWindowImpl {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
+                        .icon(FontAwesomeSolid.EXCLAMATION_TRIANGLE)
                         .type(MessageVariants.ERROR)
                         .build();
+        notification.setMinWidth(300);
+        notification.setMinHeight(60);
+        notification.setPrefWidth(400);
+        notification.setPrefHeight(60);
+        notification.setMaxWidth(500);
+        notification.setMaxHeight(60);
+        StackPane.setAlignment(notification, Pos.TOP_CENTER);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!this.getChildren().contains(notification)) {
+            this.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> delay(notification));
+        }
     }
 }

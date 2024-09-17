@@ -1,8 +1,9 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
-import io.github.palexdev.materialfx.validation.*;
-import javafx.collections.*;
-import javafx.scene.control.*;
+import io.github.palexdev.materialfx.validation.MFXValidator;
+import io.github.palexdev.materialfx.validation.Validated;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
 
 public class ValidatableComboBox<T> extends ComboBox<T> implements Validated {
     protected final MFXValidator validator;

@@ -422,4 +422,9 @@ public class EndPoints {
         public static final String recentOrders = dashboardUrl + "/recent/orders";
         public static final String stockAlerts = dashboardUrl + "/stock/alerts";
     }
+
+    public static final class Subscription {
+        public static final String subscriptionUrl = apiUrl + "/subscription";
+        public static final String status = subscriptionUrl + "/status";
+    }
 }

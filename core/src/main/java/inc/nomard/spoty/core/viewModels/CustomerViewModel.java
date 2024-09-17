@@ -10,11 +10,13 @@ import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
+
 import java.lang.reflect.*;
 import java.net.http.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;

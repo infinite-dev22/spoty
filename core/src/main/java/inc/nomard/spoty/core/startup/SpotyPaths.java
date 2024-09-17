@@ -1,9 +1,13 @@
 package inc.nomard.spoty.core.startup;
 
-import inc.nomard.spoty.utils.*;
-import java.io.*;
-import java.nio.file.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.utils.OSUtil;
+import inc.nomard.spoty.utils.SpotyLogger;
+import lombok.extern.java.Log;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Log
 public class SpotyPaths {
