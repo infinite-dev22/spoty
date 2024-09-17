@@ -737,8 +737,13 @@ public class AuthScreen extends BorderPane {
                         .duration(MessageDuration.SHORT)
                         .icon(FontAwesomeSolid.CHECK_CIRCLE)
                         .type(MessageVariants.SUCCESS)
-                        .height(60)
                         .build();
+        notification.setMinWidth(250);
+        notification.setMinHeight(60);
+        notification.setPrefWidth(300);
+        notification.setPrefHeight(60);
+        notification.setMaxWidth(300);
+        notification.setMaxHeight(60);
         AnchorPane.setRightAnchor(notification, 40.0);
         AnchorPane.setTopAnchor(notification, 10.0);
 
@@ -760,8 +765,13 @@ public class AuthScreen extends BorderPane {
                         .duration(MessageDuration.SHORT)
                         .icon(FontAwesomeSolid.EXCLAMATION_TRIANGLE)
                         .type(MessageVariants.ERROR)
-                        .height(60)
                         .build();
+        notification.setMinWidth(250);
+        notification.setMinHeight(60);
+        notification.setPrefWidth(300);
+        notification.setPrefHeight(60);
+        notification.setMaxWidth(300);
+        notification.setMaxHeight(60);
         if (loginScreen.isVisible()) {
             AnchorPane.setRightAnchor(notification, 40.0);
         }
@@ -793,7 +803,7 @@ public class AuthScreen extends BorderPane {
     }
 
     private void delay(SpotyMessage message) {
-        Duration delay = Duration.seconds(3);
+        Duration delay = Duration.seconds(4);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             var out = Animations.slideOutUp(message, Duration.millis(250));
