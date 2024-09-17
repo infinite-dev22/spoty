@@ -61,7 +61,7 @@ public class SpotyMessage extends StackPane {
     }
 
     public static void delay(SpotyMessage message) {
-        Duration delay = Duration.seconds(3);
+        Duration delay = Duration.seconds(4);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             var out = Animations.slideOutUp(message, Duration.millis(250));
