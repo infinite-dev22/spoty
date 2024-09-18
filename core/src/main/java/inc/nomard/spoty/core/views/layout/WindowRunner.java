@@ -1,22 +1,17 @@
 package inc.nomard.spoty.core.views.layout;
 
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.GlobalActions;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.viewModels.PaymentsViewModel;
 import inc.nomard.spoty.core.viewModels.SubscriptionViewModel;
 import inc.nomard.spoty.core.views.components.InformativeDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.pages.AuthScreen;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.auth.SubscriptionProbe;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -25,8 +20,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -62,7 +55,7 @@ public class WindowRunner extends ApplicationWindowImpl {
                     "Try It Now",
                     Color.web("#C44900"),
                     SubscriptionProbe.canTry,
-                    () -> PaymentsViewModel.startTrial(this::onSuccess, this::successMessage, this::errorMessage));
+                    () -> PaymentsViewModel.startTrial(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage));
             regularPlanDetails.add("Comprehensive reporting and analytics.");
             regularPlanDetails.add("Dedicated customer support.");
             regularPlanDetails.add("Start growing today!");
@@ -124,67 +117,8 @@ public class WindowRunner extends ApplicationWindowImpl {
         return null;
     }
 
-    private void successMessage(String message) {
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon(FontAwesomeSolid.CHECK_CIRCLE)
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notification.setMinWidth(300);
-        notification.setMinHeight(60);
-        notification.setPrefWidth(400);
-        notification.setPrefHeight(60);
-        notification.setMaxWidth(500);
-        notification.setMaxHeight(60);
-        StackPane.setAlignment(notification, Pos.TOP_CENTER);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!this.getChildren().contains(notification)) {
-            this.getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> delay(notification));
-        }
-    }
-
-    private void delay(SpotyMessage message) {
-        Duration delay = Duration.seconds(4);
-
-        KeyFrame keyFrame = new KeyFrame(delay, event -> {
-            var out = Animations.slideOutUp(message, Duration.millis(250));
-            out.playFromStart();
-            out.setOnFinished(actionEvent -> this.getChildren().remove(message));
-        });
-
-        Timeline timeline = new Timeline(keyFrame);
-        timeline.play();
-    }
-
     private void onSuccess() {
         this.setMorph(false);
         this.getChildren().removeAll(vBox);
-    }
-
-    private void errorMessage(String message) {
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder(message)
-                        .duration(MessageDuration.SHORT)
-                        .icon(FontAwesomeSolid.EXCLAMATION_TRIANGLE)
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notification.setMinWidth(300);
-        notification.setMinHeight(60);
-        notification.setPrefWidth(400);
-        notification.setPrefHeight(60);
-        notification.setMaxWidth(500);
-        notification.setMaxHeight(60);
-        StackPane.setAlignment(notification, Pos.TOP_CENTER);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!this.getChildren().contains(notification)) {
-            this.getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> delay(notification));
-        }
     }
 }
