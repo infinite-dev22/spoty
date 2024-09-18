@@ -197,10 +197,6 @@ public class DepartmentViewModel {
         var department =
                 Department.builder()
                         .name(getName())
-                        .manager(getManager())
-                        .parentDepartment(getParentDepartment())
-                        .location(getLocation())
-                        .active(isActive())
                         .description(getDescription())
                         .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.post(department);
@@ -212,6 +208,11 @@ public class DepartmentViewModel {
                     onSuccess.run();
                     successMessage.showMessage("Department created successfully");
                 });
+            } else if (response.statusCode() == 400) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Malformed request"));
+                }
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
@@ -407,10 +408,6 @@ public class DepartmentViewModel {
         var department = Department.builder()
                 .id(getId())
                 .name(getName())
-                .manager(getManager())
-                .parentDepartment(getParentDepartment())
-                .location(getLocation())
-                .active(isActive())
                 .description(getDescription())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.put(department);
@@ -422,6 +419,11 @@ public class DepartmentViewModel {
                     onSuccess.run();
                     successMessage.showMessage("Department updated successfully");
                 });
+            } else if (response.statusCode() == 400) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Malformed request"));
+                }
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
