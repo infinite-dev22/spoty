@@ -1,10 +1,13 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import java.time.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.Role;
+import inc.nomard.spoty.network_bridge.dtos.Tenant;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -27,7 +30,6 @@ public class Employee {
     private String avatar;
     private String email;
     private String salary;
-    private String workShift;
     @Builder.Default
     private boolean active = true;
     @Builder.Default
@@ -78,13 +80,6 @@ public class Employee {
             return "Active";
         }
         return "Not Active";
-    }
-
-    public String getWorkShift() {
-        if (Objects.nonNull(workShift)) {
-            return workShift;
-        }
-        return "N/A";
     }
 
     public String getEmail() {

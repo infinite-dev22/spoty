@@ -11,8 +11,7 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
 import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.models.UserModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.UsersRepositoryImpl;
+import inc.nomard.spoty.network_bridge.repositories.implementations.EmployeesRepositoryImpl;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
@@ -38,7 +37,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Log
-public class UserViewModel {
+public class EmployeeViewModel {
     public static final ObservableList<Employee> USERS_LIST = FXCollections.observableArrayList();
     public static final ListProperty<Employee> EMPLOYEES = new SimpleListProperty<>(USERS_LIST);
     @Getter
@@ -67,7 +66,7 @@ public class UserViewModel {
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<EmploymentStatus> employmentStatus = new SimpleObjectProperty<>(null);
     private static final StringProperty workShift = new SimpleStringProperty("");
-    private static final UsersRepositoryImpl usersRepository = new UsersRepositoryImpl();
+    private static final EmployeesRepositoryImpl usersRepository = new EmployeesRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
@@ -77,7 +76,7 @@ public class UserViewModel {
     }
 
     public static void setId(long id) {
-        UserViewModel.id.set(id);
+        EmployeeViewModel.id.set(id);
     }
 
     public static LongProperty idProperty() {
@@ -89,7 +88,7 @@ public class UserViewModel {
     }
 
     public static void setFirstName(String firstName) {
-        UserViewModel.firstName.set(firstName);
+        EmployeeViewModel.firstName.set(firstName);
     }
 
     public static StringProperty firstNameProperty() {
@@ -101,7 +100,7 @@ public class UserViewModel {
     }
 
     public static void setLastName(String lastName) {
-        UserViewModel.lastName.set(lastName);
+        EmployeeViewModel.lastName.set(lastName);
     }
 
     public static StringProperty lastNameProperty() {
@@ -113,7 +112,7 @@ public class UserViewModel {
     }
 
     public static void setActive(boolean active) {
-        UserViewModel.active.set(active);
+        EmployeeViewModel.active.set(active);
     }
 
     public static BooleanProperty activeProperty() {
@@ -125,10 +124,10 @@ public class UserViewModel {
     }
 
     public static void setOtherName(String otherName) {
-        UserViewModel.otherName.set(otherName);
+        EmployeeViewModel.otherName.set(otherName);
     }
 
-    public static StringProperty userNameProperty() {
+    public static StringProperty otherNameProperty() {
         return otherName;
     }
 
@@ -137,7 +136,7 @@ public class UserViewModel {
     }
 
     public static void setRole(Role role) {
-        UserViewModel.role.set(role);
+        EmployeeViewModel.role.set(role);
     }
 
     public static ObjectProperty<Role> roleProperty() {
@@ -149,7 +148,7 @@ public class UserViewModel {
     }
 
     public static void setEmail(String email) {
-        UserViewModel.email.set(email);
+        EmployeeViewModel.email.set(email);
     }
 
     public static StringProperty emailProperty() {
@@ -161,7 +160,7 @@ public class UserViewModel {
     }
 
     public static void setPhone(String phone) {
-        UserViewModel.phone.set(phone);
+        EmployeeViewModel.phone.set(phone);
     }
 
     public static StringProperty phoneProperty() {
@@ -173,7 +172,7 @@ public class UserViewModel {
     }
 
     public static void setEMPLOYEES(ObservableList<Employee> employees) {
-        UserViewModel.EMPLOYEES.set(employees);
+        EmployeeViewModel.EMPLOYEES.set(employees);
     }
 
     public static ListProperty<Employee> usersProperty() {
@@ -185,7 +184,7 @@ public class UserViewModel {
     }
 
     public static void setAvatar(String avatar) {
-        UserViewModel.avatar.set(avatar);
+        EmployeeViewModel.avatar.set(avatar);
     }
 
     public static StringProperty avatarProperty() {
@@ -197,7 +196,7 @@ public class UserViewModel {
     }
 
     public static void setDateOfBirth(LocalDate dateOfBirth) {
-        UserViewModel.dateOfBirth.set(dateOfBirth);
+        EmployeeViewModel.dateOfBirth.set(dateOfBirth);
     }
 
     public static ObjectProperty<LocalDate> dateOfBirthProperty() {
@@ -209,7 +208,7 @@ public class UserViewModel {
     }
 
     public static void setDepartment(Department department) {
-        UserViewModel.department.set(department);
+        EmployeeViewModel.department.set(department);
     }
 
     public static ObjectProperty<Department> departmentProperty() {
@@ -221,7 +220,7 @@ public class UserViewModel {
     }
 
     public static void setDesignation(Designation designation) {
-        UserViewModel.designation.set(designation);
+        EmployeeViewModel.designation.set(designation);
     }
 
     public static ObjectProperty<Designation> designationProperty() {
@@ -233,7 +232,7 @@ public class UserViewModel {
     }
 
     public static void setEmploymentStatus(EmploymentStatus employmentStatus) {
-        UserViewModel.employmentStatus.set(employmentStatus);
+        EmployeeViewModel.employmentStatus.set(employmentStatus);
     }
 
     public static ObjectProperty<EmploymentStatus> employmentStatusProperty() {
@@ -245,7 +244,7 @@ public class UserViewModel {
     }
 
     public static void setWorkShift(String workShift) {
-        UserViewModel.workShift.set(workShift);
+        EmployeeViewModel.workShift.set(workShift);
     }
 
     public static StringProperty workShiftProperty() {
@@ -257,7 +256,7 @@ public class UserViewModel {
     }
 
     public static void setTotalPages(Integer totalPages) {
-        UserViewModel.totalPages.set(totalPages);
+        EmployeeViewModel.totalPages.set(totalPages);
     }
 
     public static IntegerProperty totalPagesProperty() {
@@ -269,7 +268,7 @@ public class UserViewModel {
     }
 
     public static void setPageNumber(Integer pageNumber) {
-        UserViewModel.pageNumber.set(pageNumber);
+        EmployeeViewModel.pageNumber.set(pageNumber);
     }
 
     public static IntegerProperty pageNumberProperty() {
@@ -281,7 +280,7 @@ public class UserViewModel {
     }
 
     public static void setPageSize(Integer pageSize) {
-        UserViewModel.pageSize.set(pageSize);
+        EmployeeViewModel.pageSize.set(pageSize);
     }
 
     public static IntegerProperty pageSizeProperty() {
@@ -305,16 +304,15 @@ public class UserViewModel {
         setAvatar("");
     }
 
-    public static void saveUser(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                SpotyGotFunctional.MessageConsumer successMessage,
-                                SpotyGotFunctional.MessageConsumer errorMessage) {
-        var user = UserModel.builder()
+    public static void saveEmployee(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                    SpotyGotFunctional.MessageConsumer successMessage,
+                                    SpotyGotFunctional.MessageConsumer errorMessage) {
+        var user = Employee.builder()
                 .firstName(getFirstName())
                 .lastName(getLastName())
                 .otherName(getOtherName())
                 .phone(getPhone())
                 .email(getEmail())
-                .dateOfBirth(getDateOfBirth())
                 .avatar(getAvatar())
                 .active(isActive())
                 .role(getRole())
@@ -329,7 +327,7 @@ public class UserViewModel {
                 // Process the successful response
                 Platform.runLater(() -> {
                     onSuccess.run();
-                    successMessage.showMessage("User created successfully");
+                    successMessage.showMessage("Employee created successfully");
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
@@ -358,13 +356,13 @@ public class UserViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, UserViewModel.class);
+            SpotyLogger.writeToFile(throwable, EmployeeViewModel.class);
             return null;
         });
     }
 
-    public static void getAllUsers(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                   SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+    public static void getAllEmployees(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                       SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
         CompletableFuture<HttpResponse<String>> responseFuture = usersRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
@@ -411,7 +409,7 @@ public class UserViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, UserViewModel.class);
+            SpotyLogger.writeToFile(throwable, EmployeeViewModel.class);
             return null;
         });
     }
@@ -436,7 +434,6 @@ public class UserViewModel {
                     setDepartment(user.getDepartment());
                     setDesignation(user.getDesignation());
                     setEmploymentStatus(user.getEmploymentStatus());
-                    setWorkShift(user.getWorkShift());
                     setActive(user.isActive());
                     onSuccess.run();
                 });
@@ -517,7 +514,7 @@ public class UserViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, UserViewModel.class);
+            SpotyLogger.writeToFile(throwable, EmployeeViewModel.class);
             return null;
         });
     }
@@ -525,14 +522,13 @@ public class UserViewModel {
     public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        var user = UserModel.builder()
+        var user = Employee.builder()
                 .id(getId())
                 .firstName(getFirstName())
                 .lastName(getLastName())
                 .otherName(getOtherName())
                 .phone(getPhone())
                 .email(getEmail())
-                .dateOfBirth(getDateOfBirth())
                 .avatar(getAvatar())
                 .active(isActive())
                 .role(getRole())
@@ -547,7 +543,7 @@ public class UserViewModel {
                 // Process the successful response
                 Platform.runLater(() -> {
                     onSuccess.run();
-                    successMessage.showMessage("User updated successfully");
+                    successMessage.showMessage("Employee updated successfully");
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
@@ -576,7 +572,7 @@ public class UserViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, UserViewModel.class);
+            SpotyLogger.writeToFile(throwable, EmployeeViewModel.class);
             return null;
         });
     }
@@ -593,7 +589,7 @@ public class UserViewModel {
                 // Process the successful response
                 Platform.runLater(() -> {
                     onSuccess.run();
-                    successMessage.showMessage("User deleted successfully");
+                    successMessage.showMessage("Employee deleted successfully");
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
@@ -622,7 +618,7 @@ public class UserViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
                 }
             }
-            SpotyLogger.writeToFile(throwable, UserViewModel.class);
+            SpotyLogger.writeToFile(throwable, EmployeeViewModel.class);
             return null;
         });
     }

@@ -1,22 +1,18 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.ModalPage;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
@@ -29,20 +25,19 @@ import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter;
 import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.util.Duration;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,17 +45,18 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
-public class UserForm extends ModalPage {
+public class EmployeeForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
     public CustomButton saveBtn;
     public Button cancelBtn;
-    private ValidatableTextField email, phone, firstname, lastname, username;
+    private ValidatableTextField email, phone, firstname, lastname, otherName;
     private ValidatableComboBox<Role> role;
     private ToggleSwitch status;
     private Label firstNameValidationLabel, emailValidationLabel, phoneValidationLabel,
-            lastNameValidationLabel, userNameValidationLabel, roleValidationLabel,
+            lastNameValidationLabel, otherNameValidationLabel, roleValidationLabel,
             departmentValidationLabel, designationValidationLabel,
             employmentStatusValidationLabel, workShiftValidationLabel;
     private ValidatableDatePicker dateOfBirth;
@@ -69,10 +65,11 @@ public class UserForm extends ModalPage {
     private ValidatableComboBox<EmploymentStatus> employmentStatus;
     private ValidatableComboBox<String> workShift;
     private List<Constraint> firstNameConstraints, lastNameConstraints,
-            userNameConstraints, userRoleConstraints;
+            otherNameConstraints, userRoleConstraints;
     private Event actionEvent = null;
 
-    public UserForm() {
+    public EmployeeForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         initializeComponents();
         initializeComponentProperties();
         setupLayout();
@@ -81,7 +78,7 @@ public class UserForm extends ModalPage {
     private void initializeComponents() {
         firstNameValidationLabel = createValidationLabel();
         lastNameValidationLabel = createValidationLabel();
-        userNameValidationLabel = createValidationLabel();
+        otherNameValidationLabel = createValidationLabel();
         emailValidationLabel = createValidationLabel();
         phoneValidationLabel = createValidationLabel();
         departmentValidationLabel = createValidationLabel();
@@ -90,18 +87,18 @@ public class UserForm extends ModalPage {
         workShiftValidationLabel = createValidationLabel();
         roleValidationLabel = createValidationLabel();
 
-        firstname = createTextField("First name");
-        lastname = createTextField("Last name");
-        username = createTextField("Username");
+        firstname = createTextField();
+        lastname = createTextField();
+        otherName = createTextField();
         dateOfBirth = createDatePicker();
-        email = createTextField("Email");
-        phone = createTextField("Phone");
+        email = createTextField();
+        phone = createTextField();
 
-        department = createFilterComboBox("Department", DepartmentViewModel.getDepartments());
-        designation = createFilterComboBox("Designation", DesignationViewModel.getDesignations());
-        employmentStatus = createFilterComboBox("Employment Status", EmploymentStatusViewModel.getEmploymentStatuses());
+        department = createFilterComboBox(DepartmentViewModel.getDepartments());
+        designation = createFilterComboBox(DesignationViewModel.getDesignations());
+        employmentStatus = createFilterComboBox(EmploymentStatusViewModel.getEmploymentStatuses());
         workShift = createComboBox();
-        role = createFilterComboBox("Role", RoleViewModel.getRoles());
+        role = createFilterComboBox(RoleViewModel.getRoles());
 
         status = new ToggleSwitch();
 
@@ -121,15 +118,31 @@ public class UserForm extends ModalPage {
     }
 
     private void setupLayout() {
-        GridPane gridPane = createGridPane();
-        addGridPaneContent(gridPane);
-
         HBox buttonBox = new HBox(20, saveBtn, cancelBtn);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10, 10, 10, 10));
 
-        setCenter(gridPane);
+        setCenter(buildCenter());
         setBottom(buttonBox);
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(
+                buildFieldBox(firstname, "First name", firstNameValidationLabel),
+                buildFieldBox(lastname, "Last name", lastNameValidationLabel),
+                buildFieldBox(otherName, "Other Name", otherNameValidationLabel),
+                buildFieldBox(dateOfBirth, "Date Of Birth"),
+                buildFieldBox(email, "Email", emailValidationLabel),
+                buildFieldBox(phone, "Phone", phoneValidationLabel),
+                buildFieldBox(department, "Department", departmentValidationLabel),
+                buildFieldBox(designation, "Designation", designationValidationLabel),
+                buildFieldBox(employmentStatus, "Employment Status", employmentStatusValidationLabel),
+                buildFieldBox(role, "Role", roleValidationLabel),
+                buildFieldBox(status, "Status"));
+        return vbox;
     }
 
     private Label createValidationLabel() {
@@ -141,7 +154,7 @@ public class UserForm extends ModalPage {
         return label;
     }
 
-    private ValidatableTextField createTextField(String floatingText) {
+    private ValidatableTextField createTextField() {
         ValidatableTextField textField = new ValidatableTextField();
         textField.setPrefWidth(300);
         return textField;
@@ -149,13 +162,13 @@ public class UserForm extends ModalPage {
 
     private ValidatableDatePicker createDatePicker() {
         ValidatableDatePicker datePicker = new ValidatableDatePicker();
-        datePicker.setPrefWidth(300);
+        datePicker.setPrefWidth(1000);
         return datePicker;
     }
 
-    private <T> ValidatableComboBox<T> createFilterComboBox(String floatingText, ObservableList<T> items) {
+    private <T> ValidatableComboBox<T> createFilterComboBox(ObservableList<T> items) {
         ValidatableComboBox<T> comboBox = new ValidatableComboBox<>();
-        comboBox.setPrefWidth(300);
+        comboBox.setPrefWidth(1000);
         comboBox.setItems(items);
         return comboBox;
     }
@@ -163,58 +176,18 @@ public class UserForm extends ModalPage {
     private ValidatableComboBox<String> createComboBox() {
         ValidatableComboBox<String> comboBox = new ValidatableComboBox<>();
         comboBox.setPrefWidth(300);
-        comboBox.setItems(UserViewModel.getWorkShiftsList());
+        comboBox.setItems(EmployeeViewModel.getWorkShiftsList());
         return comboBox;
     }
 
-    private GridPane createGridPane() {
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(20);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(10, 10, 10, 10));
-
-        ColumnConstraints col1 = new ColumnConstraints();
-        col1.setHgrow(Priority.SOMETIMES);
-        ColumnConstraints col2 = new ColumnConstraints();
-        col2.setHgrow(Priority.SOMETIMES);
-
-        gridPane.getColumnConstraints().addAll(col1, col2);
-
-        for (int i = 0; i < 6; i++) {
-            RowConstraints row = new RowConstraints();
-            row.setVgrow(Priority.SOMETIMES);
-            gridPane.getRowConstraints().add(row);
-        }
-
-        return gridPane;
-    }
-
-    private void addGridPaneContent(GridPane gridPane) {
-        addFormRow(gridPane, 0, buildFieldBox(firstname, "First name"), firstNameValidationLabel, buildFieldBox(lastname, "Last name"), lastNameValidationLabel);
-        addFormRow(gridPane, 1, buildFieldBox(username, "Username"), userNameValidationLabel, buildFieldBox(dateOfBirth, "Date Of Birth"), null);
-        addFormRow(gridPane, 2, buildFieldBox(email, "Email"), emailValidationLabel, buildFieldBox(phone, "Phone"), phoneValidationLabel);
-        addFormRow(gridPane, 3, buildFieldBox(department, "Department"), departmentValidationLabel, buildFieldBox(designation, "Designation"), designationValidationLabel);
-        addFormRow(gridPane, 4, buildFieldBox(employmentStatus, "Employment Status"), employmentStatusValidationLabel, buildFieldBox(workShift, "Work Shift"), workShiftValidationLabel);
-        addFormRow(gridPane, 5, buildFieldBox(role, "Role"), roleValidationLabel, buildFieldBox(status, "Status"), null);
-    }
-
-    private VBox buildFieldBox(Control textField, String floatingText) {
+    private VBox buildFieldBox(Control control, String floatingText, Label validationLabel) {
         var label = new Label(floatingText);
-        return new VBox(label, textField);
+        return new VBox(label, control, validationLabel);
     }
 
-    private void addFormRow(GridPane gridPane, int rowIndex, Node leftControl, Label leftLabel, Node rightControl, Label rightLabel) {
-        addControlToGrid(gridPane, 0, rowIndex, leftControl, leftLabel);
-        addControlToGrid(gridPane, 1, rowIndex, rightControl, rightLabel);
-    }
-
-    private void addControlToGrid(GridPane gridPane, int colIndex, int rowIndex, Node control, Label validationLabel) {
-        VBox vbox = new VBox(5, control);
-        if (validationLabel != null) {
-            vbox.getChildren().add(validationLabel);
-        }
-        vbox.setPadding(new Insets(0, 0, 2.5, 0));
-        gridPane.add(vbox, colIndex, rowIndex);
+    private VBox buildFieldBox(Control control, String floatingText) {
+        var label = new Label(floatingText);
+        return new VBox(label, control);
     }
 
     private void setupPhoneField() {
@@ -227,18 +200,18 @@ public class UserForm extends ModalPage {
     }
 
     private void setupBindings() {
-        bindTextField(firstname, UserViewModel.firstNameProperty());
-        bindTextField(lastname, UserViewModel.lastNameProperty());
-        bindTextField(username, UserViewModel.userNameProperty());
-        bindTextField(email, UserViewModel.emailProperty());
-        bindTextField(phone, UserViewModel.phoneProperty());
-        bindFilterComboBox(role, UserViewModel.roleProperty());
-        bindToggleButton(status, UserViewModel.activeProperty());
-        bindFilterComboBox(department, UserViewModel.departmentProperty());
-        bindFilterComboBox(designation, UserViewModel.designationProperty());
-        bindFilterComboBox(employmentStatus, UserViewModel.employmentStatusProperty());
-        bindComboBox(workShift, UserViewModel.workShiftProperty());
-        bindDatePicker(dateOfBirth, UserViewModel.dateOfBirthProperty());
+        bindTextField(firstname, EmployeeViewModel.firstNameProperty());
+        bindTextField(lastname, EmployeeViewModel.lastNameProperty());
+        bindTextField(otherName, EmployeeViewModel.otherNameProperty());
+        bindTextField(email, EmployeeViewModel.emailProperty());
+        bindTextField(phone, EmployeeViewModel.phoneProperty());
+        bindFilterComboBox(role, EmployeeViewModel.roleProperty());
+        bindToggleButton(status, EmployeeViewModel.activeProperty());
+        bindFilterComboBox(department, EmployeeViewModel.departmentProperty());
+        bindFilterComboBox(designation, EmployeeViewModel.designationProperty());
+        bindFilterComboBox(employmentStatus, EmployeeViewModel.employmentStatusProperty());
+        bindComboBox(workShift, EmployeeViewModel.workShiftProperty());
+        bindDatePicker(dateOfBirth, EmployeeViewModel.dateOfBirthProperty());
     }
 
     private void bindTextField(ValidatableTextField textField, Property<String> property) {
@@ -264,7 +237,7 @@ public class UserForm extends ModalPage {
     private void setupValidators() {
         requiredValidator(firstname, firstNameValidationLabel, "First name is required");
         requiredValidator(lastname, lastNameValidationLabel, "Last name is required");
-        requiredValidator(username, userNameValidationLabel, "Username is required");
+        requiredValidator(otherName, otherNameValidationLabel, "Employeename is required");
         requiredValidator(role, roleValidationLabel, "Role is required");
     }
 
@@ -318,13 +291,13 @@ public class UserForm extends ModalPage {
 
     private void dialogOnActions() {
         saveBtn.setOnAction(this::onSave);
-        cancelBtn.setOnAction(this::onCancel);
+        cancelBtn.setOnAction(event -> this.dispose());
     }
 
     private void onSave(Event event) {
         firstNameConstraints = firstname.validate();
         lastNameConstraints = lastname.validate();
-        userNameConstraints = username.validate();
+        otherNameConstraints = otherName.validate();
         userRoleConstraints = role.validate();
         if (!firstNameConstraints.isEmpty()) {
             firstNameValidationLabel.setManaged(true);
@@ -342,12 +315,12 @@ public class UserForm extends ModalPage {
             MFXStageDialog dialog = (MFXStageDialog) lastname.getScene().getWindow();
             dialog.sizeToScene();
         }
-        if (!userNameConstraints.isEmpty()) {
-            userNameValidationLabel.setManaged(true);
-            userNameValidationLabel.setVisible(true);
-            userNameValidationLabel.setText(userNameConstraints.getFirst().getMessage());
-            username.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) username.getScene().getWindow();
+        if (!otherNameConstraints.isEmpty()) {
+            otherNameValidationLabel.setManaged(true);
+            otherNameValidationLabel.setVisible(true);
+            otherNameValidationLabel.setText(otherNameConstraints.getFirst().getMessage());
+            otherName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+            MFXStageDialog dialog = (MFXStageDialog) otherName.getScene().getWindow();
             dialog.sizeToScene();
         }
         if (!userRoleConstraints.isEmpty()) {
@@ -360,77 +333,50 @@ public class UserForm extends ModalPage {
         }
         if (firstNameConstraints.isEmpty() &
                 lastNameConstraints.isEmpty() &
-                userNameConstraints.isEmpty() &
+                otherNameConstraints.isEmpty() &
                 userRoleConstraints.isEmpty()
                 && !emailValidationLabel.isVisible()
                 && !phoneValidationLabel.isVisible()) {
-            if (UserViewModel.getId() > 0) {
-                UserViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+            if (EmployeeViewModel.getId() > 0) {
+                EmployeeViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
                 actionEvent = event;
                 return;
             }
-            UserViewModel.saveUser(this::onSuccess, this::successMessage, this::errorMessage);
+            EmployeeViewModel.saveEmployee(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
             actionEvent = event;
         }
     }
 
     private void onCancel(ActionEvent event) {
         closeDialog(event);
-        UserViewModel.resetProperties();
+        EmployeeViewModel.resetProperties();
 
         firstNameValidationLabel.setVisible(false);
         lastNameValidationLabel.setVisible(false);
-        userNameValidationLabel.setVisible(false);
+        otherNameValidationLabel.setVisible(false);
         roleValidationLabel.setVisible(false);
         emailValidationLabel.setVisible(false);
         phoneValidationLabel.setVisible(false);
 
         firstNameValidationLabel.setManaged(false);
         lastNameValidationLabel.setManaged(false);
-        userNameValidationLabel.setManaged(false);
+        otherNameValidationLabel.setManaged(false);
         roleValidationLabel.setManaged(false);
         emailValidationLabel.setManaged(false);
         phoneValidationLabel.setManaged(false);
 
         firstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         lastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        username.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        username.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        otherName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        otherName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         role.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         this.dispose();
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        UserViewModel.resetProperties();
-        UserViewModel.getAllUsers(null, null, null, null);
         this.dispose();
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
-    private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        var notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        EmployeeViewModel.getAllEmployees(null, null, null, null);
+        this.dispose();
     }
 
     private void setupFieldProperties() {
@@ -459,7 +405,7 @@ public class UserForm extends ModalPage {
                         employmentStatus -> StringUtils.containsIgnoreCase(employmentStatusConverter.toString(employmentStatus), searchStr);
 
         // Combo box properties.
-        workShift.setItems(UserViewModel.getWorkShiftsList());
+        workShift.setItems(EmployeeViewModel.getWorkShiftsList());
         role.setConverter(roleConverter);
         if (RoleViewModel.getRoles().isEmpty()) {
             RoleViewModel.getRoles()
@@ -498,23 +444,24 @@ public class UserForm extends ModalPage {
         }
     }
 
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        EmployeeViewModel.resetProperties();
         saveBtn = null;
         cancelBtn = null;
         email = null;
         phone = null;
         firstname = null;
         lastname = null;
-        username = null;
+        otherName = null;
         role = null;
         status = null;
         firstNameValidationLabel = null;
         emailValidationLabel = null;
         phoneValidationLabel = null;
         lastNameValidationLabel = null;
-        userNameValidationLabel = null;
+        otherNameValidationLabel = null;
         roleValidationLabel = null;
         departmentValidationLabel = null;
         designationValidationLabel = null;
@@ -527,7 +474,7 @@ public class UserForm extends ModalPage {
         workShift = null;
         firstNameConstraints = null;
         lastNameConstraints = null;
-        userNameConstraints = null;
+        otherNameConstraints = null;
         userRoleConstraints = null;
         actionEvent = null;
     }

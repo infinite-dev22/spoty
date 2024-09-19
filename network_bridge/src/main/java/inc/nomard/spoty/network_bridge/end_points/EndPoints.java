@@ -270,26 +270,15 @@ public class EndPoints {
         public static final String deleteUnitsOfMeasure = unitsOfMeasureUrl + "/delete/multiple";
     }
 
-    public static final class Users {
-        public static final String usersUrl = apiUrl + "/users";
-        public static final String allUsers = usersUrl + "/all";
-        public static final String userById = usersUrl + "/single";
-        public static final String searchUsers = usersUrl + "/search";
-        public static final String addUser = usersUrl + "/add";
-        public static final String updateUser = usersUrl + "/update";
-        public static final String deleteUser = usersUrl + "/delete/single";
-        public static final String deleteUsers = usersUrl + "/delete/multiple";
-    }
-
-    public static final class UserProfiles {
-        public static final String userProfilesUrl = apiUrl + "/user/profiles";
-        public static final String allUserProfiles = userProfilesUrl + "/all";
-        public static final String userProfileById = userProfilesUrl + "/single";
-        public static final String searchUserProfiles = userProfilesUrl + "/search";
-        public static final String addUserProfile = userProfilesUrl + "/add";
-        public static final String updateUserProfile = userProfilesUrl + "/update";
-        public static final String deleteUserProfile = userProfilesUrl + "/delete/single";
-        public static final String deleteUserProfiles = userProfilesUrl + "/delete/multiple";
+    public static final class Employees {
+        public static final String employeesUrl = apiUrl + "/employees";
+        public static final String allEmployees = employeesUrl + "/all";
+        public static final String employeeById = employeesUrl + "/single";
+        public static final String searchEmployees = employeesUrl + "/search";
+        public static final String addEmployee = employeesUrl + "/add";
+        public static final String updateEmployee = employeesUrl + "/update";
+        public static final String deleteEmployee = employeesUrl + "/delete/single";
+        public static final String deleteEmployees = employeesUrl + "/delete/multiple";
     }
 
     public static final class EmploymentStatus {

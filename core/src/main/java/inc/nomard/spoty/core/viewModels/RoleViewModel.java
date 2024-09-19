@@ -231,7 +231,6 @@ public class RoleViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.fetchAllRoles(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
-            // Process the successful response
             if (Objects.nonNull(onSuccess)) {
                 Platform.runLater(() -> {
                     Type type = new TypeToken<ResponseModel<Role>>() {

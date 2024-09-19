@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 import lombok.extern.java.*;
 
 @Log
-public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
+public class EmployeesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class,
                     new LocalDateTypeAdapter())
@@ -32,7 +32,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
         }
 
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Users.allUsers + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
+                .uri(URI.create(EndPoints.Employees.allEmployees + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -45,7 +45,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> fetch(FindModel findModel) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Users.userById))
+                .uri(URI.create(EndPoints.Employees.employeeById))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -58,7 +58,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> search(SearchModel searchModel) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Users.searchUsers))
+                .uri(URI.create(EndPoints.Employees.searchEmployees))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -71,7 +71,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> post(Object object) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Users.addUser))
+                .uri(URI.create(EndPoints.Employees.addEmployee))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -84,7 +84,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> put(Object object) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Users.updateUser))
+                .uri(URI.create(EndPoints.Employees.updateEmployee))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -97,7 +97,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> delete(FindModel findModel) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Users.deleteUser))
+                .uri(URI.create(EndPoints.Employees.deleteEmployee))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -110,7 +110,7 @@ public class UsersRepositoryImpl extends ProtectedGlobals implements SimpleRepos
     @Override
     public CompletableFuture<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Users.deleteUsers))
+                .uri(URI.create(EndPoints.Employees.deleteEmployees))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

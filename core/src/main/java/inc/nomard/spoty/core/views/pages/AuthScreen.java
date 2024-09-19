@@ -10,8 +10,8 @@ import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
 import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
@@ -667,7 +667,7 @@ public class AuthScreen extends BorderPane {
                 CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null, null, null)),
                 CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null, null, null)),
                 CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null, null, null)),
-                CompletableFuture.runAsync(() -> UserViewModel.getAllUsers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> EmployeeViewModel.getAllEmployees(null, null, null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getTotalEarnings(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getTotalPurchases(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getCountProducts(null, null)),

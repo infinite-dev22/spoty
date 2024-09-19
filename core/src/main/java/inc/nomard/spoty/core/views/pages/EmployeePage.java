@@ -1,17 +1,21 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
-import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
+import inc.nomard.spoty.core.viewModels.RoleViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
-import inc.nomard.spoty.core.views.forms.UserForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.forms.EmployeeForm;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -19,21 +23,22 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @Log
 public class EmployeePage extends OutlinePage {
+    private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Employee> masterTable;
     private MFXProgressSpinner progress;
@@ -50,10 +55,32 @@ public class EmployeePage extends OutlinePage {
 
     public EmployeePage() {
         super();
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        UserViewModel.getAllUsers(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> DepartmentViewModel.getAllDepartments(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null, null, null)),
+                CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null, null)),
+                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null, null, null)),
+                CompletableFuture.runAsync(() -> EmployeeViewModel.getAllEmployees(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -123,15 +150,15 @@ public class EmployeePage extends OutlinePage {
         var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
-        if (UserViewModel.getTotalPages() > 0) {
+        if (EmployeeViewModel.getTotalPages() > 0) {
             paging.setVisible(true);
             paging.setManaged(true);
         } else {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        UserViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
-            if (UserViewModel.getTotalPages() > 0) {
+        EmployeeViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (EmployeeViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
             } else {
@@ -180,12 +207,12 @@ public class EmployeePage extends OutlinePage {
                 role).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
-        styleUserTable();
+        styleEmployeeTable();
 
-        masterTable.setItems(UserViewModel.getEMPLOYEES());
+        masterTable.setItems(EmployeeViewModel.getEMPLOYEES());
     }
 
-    private void styleUserTable() {
+    private void styleEmployeeTable() {
         masterTable.setPrefSize(1200, 1000);
 
         masterTable.setRowFactory(
@@ -213,13 +240,13 @@ public class EmployeePage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            UserViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            EmployeeViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
             event.consume();
         }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    UserViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new UserForm(), this).showAndWait(), this::errorMessage);
+                    EmployeeViewModel.getItem(obj.getItem().getId(), this::showDialog, SpotyUtils::errorMessage);
                     e.consume();
                 });
         contextMenu.getItems().addAll(edit, delete);
@@ -228,11 +255,23 @@ public class EmployeePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new UserForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog());
+    }
+
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new EmployeeForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
-        UserViewModel.getAllUsers(null, null, null, null);
+        EmployeeViewModel.getAllEmployees(null, null, null, null);
     }
 
     public void setSearchBar() {
@@ -241,43 +280,21 @@ public class EmployeePage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                UserViewModel.getAllUsers(null, null, null, null);
+                EmployeeViewModel.getAllEmployees(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
-            UserViewModel.searchItem(nv, () -> {
+            EmployeeViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     private void setupTableColumns() {
@@ -393,17 +410,17 @@ public class EmployeePage extends OutlinePage {
     }
 
     private Pagination buildPagination() {
-        var pagination = new Pagination(UserViewModel.getTotalPages(), 0);
+        var pagination = new Pagination(EmployeeViewModel.getTotalPages(), 0);
         pagination.setMaxPageIndicatorCount(5);
-        pagination.pageCountProperty().bindBidirectional(UserViewModel.totalPagesProperty());
+        pagination.pageCountProperty().bindBidirectional(EmployeeViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
             progress.setVisible(true);
-            UserViewModel.getAllUsers(() -> {
+            EmployeeViewModel.getAllEmployees(() -> {
                 progress.setManaged(false);
                 progress.setVisible(false);
-            }, null, pageNum, UserViewModel.getPageSize());
-            UserViewModel.setPageNumber(pageNum);
+            }, null, pageNum, EmployeeViewModel.getPageSize());
+            EmployeeViewModel.setPageNumber(pageNum);
             return new StackPane(); // null isn't allowed
         });
         return pagination;
@@ -412,21 +429,21 @@ public class EmployeePage extends OutlinePage {
     private ComboBox<Integer> buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
-        pageSize.valueProperty().bindBidirectional(UserViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().bindBidirectional(EmployeeViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
                 (observableValue, integer, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
-                    UserViewModel
-                            .getAllUsers(
+                    EmployeeViewModel
+                            .getAllEmployees(
                                     () -> {
                                         progress.setManaged(false);
                                         progress.setVisible(false);
                                     },
                                     null,
-                                    UserViewModel.getPageNumber(),
+                                    EmployeeViewModel.getPageNumber(),
                                     t1);
-                    UserViewModel.setPageSize(t1);
+                    EmployeeViewModel.setPageSize(t1);
                 });
         return pageSize;
     }

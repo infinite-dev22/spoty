@@ -3,7 +3,7 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import com.dlsc.gemsfx.TimePicker;
-import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
@@ -117,10 +117,10 @@ public class LeaveRequestForm extends ModalPage {
                 employeeDetail -> employeeDetail == null ? "" : employeeDetail.getName());
         employee.setConverter(employeeConverter);
 
-        if (UserViewModel.getEMPLOYEES().isEmpty()) {
-            UserViewModel.getEMPLOYEES().addListener((ListChangeListener<Employee>) c -> employee.setItems(UserViewModel.getEMPLOYEES()));
+        if (EmployeeViewModel.getEMPLOYEES().isEmpty()) {
+            EmployeeViewModel.getEMPLOYEES().addListener((ListChangeListener<Employee>) c -> employee.setItems(EmployeeViewModel.getEMPLOYEES()));
         } else {
-            employee.itemsProperty().bindBidirectional(UserViewModel.usersProperty());
+            employee.itemsProperty().bindBidirectional(EmployeeViewModel.usersProperty());
         }
         leaveType.setItems(LeaveStatusViewModel.getLeaveTypeList());
     }
