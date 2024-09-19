@@ -205,7 +205,7 @@ public class EmployeePage extends OutlinePage {
         masterTable.getColumns().addAll(columnList);
         styleEmployeeTable();
 
-        masterTable.setItems(EmployeeViewModel.getEMPLOYEES());
+        masterTable.setItems(EmployeeViewModel.getEmployees());
     }
 
     private void styleEmployeeTable() {
