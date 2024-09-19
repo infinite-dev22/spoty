@@ -117,8 +117,8 @@ public class LeaveRequestForm extends ModalPage {
                 employeeDetail -> employeeDetail == null ? "" : employeeDetail.getName());
         employee.setConverter(employeeConverter);
 
-        if (EmployeeViewModel.getEMPLOYEES().isEmpty()) {
-            EmployeeViewModel.getEMPLOYEES().addListener((ListChangeListener<Employee>) c -> employee.setItems(EmployeeViewModel.getEMPLOYEES()));
+        if (EmployeeViewModel.getEmployees().isEmpty()) {
+            EmployeeViewModel.getEmployees().addListener((ListChangeListener<Employee>) c -> employee.setItems(EmployeeViewModel.getEmployees()));
         } else {
             employee.itemsProperty().bindBidirectional(EmployeeViewModel.usersProperty());
         }
