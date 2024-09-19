@@ -10,6 +10,7 @@ public class ValidatableComboBox<T> extends ComboBox<T> implements Validated {
 
     public ValidatableComboBox() {
         this.validator = new MFXValidator();
+        this.setMaxHeight(45);
     }
 
     public ValidatableComboBox(ObservableList<T> observableList) {

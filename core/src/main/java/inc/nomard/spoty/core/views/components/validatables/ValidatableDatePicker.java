@@ -12,6 +12,7 @@ public class ValidatableDatePicker extends DatePicker implements Validated {
 
     public ValidatableDatePicker() {
         this.validator = new MFXValidator();
+        this.setMaxHeight(45);
     }
 
     public ValidatableDatePicker(LocalDate localDate) {

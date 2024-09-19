@@ -12,6 +12,7 @@ public class ValidatableTextField extends CustomTextField implements Validated {
 
     public ValidatableTextField() {
         this.validator = new MFXValidator();
+        this.setMaxHeight(45);
     }
 
     public ValidatableTextField(String text) {
