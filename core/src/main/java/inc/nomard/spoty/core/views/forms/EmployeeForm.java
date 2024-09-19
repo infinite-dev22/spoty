@@ -53,14 +53,13 @@ public class EmployeeForm extends BorderPane {
     private final ModalPane modalPane;
     public CustomButton saveBtn;
     public Button cancelBtn;
-    private ValidatableTextField email, phone, firstname, lastname, otherName;
+    private ValidatableTextField email, phone, firstname, lastname, otherName, salary;
     private ValidatableComboBox<Role> role;
     private ToggleSwitch status;
     private Label firstNameValidationLabel, emailValidationLabel, phoneValidationLabel,
             lastNameValidationLabel, otherNameValidationLabel, roleValidationLabel,
             departmentValidationLabel, designationValidationLabel,
             employmentStatusValidationLabel, workShiftValidationLabel;
-    private ValidatableDatePicker dateOfBirth;
     private ValidatableComboBox<Department> department;
     private ValidatableComboBox<Designation> designation;
     private ValidatableComboBox<EmploymentStatus> employmentStatus;
@@ -90,7 +89,7 @@ public class EmployeeForm extends BorderPane {
         firstname = createTextField();
         lastname = createTextField();
         otherName = createTextField();
-        dateOfBirth = createDatePicker();
+        salary = createTextField();
         email = createTextField();
         phone = createTextField();
 
@@ -133,7 +132,7 @@ public class EmployeeForm extends BorderPane {
                 buildFieldBox(firstname, "First name", firstNameValidationLabel),
                 buildFieldBox(lastname, "Last name", lastNameValidationLabel),
                 buildFieldBox(otherName, "Other Name", otherNameValidationLabel),
-                buildFieldBox(dateOfBirth, "Date Of Birth"),
+                buildFieldBox(salary, "Date Of Birth"),
                 buildFieldBox(email, "Email", emailValidationLabel),
                 buildFieldBox(phone, "Phone", phoneValidationLabel),
                 buildFieldBox(department, "Department", departmentValidationLabel),
@@ -209,7 +208,7 @@ public class EmployeeForm extends BorderPane {
         bindFilterComboBox(department, EmployeeViewModel.departmentProperty());
         bindFilterComboBox(designation, EmployeeViewModel.designationProperty());
         bindFilterComboBox(employmentStatus, EmployeeViewModel.employmentStatusProperty());
-        bindDatePicker(dateOfBirth, EmployeeViewModel.dateOfBirthProperty());
+        bindTextField(salary, EmployeeViewModel.salaryProperty());
     }
 
     private void bindTextField(ValidatableTextField textField, Property<String> property) {
@@ -464,7 +463,7 @@ public class EmployeeForm extends BorderPane {
         designationValidationLabel = null;
         employmentStatusValidationLabel = null;
         workShiftValidationLabel = null;
-        dateOfBirth = null;
+        salary = null;
         department = null;
         designation = null;
         employmentStatus = null;

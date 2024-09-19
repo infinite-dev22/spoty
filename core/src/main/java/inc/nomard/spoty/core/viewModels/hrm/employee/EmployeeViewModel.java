@@ -11,6 +11,7 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
 import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.models.UserModel;
 import inc.nomard.spoty.network_bridge.repositories.implementations.EmployeesRepositoryImpl;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
@@ -38,8 +39,8 @@ import java.util.concurrent.CompletableFuture;
 
 @Log
 public class EmployeeViewModel {
-    public static final ObservableList<Employee> USERS_LIST = FXCollections.observableArrayList();
-    public static final ListProperty<Employee> EMPLOYEES = new SimpleListProperty<>(USERS_LIST);
+    public static final ObservableList<Employee> employeesLists = FXCollections.observableArrayList();
+    public static final ListProperty<Employee> Employees = new SimpleListProperty<>(employeesLists);
     @Getter
     private static final ObservableList<String> workShiftsList = FXCollections.observableArrayList("Day", "Evening", "Full");
     private static final Gson gson = new GsonBuilder()
@@ -61,7 +62,7 @@ public class EmployeeViewModel {
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final BooleanProperty active = new SimpleBooleanProperty(true);
     private static final StringProperty avatar = new SimpleStringProperty("");
-    private static final ObjectProperty<LocalDate> dateOfBirth = new SimpleObjectProperty<LocalDate>();
+    private static final StringProperty salary = new SimpleStringProperty();
     private static final ObjectProperty<Department> department = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<EmploymentStatus> employmentStatus = new SimpleObjectProperty<>(null);
@@ -166,16 +167,16 @@ public class EmployeeViewModel {
         return phone;
     }
 
-    public static ObservableList<Employee> getEMPLOYEES() {
-        return EMPLOYEES.get();
+    public static ObservableList<Employee> getEmployees() {
+        return Employees.get();
     }
 
-    public static void setEMPLOYEES(ObservableList<Employee> employees) {
-        EmployeeViewModel.EMPLOYEES.set(employees);
+    public static void setEmployees(ObservableList<Employee> employees) {
+        EmployeeViewModel.Employees.set(employees);
     }
 
     public static ListProperty<Employee> usersProperty() {
-        return EMPLOYEES;
+        return Employees;
     }
 
     public static String getAvatar() {
@@ -190,16 +191,16 @@ public class EmployeeViewModel {
         return avatar;
     }
 
-    public static LocalDate getDateOfBirth() {
-        return dateOfBirth.get();
+    public static String getSalary() {
+        return salary.get();
     }
 
-    public static void setDateOfBirth(LocalDate dateOfBirth) {
-        EmployeeViewModel.dateOfBirth.set(dateOfBirth);
+    public static void setSalary(String salary) {
+        EmployeeViewModel.salary.set(salary);
     }
 
-    public static ObjectProperty<LocalDate> dateOfBirthProperty() {
-        return dateOfBirth;
+    public static StringProperty salaryProperty() {
+        return salary;
     }
 
     public static Department getDepartment() {
@@ -282,7 +283,7 @@ public class EmployeeViewModel {
         setEmail("");
         setPhone("");
         setActive(true);
-        setDateOfBirth(null);
+        setSalary("");
         setRole(null);
         setDepartment(null);
         setDesignation(null);
@@ -293,7 +294,7 @@ public class EmployeeViewModel {
     public static void saveEmployee(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                     SpotyGotFunctional.MessageConsumer successMessage,
                                     SpotyGotFunctional.MessageConsumer errorMessage) {
-        var user = Employee.builder()
+        var user = UserModel.builder()
                 .firstName(getFirstName())
                 .lastName(getLastName())
                 .otherName(getOtherName())
@@ -362,8 +363,8 @@ public class EmployeeViewModel {
                     setPageNumber(responseModel.getPageable().getPageNumber());
                     setPageSize(responseModel.getPageable().getPageSize());
                     ArrayList<Employee> employeeList = responseModel.getContent();
-                    USERS_LIST.clear();
-                    USERS_LIST.addAll(employeeList);
+                    employeesLists.clear();
+                    employeesLists.addAll(employeeList);
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
@@ -469,8 +470,8 @@ public class EmployeeViewModel {
                     }.getType();
                     ArrayList<Employee> employeeList = gson.fromJson(
                             response.body(), listType);
-                    USERS_LIST.clear();
-                    USERS_LIST.addAll(employeeList);
+                    employeesLists.clear();
+                    employeesLists.addAll(employeeList);
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {

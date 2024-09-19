@@ -20,6 +20,7 @@ public class UserModel implements Serializable {
     private String otherName;
     private String email;
     private String phone;
+    private String salary;
     private Role role;
     private LocalDate dateOfBirth;
     private Branch branch;
