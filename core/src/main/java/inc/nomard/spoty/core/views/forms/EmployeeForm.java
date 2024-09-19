@@ -41,6 +41,7 @@ import lombok.extern.java.Log;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -192,7 +193,7 @@ public class EmployeeForm extends BorderPane {
 
     private void setupPhoneField() {
         phone.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
+            if (Objects.nonNull(newValue) && !newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
         });
         phone.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != oldValue) phone.setLeft(new Label("+"));
