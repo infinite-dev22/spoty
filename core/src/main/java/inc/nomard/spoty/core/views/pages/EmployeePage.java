@@ -49,7 +49,6 @@ public class EmployeePage extends OutlinePage {
     private TableColumn<Employee, Employee> employmentStatus;
     private TableColumn<Employee, Employee> department;
     private TableColumn<Employee, Employee> status;
-    private TableColumn<Employee, String> workShift;
     private TableColumn<Employee, String> salary;
     private TableColumn<Employee, Employee> role;
 
@@ -179,7 +178,6 @@ public class EmployeePage extends OutlinePage {
         employmentStatus = new TableColumn<>("Employment Status");
         department = new TableColumn<>("Department");
         status = new TableColumn<>("Status");
-        workShift = new TableColumn<>("Work Shift");
         salary = new TableColumn<>("Salary");
         role = new TableColumn<>("Role");
 
@@ -189,7 +187,6 @@ public class EmployeePage extends OutlinePage {
         employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         department.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        workShift.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         role.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
@@ -202,7 +199,6 @@ public class EmployeePage extends OutlinePage {
                 employmentStatus,
                 department,
                 status,
-                workShift,
                 salary,
                 role).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -377,7 +373,6 @@ public class EmployeePage extends OutlinePage {
                 }
             }
         });
-        workShift.setCellValueFactory(new PropertyValueFactory<>("workShift"));
         salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
         role.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         role.setCellFactory(tableColumn -> new TableCell<>() {

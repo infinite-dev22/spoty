@@ -64,7 +64,6 @@ public class EmployeeForm extends BorderPane {
     private ValidatableComboBox<Department> department;
     private ValidatableComboBox<Designation> designation;
     private ValidatableComboBox<EmploymentStatus> employmentStatus;
-    private ValidatableComboBox<String> workShift;
     private List<Constraint> firstNameConstraints, lastNameConstraints,
             otherNameConstraints, userRoleConstraints;
     private Event actionEvent = null;
@@ -98,7 +97,6 @@ public class EmployeeForm extends BorderPane {
         department = createFilterComboBox(DepartmentViewModel.getDepartments());
         designation = createFilterComboBox(DesignationViewModel.getDesignations());
         employmentStatus = createFilterComboBox(EmploymentStatusViewModel.getEmploymentStatuses());
-        workShift = createComboBox();
         role = createFilterComboBox(RoleViewModel.getRoles());
 
         status = new ToggleSwitch();
@@ -211,7 +209,6 @@ public class EmployeeForm extends BorderPane {
         bindFilterComboBox(department, EmployeeViewModel.departmentProperty());
         bindFilterComboBox(designation, EmployeeViewModel.designationProperty());
         bindFilterComboBox(employmentStatus, EmployeeViewModel.employmentStatusProperty());
-        bindComboBox(workShift, EmployeeViewModel.workShiftProperty());
         bindDatePicker(dateOfBirth, EmployeeViewModel.dateOfBirthProperty());
     }
 
@@ -406,7 +403,6 @@ public class EmployeeForm extends BorderPane {
                         employmentStatus -> StringUtils.containsIgnoreCase(employmentStatusConverter.toString(employmentStatus), searchStr);
 
         // Combo box properties.
-        workShift.setItems(EmployeeViewModel.getWorkShiftsList());
         role.setConverter(roleConverter);
         if (RoleViewModel.getRoles().isEmpty()) {
             RoleViewModel.getRoles()
@@ -472,7 +468,6 @@ public class EmployeeForm extends BorderPane {
         department = null;
         designation = null;
         employmentStatus = null;
-        workShift = null;
         firstNameConstraints = null;
         lastNameConstraints = null;
         otherNameConstraints = null;

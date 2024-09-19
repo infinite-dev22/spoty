@@ -65,7 +65,6 @@ public class EmployeeViewModel {
     private static final ObjectProperty<Department> department = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<EmploymentStatus> employmentStatus = new SimpleObjectProperty<>(null);
-    private static final StringProperty workShift = new SimpleStringProperty("");
     private static final EmployeesRepositoryImpl usersRepository = new EmployeesRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
@@ -239,18 +238,6 @@ public class EmployeeViewModel {
         return employmentStatus;
     }
 
-    public static String getWorkShift() {
-        return workShift.get();
-    }
-
-    public static void setWorkShift(String workShift) {
-        EmployeeViewModel.workShift.set(workShift);
-    }
-
-    public static StringProperty workShiftProperty() {
-        return workShift;
-    }
-
     public static Integer getTotalPages() {
         return totalPages.get();
     }
@@ -300,7 +287,6 @@ public class EmployeeViewModel {
         setDepartment(null);
         setDesignation(null);
         setEmploymentStatus(null);
-        setWorkShift("");
         setAvatar("");
     }
 
