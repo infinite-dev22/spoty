@@ -36,7 +36,7 @@ public class PurchaseMaster {
     private LocalDateTime updatedAt;
 
     public String getSupplierName() {
-        return supplier.getName();
+        return supplier.getFirstName() + " " + supplier.getOtherName() + " " + supplier.getLastName();
     }
 
     public String getLocaleDate() {

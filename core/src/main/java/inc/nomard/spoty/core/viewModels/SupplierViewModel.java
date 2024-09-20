@@ -1,26 +1,35 @@
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.response.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.SuppliersRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.java.Log;
+
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Log
 public class SupplierViewModel {
@@ -38,7 +47,9 @@ public class SupplierViewModel {
     private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
     private static final SuppliersRepositoryImpl suppliersRepository = new SuppliersRepositoryImpl();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty firstName = new SimpleStringProperty("");
+    private static final StringProperty otherName = new SimpleStringProperty("");
+    private static final StringProperty lastName = new SimpleStringProperty("");
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
@@ -61,16 +72,40 @@ public class SupplierViewModel {
         return id;
     }
 
-    public static String getName() {
-        return name.get();
+    public static String getFirstName() {
+        return firstName.get();
     }
 
-    public static void setName(String name) {
-        SupplierViewModel.name.set(name);
+    public static void setFirstName(String firstName) {
+        SupplierViewModel.firstName.set(firstName);
     }
 
-    public static StringProperty nameProperty() {
-        return name;
+    public static StringProperty firstNameProperty() {
+        return firstName;
+    }
+
+    public static String getOtherName() {
+        return otherName.get();
+    }
+
+    public static void setOtherName(String otherName) {
+        SupplierViewModel.otherName.set(otherName);
+    }
+
+    public static StringProperty otherNameProperty() {
+        return otherName;
+    }
+
+    public static String getLastName() {
+        return lastName.get();
+    }
+
+    public static void setLastName(String lastName) {
+        SupplierViewModel.lastName.set(lastName);
+    }
+
+    public static StringProperty lastNameProperty() {
+        return lastName;
     }
 
     public static String getEmail() {
@@ -195,7 +230,9 @@ public class SupplierViewModel {
 
     public static void resetProperties() {
         setId(0);
-        setName("");
+        setFirstName("");
+        setOtherName("");
+        setLastName("");
         setEmail("");
         setEmail("");
         setPhone("");
@@ -209,7 +246,9 @@ public class SupplierViewModel {
                                     SpotyGotFunctional.MessageConsumer successMessage,
                                     SpotyGotFunctional.MessageConsumer errorMessage) {
         var supplier = Supplier.builder()
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())
@@ -323,7 +362,9 @@ public class SupplierViewModel {
                 Platform.runLater(() -> {
                     var supplier = gson.fromJson(response.body(), Supplier.class);
                     setId(supplier.getId());
-                    setName(supplier.getName());
+                    setFirstName(supplier.getFirstName());
+                    setOtherName(supplier.getOtherName());
+                    setLastName(supplier.getLastName());
                     setEmail(supplier.getEmail());
                     setPhone(supplier.getPhone());
                     setCity(supplier.getCity());
@@ -419,7 +460,9 @@ public class SupplierViewModel {
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var supplier = Supplier.builder()
                 .id(getId())
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())
