@@ -1,42 +1,33 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
+import inc.nomard.spoty.core.viewModels.TaxViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalPage;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.event.Event;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.viewModels.TaxViewModel.resetProperties;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-
 @Log
 public class DiscountForm extends ModalPage {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
     public ValidatableTextField name,
             percentage;
     public Label nameValidationLabel,
@@ -45,13 +36,9 @@ public class DiscountForm extends ModalPage {
     public Button cancelBtn;
     private List<Constraint> nameConstraints,
             percentageConstraints;
-    private Event actionEvent = null;
 
-    public DiscountForm() {
-        init();
-    }
-
-    public void init() {
+    public DiscountForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -62,7 +49,7 @@ public class DiscountForm extends ModalPage {
         // Input.
         name = new ValidatableTextField();
         var label = new Label("Name");
-        name.setPrefWidth(400d);
+        name.setPrefWidth(1000d);
         name.textProperty().bindBidirectional(DiscountViewModel.nameProperty());
         // Validation.
         nameValidationLabel = Validators.buildValidationLabel();
@@ -77,7 +64,7 @@ public class DiscountForm extends ModalPage {
         // Input.
         percentage = new ValidatableTextField();
         var label = new Label("Percentage");
-        percentage.setPrefWidth(400d);
+        percentage.setPrefWidth(1000d);
         percentage.setRight(new MFXFontIcon("fas-percent"));
         percentage.setPromptText("0.00");
         percentage.textProperty().bindBidirectional(DiscountViewModel.percentageProperty(), new NumberStringConverter());
@@ -127,12 +114,7 @@ public class DiscountForm extends ModalPage {
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    resetProperties();
-                    closeDialog(event);
-                    dispose();
-                });
+        cancelBtn.setOnAction((event) -> this.dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
@@ -142,35 +124,33 @@ public class DiscountForm extends ModalPage {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!percentageConstraints.isEmpty()) {
                         percentageValidationLabel.setManaged(true);
                         percentageValidationLabel.setVisible(true);
                         percentageValidationLabel.setText(percentageConstraints.getFirst().getMessage());
                         percentage.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) percentage.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && percentageConstraints.isEmpty()) {
+                        saveBtn.startLoading();
                         if (DiscountViewModel.getId() > 0) {
-                            DiscountViewModel.updateDiscount(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
-                            return;
+                            DiscountViewModel.updateDiscount(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            DiscountViewModel.saveDiscount(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        DiscountViewModel.saveDiscount(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        DiscountViewModel.resetProperties();
+        this.dispose();
         DiscountViewModel.getDiscounts(null, null, null, null);
-        dispose();
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void requiredValidator() {
@@ -214,43 +194,17 @@ public class DiscountForm extends ModalPage {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
-    private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
-    @Override
     public void dispose() {
-        super.dispose();
-        this.name = null;
-        this.percentage = null;
-        this.saveBtn = null;
-        this.cancelBtn = null;
-        this.nameValidationLabel = null;
-        this.percentageValidationLabel = null;
-        this.nameConstraints = null;
-        this.percentageConstraints = null;
-        this.actionEvent = null;
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        TaxViewModel.resetProperties();
+        name = null;
+        nameValidationLabel = null;
+        nameConstraints = null;
+        percentage = null;
+        percentageValidationLabel = null;
+        percentageConstraints = null;
+        saveBtn = null;
+        cancelBtn = null;
     }
 }
