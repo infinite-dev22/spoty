@@ -13,7 +13,6 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import javafx.css.PseudoClass;
-import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -157,11 +156,12 @@ public class EmploymentStatusForm extends BorderPane {
                     }
                     if (nameConstraints.isEmpty() &
                             colorConstraints.isEmpty()) {
+                        saveBtn.startLoading();
                         if (EmploymentStatusViewModel.getId() > 0) {
-                            EmploymentStatusViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
-                            return;
+                            EmploymentStatusViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            EmploymentStatusViewModel.saveEmploymentStatus(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        EmploymentStatusViewModel.saveEmploymentStatus(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
                     }
                 });
     }
@@ -169,6 +169,11 @@ public class EmploymentStatusForm extends BorderPane {
     private void onSuccess() {
         this.dispose();
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null, null);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void requiredValidator() {

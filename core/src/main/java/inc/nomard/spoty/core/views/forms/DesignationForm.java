@@ -128,11 +128,12 @@ public class DesignationForm extends BorderPane {
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (constraints.isEmpty()) {
+                        saveBtn.startLoading();
                         if (DesignationViewModel.getId() > 0) {
-                            DesignationViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
-                            return;
+                            DesignationViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            DesignationViewModel.saveDesignation(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        DesignationViewModel.saveDesignation(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
                     }
                 });
     }
@@ -140,6 +141,11 @@ public class DesignationForm extends BorderPane {
     private void onSuccess() {
         this.dispose();
         DesignationViewModel.getAllDesignations(null, null, null, null);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void requiredValidator() {

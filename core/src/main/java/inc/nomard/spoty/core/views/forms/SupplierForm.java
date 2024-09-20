@@ -212,10 +212,11 @@ public class SupplierForm extends BorderPane {
                 && lastNameConstraints.isEmpty()
                 && emailConstraints.isEmpty()
                 && phoneConstraints.isEmpty()) {
+            saveBtn.startLoading();
             if (SupplierViewModel.getId() > 0) {
-                SupplierViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
+                SupplierViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             } else {
-                SupplierViewModel.saveSupplier(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
+                SupplierViewModel.saveSupplier(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             }
         }
     }
@@ -223,6 +224,11 @@ public class SupplierForm extends BorderPane {
     private void onSuccess() {
         this.dispose();
         SupplierViewModel.getAllSuppliers(null, null, null, null);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void dispose() {

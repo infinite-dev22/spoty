@@ -118,11 +118,12 @@ public class DepartmentForm extends BorderPane {
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (constraints.isEmpty()) {
+                        saveBtn.startLoading();
                         if (DepartmentViewModel.getId() > 0) {
-                            DepartmentViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
-                            return;
+                            DepartmentViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            DepartmentViewModel.saveDepartment(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        DepartmentViewModel.saveDepartment(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
                     }
                 });
     }
@@ -130,6 +131,11 @@ public class DepartmentForm extends BorderPane {
     private void onSuccess() {
         this.dispose();
         DepartmentViewModel.getAllDepartments(null, null, null, null);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void requiredValidator() {
