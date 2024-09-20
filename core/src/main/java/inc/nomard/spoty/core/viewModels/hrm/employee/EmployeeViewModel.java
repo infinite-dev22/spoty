@@ -300,6 +300,7 @@ public class EmployeeViewModel {
                 .otherName(getOtherName())
                 .phone(getPhone())
                 .email(getEmail())
+                .salary(getSalary())
                 .avatar(getAvatar())
                 .active(isActive())
                 .role(getRole())
@@ -310,7 +311,7 @@ public class EmployeeViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = usersRepository.post(user);
         responseFuture.thenAccept(response -> {
             // Handle successful response
-            if (response.statusCode() == 201 || response.statusCode() == 204) {
+            if (response.statusCode() == 201 || response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
                 Platform.runLater(() -> {
                     onSuccess.run();

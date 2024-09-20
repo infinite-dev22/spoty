@@ -17,7 +17,6 @@ import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcore.utils.StringUtils;
@@ -26,7 +25,6 @@ import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -39,13 +37,10 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 
 @Log
 public class EmployeeForm extends BorderPane {
@@ -56,16 +51,15 @@ public class EmployeeForm extends BorderPane {
     private ValidatableTextField email, phone, firstname, lastname, otherName, salary;
     private ValidatableComboBox<Role> role;
     private ToggleSwitch status;
-    private Label firstNameValidationLabel, emailValidationLabel, phoneValidationLabel,
-            lastNameValidationLabel, otherNameValidationLabel, roleValidationLabel,
+    private Label firstNameValidationLabel, emailValidationLabel,
+            lastNameValidationLabel, roleValidationLabel,
             departmentValidationLabel, designationValidationLabel,
-            employmentStatusValidationLabel, workShiftValidationLabel;
+            employmentStatusValidationLabel;
     private ValidatableComboBox<Department> department;
     private ValidatableComboBox<Designation> designation;
     private ValidatableComboBox<EmploymentStatus> employmentStatus;
-    private List<Constraint> firstNameConstraints, lastNameConstraints,
-            otherNameConstraints, userRoleConstraints;
-    private Event actionEvent = null;
+    private List<Constraint> firstNameConstraints, lastNameConstraints, emailConstraints, departmentConstraints,
+            designationConstraints, employmentStatusConstraints, userRoleConstraints;
 
     public EmployeeForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -77,13 +71,10 @@ public class EmployeeForm extends BorderPane {
     private void initializeComponents() {
         firstNameValidationLabel = createValidationLabel();
         lastNameValidationLabel = createValidationLabel();
-        otherNameValidationLabel = createValidationLabel();
         emailValidationLabel = createValidationLabel();
-        phoneValidationLabel = createValidationLabel();
         departmentValidationLabel = createValidationLabel();
         designationValidationLabel = createValidationLabel();
         employmentStatusValidationLabel = createValidationLabel();
-        workShiftValidationLabel = createValidationLabel();
         roleValidationLabel = createValidationLabel();
 
         firstname = createTextField();
@@ -130,11 +121,11 @@ public class EmployeeForm extends BorderPane {
         vbox.setPadding(new Insets(10d));
         vbox.getChildren().addAll(
                 buildFieldBox(firstname, "First name", firstNameValidationLabel),
+                buildFieldBox(otherName, "Middle Name(Optional)"),
                 buildFieldBox(lastname, "Last name", lastNameValidationLabel),
-                buildFieldBox(otherName, "Other Name", otherNameValidationLabel),
-                buildFieldBox(salary, "Date Of Birth"),
+                buildFieldBox(salary, "Salary(Optional)"),
                 buildFieldBox(email, "Email", emailValidationLabel),
-                buildFieldBox(phone, "Phone", phoneValidationLabel),
+                buildFieldBox(phone, "Phone(Optional)"),
                 buildFieldBox(department, "Department", departmentValidationLabel),
                 buildFieldBox(designation, "Designation", designationValidationLabel),
                 buildFieldBox(employmentStatus, "Employment Status", employmentStatusValidationLabel),
@@ -158,23 +149,10 @@ public class EmployeeForm extends BorderPane {
         return textField;
     }
 
-    private ValidatableDatePicker createDatePicker() {
-        ValidatableDatePicker datePicker = new ValidatableDatePicker();
-        datePicker.setPrefWidth(1000);
-        return datePicker;
-    }
-
     private <T> ValidatableComboBox<T> createFilterComboBox(ObservableList<T> items) {
         ValidatableComboBox<T> comboBox = new ValidatableComboBox<>();
         comboBox.setPrefWidth(1000);
         comboBox.setItems(items);
-        return comboBox;
-    }
-
-    private ValidatableComboBox<String> createComboBox() {
-        ValidatableComboBox<String> comboBox = new ValidatableComboBox<>();
-        comboBox.setPrefWidth(300);
-        comboBox.setItems(EmployeeViewModel.getWorkShiftsList());
         return comboBox;
     }
 
@@ -219,22 +197,17 @@ public class EmployeeForm extends BorderPane {
         comboBox.valueProperty().bindBidirectional(property);
     }
 
-    private <T> void bindComboBox(ValidatableComboBox<T> comboBox, Property<T> property) {
-        comboBox.valueProperty().bindBidirectional(property);
-    }
-
     private void bindToggleButton(ToggleSwitch toggleButton, Property<Boolean> property) {
         toggleButton.selectedProperty().bindBidirectional(property);
-    }
-
-    private void bindDatePicker(ValidatableDatePicker datePicker, Property<LocalDate> property) {
-        datePicker.valueProperty().bindBidirectional(property);
     }
 
     private void setupValidators() {
         requiredValidator(firstname, firstNameValidationLabel, "First name is required");
         requiredValidator(lastname, lastNameValidationLabel, "Last name is required");
-        requiredValidator(otherName, otherNameValidationLabel, "Employeename is required");
+        requiredValidator(email, emailValidationLabel, "Email is required");
+        requiredValidator(department, departmentValidationLabel, "Department is required");
+        requiredValidator(designation, designationValidationLabel, "Designation is required");
+        requiredValidator(employmentStatus, employmentStatusValidationLabel, "Employment status is required");
         requiredValidator(role, roleValidationLabel, "Role is required");
     }
 
@@ -294,86 +267,78 @@ public class EmployeeForm extends BorderPane {
     private void onSave(Event event) {
         firstNameConstraints = firstname.validate();
         lastNameConstraints = lastname.validate();
-        otherNameConstraints = otherName.validate();
+        emailConstraints = role.validate();
+        departmentConstraints = role.validate();
+        designationConstraints = role.validate();
+        employmentStatusConstraints = role.validate();
         userRoleConstraints = role.validate();
         if (!firstNameConstraints.isEmpty()) {
             firstNameValidationLabel.setManaged(true);
             firstNameValidationLabel.setVisible(true);
             firstNameValidationLabel.setText(firstNameConstraints.getFirst().getMessage());
             firstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) firstname.getScene().getWindow();
-            dialog.sizeToScene();
         }
         if (!lastNameConstraints.isEmpty()) {
             lastNameValidationLabel.setManaged(true);
             lastNameValidationLabel.setVisible(true);
             lastNameValidationLabel.setText(lastNameConstraints.getFirst().getMessage());
             lastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) lastname.getScene().getWindow();
-            dialog.sizeToScene();
         }
-        if (!otherNameConstraints.isEmpty()) {
-            otherNameValidationLabel.setManaged(true);
-            otherNameValidationLabel.setVisible(true);
-            otherNameValidationLabel.setText(otherNameConstraints.getFirst().getMessage());
-            otherName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) otherName.getScene().getWindow();
-            dialog.sizeToScene();
+        if (!emailConstraints.isEmpty()) {
+            emailValidationLabel.setManaged(true);
+            emailValidationLabel.setVisible(true);
+            emailValidationLabel.setText(emailConstraints.getFirst().getMessage());
+            email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!departmentConstraints.isEmpty()) {
+            departmentValidationLabel.setManaged(true);
+            departmentValidationLabel.setVisible(true);
+            departmentValidationLabel.setText(departmentConstraints.getFirst().getMessage());
+            department.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!designationConstraints.isEmpty()) {
+            designationValidationLabel.setManaged(true);
+            designationValidationLabel.setVisible(true);
+            designationValidationLabel.setText(designationConstraints.getFirst().getMessage());
+            designation.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!employmentStatusConstraints.isEmpty()) {
+            employmentStatusValidationLabel.setManaged(true);
+            employmentStatusValidationLabel.setVisible(true);
+            employmentStatusValidationLabel.setText(employmentStatusConstraints.getFirst().getMessage());
+            employmentStatus.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
         }
         if (!userRoleConstraints.isEmpty()) {
             roleValidationLabel.setManaged(true);
             roleValidationLabel.setVisible(true);
             roleValidationLabel.setText(userRoleConstraints.getFirst().getMessage());
             role.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) role.getScene().getWindow();
-            dialog.sizeToScene();
         }
         if (firstNameConstraints.isEmpty() &
                 lastNameConstraints.isEmpty() &
-                otherNameConstraints.isEmpty() &
-                userRoleConstraints.isEmpty()
-                && !emailValidationLabel.isVisible()
-                && !phoneValidationLabel.isVisible()) {
+                emailConstraints.isEmpty() &
+                departmentConstraints.isEmpty() &
+                designationConstraints.isEmpty() &
+                employmentStatusConstraints.isEmpty() &
+                userRoleConstraints.isEmpty()) {
+            saveBtn.startLoading();
             if (EmployeeViewModel.getId() > 0) {
-                EmployeeViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
-                actionEvent = event;
-                return;
+                EmployeeViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::onError);
+            } else {
+                EmployeeViewModel.saveEmployee(this::onSuccess, SpotyUtils::successMessage, this::onError);
             }
-            EmployeeViewModel.saveEmployee(this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
-            actionEvent = event;
         }
     }
 
-    private void onCancel(ActionEvent event) {
-        closeDialog(event);
-        EmployeeViewModel.resetProperties();
-
-        firstNameValidationLabel.setVisible(false);
-        lastNameValidationLabel.setVisible(false);
-        otherNameValidationLabel.setVisible(false);
-        roleValidationLabel.setVisible(false);
-        emailValidationLabel.setVisible(false);
-        phoneValidationLabel.setVisible(false);
-
-        firstNameValidationLabel.setManaged(false);
-        lastNameValidationLabel.setManaged(false);
-        otherNameValidationLabel.setManaged(false);
-        roleValidationLabel.setManaged(false);
-        emailValidationLabel.setManaged(false);
-        phoneValidationLabel.setManaged(false);
-
-        firstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        lastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        otherName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        otherName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        role.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        this.dispose();
-    }
-
     private void onSuccess() {
+        saveBtn.stopLoading();
         this.dispose();
         EmployeeViewModel.getAllEmployees(null, null, null, null);
-        this.dispose();
+    }
+
+    private void onError(String message) {
+        saveBtn.stopLoading();
+        SpotyUtils.errorMessage(message);
     }
 
     private void setupFieldProperties() {
@@ -441,8 +406,8 @@ public class EmployeeForm extends BorderPane {
     }
 
     public void dispose() {
-        modalPane.hide(true);
         modalPane.setPersistent(false);
+        modalPane.hide(true);
         EmployeeViewModel.resetProperties();
         saveBtn = null;
         cancelBtn = null;
@@ -455,22 +420,21 @@ public class EmployeeForm extends BorderPane {
         status = null;
         firstNameValidationLabel = null;
         emailValidationLabel = null;
-        phoneValidationLabel = null;
         lastNameValidationLabel = null;
-        otherNameValidationLabel = null;
         roleValidationLabel = null;
         departmentValidationLabel = null;
         designationValidationLabel = null;
         employmentStatusValidationLabel = null;
-        workShiftValidationLabel = null;
         salary = null;
         department = null;
         designation = null;
         employmentStatus = null;
         firstNameConstraints = null;
         lastNameConstraints = null;
-        otherNameConstraints = null;
         userRoleConstraints = null;
-        actionEvent = null;
+        emailConstraints = null;
+        departmentConstraints = null;
+        designationConstraints = null;
+        employmentStatusConstraints = null;
     }
 }

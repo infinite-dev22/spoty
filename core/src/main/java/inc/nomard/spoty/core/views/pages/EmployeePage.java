@@ -332,7 +332,7 @@ public class EmployeePage extends OutlinePage {
                     var chip = new Label(item.getEmploymentStatusName());
                     chip.setAlignment(Pos.CENTER);
                     chip.setPadding(new Insets(5, 10, 5, 10));
-                    chip.setPrefWidth(50);
+                    chip.setPrefWidth(150);
                     chip.setStyle("-fx-background-color: " + item.getEmploymentStatusColor() + ";"
                             + "-fx-foreground-color: white;"
                             + "-fx-background-radius: 50;"
