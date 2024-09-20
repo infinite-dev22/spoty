@@ -149,7 +149,7 @@ public class Navigation {
         var payRoll = NavTree.NavTreeItem.page("PayRoll", PaySlipPage.class);
 
         var humanResource = NavTree.NavTreeItem.group("Human Resource", FontAwesomeSolid.USER_TIE);
-        if (flavor == AppFlavor.TRACTION) {
+        if (flavor == AppFlavor.DEV) {
             humanResource
                     .getChildren()
                     .setAll(humanResourceManagement,
