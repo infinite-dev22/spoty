@@ -39,7 +39,9 @@ public class CustomerViewModel {
             .create();
     private static final ListProperty<Customer> customers = new SimpleListProperty<>(customersList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty firstName = new SimpleStringProperty("");
+    private static final StringProperty otherName = new SimpleStringProperty("");
+    private static final StringProperty lastName = new SimpleStringProperty("");
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
@@ -63,16 +65,40 @@ public class CustomerViewModel {
         return id;
     }
 
-    public static String getName() {
-        return name.get();
+    public static String getFirstName() {
+        return firstName.get();
     }
 
-    public static void setName(String name) {
-        CustomerViewModel.name.set(name);
+    public static void setFirstName(String firstName) {
+        CustomerViewModel.firstName.set(firstName);
     }
 
-    public static StringProperty nameProperty() {
-        return name;
+    public static StringProperty firstNameProperty() {
+        return firstName;
+    }
+
+    public static String getOtherName() {
+        return otherName.get();
+    }
+
+    public static void setOtherName(String otherName) {
+        CustomerViewModel.otherName.set(otherName);
+    }
+
+    public static StringProperty otherNameProperty() {
+        return otherName;
+    }
+
+    public static String getLastName() {
+        return lastName.get();
+    }
+
+    public static void setLastName(String lastName) {
+        CustomerViewModel.lastName.set(lastName);
+    }
+
+    public static StringProperty lastNameProperty() {
+        return lastName;
     }
 
     public static String getEmail() {
@@ -197,7 +223,9 @@ public class CustomerViewModel {
 
     public static void resetProperties() {
         setId(0);
-        setName("");
+        setFirstName("");
+        setOtherName("");
+        setLastName("");
         setEmail("");
         setPhone("");
         setCity("");
@@ -210,7 +238,9 @@ public class CustomerViewModel {
                                     SpotyGotFunctional.MessageConsumer successMessage,
                                     SpotyGotFunctional.MessageConsumer errorMessage) {
         var customer = Customer.builder()
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())
@@ -324,7 +354,9 @@ public class CustomerViewModel {
                 Platform.runLater(() -> {
                     var customer = gson.fromJson(response.body(), Customer.class);
                     setId(customer.getId());
-                    setName(customer.getName());
+                    setFirstName(customer.getFirstName());
+                    setOtherName(customer.getOtherName());
+                    setLastName(customer.getLastName());
                     setEmail(customer.getEmail());
                     setPhone(customer.getPhone());
                     setCity(customer.getCity());
@@ -420,7 +452,9 @@ public class CustomerViewModel {
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var customer = Customer.builder()
                 .id(getId())
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())

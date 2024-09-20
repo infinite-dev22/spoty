@@ -4,35 +4,28 @@ import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.CustomerForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.forms.SupplierForm;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.previews.CustomerPreview;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -51,8 +44,6 @@ public class CustomerPage extends OutlinePage {
     private TableColumn<Customer, String> city;
     private TableColumn<Customer, String> country;
     private TableColumn<Customer, String> taxNumber;
-    private TableColumn<Customer, Customer> createdBy;
-    private TableColumn<Customer, Customer> createdAt;
 
     public CustomerPage() {
         super();
@@ -166,8 +157,6 @@ public class CustomerPage extends OutlinePage {
         city = new TableColumn<>("City");
         country = new TableColumn<>("Country");
         taxNumber = new TableColumn<>("Tax No.");
-        createdBy = new TableColumn<>("Created By");
-        createdAt = new TableColumn<>("Created At");
 
         name.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         phone.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
@@ -176,12 +165,10 @@ public class CustomerPage extends OutlinePage {
         city.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         country.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         taxNumber.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
-        createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(name, phone, email, address, city, country, taxNumber, createdBy, createdAt).toList());
+        var columnList = new LinkedList<>(Stream.of(name, phone, email, address, city, country, taxNumber).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
         styleCustomerTable();
@@ -216,13 +203,13 @@ public class CustomerPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            CustomerViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            CustomerViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    CustomerViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new CustomerForm(), this).showAndWait(), this::errorMessage);
+                    CustomerViewModel.getItem(obj.getItem().getId(), this::showDialog, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -237,11 +224,23 @@ public class CustomerPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new CustomerForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog());
     }
 
     private void onSuccess() {
         CustomerViewModel.getAllCustomers(null, null, null, null);
+    }
+
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new CustomerForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     public void viewShow(Customer customer) {
@@ -272,32 +271,10 @@ public class CustomerPage extends OutlinePage {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     private void setupTableColumns() {
@@ -308,26 +285,6 @@ public class CustomerPage extends OutlinePage {
         city.setCellValueFactory(new PropertyValueFactory<>("city"));
         country.setCellValueFactory(new PropertyValueFactory<>("country"));
         taxNumber.setCellValueFactory(new PropertyValueFactory<>("taxNumber"));
-        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Customer item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
-            }
-        });
-        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Customer item, boolean empty) {
-                super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
-
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
-
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
-            }
-        });
     }
 
     private Pagination buildPagination() {

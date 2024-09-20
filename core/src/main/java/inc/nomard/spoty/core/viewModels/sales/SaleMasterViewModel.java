@@ -627,7 +627,8 @@ public class SaleMasterViewModel {
     public static void setDefaultCustomer() {
         var customer = new Customer();
         customer.setId(1L);
-        customer.setName("Walk In Customer");
+        customer.setFirstName("Walk-In");
+        customer.setLastName("Customer");
         setCustomer(customer);
     }
 }
