@@ -73,7 +73,9 @@ public class CustomButton extends HBox {
     }
 
     public void setOnAction(EventHandler<MouseEvent> actionEvent) {
-        onAction.set(actionEvent);
+        if (!this.progressSpinner.isVisible() && !this.progressSpinner.isManaged()) {
+            onAction.set(actionEvent);
+        }
     }
 
     public void fire() {
