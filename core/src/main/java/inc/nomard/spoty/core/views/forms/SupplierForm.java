@@ -121,7 +121,7 @@ public class SupplierForm extends BorderPane {
 
     private ValidatableTextField createTextField() {
         ValidatableTextField textField = new ValidatableTextField();
-        textField.setPrefWidth(300);
+        textField.setPrefWidth(1000);
         return textField;
     }
 
