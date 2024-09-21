@@ -1,17 +1,13 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.UOMViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.ModalPage;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
@@ -20,35 +16,27 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import javafx.collections.ListChangeListener;
+import javafx.css.PseudoClass;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-
 @Log
-public class UOMForm extends ModalPage {
-    /**
-     * =>When editing a row, the extra fields won't display even though the row clearly has a BaseUnit
-     * filled in its combo. =>The dialog should animate to expand and contract when a BaseUnit is
-     * present i.e. not just have a scroll view.
-     */
+public class UOMForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
     public ValidatableTextField name,
             shortName;
     public ValidatableNumberField operatorValue;
@@ -63,13 +51,9 @@ public class UOMForm extends ModalPage {
     private List<Constraint> nameConstraints,
             operatorConstraints,
             operatorValueConstraints;
-    private Event actionEvent = null;
 
-    public UOMForm() {
-        init();
-    }
-
-    public void init() {
+    public UOMForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         setUomFormDialogOnActions();
@@ -79,7 +63,7 @@ public class UOMForm extends ModalPage {
         // Input.
         name = new ValidatableTextField();
         var label = new Label("Name");
-        name.setPrefWidth(400d);
+        name.setPrefWidth(1000d);
         name.textProperty().bindBidirectional(UOMViewModel.nameProperty());
         // Validation.
         nameValidationLabel = Validators.buildValidationLabel();
@@ -94,7 +78,7 @@ public class UOMForm extends ModalPage {
         // Input.
         shortName = new ValidatableTextField();
         var label = new Label("Short Name");
-        shortName.setPrefWidth(400d);
+        shortName.setPrefWidth(1000d);
         shortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
@@ -107,7 +91,7 @@ public class UOMForm extends ModalPage {
         // Input.
         baseUnit = new ValidatableComboBox<>();
         var label = new Label("Base Unit");
-        baseUnit.setPrefWidth(400d);
+        baseUnit.setPrefWidth(1000d);
         baseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
         // Input listeners.
         baseUnit
@@ -158,7 +142,7 @@ public class UOMForm extends ModalPage {
         // Input.
         operator = new ValidatableComboBox<>();
         var label = new Label("Operator");
-        operator.setPrefWidth(400d);
+        operator.setPrefWidth(1000d);
         operator.valueProperty().bindBidirectional(UOMViewModel.operatorProperty());
         operator.setItems(UOMViewModel.operatorList);
         // Validation.
@@ -174,7 +158,7 @@ public class UOMForm extends ModalPage {
         // Input.
         operatorValue = new ValidatableNumberField();
         var label = new Label("Operator Value");
-        operatorValue.setPrefWidth(400d);
+        operatorValue.setPrefWidth(1000d);
         operatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
         var vbox = new VBox();
         vbox.setSpacing(2d);
@@ -223,31 +207,10 @@ public class UOMForm extends ModalPage {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void setUomFormDialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    closeDialog(event);
-                    UOMViewModel.resetUOMProperties();
-                    nameValidationLabel.setVisible(false);
-                    operatorValidationLabel.setVisible(false);
-                    operatorValueValidationLabel.setVisible(false);
-                    formsHolder.setVisible(false);
-
-                    nameValidationLabel.setManaged(false);
-                    operatorValidationLabel.setManaged(false);
-                    operatorValueValidationLabel.setManaged(false);
-                    formsHolder.setManaged(false);
-
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    operator.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    operatorValue.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    this.dispose();
-                });
+        cancelBtn.setOnAction((event) -> this.dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
@@ -260,8 +223,6 @@ public class UOMForm extends ModalPage {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (Objects.nonNull(baseUnit.getValue())) {
                         if (!operatorConstraints.isEmpty()) {
@@ -269,16 +230,12 @@ public class UOMForm extends ModalPage {
                             operatorValidationLabel.setVisible(true);
                             operatorValidationLabel.setText(operatorConstraints.getFirst().getMessage());
                             operator.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                            MFXStageDialog dialog = (MFXStageDialog) operator.getScene().getWindow();
-                            dialog.sizeToScene();
                         }
                         if (!operatorValueConstraints.isEmpty()) {
                             operatorValueValidationLabel.setManaged(true);
                             operatorValueValidationLabel.setVisible(true);
                             operatorValueValidationLabel.setText(operatorValueConstraints.getFirst().getMessage());
                             operatorValue.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                            MFXStageDialog dialog = (MFXStageDialog) operator.getScene().getWindow();
-                            dialog.sizeToScene();
                         }
                     }
                     if (nameConstraints.isEmpty()) {
@@ -288,22 +245,18 @@ public class UOMForm extends ModalPage {
                                 return;
                             }
                         }
+                        saveBtn.startLoading();
                         if (UOMViewModel.getId() > 0) {
-                            UOMViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
-                            return;
+                            UOMViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            UOMViewModel.saveUOM(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        UOMViewModel.saveUOM(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        formsHolder.setManaged(false);
-        formsHolder.setVisible(false);
-        UOMViewModel.resetUOMProperties();
+        this.dispose();
         UOMViewModel.getAllUOMs(null, null, null, null);
     }
 
@@ -367,50 +320,28 @@ public class UOMForm extends ModalPage {
                         });
     }
 
-    private void successMessage(String message) {
-        this.dispose();
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
-    @Override
     public void dispose() {
-        super.dispose();
-        this.name = null;
-        this.shortName = null;
-        this.baseUnit = null;
-        this.operator = null;
-        this.operatorValue = null;
-        this.saveBtn = null;
-        this.cancelBtn = null;
-        this.formsHolder = null;
-        this.nameValidationLabel = null;
-        this.operatorValidationLabel = null;
-        this.operatorValueValidationLabel = null;
-        this.nameConstraints = null;
-        this.operatorConstraints = null;
-        this.operatorValueConstraints = null;
-        this.actionEvent = null;
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        UOMViewModel.resetUOMProperties();
+        name = null;
+        shortName = null;
+        baseUnit = null;
+        operator = null;
+        operatorValue = null;
+        saveBtn = null;
+        cancelBtn = null;
+        formsHolder = null;
+        nameValidationLabel = null;
+        operatorValidationLabel = null;
+        operatorValueValidationLabel = null;
+        nameConstraints = null;
+        operatorConstraints = null;
+        operatorValueConstraints = null;
     }
 }

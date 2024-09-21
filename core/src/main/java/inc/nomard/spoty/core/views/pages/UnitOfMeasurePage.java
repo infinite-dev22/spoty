@@ -1,15 +1,14 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.UOMViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.UOMForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
@@ -19,14 +18,13 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -37,6 +35,7 @@ import java.util.stream.Stream;
 @SuppressWarnings("unchecked")
 @Log
 public class UnitOfMeasurePage extends OutlinePage {
+    private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<UnitOfMeasure> masterTable;
     private MFXProgressSpinner progress;
@@ -52,10 +51,18 @@ public class UnitOfMeasurePage extends OutlinePage {
     private TableColumn<UnitOfMeasure, UnitOfMeasure> updatedAt;
 
     public UnitOfMeasurePage() {
-        addNode(init());
+        super();
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
         UOMViewModel.getAllUOMs(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -164,9 +171,9 @@ public class UnitOfMeasurePage extends OutlinePage {
         uomOperator.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         uomOperationValue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
 
         setupTableColumns();
 
@@ -211,13 +218,13 @@ public class UnitOfMeasurePage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            UOMViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            UOMViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 e -> {
-                    UOMViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new UOMForm(), this).showAndWait(), this::errorMessage);
+                    UOMViewModel.getItem(obj.getItem().getId(), this::showDialog, this::errorMessage);
                     e.consume();
                 });
         contextMenu.getItems().addAll(edit, delete);
@@ -226,39 +233,29 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new UOMForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog());
+    }
+
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new UOMForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
         UOMViewModel.getAllUOMs(null, null, null, null);
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     public void setSearchBar() {
@@ -311,7 +308,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
@@ -323,7 +320,6 @@ public class UnitOfMeasurePage extends OutlinePage {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
@@ -332,7 +328,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 

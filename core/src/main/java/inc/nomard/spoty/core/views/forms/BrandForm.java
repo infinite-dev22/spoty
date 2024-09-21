@@ -1,54 +1,44 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.BrandViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
-import javafx.event.Event;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static inc.nomard.spoty.core.viewModels.BrandViewModel.clearBrandData;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
-public class BrandForm extends MFXGenericDialog {
+public class BrandForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
     public ValidatableTextField name;
     public ValidatableTextArea description;
     public CustomButton saveBtn;
     public Button cancelBtn;
     public Label nameValidationLabel;
     private List<Constraint> nameConstraints;
-    private Event actionEvent = null;
 
-    public BrandForm() {
-        init();
-    }
-
-    public void init() {
+    public BrandForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -59,7 +49,7 @@ public class BrandForm extends MFXGenericDialog {
         // Input.
         name = new ValidatableTextField();
         var label = new Label("Name");
-        name.setPrefWidth(400d);
+        name.setPrefWidth(1000d);
         name.textProperty().bindBidirectional(BrandViewModel.nameProperty());
         // Validation.
         nameValidationLabel = Validators.buildValidationLabel();
@@ -74,7 +64,7 @@ public class BrandForm extends MFXGenericDialog {
         // Input.
         description = new ValidatableTextArea();
         var label = new Label("Description");
-        description.setPrefWidth(400d);
+        description.setPrefWidth(1000d);
         description.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
         description.setWrapText(true);
         var vbox = new VBox();
@@ -115,21 +105,10 @@ public class BrandForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    closeDialog(event);
-                    clearBrandData();
-
-                    nameValidationLabel.setVisible(false);
-                    nameValidationLabel.setManaged(false);
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
+        cancelBtn.setOnAction((event) -> this.dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
@@ -138,23 +117,20 @@ public class BrandForm extends MFXGenericDialog {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()) {
-                        actionEvent = event;
+                        saveBtn.startLoading();
                         if (BrandViewModel.getId() > 0) {
-                            BrandViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            return;
+                            BrandViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            BrandViewModel.saveBrand(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        BrandViewModel.saveBrand(this::onSuccess, this::successMessage, this::errorMessage);
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        BrandViewModel.clearBrandData();
+        this.dispose();
         BrandViewModel.getAllBrands(null, null, null, null);
     }
 
@@ -181,29 +157,19 @@ public class BrandForm extends MFXGenericDialog {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        BrandViewModel.clearBrandData();
+        name = null;
+        nameValidationLabel = null;
+        description = null;
+        saveBtn = null;
+        cancelBtn = null;
     }
 }
