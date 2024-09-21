@@ -64,7 +64,6 @@ public class ProductViewModel {
     private static final StringProperty taxType = new SimpleStringProperty("");
     private static final StringProperty stockAlert = new SimpleStringProperty();
     private static final StringProperty serial = new SimpleStringProperty("");
-    private static final StringProperty description = new SimpleStringProperty("");
     private static final ProductsRepositoryImpl productsRepository = new ProductsRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
@@ -280,18 +279,6 @@ public class ProductViewModel {
         ProductViewModel.serial.set(serial);
     }
 
-    public static String getDescription() {
-        return description.get();
-    }
-
-    public static void setDescription(String description) {
-        ProductViewModel.description.set(description);
-    }
-
-    public static StringProperty descriptionProperty() {
-        return description;
-    }
-
     public static ListProperty<Product> productsProperty() {
         return products;
     }
@@ -349,7 +336,6 @@ public class ProductViewModel {
                 .stockAlert(getStockAlert())
                 .serialNumber(getSerialNumber())
                 .image(getImage())
-                .description(getDescription())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.post(product, getImageFile());
         responseFuture.thenAccept(response -> {

@@ -1,20 +1,17 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.Animations;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.ProductForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.previews.ProductPreview;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -22,19 +19,19 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
@@ -55,26 +52,43 @@ public class ProductPage extends OutlinePage {
     private TableColumn<Product, Product> discount;
     private TableColumn<Product, Product> createdBy;
     private TableColumn<Product, Product> createdAt;
-    private TableColumn<Product, Product> updatedBy;
-    private TableColumn<Product, Product> updatedAt;
 
     public ProductPage() {
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::errorMessage, null, null);
         modalPane.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
             }
         });
+        createBtn.setDisable(true);
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductCategoryViewModel.getAllProductCategories(null, null, null, null)),
+                CompletableFuture.runAsync(() -> BrandViewModel.getAllBrands(null, null, null, null)),
+                CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null, null, null)),
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        createBtn.setDisable(true);
+        return null;
     }
 
     private void onDataInitializationSuccess() {
         progress.setManaged(false);
         progress.setVisible(false);
+        createBtn.setDisable(false);
     }
 
     public BorderPane init() {
@@ -172,8 +186,6 @@ public class ProductPage extends OutlinePage {
         discount = new TableColumn<>("Discount");
         createdBy = new TableColumn<>("Created By");
         createdAt = new TableColumn<>("Created At");
-        updatedBy = new TableColumn<>("Updated By");
-        updatedAt = new TableColumn<>("Updated At");
 
         productName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         productCategory.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
@@ -185,8 +197,6 @@ public class ProductPage extends OutlinePage {
         discount.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
 
         setupTableColumns();
 
@@ -199,9 +209,7 @@ public class ProductPage extends OutlinePage {
                 tax,
                 discount,
                 createdBy,
-                createdAt,
-                updatedBy,
-                updatedAt).toList());
+                createdAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleTable();
@@ -247,13 +255,13 @@ public class ProductPage extends OutlinePage {
         });
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            ProductViewModel.deleteProduct(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            ProductViewModel.deleteProduct(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName(), this));
         // Edit
         edit.setOnAction(
                 event -> {
-                    ProductViewModel.getProduct(obj.getItem().getId(), () -> SpotyDialog.createDialog(new ProductForm(), this).showAndWait(), this::errorMessage);
+                    ProductViewModel.getProduct(obj.getItem().getId(), this::showFormDialog, this::errorMessage);
                     event.consume();
                 });
         contextMenu.getItems().addAll(view, edit, delete);
@@ -262,7 +270,19 @@ public class ProductPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new ProductForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showFormDialog());
+    }
+
+    private void showFormDialog() {
+        var dialog = new ModalContentHolder(700, -1);
+        dialog.getChildren().add(new ProductForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     public void viewShow(Product product) {
@@ -280,32 +300,10 @@ public class ProductPage extends OutlinePage {
         ProductViewModel.getAllProducts(null, null, null, null);
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     public void setSearchBar() {
@@ -348,6 +346,7 @@ public class ProductPage extends OutlinePage {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCostPrice()));
             }
         });
@@ -356,6 +355,7 @@ public class ProductPage extends OutlinePage {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getSalePrice()));
             }
         });
@@ -364,6 +364,7 @@ public class ProductPage extends OutlinePage {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
             }
         });
@@ -372,6 +373,7 @@ public class ProductPage extends OutlinePage {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getTax()) ? null : AppUtils.decimalFormatter().format(item.getTax().getPercentage()));
             }
         });
@@ -380,6 +382,7 @@ public class ProductPage extends OutlinePage {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDiscount()) ? null : AppUtils.decimalFormatter().format(item.getDiscount().getPercentage()));
             }
         });
@@ -396,32 +399,11 @@ public class ProductPage extends OutlinePage {
             @Override
             public void updateItem(Product item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
-            }
-        });
-        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Product item, boolean empty) {
-                super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
-            }
-        });
-        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Product item, boolean empty) {
-                super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
-
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
-
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
     }

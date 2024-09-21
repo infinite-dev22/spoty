@@ -52,7 +52,6 @@ public class ProductPreview extends BorderPane {
     private static final DoubleProperty discountProperty = new SimpleDoubleProperty();
     private static final DoubleProperty stockQuantityProperty = new SimpleDoubleProperty();
     private static final DoubleProperty alertProperty = new SimpleDoubleProperty();
-    private static final StringProperty descriptionProperty = new SimpleStringProperty();
     private static final ObjectProperty<ImagePattern> barcodeProperty = new SimpleObjectProperty<>();
     private final Rectangle productImageHolder = new Rectangle();
     private final ModalPane modalPane;
@@ -191,8 +190,7 @@ public class ProductPreview extends BorderPane {
                 buildSpacedTitledText("Tax", taxProperty),
                 buildSpacedTitledText("Discount", discountProperty),
                 buildSpacedTitledText("Stock Quantity", stockQuantityProperty),
-                buildSpacedTitledText("Alert Quantity", alertProperty),
-                buildSpacedTitledText("Description", descriptionProperty));
+                buildSpacedTitledText("Alert Quantity", alertProperty));
         VBox.setVgrow(vbox, Priority.ALWAYS);
         return vbox;
     }
@@ -249,7 +247,6 @@ public class ProductPreview extends BorderPane {
         discountProperty.set(Objects.nonNull(product.getDiscount()) ? product.getDiscount().getPercentage() : 0d);
         stockQuantityProperty.set(product.getQuantity());
         alertProperty.set(product.getStockAlert());
-        descriptionProperty.set(product.getDescription());
         Platform.runLater(() -> loadImageAsync(product.getImage()));
     }
 
