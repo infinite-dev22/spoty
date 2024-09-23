@@ -26,6 +26,7 @@ public class CustomButton extends HBox {
         this.progressSpinner.setManaged(false);
 
         this.getStyleClass().add("button");
+        label.setStyle("-fx-text-fill: white;");
 
         this.getChildren().addAll(this.label, this.progressSpinner);
 
