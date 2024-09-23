@@ -196,8 +196,8 @@ public class RequisitionPage extends OutlinePage {
     private void setupTable() {
         reference = new TableColumn<>("Ref");
         supplier = new TableColumn<>("Supplier");
-        status = new TableColumn<>("Approved Status");
-        approvalStatus = new TableColumn<>("Status");
+        status = new TableColumn<>("Status");
+        approvalStatus = new TableColumn<>("Approved Status");
         createdBy = new TableColumn<>("Created By");
         createdAt = new TableColumn<>("Created At");
         updatedBy = new TableColumn<>("Updated By");
