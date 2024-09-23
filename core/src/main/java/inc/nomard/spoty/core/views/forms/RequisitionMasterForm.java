@@ -11,10 +11,11 @@ import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
@@ -54,7 +55,8 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 
 @Log
 public class RequisitionMasterForm extends VBox {
-    private final ModalPane modalPane;
+    private final ModalPane modalPane1;
+    private final ModalPane modalPane2;
     public CustomButton saveBtn;
     public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
@@ -64,8 +66,9 @@ public class RequisitionMasterForm extends VBox {
     private TableColumn<RequisitionDetail, RequisitionDetail> product;
     private TableColumn<RequisitionDetail, RequisitionDetail> quantity;
 
-    public RequisitionMasterForm(ModalPane modalPane) {
-        this.modalPane = modalPane;
+    public RequisitionMasterForm(ModalPane modalPane1, ModalPane modalPane2) {
+        this.modalPane1 = modalPane1;
+        this.modalPane2 = modalPane2;
         init();
         initializeComponentProperties();
     }
@@ -107,10 +110,19 @@ public class RequisitionMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait());
+        addBtn.setOnAction(event -> this.showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(450, 250);
+        dialog.getChildren().add(new RequisitionDetailForm(modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane2.setAlignment(Pos.CENTER_RIGHT);
+        modalPane2.show(dialog);
+        modalPane2.setPersistent(true);
     }
 
     private TableView<RequisitionDetail> buildTable() {
@@ -155,10 +167,11 @@ public class RequisitionMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
+                saveBtn.startLoading();
                 if (RequisitionMasterViewModel.getId() > 0) {
-                    RequisitionMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                    RequisitionMasterViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 } else {
-                    RequisitionMasterViewModel.saveRequisitionMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                    RequisitionMasterViewModel.saveRequisitionMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 }
             }
         });
@@ -267,7 +280,7 @@ public class RequisitionMasterForm extends VBox {
 
     private void handleEditAction(TableRow<RequisitionDetail> row) {
         Platform.runLater(() -> RequisitionDetailViewModel.getRequisitionDetail(row.getItem().getId()));
-        SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait();
+        this.showForm();
     }
 
     private void bindTableItems() {
@@ -300,30 +313,9 @@ public class RequisitionMasterForm extends VBox {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     private void setupTableColumnData() {
@@ -346,8 +338,8 @@ public class RequisitionMasterForm extends VBox {
     }
 
     public void dispose() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        modalPane1.hide(true);
+        modalPane1.setPersistent(false);
         RequisitionMasterViewModel.resetProperties();
         supplierValidationLabel = null;
         supplier = null;

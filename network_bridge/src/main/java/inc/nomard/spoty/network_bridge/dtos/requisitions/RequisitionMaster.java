@@ -22,6 +22,7 @@ public class RequisitionMaster {
     private List<RequisitionDetail> requisitionDetails;
     private String notes;
     private String status;
+    private String approvalStatus;
     private Employee createdBy;
     private LocalDateTime createdAt;
     private Employee updatedBy;
@@ -29,9 +30,5 @@ public class RequisitionMaster {
 
     public String getSupplierName() {
         return supplier.getFirstName() + " " + supplier.getOtherName() + " " + supplier.getLastName();
-    }
-
-    public String doneBy() {
-        return createdBy.getName();
     }
 }

@@ -1,20 +1,19 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.RequisitionMasterForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.previews.RequisitionPreviewController;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -34,14 +33,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
@@ -49,7 +47,8 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 @SuppressWarnings("unchecked")
 @Log
 public class RequisitionPage extends OutlinePage {
-    private final SideModalPane modalPane;
+    private final SideModalPane modalPane1;
+    private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<RequisitionMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -58,6 +57,7 @@ public class RequisitionPage extends OutlinePage {
     private TableColumn<RequisitionMaster, String> reference;
     private TableColumn<RequisitionMaster, RequisitionMaster> supplier;
     private TableColumn<RequisitionMaster, RequisitionMaster> status;
+    private TableColumn<RequisitionMaster, RequisitionMaster> approvalStatus;
     private TableColumn<RequisitionMaster, RequisitionMaster> createdBy;
     private TableColumn<RequisitionMaster, RequisitionMaster> createdAt;
     private TableColumn<RequisitionMaster, RequisitionMaster> updatedBy;
@@ -69,19 +69,39 @@ public class RequisitionPage extends OutlinePage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        modalPane = new SideModalPane();
+        modalPane1 = new SideModalPane();
+        modalPane2 = new SideModalPane();
 
-        getChildren().addAll(modalPane, init());
+        getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        RequisitionMasterViewModel.getAllRequisitionMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
 
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
-                modalPane.setAlignment(Pos.CENTER);
-                modalPane.usePredefinedTransitionFactories(null);
+                modalPane1.setAlignment(Pos.CENTER);
+                modalPane1.usePredefinedTransitionFactories(null);
             }
         });
+        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane2.setAlignment(Pos.CENTER);
+                modalPane2.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> SupplierViewModel.getAllSuppliers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -176,25 +196,28 @@ public class RequisitionPage extends OutlinePage {
     private void setupTable() {
         reference = new TableColumn<>("Ref");
         supplier = new TableColumn<>("Supplier");
-        status = new TableColumn<>("Status");
+        status = new TableColumn<>("Approved Status");
+        approvalStatus = new TableColumn<>("Status");
         createdBy = new TableColumn<>("Created By");
         createdAt = new TableColumn<>("Created At");
         updatedBy = new TableColumn<>("Updated By");
         updatedAt = new TableColumn<>("Updated At");
 
-        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         supplier.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        approvalStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
 
         setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(reference,
                 supplier,
                 status,
+                approvalStatus,
                 createdBy,
                 createdAt,
                 updatedBy,
@@ -235,7 +258,7 @@ public class RequisitionPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            RequisitionMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            RequisitionMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getSupplierName() + "'s requisition", this));
         // Edit
@@ -257,14 +280,14 @@ public class RequisitionPage extends OutlinePage {
 
     private void showForm() {
         var dialog = new ModalContentHolder(500, -1);
-        dialog.getChildren().add(new RequisitionMasterForm(modalPane));
+        dialog.getChildren().add(new RequisitionMasterForm(modalPane1, modalPane2));
         dialog.setPadding(new Insets(5d));
-        modalPane.setAlignment(Pos.TOP_RIGHT);
-        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-        modalPane.show(dialog);
-        modalPane.setPersistent(true);
+        modalPane1.setAlignment(Pos.TOP_RIGHT);
+        modalPane1.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane1.setOutTransitionFactory(node -> Animations.slideOutRight(node, Duration.millis(400)));
+        modalPane1.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane1.show(dialog);
+        modalPane1.setPersistent(true);
     }
 
     private void onSuccess() {
@@ -290,32 +313,10 @@ public class RequisitionPage extends OutlinePage {
         viewDialog.showAndWait();
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     public void setSearchBar() {
@@ -350,6 +351,7 @@ public class RequisitionPage extends OutlinePage {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
 
                 if (!empty && !Objects.isNull(item)) {
                     var chip = new Label(item.getStatus());
@@ -357,18 +359,76 @@ public class RequisitionPage extends OutlinePage {
                     chip.setAlignment(Pos.CENTER);
 
                     Color col;
-                    switch (item.getStatus()) {
-                        case "Approved" -> col = Color.valueOf(Styles.SUCCESS);
-                        case "Pending" -> col = Color.valueOf("blue");
-                        case "Rejected" -> col = Color.valueOf(Styles.DANGER);
-                        case "Returned" -> col = Color.valueOf(Styles.WARNING);
-                        default -> col = Color.valueOf(Styles.TEXT_MUTED);
+                    Color color;
+                    switch (item.getStatus().toLowerCase()) {
+                        case "processed" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .15);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .15);
+                        }
+                        case "canceled" -> {
+                            col = Color.rgb(255, 69, 58);
+                            color = Color.rgb(255, 69, 58, .15);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .15);
+                        }
                     }
-                    var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
 
-                    chip.setTextFill(color.darker());
-                    chip.setBorder(new Border(new BorderStroke(color.darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
-                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
+        approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getApprovalStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
+                    switch (item.getApprovalStatus().toLowerCase()) {
+                        case "approved" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .15);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .15);
+                        }
+                        case "rejected" -> {
+                            col = Color.rgb(255, 69, 58);
+                            color = Color.rgb(255, 69, 58, .15);
+                        }
+                        case "returned" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .15);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .15);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
 
                     setGraphic(chip);
                     setText(null);
@@ -391,7 +451,7 @@ public class RequisitionPage extends OutlinePage {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
@@ -403,7 +463,6 @@ public class RequisitionPage extends OutlinePage {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
@@ -412,7 +471,7 @@ public class RequisitionPage extends OutlinePage {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
