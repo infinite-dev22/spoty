@@ -10,7 +10,6 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberFiel
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
@@ -21,6 +20,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
@@ -32,7 +32,7 @@ import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
-public class PurchaseDetailForm extends MFXGenericDialog {
+public class PurchaseDetailForm extends BorderPane {
     private final ModalPane modalPane;
     public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
@@ -110,9 +110,6 @@ public class PurchaseDetailForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void setupProductComboBox() {
