@@ -43,17 +43,15 @@ public class PurchaseReturnPage extends OutlinePage {
     private TextField searchBar;
     private TableView<PurchaseReturnMaster> masterTable;
     private MFXProgressSpinner progress;
+    private TableColumn<PurchaseReturnMaster, String> reference;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> supplier;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseDate;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseTotalPrice;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseAmountPaid;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseAmountDue;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> approvalStatus;
-    private TableColumn<PurchaseReturnMaster, String> purchaseStatus;
-    private TableColumn<PurchaseReturnMaster, String> masterPaymentStatus;
-    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdBy;
-    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdAt;
-    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> updatedBy;
-    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> updatedAt;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseStatus;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> paymentStatus;
 
     public PurchaseReturnPage() {
         modalPane = new SideModalPane();
@@ -157,18 +155,17 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     private void setupTable() {
+        reference = new TableColumn<>("Ref");
         supplier = new TableColumn<>("Supplier");
         purchaseDate = new TableColumn<>("Date");
         purchaseTotalPrice = new TableColumn<>("Total Amount");
-        purchaseAmountPaid = new TableColumn<>("Paid Amount");
+        purchaseAmountPaid = new TableColumn<>("Amount Paid");
+        purchaseAmountDue = new TableColumn<>("Amount Due");
+        purchaseStatus = new TableColumn<>("Purchase Status");
         approvalStatus = new TableColumn<>("Approval Status");
-        purchaseStatus = new TableColumn<>("Status");
-        masterPaymentStatus = new TableColumn<>("Pay Status");
-        createdBy = new TableColumn<>("Created By");
-        createdAt = new TableColumn<>("Created At");
-        updatedBy = new TableColumn<>("Updated By");
-        updatedAt = new TableColumn<>("Updated At");
+        paymentStatus = new TableColumn<>("Pay Status");
 
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         supplier
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
@@ -179,31 +176,30 @@ public class PurchaseReturnPage extends OutlinePage {
         purchaseAmountPaid
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
+        purchaseAmountDue
+                .prefWidthProperty()
+                .bind(masterTable.widthProperty().multiply(.15));
         approvalStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
         purchaseStatus
                 .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
-        masterPaymentStatus
+                .bind(masterTable.widthProperty().multiply(.2));
+        paymentStatus
                 .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
-        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+                .bind(masterTable.widthProperty().multiply(.2));
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(supplier,
+        var columnList = new LinkedList<>(Stream.of(reference,
+                supplier,
                 purchaseDate,
                 purchaseTotalPrice,
                 purchaseAmountPaid,
-                approvalStatus,
+                purchaseAmountDue,
                 purchaseStatus,
-                masterPaymentStatus,
-                createdBy,
-                createdAt).toList());
+                approvalStatus,
+                paymentStatus).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getTable();
@@ -314,6 +310,7 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     private void setupTableColumns() {
+        reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
         supplier.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         supplier.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
@@ -349,6 +346,15 @@ public class PurchaseReturnPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
             }
         });
+        purchaseAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(PurchaseReturnMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountDue()));
+            }
+        });
         approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
@@ -366,23 +372,23 @@ public class PurchaseReturnPage extends OutlinePage {
                     switch (item.getApprovalStatus().toLowerCase()) {
                         case "approved" -> {
                             col = Color.rgb(50, 215, 75);
-                            color = Color.rgb(50, 215, 75, .15);
+                            color = Color.rgb(50, 215, 75, .1);
                         }
                         case "pending" -> {
                             col = Color.web("#9a1fe6");
-                            color = Color.web("#9a1fe6", .15);
+                            color = Color.web("#9a1fe6", .1);
                         }
                         case "rejected" -> {
                             col = Color.rgb(255, 69, 58);
-                            color = Color.rgb(255, 69, 58, .15);
+                            color = Color.rgb(255, 69, 58, .1);
                         }
                         case "returned" -> {
                             col = Color.rgb(255, 159, 10);
-                            color = Color.rgb(255, 159, 10, .15);
+                            color = Color.rgb(255, 159, 10, .1);
                         }
                         default -> {
                             col = Color.web("#aeaeb2");
-                            color = Color.web("#aeaeb2", .15);
+                            color = Color.web("#aeaeb2", .1);
                         }
                     }
 
@@ -397,47 +403,92 @@ public class PurchaseReturnPage extends OutlinePage {
                 }
             }
         });
-        purchaseStatus.setCellValueFactory(new PropertyValueFactory<>("purchaseStatus"));
-        masterPaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
-        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(PurchaseReturnMaster item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
-            }
-        });
-        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        purchaseStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getPurchaseStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
 
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+                    Color col;
+                    Color color;
+                    switch (item.getPurchaseStatus().toLowerCase()) {
+                        case "received" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "ordered" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
-        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        paymentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        paymentStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
-            }
-        });
-        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(PurchaseReturnMaster item, boolean empty) {
-                super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getPaymentStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
 
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+                    Color col;
+                    Color color;
+                    switch (item.getPaymentStatus().toLowerCase()) {
+                        case "paid" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "unpaid" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "partial" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
     }
