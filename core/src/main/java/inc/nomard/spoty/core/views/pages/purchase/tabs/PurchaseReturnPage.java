@@ -24,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
@@ -46,7 +47,7 @@ public class PurchaseReturnPage extends OutlinePage {
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseDate;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseTotalPrice;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseAmountPaid;
-    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseAmountDue;
+    private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> approvalStatus;
     private TableColumn<PurchaseReturnMaster, String> purchaseStatus;
     private TableColumn<PurchaseReturnMaster, String> masterPaymentStatus;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> createdBy;
@@ -160,7 +161,7 @@ public class PurchaseReturnPage extends OutlinePage {
         purchaseDate = new TableColumn<>("Date");
         purchaseTotalPrice = new TableColumn<>("Total Amount");
         purchaseAmountPaid = new TableColumn<>("Paid Amount");
-        purchaseAmountDue = new TableColumn<>("Due Amount");
+        approvalStatus = new TableColumn<>("Approval Status");
         purchaseStatus = new TableColumn<>("Status");
         masterPaymentStatus = new TableColumn<>("Pay Status");
         createdBy = new TableColumn<>("Created By");
@@ -178,7 +179,7 @@ public class PurchaseReturnPage extends OutlinePage {
         purchaseAmountPaid
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        purchaseAmountDue
+        approvalStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
         purchaseStatus
@@ -195,12 +196,12 @@ public class PurchaseReturnPage extends OutlinePage {
         setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(supplier,
-                purchaseStatus,
-                masterPaymentStatus,
                 purchaseDate,
                 purchaseTotalPrice,
                 purchaseAmountPaid,
-                purchaseAmountDue,
+                approvalStatus,
+                purchaseStatus,
+                masterPaymentStatus,
                 createdBy,
                 createdAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -348,12 +349,52 @@ public class PurchaseReturnPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
             }
         });
-        purchaseAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        purchaseAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+        approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountDue()));
+                this.setAlignment(Pos.CENTER);
+
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getApprovalStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
+                    switch (item.getApprovalStatus().toLowerCase()) {
+                        case "approved" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .15);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .15);
+                        }
+                        case "rejected" -> {
+                            col = Color.rgb(255, 69, 58);
+                            color = Color.rgb(255, 69, 58, .15);
+                        }
+                        case "returned" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .15);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .15);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
         purchaseStatus.setCellValueFactory(new PropertyValueFactory<>("purchaseStatus"));

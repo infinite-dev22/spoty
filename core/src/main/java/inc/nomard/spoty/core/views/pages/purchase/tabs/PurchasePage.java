@@ -1,6 +1,10 @@
 package inc.nomard.spoty.core.views.pages.purchase.tabs;
 
 import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.DiscountViewModel;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.SupplierViewModel;
+import inc.nomard.spoty.core.viewModels.TaxViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.PurchaseMasterForm;
@@ -11,10 +15,12 @@ import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.pages.EmployeePage;
 import inc.nomard.spoty.core.views.previews.PurchasePreview;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -27,6 +33,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
@@ -36,39 +43,61 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 @Log
 public class PurchasePage extends OutlinePage {
-    private final SideModalPane modalPane;
+    private final SideModalPane modalPane1;
+    private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<PurchaseMaster> masterTable;
     private MFXProgressSpinner progress;
+    private TableColumn<PurchaseMaster, String> reference;
     private TableColumn<PurchaseMaster, PurchaseMaster> supplier;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseDate;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseTotalPrice;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseAmountPaid;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseAmountDue;
-    private TableColumn<PurchaseMaster, String> purchaseStatus;
-    private TableColumn<PurchaseMaster, String> masterPaymentStatus;
-    private TableColumn<PurchaseMaster, PurchaseMaster> createdBy;
-    private TableColumn<PurchaseMaster, PurchaseMaster> createdAt;
-    private TableColumn<PurchaseMaster, PurchaseMaster> updatedBy;
-    private TableColumn<PurchaseMaster, PurchaseMaster> updatedAt;
+    private TableColumn<PurchaseMaster, PurchaseMaster> approvalStatus;
+    private TableColumn<PurchaseMaster, PurchaseMaster> purchaseStatus;
+    private TableColumn<PurchaseMaster, PurchaseMaster> paymentStatus;
 
     public PurchasePage() {
-        modalPane = new SideModalPane();
-        getChildren().addAll(modalPane, init());
+        modalPane1 = new SideModalPane();
+        modalPane2 = new SideModalPane();
+        getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        PurchaseMasterViewModel.getAllPurchaseMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
-                modalPane.setAlignment(Pos.CENTER);
-                modalPane.usePredefinedTransitionFactories(null);
+                modalPane1.setAlignment(Pos.CENTER);
+                modalPane1.usePredefinedTransitionFactories(null);
             }
         });
+        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane2.setAlignment(Pos.CENTER);
+                modalPane2.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> SupplierViewModel.getAllSuppliers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -124,26 +153,26 @@ public class PurchasePage extends OutlinePage {
 
     private void showForm() {
         var dialog = new ModalContentHolder(500, -1);
-        dialog.getChildren().add(new PurchaseMasterForm(modalPane));
+        dialog.getChildren().add(new PurchaseMasterForm(modalPane1, modalPane2));
         dialog.setPadding(new Insets(5d));
-        modalPane.setAlignment(Pos.TOP_RIGHT);
-        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-        modalPane.show(dialog);
-        modalPane.setPersistent(true);
+        modalPane1.setAlignment(Pos.TOP_RIGHT);
+        modalPane1.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane1.setOutTransitionFactory(node -> Animations.slideOutRight(node, Duration.millis(400)));
+        modalPane1.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane1.show(dialog);
+        modalPane1.setPersistent(true);
     }
 
     private void showReturnForm() {
         var dialog = new ModalContentHolder(500, -1);
-        dialog.getChildren().add(new PurchaseReturnMasterForm(modalPane));
+        dialog.getChildren().add(new PurchaseReturnMasterForm(modalPane1));
         dialog.setPadding(new Insets(5d));
-        modalPane.setAlignment(Pos.TOP_RIGHT);
-        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-        modalPane.show(dialog);
-        modalPane.setPersistent(true);
+        modalPane1.setAlignment(Pos.TOP_RIGHT);
+        modalPane1.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane1.setOutTransitionFactory(node -> Animations.slideOutRight(node, Duration.millis(400)));
+        modalPane1.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane1.show(dialog);
+        modalPane1.setPersistent(true);
     }
 
     private HBox buildTop() {
@@ -185,53 +214,51 @@ public class PurchasePage extends OutlinePage {
     }
 
     private void setupTable() {
+        reference = new TableColumn<>("Ref");
         supplier = new TableColumn<>("Supplier");
         purchaseDate = new TableColumn<>("Date");
         purchaseTotalPrice = new TableColumn<>("Total Amount");
-        purchaseAmountPaid = new TableColumn<>("Paid Amount");
-        purchaseAmountDue = new TableColumn<>("Due Amount");
-        purchaseStatus = new TableColumn<>("Status");
-        masterPaymentStatus = new TableColumn<>("Pay Status");
-        createdBy = new TableColumn<>("Created By");
-        createdAt = new TableColumn<>("Created At");
-        updatedBy = new TableColumn<>("Updated By");
-        updatedAt = new TableColumn<>("Updated At");
+        purchaseAmountPaid = new TableColumn<>("Amount Paid");
+        purchaseAmountDue = new TableColumn<>("Amount Due");
+        purchaseStatus = new TableColumn<>("Purchase Status");
+        approvalStatus = new TableColumn<>("Approval Status");
+        paymentStatus = new TableColumn<>("Pay Status");
 
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         supplier
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        purchaseDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        purchaseDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         purchaseTotalPrice
                 .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.15));
         purchaseAmountPaid
                 .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.15));
         purchaseAmountDue
+                .prefWidthProperty()
+                .bind(masterTable.widthProperty().multiply(.15));
+        approvalStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
         purchaseStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.2));
-        masterPaymentStatus
+        paymentStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.2));
-        createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(supplier,
-                purchaseStatus,
-                masterPaymentStatus,
+        var columnList = new LinkedList<>(Stream.of(reference,
+                supplier,
                 purchaseDate,
                 purchaseTotalPrice,
                 purchaseAmountPaid,
                 purchaseAmountDue,
-                createdBy,
-                createdAt).toList());
+                purchaseStatus,
+                approvalStatus,
+                paymentStatus).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getTable();
@@ -292,13 +319,13 @@ public class PurchasePage extends OutlinePage {
     }
 
     public void viewShow(PurchaseMaster purchaseMaster) {
-        var scrollPane = new ScrollPane(new PurchasePreview(purchaseMaster, modalPane));
+        var scrollPane = new ScrollPane(new PurchasePreview(purchaseMaster, modalPane1));
         scrollPane.setMaxHeight(10_000);
 
         var dialog = new ModalContentHolder(710, -1);
         dialog.getChildren().add(scrollPane);
         dialog.setPadding(new Insets(5d));
-        modalPane.show(dialog);
+        modalPane1.show(dialog);
     }
 
     private void successMessage(String message) {
@@ -347,6 +374,7 @@ public class PurchasePage extends OutlinePage {
     }
 
     private void setupTableColumns() {
+        reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
         supplier.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         supplier.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
@@ -360,6 +388,7 @@ public class PurchasePage extends OutlinePage {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
@@ -371,6 +400,7 @@ public class PurchasePage extends OutlinePage {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
             }
         });
@@ -379,7 +409,8 @@ public class PurchasePage extends OutlinePage {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getPaidAmount()));
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
             }
         });
         purchaseAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
@@ -387,50 +418,144 @@ public class PurchasePage extends OutlinePage {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountDue()));
             }
         });
-        purchaseStatus.setCellValueFactory(new PropertyValueFactory<>("purchaseStatus"));
-        masterPaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
-        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(PurchaseMaster item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
-            }
-        });
-        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getApprovalStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
 
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+                    Color col;
+                    Color color;
+                    switch (item.getApprovalStatus().toLowerCase()) {
+                        case "approved" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "rejected" -> {
+                            col = Color.rgb(255, 69, 58);
+                            color = Color.rgb(255, 69, 58, .1);
+                        }
+                        case "returned" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
-        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        purchaseStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        purchaseStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
+
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getPurchaseStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
+                    switch (item.getPurchaseStatus().toLowerCase()) {
+                        case "received" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "ordered" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
-        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        paymentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        paymentStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER);
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getPaymentStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
 
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
+                    Color col;
+                    Color color;
+                    switch (item.getPaymentStatus().toLowerCase()) {
+                        case "paid" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "unpaid" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "partial" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
             }
         });
     }

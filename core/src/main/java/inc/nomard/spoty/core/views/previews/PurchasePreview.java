@@ -78,13 +78,13 @@ public class PurchasePreview extends BorderPane {
         discountProperty.set(Objects.nonNull(purchase.getDiscount()) ? purchase.getDiscount().getPercentage() : 0d);
         taxProperty.set(Objects.nonNull(purchase.getTax()) ? purchase.getTax().getPercentage() : 0d);
         netCostProperty.set(purchase.getTotal());
-        paidAmountProperty.set(purchase.getPaidAmount());
+        paidAmountProperty.set(purchase.getAmountPaid());
         noteProperty.set(purchase.getNotes());
         servedByProperty.set(purchase.getCreatedBy().getName());
     }
 
-    private Text buildHeaderText(String txt) {
-        var text = new Text(txt);
+    private Text buildHeaderText() {
+        var text = new Text("Purchase Receipt");
         text.getStyleClass().addAll(Styles.TITLE_2, Styles.TEXT_SUBTLE, Styles.TEXT_ITALIC);
         return text;
     }
@@ -156,7 +156,7 @@ public class PurchasePreview extends BorderPane {
             @Override
             public void updateItem(PurchaseDetail item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getSubTotalCost()));
+                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getUnitCost()));
             }
         });
 
@@ -164,7 +164,7 @@ public class PurchasePreview extends BorderPane {
     }
 
     private HBox buildHeader() {
-        var vbox1 = new VBox(buildHeaderText("Purchase Receipt"));
+        var vbox1 = new VBox(buildHeaderText());
         vbox1.setAlignment(Pos.BOTTOM_LEFT);
         var vbox2 = new VBox(buildTitledText("Date", orderDateProperty));
         vbox2.setAlignment(Pos.TOP_RIGHT);
@@ -272,15 +272,15 @@ public class PurchasePreview extends BorderPane {
         return vbox;
     }
 
-    private FontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
+    private FontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction) {
         var icon = new FontIcon(FontAwesomeSolid.CIRCLE);
         icon.setOnMouseClicked(event -> onAction.run());
-        icon.getStyleClass().addAll(styleClass, Styles.DANGER);
+        icon.getStyleClass().addAll("close-icon", Styles.DANGER);
         return icon;
     }
 
     private HBox buildTop() {
-        var hbox = new HBox(buildFontIcon(this::dispose, "close-icon"));
+        var hbox = new HBox(buildFontIcon(this::dispose));
         hbox.setMaxHeight(20d);
         hbox.setMinHeight(20d);
         hbox.setAlignment(Pos.CENTER_LEFT);

@@ -61,9 +61,12 @@ public class PurchaseMasterViewModel {
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
     private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
-    private static final StringProperty status = new SimpleStringProperty("");
+    private static final StringProperty purchaseStatus = new SimpleStringProperty("");
+    private static final StringProperty paymentStatus = new SimpleStringProperty("");
+    private static final StringProperty approvalStatus = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    private static final DoubleProperty paidAmount = new SimpleDoubleProperty(0d);
+    private static final DoubleProperty amountPaid = new SimpleDoubleProperty(0d);
+    private static final DoubleProperty amountDue = new SimpleDoubleProperty(0d);
     private static final DoubleProperty shippingFee = new SimpleDoubleProperty(0d);
     private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
@@ -106,16 +109,40 @@ public class PurchaseMasterViewModel {
         return supplier;
     }
 
-    public static String getStatus() {
-        return status.get();
+    public static String getPurchaseStatus() {
+        return purchaseStatus.get();
     }
 
-    public static void setStatus(String status) {
-        PurchaseMasterViewModel.status.set(status);
+    public static void setPurchaseStatus(String purchaseStatus) {
+        PurchaseMasterViewModel.purchaseStatus.set(purchaseStatus);
     }
 
-    public static StringProperty statusProperty() {
-        return status;
+    public static StringProperty purchaseStatusProperty() {
+        return purchaseStatus;
+    }
+
+    public static String getPaymentStatus() {
+        return paymentStatus.get();
+    }
+
+    public static void setPaymentStatus(String paymentStatus) {
+        PurchaseMasterViewModel.paymentStatus.set(paymentStatus);
+    }
+
+    public static StringProperty paymentStatusProperty() {
+        return paymentStatus;
+    }
+
+    public static String getApprovalStatus() {
+        return approvalStatus.get();
+    }
+
+    public static void setApprovalStatus(String approvalStatus) {
+        PurchaseMasterViewModel.approvalStatus.set(approvalStatus);
+    }
+
+    public static StringProperty approvalStatusProperty() {
+        return approvalStatus;
     }
 
     public static Tax getTax() {
@@ -166,16 +193,28 @@ public class PurchaseMasterViewModel {
         return shippingFee;
     }
 
-    public static Double getPaidAmount() {
-        return paidAmount.get();
+    public static Double getAmountPaid() {
+        return amountPaid.get();
     }
 
-    public static void setPaidAmount(Double paidAmount) {
-        PurchaseMasterViewModel.paidAmount.set(paidAmount);
+    public static void setAmountPaid(Double amountPaid) {
+        PurchaseMasterViewModel.amountPaid.set(amountPaid);
     }
 
-    public static DoubleProperty paidAmountProperty() {
-        return paidAmount;
+    public static DoubleProperty amountPaidProperty() {
+        return amountPaid;
+    }
+
+    public static Double getAmountDue() {
+        return amountDue.get();
+    }
+
+    public static void setAmountDue(Double amountDue) {
+        PurchaseMasterViewModel.amountDue.set(amountDue);
+    }
+
+    public static DoubleProperty amountDueProperty() {
+        return amountDue;
     }
 
     public static ObservableList<PurchaseMaster> getPurchases() {
@@ -233,10 +272,11 @@ public class PurchaseMasterViewModel {
             setSupplier(null);
             setTax(null);
             setDiscount(null);
-            setStatus("");
+            setPurchaseStatus("");
             setNote("");
             setShippingFee(0d);
-            setPaidAmount(0d);
+            setAmountPaid(0d);
+            setAmountDue(0d);
             PENDING_DELETES.clear();
             PurchaseDetailViewModel.getPurchaseDetails().clear();
         });
@@ -250,9 +290,9 @@ public class PurchaseMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .paidAmount(getPaidAmount())
+                .amountPaid(getAmountPaid())
                 .shippingFee(getShippingFee())
-                .purchaseStatus(getStatus())
+                .purchaseStatus(getPurchaseStatus())
                 .paymentStatus("")
                 .notes(getNotes())
                 .build();
@@ -301,6 +341,14 @@ public class PurchaseMasterViewModel {
                     setNote(purchaseMaster.getNotes());
                     setDate(purchaseMaster.getDate());
                     setSupplier(purchaseMaster.getSupplier());
+                    setTax(purchaseMaster.getTax());
+                    setDiscount(purchaseMaster.getDiscount());
+                    setPurchaseStatus(purchaseMaster.getPurchaseStatus());
+                    setPaymentStatus(purchaseMaster.getPaymentStatus());
+                    setApprovalStatus(purchaseMaster.getApprovalStatus());
+                    setShippingFee(purchaseMaster.getShippingFee());
+                    setAmountPaid(purchaseMaster.getAmountPaid());
+                    setAmountDue(purchaseMaster.getAmountDue());
                     PurchaseDetailViewModel.getPurchaseDetails().clear();
                     PurchaseDetailViewModel.getPurchaseDetails().addAll(purchaseMaster.getPurchaseDetails());
                     if (onSuccess != null) {
@@ -344,9 +392,9 @@ public class PurchaseMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .paidAmount(getPaidAmount())
+                .amountPaid(getAmountPaid())
                 .shippingFee(getShippingFee())
-                .purchaseStatus(getStatus())
+                .purchaseStatus(getPurchaseStatus())
                 .paymentStatus("")
                 .notes(getNotes())
                 .build();
@@ -370,6 +418,7 @@ public class PurchaseMasterViewModel {
     private static void handleResponse(HttpResponse<String> response, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                        SpotyGotFunctional.MessageConsumer successMessage,
                                        SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
         Platform.runLater(() -> {
             switch (response.statusCode()) {
                 case 200:
@@ -390,6 +439,7 @@ public class PurchaseMasterViewModel {
     }
 
     private static void handleNon200Status(HttpResponse<String> response, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
         Platform.runLater(() -> {
             String message;
             switch (response.statusCode()) {
@@ -411,6 +461,7 @@ public class PurchaseMasterViewModel {
     }
 
     private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.severe(throwable.getMessage());
         Platform.runLater(() -> {
             SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
             String message = Connectivity.isConnectedToInternet() ? "An in-app error occurred" : "No Internet Connection";

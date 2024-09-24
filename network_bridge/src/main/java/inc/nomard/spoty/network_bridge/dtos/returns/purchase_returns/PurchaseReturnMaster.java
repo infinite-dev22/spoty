@@ -24,9 +24,11 @@ public class PurchaseReturnMaster {
     private Tax tax;
     private Discount discount;
     private double amountPaid;
-    private double total;
     private double amountDue;
+    private double shippingFee;
+    private double total;
     private double subTotal;
+    private String approvalStatus;
     private String purchaseStatus;
     private String paymentStatus;
     private String notes;

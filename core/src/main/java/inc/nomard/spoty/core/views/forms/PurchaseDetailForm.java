@@ -1,59 +1,47 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
 public class PurchaseDetailForm extends MFXGenericDialog {
+    private final ModalPane modalPane;
     public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
     public CustomButton saveBtn;
     public Button cancelBtn;
     public Label quantityValidationLabel, productValidationLabel;
 
-    public PurchaseDetailForm() {
-        init();
-    }
-
-    public void init() {
+    public PurchaseDetailForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -185,21 +173,8 @@ public class PurchaseDetailForm extends MFXGenericDialog {
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(this::resetForm);
+        cancelBtn.setOnAction(actionEvent -> dispose());
         saveBtn.setOnAction(this::saveForm);
-    }
-
-    private void resetForm(ActionEvent event) {
-        closeDialog(event);
-        PurchaseDetailViewModel.resetProperties();
-        hideValidationLabels();
-    }
-
-    private void hideValidationLabels() {
-        productValidationLabel.setVisible(false);
-        productValidationLabel.setManaged(false);
-        quantityValidationLabel.setVisible(false);
-        quantityValidationLabel.setManaged(false);
     }
 
     private void saveForm(Event event) {
@@ -214,7 +189,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         }
 
         if (productConstraints.isEmpty() && quantityConstraints.isEmpty()) {
-            processSave(event);
+            processSave();
         }
     }
 
@@ -223,40 +198,28 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         validationLabel.setVisible(true);
         validationLabel.setText(message);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-        MFXStageDialog dialog = (MFXStageDialog) control.getScene().getWindow();
-        dialog.sizeToScene();
     }
 
-    private void processSave(Event event) {
-        String message;
-
+    private void processSave() {
         if (tempIdProperty().get() > -1) {
             PurchaseDetailViewModel.updatePurchaseDetail();
-            message = "Product changed successfully";
+            SpotyUtils.successMessage("Product changed successfully");
         } else {
             PurchaseDetailViewModel.addPurchaseDetail();
-            message = "Product added successfully";
+            SpotyUtils.successMessage("Product added successfully");
         }
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-        PurchaseDetailViewModel.resetProperties();
-        closeDialog(event);
+        dispose();
     }
 
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        PurchaseDetailViewModel.resetProperties();
+        this.product = null;
+        this.quantity = null;
+        this.cancelBtn = null;
+        this.saveBtn = null;
+        this.quantityValidationLabel = null;
+        this.productValidationLabel = null;
     }
 }

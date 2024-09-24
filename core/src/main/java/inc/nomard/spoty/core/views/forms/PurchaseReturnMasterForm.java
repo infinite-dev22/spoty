@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
@@ -12,10 +11,7 @@ import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
@@ -29,16 +25,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -161,7 +153,8 @@ public class PurchaseReturnMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
-                PurchaseReturnMasterViewModel.savePurchaseReturnMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                saveBtn.startLoading();
+                PurchaseReturnMasterViewModel.savePurchaseReturnMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             }
         });
         return saveBtn;
@@ -170,9 +163,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            this.dispose();
-        });
+        cancelBtn.setOnAction(event -> this.dispose());
         return cancelBtn;
     }
 
@@ -327,14 +318,14 @@ public class PurchaseReturnMasterForm extends VBox {
     }
 
     private void requiredValidator() {
-        setupValidation(supplier, "Supplier is required", supplierValidationLabel);
-        setupValidation(date, "Date is required", dateValidationLabel);
+        setupValidation(supplier, supplierValidationLabel);
+        setupValidation(date, dateValidationLabel);
     }
 
-    private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
+    private <T> void setupValidation(ValidatableComboBox<T> field, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Supplier is required")
                 .setCondition(field.valueProperty().isNotNull())
                 .get();
 
@@ -348,10 +339,10 @@ public class PurchaseReturnMasterForm extends VBox {
         });
     }
 
-    private void setupValidation(ValidatableDatePicker field, String message, Label validationLabel) {
+    private void setupValidation(ValidatableDatePicker field, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Date is required")
                 .setCondition(field.valueProperty().isNotNull())
                 .get();
 
@@ -363,32 +354,11 @@ public class PurchaseReturnMasterForm extends VBox {
                 field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
             }
         });
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void dispose() {

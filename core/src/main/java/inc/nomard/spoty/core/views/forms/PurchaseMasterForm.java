@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.TaxViewModel;
@@ -14,11 +13,8 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Discount;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
@@ -41,17 +37,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -65,14 +57,13 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 
 @Log
 public class PurchaseMasterForm extends VBox {
-    private final ModalPane modalPane;
+    private final ModalPane modalPane1;
+    private final ModalPane modalPane2;
     public CustomButton saveBtn;
     public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
     private Label paidAmountValidationLabel;
     private Label shippingValidationLabel;
-    private Label discountValidationLabel;
-    private Label taxValidationLabel;
     private Label dateValidationLabel;
     private ValidatableComboBox<Discount> discount;
     private ValidatableComboBox<Tax> tax;
@@ -85,8 +76,9 @@ public class PurchaseMasterForm extends VBox {
     private TableColumn<PurchaseDetail, PurchaseDetail> product;
     private TableColumn<PurchaseDetail, PurchaseDetail> quantity;
 
-    public PurchaseMasterForm(ModalPane modalPane) {
-        this.modalPane = modalPane;
+    public PurchaseMasterForm(ModalPane modalPane1, ModalPane modalPane2) {
+        this.modalPane1 = modalPane1;
+        this.modalPane2 = modalPane2;
         init();
         initializeComponentProperties();
     }
@@ -132,10 +124,19 @@ public class PurchaseMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> SpotyDialog.createDialog(new PurchaseDetailForm(), this).showAndWait());
+        addBtn.setOnAction(event -> this.showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(450, 250);
+        dialog.getChildren().add(new PurchaseDetailForm(modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane2.setAlignment(Pos.CENTER_RIGHT);
+        modalPane2.show(dialog);
+        modalPane2.setPersistent(true);
     }
 
     private TableView<PurchaseDetail> buildTable() {
@@ -188,10 +189,11 @@ public class PurchaseMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
+                saveBtn.startLoading();
                 if (PurchaseMasterViewModel.getId() > 0) {
-                    PurchaseMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                    PurchaseMasterViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 } else {
-                    PurchaseMasterViewModel.savePurchaseMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                    PurchaseMasterViewModel.savePurchaseMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 }
             }
         });
@@ -201,9 +203,7 @@ public class PurchaseMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            this.dispose();
-        });
+        cancelBtn.setOnAction(event -> this.dispose());
         return cancelBtn;
     }
 
@@ -230,16 +230,14 @@ public class PurchaseMasterForm extends VBox {
         var label = new Label("Discount");
         discount = new ValidatableComboBox<>();
         discount.setPrefWidth(10000d);
-        discountValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(label, discount, discountValidationLabel);
+        return buildFieldHolder(label, discount);
     }
 
     private VBox buildTax() {
         var label = new Label("Tax");
         tax = new ValidatableComboBox<>();
         tax.setPrefWidth(10000d);
-        taxValidationLabel = Validators.buildValidationLabel();
-        return buildFieldHolder(label, tax, taxValidationLabel);
+        return buildFieldHolder(label, tax);
     }
 
     private void setPurchaseComboBoxes() {
@@ -293,7 +291,7 @@ public class PurchaseMasterForm extends VBox {
         date.valueProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
         supplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
         note.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
-        paidAmount.textProperty().bindBidirectional(PurchaseMasterViewModel.paidAmountProperty(), new NumberStringConverter());
+        paidAmount.textProperty().bindBidirectional(PurchaseMasterViewModel.amountPaidProperty(), new NumberStringConverter());
         shipping.textProperty().bindBidirectional(PurchaseMasterViewModel.shippingFeeProperty(), new NumberStringConverter());
     }
 
@@ -315,8 +313,6 @@ public class PurchaseMasterForm extends VBox {
         validateField(date, dateValidationLabel);
         validateField(paidAmount, paidAmountValidationLabel);
         validateField(shipping, shippingValidationLabel);
-        validateField(discount, discountValidationLabel);
-        validateField(tax, taxValidationLabel);
     }
 
     private <T> void validateField(ValidatableComboBox<T> field, Label validationLabel) {
@@ -374,9 +370,7 @@ public class PurchaseMasterForm extends VBox {
     }
 
     private void styleTable() {
-        tableView.setMinSize(10000, 200);
-        tableView.setPrefSize(10000, 500);
-        tableView.setMaxSize(10000, 1000);
+        tableView.setPrefSize(10000, 10000);
         tableView.setRowFactory(t -> {
             TableRow<PurchaseDetail> row = new TableRow<>();
             row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
@@ -402,7 +396,7 @@ public class PurchaseMasterForm extends VBox {
 
     private void handleEditAction(TableRow<PurchaseDetail> row) {
         Platform.runLater(() -> PurchaseDetailViewModel.getPurchaseDetail(row.getItem()));
-        SpotyDialog.createDialog(new PurchaseDetailForm(), this).showAndWait();
+        this.showForm();
     }
 
     private void bindTableItems() {
@@ -416,11 +410,9 @@ public class PurchaseMasterForm extends VBox {
 
     private void requiredValidator() {
         setupValidation(supplier, "Supplier is required", supplierValidationLabel);
-        setupValidation(date, "Date is required", dateValidationLabel);
+        setupValidation(date, dateValidationLabel);
         setupValidation(paidAmount, "Paid Amount is required", paidAmountValidationLabel);
         setupValidation(shipping, "Shipping is required", shippingValidationLabel);
-        setupValidation(discount, "Discount is required", discountValidationLabel);
-        setupValidation(tax, "Tax is required", taxValidationLabel);
     }
 
     private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
@@ -440,10 +432,10 @@ public class PurchaseMasterForm extends VBox {
         });
     }
 
-    private void setupValidation(ValidatableDatePicker field, String message, Label validationLabel) {
+    private void setupValidation(ValidatableDatePicker field, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Date is required")
                 .setCondition(field.valueProperty().isNotNull())
                 .get();
 
@@ -474,30 +466,9 @@ public class PurchaseMasterForm extends VBox {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     private void setupTableColumnData() {
@@ -520,8 +491,8 @@ public class PurchaseMasterForm extends VBox {
     }
 
     public void dispose() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        modalPane1.hide(true);
+        modalPane1.setPersistent(false);
         PurchaseMasterViewModel.resetProperties();
         supplierValidationLabel = null;
         dateValidationLabel = null;

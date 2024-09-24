@@ -10,7 +10,7 @@ import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.PurchaseReturnsRepositoryImpl;
+import inc.nomard.spoty.network_bridge.repositories.implementations.PurchasesRepositoryImpl;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
@@ -39,7 +39,7 @@ import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
 @Log
 public class PurchaseReturnMasterViewModel {
     @Getter
-    public static final ObservableList<PurchaseReturnMaster> purchaseReturnsList = FXCollections.observableArrayList();
+    public static final ObservableList<PurchaseReturnMaster> purchasesList = FXCollections.observableArrayList();
     @Getter
     public static final ObservableList<String> statusesList = FXCollections.observableArrayList("Approved",
             "Pending",
@@ -55,7 +55,7 @@ public class PurchaseReturnMasterViewModel {
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
-    private static final ListProperty<PurchaseReturnMaster> purchaseReturns = new SimpleListProperty<>(purchaseReturnsList);
+    private static final ListProperty<PurchaseReturnMaster> purchases = new SimpleListProperty<>(purchasesList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<LocalDate> date = new SimpleObjectProperty<>();
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
@@ -63,7 +63,9 @@ public class PurchaseReturnMasterViewModel {
     private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    private static final PurchaseReturnsRepositoryImpl purchaseReturnsRepository = new PurchaseReturnsRepositoryImpl();
+    private static final DoubleProperty amountPaid = new SimpleDoubleProperty(0d);
+    private static final DoubleProperty shippingFee = new SimpleDoubleProperty(0d);
+    private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
@@ -152,16 +154,40 @@ public class PurchaseReturnMasterViewModel {
         return note;
     }
 
+    public static Double getShippingFee() {
+        return shippingFee.get();
+    }
+
+    public static void setShippingFee(Double shippingFee) {
+        PurchaseReturnMasterViewModel.shippingFee.set(shippingFee);
+    }
+
+    public static DoubleProperty shippingFeeProperty() {
+        return shippingFee;
+    }
+
+    public static Double getAmountPaid() {
+        return amountPaid.get();
+    }
+
+    public static void setAmountPaid(Double amountPaid) {
+        PurchaseReturnMasterViewModel.amountPaid.set(amountPaid);
+    }
+
+    public static DoubleProperty amountPaidProperty() {
+        return amountPaid;
+    }
+
     public static ObservableList<PurchaseReturnMaster> getPurchaseReturns() {
-        return purchaseReturns.get();
+        return purchases.get();
     }
 
-    public static void setPurchaseReturns(ObservableList<PurchaseReturnMaster> purchaseReturns) {
-        PurchaseReturnMasterViewModel.purchaseReturns.set(purchaseReturns);
+    public static void setPurchaseReturns(ObservableList<PurchaseReturnMaster> purchases) {
+        PurchaseReturnMasterViewModel.purchases.set(purchases);
     }
 
-    public static ListProperty<PurchaseReturnMaster> purchaseReturnsProperty() {
-        return purchaseReturns;
+    public static ListProperty<PurchaseReturnMaster> purchasesProperty() {
+        return purchases;
     }
 
     public static Integer getTotalPages() {
@@ -209,6 +235,8 @@ public class PurchaseReturnMasterViewModel {
             setDiscount(null);
             setStatus("");
             setNote("");
+            setShippingFee(0d);
+            setAmountPaid(0d);
             PENDING_DELETES.clear();
             PurchaseReturnDetailViewModel.getPurchaseReturnDetails().clear();
         });
@@ -222,22 +250,23 @@ public class PurchaseReturnMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .amountPaid(0)
-                .total(0)
-                .amountDue(0)
+                .amountPaid(getAmountPaid())
+                .shippingFee(getShippingFee())
+                .purchaseStatus(getStatus())
+                .paymentStatus("")
                 .notes(getNotes())
                 .build();
         if (!PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty()) {
             purchaseMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.getPurchaseReturnDetails());
         }
-        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.post(purchaseMaster);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.post(purchaseMaster);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void getAllPurchaseReturnMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                                    SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
-        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.fetchAll(pageNo, pageSize);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
@@ -248,8 +277,8 @@ public class PurchaseReturnMasterViewModel {
                     setPageNumber(responseModel.getPageable().getPageNumber());
                     setPageSize(responseModel.getPageable().getPageSize());
                     ArrayList<PurchaseReturnMaster> purchaseList = responseModel.getContent();
-                    purchaseReturnsList.clear();
-                    purchaseReturnsList.addAll(purchaseList);
+                    purchasesList.clear();
+                    purchasesList.addAll(purchaseList);
                     if (onSuccess != null) {
                         onSuccess.run();
                     }
@@ -263,7 +292,7 @@ public class PurchaseReturnMasterViewModel {
     public static void getPurchaseReturnMaster(Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                                SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.fetch(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
@@ -287,15 +316,15 @@ public class PurchaseReturnMasterViewModel {
     public static void searchItem(String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.search(searchModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.search(searchModel);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
                     Type listType = new TypeToken<ArrayList<PurchaseReturnMaster>>() {
                     }.getType();
                     ArrayList<PurchaseReturnMaster> purchaseList = gson.fromJson(response.body(), listType);
-                    purchaseReturnsList.clear();
-                    purchaseReturnsList.addAll(purchaseList);
+                    purchasesList.clear();
+                    purchasesList.addAll(purchaseList);
                     if (onSuccess != null) {
                         onSuccess.run();
                     }
@@ -315,15 +344,16 @@ public class PurchaseReturnMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .amountPaid(0)
-                .total(0)
-                .amountDue(0)
+                .amountPaid(getAmountPaid())
+                .shippingFee(getShippingFee())
+                .purchaseStatus(getStatus())
+                .paymentStatus("")
                 .notes(getNotes())
                 .build();
         if (!PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty()) {
             purchaseMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.getPurchaseReturnDetails());
         }
-        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.put(purchaseMaster);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.put(purchaseMaster);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));
     }
@@ -332,7 +362,7 @@ public class PurchaseReturnMasterViewModel {
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.delete(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.delete(findModel);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));
     }
@@ -340,6 +370,7 @@ public class PurchaseReturnMasterViewModel {
     private static void handleResponse(HttpResponse<String> response, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                        SpotyGotFunctional.MessageConsumer successMessage,
                                        SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
         Platform.runLater(() -> {
             switch (response.statusCode()) {
                 case 200:
@@ -360,6 +391,7 @@ public class PurchaseReturnMasterViewModel {
     }
 
     private static void handleNon200Status(HttpResponse<String> response, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
         Platform.runLater(() -> {
             String message;
             switch (response.statusCode()) {
@@ -381,6 +413,7 @@ public class PurchaseReturnMasterViewModel {
     }
 
     private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.severe(throwable.getMessage());
         Platform.runLater(() -> {
             SpotyLogger.writeToFile(throwable, PurchaseReturnMasterViewModel.class);
             String message = Connectivity.isConnectedToInternet() ? "An in-app error occurred" : "No Internet Connection";
