@@ -70,7 +70,6 @@ public class CustomButton extends HBox {
 
     private void setButtonEventProperty() {
         this.onMouseClickedProperty().bind(onAction);
-        this.onMousePressedProperty().bind(onAction);
     }
 
     public void setOnAction(EventHandler<MouseEvent> actionEvent) {
