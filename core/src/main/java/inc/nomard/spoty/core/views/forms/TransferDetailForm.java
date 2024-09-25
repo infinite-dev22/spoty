@@ -1,20 +1,15 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferDetailViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.ModalPage;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
@@ -23,23 +18,20 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
-public class TransferDetailForm extends ModalPage {
+public class TransferDetailForm extends BorderPane {
+    private final ModalPane modalPane;
     public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
     public CustomButton saveBtn;
@@ -49,11 +41,8 @@ public class TransferDetailForm extends ModalPage {
     private List<Constraint> productConstraints,
             quantityConstraints;
 
-    public TransferDetailForm() {
-        init();
-    }
-
-    public void init() {
+    public TransferDetailForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -63,7 +52,7 @@ public class TransferDetailForm extends ModalPage {
         // Input.
         product = new ValidatableComboBox<>();
         var label = new Label("Product");
-        product.setPrefWidth(400d);
+        product.setPrefWidth(1000d);
         product.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
 
         StringConverter<Product> productConverter = FunctionalStringConverter.to(
@@ -88,7 +77,7 @@ public class TransferDetailForm extends ModalPage {
         // Input.
         quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
-        quantity.setPrefWidth(400d);
+        quantity.setPrefWidth(1000d);
         quantity.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
         // Validation.
         quantityValidationLabel = Validators.buildValidationLabel();
@@ -130,25 +119,11 @@ public class TransferDetailForm extends ModalPage {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
         cancelBtn.setOnAction(
-                (event) -> {
-                    closeDialog(event);
-                    TransferDetailViewModel.resetProperties();
-                    productValidationLabel.setVisible(false);
-                    quantityValidationLabel.setVisible(false);
-
-                    productValidationLabel.setManaged(false);
-                    quantityValidationLabel.setManaged(false);
-
-                    product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
+                (event) -> this.dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     productConstraints = product.validate();
@@ -158,28 +133,23 @@ public class TransferDetailForm extends ModalPage {
                         productValidationLabel.setVisible(true);
                         productValidationLabel.setText(productConstraints.getFirst().getMessage());
                         product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) product.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!quantityConstraints.isEmpty()) {
                         quantityValidationLabel.setManaged(true);
                         quantityValidationLabel.setVisible(true);
                         quantityValidationLabel.setText(quantityConstraints.getFirst().getMessage());
                         quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (productConstraints.isEmpty()
                             && quantityConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
                             TransferDetailViewModel.updateTransferDetail();
-                            successMessage("Product changed successfully");
-                            closeDialog(event);
-                            return;
+                            SpotyUtils.successMessage("Product changed successfully");
+                        } else {
+                            TransferDetailViewModel.addTransferDetails();
+                            SpotyUtils.successMessage("Product added successfully");
                         }
-                        TransferDetailViewModel.addTransferDetails();
-                        successMessage("Product added successfully");
-                        closeDialog(event);
+                        this.dispose();
                     }
                 });
     }
@@ -225,31 +195,10 @@ public class TransferDetailForm extends ModalPage {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        TransferDetailViewModel.resetProperties();
         this.product = null;
         this.quantity = null;
         this.cancelBtn = null;

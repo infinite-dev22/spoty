@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferDetailViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
@@ -11,11 +10,8 @@ import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.transfers.TransferDetail;
@@ -34,13 +30,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +48,8 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 @SuppressWarnings("unchecked")
 @Log
 public class TransferMasterForm extends VBox {
-    private final ModalPane modalPane;
+    private final ModalPane modalPane1;
+    private final ModalPane modalPane2;
     public ValidatableComboBox<Branch> fromBranch,
             toBranch;
     public ValidatableDatePicker date;
@@ -68,8 +65,9 @@ public class TransferMasterForm extends VBox {
             fromBranchValidationLabel;
     private TableColumn<TransferDetail, TransferDetail> product, quantity;
 
-    public TransferMasterForm(ModalPane modalPane) {
-        this.modalPane = modalPane;
+    public TransferMasterForm(ModalPane modalPane1, ModalPane modalPane2) {
+        this.modalPane1 = modalPane1;
+        this.modalPane2 = modalPane2;
         init();
         initializeComponentProperties();
     }
@@ -110,10 +108,19 @@ public class TransferMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> SpotyDialog.createDialog(new TransferDetailForm(), this).showAndWait());
+        addBtn.setOnAction(event -> showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(450, 250);
+        dialog.getChildren().add(new TransferDetailForm(modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane2.setAlignment(Pos.CENTER_RIGHT);
+        modalPane2.show(dialog);
+        modalPane2.setPersistent(true);
     }
 
     private TableView<TransferDetail> buildTable() {
@@ -230,10 +237,11 @@ public class TransferMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
+                saveBtn.startLoading();
                 if (TransferMasterViewModel.getId() > 0) {
-                    TransferMasterViewModel.updateTransfer(this::onSuccess, this::successMessage, this::errorMessage);
+                    TransferMasterViewModel.updateTransfer(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 } else {
-                    TransferMasterViewModel.saveTransferMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                    TransferMasterViewModel.saveTransferMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 }
             }
         });
@@ -315,8 +323,7 @@ public class TransferMasterForm extends VBox {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
-
-                    SpotyDialog.createDialog(new TransferDetailForm(), contentPane).showAndWait();
+                    this.showForm();
                     event.consume();
                 });
 
@@ -356,8 +363,8 @@ public class TransferMasterForm extends VBox {
     }
 
     private void onSuccess() {
-        TransferMasterViewModel.getAllTransferMasters(null, null, null, null);
         this.dispose();
+        TransferMasterViewModel.getAllTransferMasters(null, null, null, null);
     }
 
     public void requiredValidator() {
@@ -419,30 +426,9 @@ public class TransferMasterForm extends VBox {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     private void setupTableColumns() {
@@ -465,8 +451,8 @@ public class TransferMasterForm extends VBox {
     }
 
     public void dispose() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        modalPane1.hide(true);
+        modalPane1.setPersistent(false);
         TransferMasterViewModel.resetProperties();
         fromBranchValidationLabel = null;
         toBranchValidationLabel = null;

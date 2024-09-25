@@ -1,6 +1,8 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.TransferMasterForm;
@@ -11,9 +13,12 @@ import inc.nomard.spoty.core.views.layout.SpotyDialog;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.previews.PurchasePreview;
 import inc.nomard.spoty.core.views.previews.TransferPreviewController;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import inc.nomard.spoty.network_bridge.dtos.transfers.TransferMaster;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -40,6 +45,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
@@ -47,7 +53,8 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 @SuppressWarnings("unchecked")
 @Log
 public class TransferPage extends OutlinePage {
-    private final SideModalPane modalPane;
+    private final SideModalPane modalPane1;
+    private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<TransferMaster> masterTable;
     private MFXProgressSpinner progress;
@@ -64,23 +71,38 @@ public class TransferPage extends OutlinePage {
     private TableColumn<TransferMaster, TransferMaster> updatedAt;
 
     public TransferPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        modalPane = new SideModalPane();
-        getChildren().addAll(modalPane, init());
+        modalPane1 = new SideModalPane();
+        modalPane2 = new SideModalPane();
+        getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        TransferMasterViewModel.getAllTransferMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
 
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
-                modalPane.setAlignment(Pos.CENTER);
-                modalPane.usePredefinedTransitionFactories(null);
+                modalPane1.setAlignment(Pos.CENTER);
+                modalPane1.usePredefinedTransitionFactories(null);
             }
         });
+        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane2.setAlignment(Pos.CENTER);
+                modalPane2.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> BranchViewModel.getAllBranches(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -264,35 +286,26 @@ public class TransferPage extends OutlinePage {
         TransferMasterViewModel.getAllTransferMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/TransferPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new TransferPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
+    public void viewShow(TransferMaster transfer) {
+        var scrollPane = new ScrollPane(/*new TransferPreviewController(transfer, modalPane1)*/);
+        scrollPane.setMaxHeight(10_000);
 
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
-    public void viewShow(TransferMaster transferMaster) {
-        TransferPreviewController controller = viewFxmlLoader.getController();
-        controller.init(transferMaster);
-        viewDialog.showAndWait();
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane1.show(dialog);
     }
 
     private void showForm() {
         var dialog = new ModalContentHolder(500, -1);
-        dialog.getChildren().add(new TransferMasterForm(modalPane));
+        dialog.getChildren().add(new TransferMasterForm(modalPane1, modalPane2));
         dialog.setPadding(new Insets(5d));
-        modalPane.setAlignment(Pos.TOP_RIGHT);
-        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-        modalPane.show(dialog);
-        modalPane.setPersistent(true);
+        modalPane1.setAlignment(Pos.TOP_RIGHT);
+        modalPane1.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane1.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane1.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane1.show(dialog);
+        modalPane1.setPersistent(true);
     }
 
     private void successMessage(String message) {
