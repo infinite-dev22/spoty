@@ -16,12 +16,7 @@ public class StockInMaster {
     private Long id;
     private String ref;
     private List<StockInDetail> stockInDetails;
-    private String shipping;
-    private Double total;
-    private Employee approvedBy;
-    private Employee recordedBy;
-    private LocalDateTime approvalDate;
-    private LocalDateTime recordDate;
+    private String approvalStatus;
     private String notes;
     private Employee createdBy;
     private LocalDateTime createdAt;
