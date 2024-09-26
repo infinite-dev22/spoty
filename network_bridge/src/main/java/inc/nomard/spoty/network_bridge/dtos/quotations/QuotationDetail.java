@@ -14,9 +14,8 @@ public class QuotationDetail {
     private Long id;
     private Product product;
     private int quantity;
-    private Discount discount;
-    private Tax tax;
-    private double subTotal;
+    private double unitPrice;
+    private double totalPrice;
 
     public String getProductName() {
         return product.getName();

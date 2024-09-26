@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
 import inc.nomard.spoty.core.viewModels.TaxViewModel;
@@ -13,11 +12,8 @@ import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.network_bridge.dtos.Discount;
@@ -36,16 +32,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +49,8 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 @SuppressWarnings("unchecked")
 @Log
 public class QuotationMasterForm extends VBox {
-    private final ModalPane modalPane;
+    private final ModalPane modalPane1;
+    private final ModalPane modalPane2;
     private ValidatableComboBox<Customer> customer;
     private ValidatableComboBox<Tax> tax;
     private ValidatableComboBox<Discount> discount;
@@ -70,8 +63,9 @@ public class QuotationMasterForm extends VBox {
             addBtn;
     private TableColumn<QuotationDetail, QuotationDetail> product, price, quantity;
 
-    public QuotationMasterForm(ModalPane modalPane) {
-        this.modalPane = modalPane;
+    public QuotationMasterForm(ModalPane modalPane1, ModalPane modalPane2) {
+        this.modalPane1 = modalPane1;
+        this.modalPane2 = modalPane2;
         init();
         initializeComponentProperties();
     }
@@ -105,9 +99,18 @@ public class QuotationMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add Product");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> SpotyDialog.createDialog(new QuotationDetailForm(), this).showAndWait());
+        addBtn.setOnAction(event -> this.showForm());
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(450, 250);
+        dialog.getChildren().add(new QuotationDetailForm(modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane2.setAlignment(Pos.CENTER_RIGHT);
+        modalPane2.show(dialog);
+        modalPane2.setPersistent(true);
     }
 
     private TableView<QuotationDetail> buildTable() {
@@ -254,10 +257,11 @@ public class QuotationMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
+                saveBtn.startLoading();
                 if (QuotationMasterViewModel.getId() > 0) {
-                    QuotationMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                    QuotationMasterViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 } else {
-                    QuotationMasterViewModel.saveQuotationMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                    QuotationMasterViewModel.saveQuotationMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 }
             }
         });
@@ -267,9 +271,7 @@ public class QuotationMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            this.dispose();
-        });
+        cancelBtn.setOnAction(event -> this.dispose());
         return cancelBtn;
     }
 
@@ -334,7 +336,7 @@ public class QuotationMasterForm extends VBox {
         edit.setOnAction(
                 event -> {
                     QuotationDetailViewModel.getQuotationDetail(obj.getItem());
-                    SpotyDialog.createDialog(new QuotationDetailForm(), this).showAndWait();
+                    this.showForm();
                     event.consume();
                 });
 
@@ -389,30 +391,9 @@ public class QuotationMasterForm extends VBox {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     private void setupTableColumnData() {
@@ -443,8 +424,8 @@ public class QuotationMasterForm extends VBox {
     }
 
     public void dispose() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        modalPane1.hide(true);
+        modalPane1.setPersistent(false);
         QuotationMasterViewModel.resetProperties();
         customerValidationLabel = null;
         customer = null;

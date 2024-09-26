@@ -140,13 +140,9 @@ public class QuotationDetailViewModel {
     }
 
     public static void addQuotationDetails() {
-        var subTotal = getSubTotal() * getQuantity();
         var quotationDetail = QuotationDetail.builder()
                 .product(getProduct())
                 .quantity(getQuantity())
-                .discount(getDiscount())
-                .tax(getTax())
-                .subTotal(subTotal)
                 .build();
         quotationDetailsList.add(quotationDetail);
     }
@@ -158,7 +154,7 @@ public class QuotationDetailViewModel {
         }
         quotationDetail.setProduct(getProduct());
         quotationDetail.setQuantity(getQuantity());
-        quotationDetail.setSubTotal(getSubTotal());
+        quotationDetail.setUnitPrice(getSubTotal());
         quotationDetailsList.set(getTempId(), quotationDetail);
     }
 

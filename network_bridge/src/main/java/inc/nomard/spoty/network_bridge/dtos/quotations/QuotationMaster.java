@@ -23,6 +23,7 @@ public class QuotationMaster {
     private double shippingFee;
     private double total;
     private String status;
+    private String approvalStatus;
     private String notes;
     private Employee createdBy;
     private LocalDateTime createdAt;

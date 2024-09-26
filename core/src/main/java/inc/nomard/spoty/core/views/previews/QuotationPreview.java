@@ -166,7 +166,7 @@ public class QuotationPreview extends BorderPane {
             @Override
             public void updateItem(QuotationDetail item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getSubTotal()));
+                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getTotalPrice()));
             }
         });
 
