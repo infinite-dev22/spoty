@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.forms;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.values.SharedResources;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -9,42 +9,33 @@ import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.List;
 
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
-public class AdjustmentDetailForm extends MFXGenericDialog {
+public class AdjustmentDetailForm extends BorderPane {
+    private final ModalPane modalPane;
     public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
     public CustomButton saveBtn;
@@ -52,11 +43,8 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
     public ValidatableComboBox<String> type;
     public Label productValidationLabel, quantityValidationLabel, typeValidationLabel;
 
-    public AdjustmentDetailForm() {
-        init();
-    }
-
-    public void init() {
+    public AdjustmentDetailForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -67,7 +55,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         // Input.
         var label = new Label("Product");
         product = new ValidatableComboBox<>();
-        product.setPrefWidth(400d);
+        product.setPrefWidth(1000d);
         product.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
         setupProductComboBox();
         // Validation.
@@ -83,7 +71,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         // Input.
         var label = new Label("Quantity");
         quantity = new ValidatableNumberField();
-        quantity.setPrefWidth(400d);
+        quantity.setPrefWidth(1000d);
         quantity.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
         // Validation.
         quantityValidationLabel = Validators.buildValidationLabel();
@@ -98,7 +86,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         // Input.
         var label = new Label("Adjustment Type");
         type = new ValidatableComboBox<>();
-        type.setPrefWidth(400d);
+        type.setPrefWidth(1000d);
         type.valueProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
         typeValidationLabel = Validators.buildValidationLabel();
         setupTypeComboBox();
@@ -133,6 +121,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setSpacing(20d);
+        hbox.setPadding(new Insets(10d));
         hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
         return hbox;
     }
@@ -140,9 +129,6 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void setupProductComboBox() {
@@ -227,26 +213,11 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(this::resetForm);
-        saveBtn.setOnAction(this::saveForm);
+        cancelBtn.setOnAction(event -> this.dispose());
+        saveBtn.setOnAction(event -> this.saveForm());
     }
 
-    private void resetForm(ActionEvent event) {
-        closeDialog(event);
-        AdjustmentDetailViewModel.resetProperties();
-        hideValidationLabels();
-    }
-
-    private void hideValidationLabels() {
-        productValidationLabel.setVisible(false);
-        productValidationLabel.setManaged(false);
-        quantityValidationLabel.setVisible(false);
-        quantityValidationLabel.setManaged(false);
-        typeValidationLabel.setVisible(false);
-        typeValidationLabel.setManaged(false);
-    }
-
-    private void saveForm(Event event) {
+    private void saveForm() {
         List<Constraint> productConstraints = product.validate();
         List<Constraint> quantityConstraints = quantity.validate();
         List<Constraint> typeConstraints = type.validate();
@@ -262,7 +233,7 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         }
 
         if (productConstraints.isEmpty() && quantityConstraints.isEmpty() && typeConstraints.isEmpty()) {
-            processSave(event);
+            processSave();
         }
     }
 
@@ -275,9 +246,8 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
         dialog.sizeToScene();
     }
 
-    private void processSave(Event event) {
+    private void processSave() {
         String message;
-
         if (tempIdProperty().get() > -1) {
             AdjustmentDetailViewModel.updateAdjustmentDetail((long) SharedResources.getTempId());
             message = "Entry updated successfully";
@@ -285,27 +255,21 @@ public class AdjustmentDetailForm extends MFXGenericDialog {
             AdjustmentDetailViewModel.addAdjustmentDetails();
             message = "Entry added successfully";
         }
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-
-        AdjustmentDetailViewModel.resetProperties();
-        closeDialog(event);
+        SpotyUtils.successMessage(message);
+        dispose();
     }
 
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        AdjustmentDetailViewModel.resetProperties();
+        this.product = null;
+        this.quantity = null;
+        this.type = null;
+        this.cancelBtn = null;
+        this.saveBtn = null;
+        this.quantityValidationLabel = null;
+        this.productValidationLabel = null;
+        this.typeValidationLabel = null;
     }
 }

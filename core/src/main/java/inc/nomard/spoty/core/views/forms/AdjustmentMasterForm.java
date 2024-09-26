@@ -2,17 +2,13 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyThreader;
@@ -24,22 +20,19 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 @Log
 public class AdjustmentMasterForm extends VBox {
-    private final ModalPane modalPane;
+    private final ModalPane modalPane1;
+    private final ModalPane modalPane2;
     public TableView<AdjustmentDetail> tableView;
     public ValidatableTextArea note;
     public Label title;
@@ -48,8 +41,9 @@ public class AdjustmentMasterForm extends VBox {
     private TableColumn<AdjustmentDetail, AdjustmentDetail> product, quantity;
     private TableColumn<AdjustmentDetail, String> adjustmentType;
 
-    public AdjustmentMasterForm(ModalPane modalPane) {
-        this.modalPane = modalPane;
+    public AdjustmentMasterForm(ModalPane modalPane1, ModalPane modalPane2) {
+        this.modalPane1 = modalPane1;
+        this.modalPane2 = modalPane2;
         init();
     }
 
@@ -87,7 +81,7 @@ public class AdjustmentMasterForm extends VBox {
 
         product = new TableColumn<>("Product");
         quantity = new TableColumn<>("Quantity");
-        adjustmentType = new TableColumn<>("Adjustment Type");
+        adjustmentType = new TableColumn<>("Type");
 
         product.prefWidthProperty().bind(tableView.widthProperty().multiply(.5));
         quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
@@ -103,10 +97,19 @@ public class AdjustmentMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait());
+        addBtn.setOnAction(event -> showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(450, 290);
+        dialog.getChildren().add(new AdjustmentDetailForm(modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane2.setAlignment(Pos.CENTER_RIGHT);
+        modalPane2.show(dialog);
+        modalPane2.setPersistent(true);
     }
 
     private VBox buildNote() {
@@ -137,15 +140,15 @@ public class AdjustmentMasterForm extends VBox {
         saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
-                showErrorMessage("Table can't be Empty");
+                SpotyUtils.errorMessage("Table can't be Empty");
                 return;
             }
+            saveBtn.startLoading();
             if (AdjustmentMasterViewModel.getId() > 0) {
-                AdjustmentMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                AdjustmentMasterViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             } else {
-                AdjustmentMasterViewModel.saveAdjustmentMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                AdjustmentMasterViewModel.saveAdjustmentMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             }
-            onRequiredFieldsMissing();
         });
 
         cancelBtn = new Button("Cancel");
@@ -179,7 +182,7 @@ public class AdjustmentMasterForm extends VBox {
 
     private void editRow(TableRow<AdjustmentDetail> row) {
         SpotyThreader.spotyThreadPool(() -> AdjustmentDetailViewModel.getAdjustmentDetail(row.getItem()));
-        SpotyDialog.createDialog(new AdjustmentDetailForm(), this).showAndWait();
+        showForm();
     }
 
     private void deleteRow(TableRow<AdjustmentDetail> row) {
@@ -191,41 +194,9 @@ public class AdjustmentMasterForm extends VBox {
         AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        showErrorMessage("Required fields can't be null");
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null, null);
-    }
-
-    private void showErrorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     private void setupTableColumns() {
@@ -249,8 +220,8 @@ public class AdjustmentMasterForm extends VBox {
     }
 
     public void dispose() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        modalPane1.hide(true);
+        modalPane1.setPersistent(false);
         AdjustmentMasterViewModel.resetProperties();
         tableView = null;
         note = null;
