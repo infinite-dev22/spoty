@@ -70,6 +70,7 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
 
     @Override
     public CompletableFuture<HttpResponse<String>> post(Object object) {
+        System.out.println("JSON: " + gson.toJson(object));
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.SaleReturns.addSaleReturn))
                 .header("Authorization", authToken)

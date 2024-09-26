@@ -15,7 +15,8 @@ public class SaleDetail {
     private Long id;
     private Product product;
     private int quantity;
-    private double subTotalPrice;
+    private double unitPrice;
+    private double totalPrice;
     @Builder.Default
     private transient SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
 

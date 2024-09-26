@@ -25,7 +25,6 @@ public class SaleMaster {
     private double total;
     private double amountPaid;
     private double amountDue;
-    private double changeAmount;
     private double shippingFee;
     private String paymentStatus;
     private String saleStatus;

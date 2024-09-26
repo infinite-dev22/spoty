@@ -10,7 +10,7 @@ import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.PurchasesRepositoryImpl;
+import inc.nomard.spoty.network_bridge.repositories.implementations.PurchaseReturnsRepositoryImpl;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
@@ -65,7 +65,7 @@ public class PurchaseReturnMasterViewModel {
     private static final StringProperty note = new SimpleStringProperty("");
     private static final DoubleProperty amountPaid = new SimpleDoubleProperty(0d);
     private static final DoubleProperty shippingFee = new SimpleDoubleProperty(0d);
-    private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
+    private static final PurchaseReturnsRepositoryImpl purchaseReturnsRepository = new PurchaseReturnsRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
@@ -259,14 +259,14 @@ public class PurchaseReturnMasterViewModel {
         if (!PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty()) {
             purchaseMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.getPurchaseReturnDetails());
         }
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.post(purchaseMaster);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.post(purchaseMaster);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void getAllPurchaseReturnMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                                    SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetchAll(pageNo, pageSize);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
@@ -292,7 +292,7 @@ public class PurchaseReturnMasterViewModel {
     public static void getPurchaseReturnMaster(Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                                SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetch(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
@@ -316,7 +316,7 @@ public class PurchaseReturnMasterViewModel {
     public static void searchItem(String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.search(searchModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.search(searchModel);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
@@ -353,7 +353,7 @@ public class PurchaseReturnMasterViewModel {
         if (!PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty()) {
             purchaseMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.getPurchaseReturnDetails());
         }
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.put(purchaseMaster);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.put(purchaseMaster);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));
     }
@@ -362,7 +362,7 @@ public class PurchaseReturnMasterViewModel {
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.delete(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = purchaseReturnsRepository.delete(findModel);
         responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage))
                 .exceptionally(throwable -> handleException(throwable, errorMessage));
     }
@@ -393,19 +393,22 @@ public class PurchaseReturnMasterViewModel {
     private static void handleNon200Status(HttpResponse<String> response, SpotyGotFunctional.MessageConsumer errorMessage) {
         log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
         Platform.runLater(() -> {
-            String message;
-            switch (response.statusCode()) {
-                case 401:
-                    message = "Access denied";
-                    break;
-                case 404:
-                    message = "Resource not found";
-                    break;
-                case 500:
-                default:
-                    message = "An error occurred";
-                    break;
-            }
+            String message = switch (response.statusCode()) {
+                case 400 -> "Bad request";
+                case 401 -> "Access denied";
+                case 403 -> "Forbidden resource";
+                case 404 -> "Resource not found";
+                case 406 -> "Not acceptable content";
+                case 408 -> "Request timeout";
+                case 409 -> "Conflicting resources";
+                case 422 -> "Unprocessable Content";
+                case 429 -> "Too many requests";
+                case 500 -> "Server error";
+                case 502 -> "Bad gateway";
+                case 504 -> "Gateway timeout";
+                case 507 -> "Insufficient storage";
+                default -> "Client error";
+            };
             if (errorMessage != null) {
                 errorMessage.showMessage(message);
             }
@@ -416,7 +419,7 @@ public class PurchaseReturnMasterViewModel {
         log.severe(throwable.getMessage());
         Platform.runLater(() -> {
             SpotyLogger.writeToFile(throwable, PurchaseReturnMasterViewModel.class);
-            String message = Connectivity.isConnectedToInternet() ? "An in-app error occurred" : "No Internet Connection";
+            String message = Connectivity.isConnectedToInternet() ? "An error occurred" : "No Internet Connection";
             if (errorMessage != null) {
                 errorMessage.showMessage(message);
             }

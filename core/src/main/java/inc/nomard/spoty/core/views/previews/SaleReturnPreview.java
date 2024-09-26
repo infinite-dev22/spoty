@@ -166,7 +166,7 @@ public class SaleReturnPreview extends BorderPane {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getSubTotalPrice()));
+                setText(empty || Objects.isNull(item) ? null : "UGX " + AppUtils.decimalFormatter().format(item.getUnitPrice()));
             }
         });
 

@@ -3,6 +3,8 @@ package inc.nomard.spoty.core.views.components;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -14,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class CustomButton extends HBox {
+    private StringProperty text;
     private final Label label;
     private final MFXProgressSpinner progressSpinner;
     private final ObjectProperty<EventHandler<MouseEvent>> onAction;
@@ -66,6 +69,22 @@ public class CustomButton extends HBox {
         this.progressSpinner.setColor2(Color.WHITE);
         this.progressSpinner.setColor3(Color.WHITE);
         this.progressSpinner.setColor4(Color.WHITE);
+    }
+
+    public final StringProperty textProperty() {
+        if (this.text == null) {
+            this.text = new SimpleStringProperty(this, "text", "");
+        }
+
+        return this.text;
+    }
+
+    public final void setText(String var1) {
+        this.textProperty().setValue(var1);
+    }
+
+    public final String getText() {
+        return this.text == null ? "" : this.text.getValue();
     }
 
     private void setButtonEventProperty() {

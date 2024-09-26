@@ -1,22 +1,19 @@
 package inc.nomard.spoty.core.views.pos;
 
 import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.SaleDetailViewModel;
 import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.pages.EmployeePage;
 import inc.nomard.spoty.core.views.pos.components.ProductCard;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import javafx.beans.property.Property;
@@ -29,32 +26,27 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.feather.Feather;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Log
 public class PointOfSalePage extends OutlinePage {
-    private static final int BATCH_SIZE = 96;
-    private static final int BUFFER_SIZE = 48; // Number of products to keep above and below the visible area
-    private static final double IMAGE_SIZE = 160;
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
     private ToggleGroup toggleGroup;
     private TableView<SaleDetail> cart;
     private TextField searchBar;
     private ComboBox<Discount> discount;
-    private Button checkOutBtn, emptyCartBtn;
-    // @FXML
+    private CustomButton checkOutBtn;
+    private Button emptyCartBtn;
     // private BootstrapPane productHolder;
     private TableColumn<SaleDetail, SaleDetail> cartName;
     private TableColumn<SaleDetail, SaleDetail> cartQuantity;
@@ -73,7 +65,27 @@ public class PointOfSalePage extends OutlinePage {
         setCheckoutProductsTable();
         progress.setManaged(true);
         progress.setVisible(true);
-        ProductViewModel.getAllProductsNonPaged(this::onDataInitializationSuccess, this::displayErrorMessage);
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProductsNonPaged(null, null)),
+                CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void onDataInitializationSuccess() {
@@ -234,7 +246,7 @@ public class PointOfSalePage extends OutlinePage {
         productDiscount.setEditable(false);
         productDiscount.setSortable(false);
         productDiscount.setPrefWidth(60d);
-        cartSubTotal = new TableColumn<>("Sub Total");
+        cartSubTotal = new TableColumn<>("Total");
         cartSubTotal.setEditable(false);
         cartSubTotal.setSortable(false);
         cartSubTotal.setPrefWidth(70d);
@@ -310,10 +322,9 @@ public class PointOfSalePage extends OutlinePage {
 
     // Cart Buttons UI.
     private HBox buildButtons() {
-        checkOutBtn = new Button("CheckOut $0.00");
+        checkOutBtn = new CustomButton("CheckOut $0.00");
         checkOutBtn.setOnAction(event -> savePOSSale());
         checkOutBtn.setPrefWidth(650d);
-        checkOutBtn.setDefaultButton(true);
         checkOutBtn.getStyleClass().add(Styles.ACCENT);
         checkOutBtn.setDisable(true);
         bindTotalLabels();
@@ -484,7 +495,7 @@ public class PointOfSalePage extends OutlinePage {
                 SaleDetailViewModel.getCartSale(saleDetail);
                 updateSaleDetail(saleDetail, productCard, quantity);
             } else {
-                displayNotification("Product out of stock", MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+                SpotyUtils.errorMessage("Product out of stock");
             }
         } catch (Exception e) {
             SpotyLogger.writeToFile(e, this.getClass());
@@ -495,7 +506,7 @@ public class PointOfSalePage extends OutlinePage {
         SaleDetailViewModel.setProduct(productCard.getProduct());
         SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
         SaleDetailViewModel.setQuantity(quantity);
-        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()) + saleDetail.getSubTotalPrice());
+        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()) + saleDetail.getUnitPrice());
         SaleDetailViewModel.updateCartSale((long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
     }
 
@@ -508,7 +519,7 @@ public class PointOfSalePage extends OutlinePage {
             SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
             SaleDetailViewModel.addSaleDetail();
         } else {
-            displayNotification("Product out of stock", MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+            SpotyUtils.errorMessage("Product out of stock");
         }
     }
 
@@ -525,7 +536,7 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private double calculateTotal(ObservableList<SaleDetail> saleDetails) {
-        return saleDetails.stream().mapToDouble(SaleDetail::getSubTotalPrice).sum();
+        return saleDetails.stream().mapToDouble(SaleDetail::getUnitPrice).sum();
     }
 
     private long calculateQuantity(SaleDetail saleDetail) {
@@ -591,7 +602,7 @@ public class PointOfSalePage extends OutlinePage {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getSubTotalPrice()));
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getUnitPrice()));
             }
         });
 
@@ -696,48 +707,27 @@ public class PointOfSalePage extends OutlinePage {
         SaleMasterViewModel.setAmountPaid(total);
         SaleMasterViewModel.setNotes("Approved.");
 
-        SpotyThreader.spotyThreadPool(() -> {
-            try {
-                SaleMasterViewModel.saveSaleMaster(this::onSuccess, this::displaySuccessMessage, this::displayErrorMessage);
-            } catch (Exception e) {
-                SpotyLogger.writeToFile(e, this.getClass());
-            }
-        });
+        try {
+            checkOutBtn.startLoading();
+            SaleMasterViewModel.saveSaleMaster(this::onSuccess, SpotyUtils::successMessage, this::displayErrorMessage);
+        } catch (Exception e) {
+            SpotyLogger.writeToFile(e, this.getClass());
+        }
     }
 
     private void onSuccess() {
         clearCart();
+        checkOutBtn.stopLoading();
         SaleMasterViewModel.setDefaultCustomer();
         SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
         ProductViewModel.getAllProductsNonPaged(null, this::displayErrorMessage);
     }
 
-    private void displaySuccessMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void displayErrorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
+        checkOutBtn.stopLoading();
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     public void setSearchBar() {

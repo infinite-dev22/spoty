@@ -308,7 +308,6 @@ public class SaleMasterViewModel {
                 .discount(getDiscount())
                 .subTotal(0)
                 .amountDue(0)
-                .changeAmount(0)
                 .shippingFee(0)
                 .saleStatus(getSaleStatus())
                 .paymentStatus(getPaymentStatus())
@@ -434,7 +433,6 @@ public class SaleMasterViewModel {
                     setDiscount(saleMaster.getDiscount());
                     setSubTotal(saleMaster.getSubTotal());
                     setAmountDue(saleMaster.getAmountDue());
-                    setChangeAmount(saleMaster.getChangeAmount());
                     setShippingFee(saleMaster.getShippingFee());
                     SaleDetailViewModel.saleDetailsList.clear();
                     SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleDetails());

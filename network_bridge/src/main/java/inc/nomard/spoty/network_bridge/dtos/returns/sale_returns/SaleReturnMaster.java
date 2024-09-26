@@ -27,7 +27,6 @@ public class SaleReturnMaster {
     private double total;
     private double amountPaid;
     private double amountDue;
-    private double changeAmount;
     private double shippingFee;
     private String saleStatus;
     private String paymentStatus;
