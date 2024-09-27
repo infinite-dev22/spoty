@@ -43,6 +43,7 @@ public class EndPoints {
         public static final String searchAccounts = accountsUrl + "/search";
         public static final String addAccount = accountsUrl + "/add";
         public static final String updateAccount = accountsUrl + "/update";
+        public static final String accountDeposit = accountsUrl + "/deposit";
         public static final String deleteAccount = accountsUrl + "/delete/single";
         public static final String deleteAccounts = accountsUrl + "/delete/multiple";
         public static final String transactions = accountsUrl + "/transactions";
