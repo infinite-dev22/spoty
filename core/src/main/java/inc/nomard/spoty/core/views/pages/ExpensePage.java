@@ -1,17 +1,21 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.ExpenseForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.accounting.Expense;
 import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -19,6 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
@@ -32,11 +37,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 @Log
 public class ExpensePage extends OutlinePage {
+    private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Expense> tableView;
     private MFXProgressSpinner progress;
@@ -48,14 +55,31 @@ public class ExpensePage extends OutlinePage {
     private TableColumn<Expense, String> note;
     private TableColumn<Expense, Expense> createdBy;
     private TableColumn<Expense, Expense> createdAt;
-    private TableColumn<Expense, Expense> updatedBy;
-    private TableColumn<Expense, Expense> updatedAt;
 
     public ExpensePage() {
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        ExpensesViewModel.getAllExpenses(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> AccountViewModel.getAllAccounts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> ExpensesViewModel.getAllExpenses(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -155,22 +179,18 @@ public class ExpensePage extends OutlinePage {
         note = new TableColumn<>("note");
         createdBy = new TableColumn<>("Created By");
         createdAt = new TableColumn<>("Created At");
-        updatedBy = new TableColumn<>("Updated By");
-        updatedAt = new TableColumn<>("Updated At");
 
         accountName.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         date.prefWidthProperty().bind(tableView.widthProperty().multiply(.1));
         amount.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
-        note.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        note.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
         createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         createdAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
-        updatedBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(accountName, expenseName, date, amount, note, createdBy, createdAt, updatedBy, updatedAt).toList());
+        var columnList = new LinkedList<>(Stream.of(accountName, expenseName, date, amount, note, createdBy, createdAt).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
         styleExpenseTable();
@@ -210,7 +230,7 @@ public class ExpensePage extends OutlinePage {
         // Edit
         edit.setOnAction(
                 e -> {
-                    ExpensesViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new ExpenseForm(), this).showAndWait(), this::errorMessage);
+                    ExpensesViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
                     e.consume();
                 });
         contextMenu.getItems().addAll(edit, delete);
@@ -219,7 +239,19 @@ public class ExpensePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new ExpenseForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog(0));
+    }
+
+    private void showDialog(Integer reason) {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new ExpenseForm(modalPane, reason));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
@@ -298,6 +330,7 @@ public class ExpensePage extends OutlinePage {
             @Override
             public void updateItem(Expense item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmount()));
             }
         });
@@ -320,27 +353,6 @@ public class ExpensePage extends OutlinePage {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
-            }
-        });
-        updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Expense item, boolean empty) {
-                super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
-            }
-        });
-        updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Expense item, boolean empty) {
-                super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
-
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
-
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
     }
