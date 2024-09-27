@@ -34,16 +34,8 @@ app-root {
     -fx-background-color: #ffffff;
 }
 
-.luminosity {
-    -fx-background-color: rgba(240, 240, 240, .7);
-}
-
-.tint {
-    -fx-background-color: rgba(240, 240, 240, .9);
-}
-
-.noise {
-    -fx-background-image: url(../../images/noise_texture.png);
+.windows {
+    -fx-background-color: rgba(230, 230, 230);
 }
 
 .hero-image {

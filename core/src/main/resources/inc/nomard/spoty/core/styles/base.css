@@ -513,3 +513,7 @@
 .validation-label {
     -fx-font-size: 11;
 }
+
+.button_busy {
+    -fx-foreground-color: white;
+}
