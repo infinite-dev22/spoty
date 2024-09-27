@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.pages;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
@@ -32,11 +33,10 @@ import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import inc.nomard.spoty.utils.UIUtils;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
@@ -61,15 +61,15 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-
 @Log
 public class AuthScreen extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final Stage stage;
     public ValidatableTextField email,
             signUpEmail,
@@ -97,7 +97,7 @@ public class AuthScreen extends BorderPane {
     public Button nextBtn,
             backBtn,
             signUpBack;
-    public MFXFontIcon closeLoginIcon,
+    public FontIcon closeLoginIcon,
             closeSignupIcon;
     public Pane contentPane;
     public AnchorPane actualContentPane;
@@ -501,19 +501,19 @@ public class AuthScreen extends BorderPane {
     }
 
     // Close button.
-    private MFXFontIcon buildLoginCloseButton() {
-        closeLoginIcon = new MFXFontIcon("fas-circle");
-        closeLoginIcon.setSize(15d);
+    private FontIcon buildLoginCloseButton() {
+        closeLoginIcon = new FontIcon(FontAwesomeSolid.CIRCLE);
         closeLoginIcon.getStyleClass().add("close-icon");
+        closeLoginIcon.setIconSize(15);
         closeLoginIcon.setOnMouseClicked(event -> closeIconClicked());
         UIUtils.anchor(closeLoginIcon, 10d, 10d, null, null);
         return closeLoginIcon;
     }
 
-    private MFXFontIcon buildSignupCloseButton() {
-        closeSignupIcon = new MFXFontIcon("fas-circle");
-        closeSignupIcon.setSize(15d);
+    private FontIcon buildSignupCloseButton() {
+        closeSignupIcon = new FontIcon(FontAwesomeSolid.CIRCLE);
         closeSignupIcon.getStyleClass().add("close-icon");
+        closeSignupIcon.setIconSize(15);
         closeSignupIcon.setVisible(false);
         closeSignupIcon.setManaged(false);
         closeSignupIcon.setOnMouseClicked(event -> closeIconClicked());

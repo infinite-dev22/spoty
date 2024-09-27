@@ -3,6 +3,8 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import com.dlsc.gemsfx.TimePicker;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
@@ -10,15 +12,12 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.ModalPage;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxresources.fonts.IconsProviders;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.collections.ListChangeListener;
@@ -32,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -51,7 +51,7 @@ import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
-public class LeaveRequestForm extends ModalPage {
+public class LeaveRequestForm extends BorderPane {
     public CustomButton saveButton;
     public Button cancelButton;
     public ValidatableComboBox<Employee> employee;
@@ -432,9 +432,7 @@ public class LeaveRequestForm extends ModalPage {
         }
     }
 
-    @Override
     public void dispose() {
-        super.dispose();
         saveButton = null;
         cancelButton = null;
         employee = null;

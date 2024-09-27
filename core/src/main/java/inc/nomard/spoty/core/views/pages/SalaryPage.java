@@ -5,7 +5,6 @@ import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.SalaryViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
@@ -13,7 +12,7 @@ import inc.nomard.spoty.core.views.previews.SalaryPreviewController;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.Salary;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -45,7 +44,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class SalaryPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Salary> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private MFXStageDialog viewDialog;
     private FXMLLoader viewFxmlLoader;
     private TableColumn<Salary, Salary> payslip;
@@ -82,7 +81,7 @@ public class SalaryPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -166,7 +165,7 @@ public class SalaryPage extends OutlinePage {
 
         dialogContent.setPrefHeight(screenHeight * .98);
         dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
+//        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
     }
 
     private void setupTable() {
@@ -228,10 +227,10 @@ public class SalaryPage extends OutlinePage {
             event.consume();
         });
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             SalaryViewModel.deleteSalary(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getEmployeeName() + "'s salary", this));
+        }, obj.getItem().getEmployeeName() + "'s salary").showDialog());
         contextMenu.getItems().addAll(view, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;

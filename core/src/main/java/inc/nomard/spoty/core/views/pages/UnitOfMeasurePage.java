@@ -5,6 +5,7 @@ import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.UOMViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.UOMForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.util.OutlinePage;
@@ -12,7 +13,7 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -38,7 +39,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<UnitOfMeasure> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private Button createBtn;
     private TableColumn<UnitOfMeasure, String> uomName;
     private TableColumn<UnitOfMeasure, String> uomShortName;
@@ -81,7 +82,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -217,10 +218,10 @@ public class UnitOfMeasurePage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             UOMViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {

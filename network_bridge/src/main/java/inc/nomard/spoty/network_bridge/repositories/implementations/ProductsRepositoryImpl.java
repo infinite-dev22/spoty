@@ -1,28 +1,37 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations;
 
-import com.google.gson.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.end_points.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import java.io.*;
-import java.net.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.end_points.EndPoints;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.interfaces.ProductRepository;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import lombok.extern.java.Log;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.http.*;
-import java.nio.channels.*;
-import java.nio.charset.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import lombok.*;
-import lombok.extern.java.*;
-import org.apache.http.*;
-import org.apache.http.entity.*;
-import org.apache.http.entity.mime.*;
-import org.apache.http.entity.mime.content.*;
+import java.nio.channels.Channels;
+import java.nio.channels.Pipe;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 @Log
 public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductRepository {
@@ -161,33 +170,33 @@ public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductR
                 .build();
 
         try {
-        /*
-         * Use pipeline streams to write the encoded data directly to the network
-         * instead of caching it in memory. Because Multipart request bodies contain
-         * files, they can cause memory overflows if cached in memory.
-         */
-        Pipe pipe = Pipe.open();
-        /* Pipeline streams must be used in a multi-threaded environment. Using one
-         * thread for simultaneous reads and writes can lead to deadlocks.
-         */
-        new Thread(() -> {
-            try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
-                // Write the encoded data to the pipeline.
-                httpEntity.writeTo(outputStream);
-            } catch (IOException e) {
-                SpotyLogger.writeToFile(e, ProductsRepositoryImpl.class);
-            }
+            /*
+             * Use pipeline streams to write the encoded data directly to the network
+             * instead of caching it in memory. Because Multipart request bodies contain
+             * files, they can cause memory overflows if cached in memory.
+             */
+            Pipe pipe = Pipe.open();
+            /* Pipeline streams must be used in a multi-threaded environment. Using one
+             * thread for simultaneous reads and writes can lead to deadlocks.
+             */
+            new Thread(() -> {
+                try (OutputStream outputStream = Channels.newOutputStream(pipe.sink())) {
+                    // Write the encoded data to the pipeline.
+                    httpEntity.writeTo(outputStream);
+                } catch (IOException e) {
+                    SpotyLogger.writeToFile(e, ProductsRepositoryImpl.class);
+                }
 
-        }).start();
+            }).start();
 
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Products.updateProduct))
-                .header("Authorization", authToken)
-                .header("Content-Type", httpEntity.getContentType().getValue())
-                .method("PUT", HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source())))
-                .build();
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create(EndPoints.Products.updateProduct))
+                    .header("Authorization", authToken)
+                    .header("Content-Type", httpEntity.getContentType().getValue())
+                    .method("PUT", HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source())))
+                    .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

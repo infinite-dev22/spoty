@@ -1,20 +1,20 @@
 package inc.nomard.spoty.utils.functional_paradigm;
 
-import javafx.event.*;
+import javafx.event.ActionEvent;
 
 public class SpotyGotFunctional {
     @FunctionalInterface
-    public static interface ParameterlessConsumer {
+    public interface ParameterlessConsumer {
         void run();
     }
 
     @FunctionalInterface
-    public static interface EventConsumer {
+    public interface EventConsumer {
         void run(ActionEvent event);
     }
 
     @FunctionalInterface
-    public static interface MessageConsumer {
+    public interface MessageConsumer {
         void showMessage(String message);
     }
 }

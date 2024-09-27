@@ -17,7 +17,7 @@ import inc.nomard.spoty.network_bridge.dtos.accounting.Expense;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -46,7 +46,7 @@ public class ExpensePage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Expense> tableView;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private Button createBtn;
     private TableColumn<Expense, Expense> accountName;
     private TableColumn<Expense, String> expenseName;
@@ -98,7 +98,7 @@ public class ExpensePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -223,10 +223,10 @@ public class ExpensePage extends OutlinePage {
         var edit = new MenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             ExpensesViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {

@@ -1,9 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.purchases;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import javafx.beans.property.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import javafx.beans.property.SimpleBooleanProperty;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 // TODO: Remove total and Quantity and add them to PurchaseMaster.
 // TODO: In place of total create purchasePrice.

@@ -4,7 +4,7 @@ import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.CustomerForm;
-import inc.nomard.spoty.core.views.forms.SupplierForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.previews.CustomerPreview;
@@ -12,7 +12,7 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -35,7 +35,7 @@ public class CustomerPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<Customer> tableView;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private Button createBtn;
     private TableColumn<Customer, String> name;
     private TableColumn<Customer, String> phone;
@@ -76,7 +76,7 @@ public class CustomerPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -202,10 +202,10 @@ public class CustomerPage extends OutlinePage {
         var view = new MenuItem("View");
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             CustomerViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {

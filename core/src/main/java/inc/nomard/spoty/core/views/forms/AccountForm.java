@@ -9,8 +9,8 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
@@ -34,7 +34,6 @@ import java.util.Objects;
 public class AccountForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;
-    private Integer reason;
     public ValidatableNumberField balance;
     public ValidatableTextField accountName,
             accountNumber;
@@ -44,6 +43,7 @@ public class AccountForm extends BorderPane {
             balanceValidationLabel;
     public CustomButton saveBtn;
     public Button cancelBtn;
+    private Integer reason;
     private Text subTitle;
     private Label balanceLabel;
     private List<Constraint> accountNameConstraints,

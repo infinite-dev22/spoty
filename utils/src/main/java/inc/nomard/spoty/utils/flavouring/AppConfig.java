@@ -1,11 +1,10 @@
 package inc.nomard.spoty.utils.flavouring;
 
-import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.SpotyLogger;
+import lombok.extern.java.Log;
 
-import java.io.*;
-import java.util.*;
-
-import lombok.extern.java.*;
+import java.io.IOException;
+import java.util.Properties;
 
 @Log
 public class AppConfig {

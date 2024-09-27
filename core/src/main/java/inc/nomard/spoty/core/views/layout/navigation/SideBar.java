@@ -6,13 +6,12 @@ import inc.nomard.spoty.utils.SpotyThreader;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXCircleToggleNode;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -69,19 +68,19 @@ public class SideBar extends VBox {
         this.getStyleClass().addAll("sidebar");
     }
 
-    private MFXFontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
-        var icon = new MFXFontIcon("fas-circle");
-        icon.setSize(15.0);
+    private FontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
+        var icon = new FontIcon(FontAwesomeSolid.CIRCLE);
+        icon.setIconSize(15);
         icon.setOnMouseClicked(event -> onAction.run());
         icon.getStyleClass().add(styleClass);
         return icon;
     }
 
-    private MFXFontIcon buildCloseIcon() {
+    private FontIcon buildCloseIcon() {
         return buildFontIcon(this::closeWindow, "close-icon");
     }
 
-    private MFXFontIcon buildMinimizeIcon() {
+    private FontIcon buildMinimizeIcon() {
         return buildFontIcon(this::minimizeWindow, "minimize-icon");
     }
 
@@ -149,13 +148,13 @@ public class SideBar extends VBox {
         return hbox;
     }
 
-    private MFXCircleToggleNode buildSidebarToggle() {
-        var toggle = new MFXCircleToggleNode();
+    private Button buildSidebarToggle() {
+        var toggle = new Button(null/*, new FontIcon(FontAwesomeSolid.ANGLE_LEFT)*/);
+        toggle.setGraphic(new FontIcon(FontAwesomeSolid.ANGLE_LEFT));
         var arrowIcon = new FontIcon("fas-angle-left");
         arrowIcon.getStyleClass().add("nav-toggle-arrow");
         toggle.setGraphic(arrowIcon);
         toggle.getStyleClass().add("nav-toggle");
-        toggle.setSize(15d);
         StackPane.setAlignment(toggle, Pos.CENTER_RIGHT);
         StackPane.setMargin(toggle, new Insets(40d, -45d, 0d, 0d));
         toggle.setVisible(false);

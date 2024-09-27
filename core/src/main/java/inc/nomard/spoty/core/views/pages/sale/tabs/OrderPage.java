@@ -16,7 +16,7 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -46,7 +46,7 @@ public class OrderPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<SaleMaster> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private TableColumn<SaleMaster, SaleMaster> saleCustomer;
     private TableColumn<SaleMaster, SaleMaster> saleDate;
     private TableColumn<SaleMaster, SaleMaster> saleGrandTotal;
@@ -88,7 +88,7 @@ public class OrderPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -231,10 +231,10 @@ public class OrderPage extends OutlinePage {
         var view = new MenuItem("View");
         var returnSale = new MenuItem("Return");
 
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             SaleMasterViewModel.deleteSaleMaster(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getCustomerName() + "'s order", this));
+        }, obj.getItem().getCustomerName() + "'s order").showDialog());
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());

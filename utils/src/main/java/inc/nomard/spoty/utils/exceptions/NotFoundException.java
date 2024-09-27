@@ -1,6 +1,6 @@
 package inc.nomard.spoty.utils.exceptions;
 
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 @Log
 public class NotFoundException extends RuntimeException {

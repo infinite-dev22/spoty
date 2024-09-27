@@ -1,7 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 import java.util.Currency;
 

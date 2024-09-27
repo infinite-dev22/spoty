@@ -16,7 +16,6 @@ import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.theming.JavaFXThemes;
 import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
 import io.github.palexdev.materialfx.theming.UserAgentBuilder;
-import io.github.palexdev.mfxcomponents.theming.MaterialThemes;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.ColorScheme;
@@ -62,7 +61,6 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(LIGHT_THEME_CSS);
         applySystemTheme(scene);
-        MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         scene.setFill(null);
         return scene;
     }
@@ -109,11 +107,9 @@ public class Main extends Application {
         if (colorScheme == ColorScheme.DARK) {
             scene.getStylesheets().set(0, DARK_THEME_CSS);
             Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
-            MaterialThemes.PURPLE_DARK.applyOn(scene);
         } else {
             scene.getStylesheets().set(0, LIGHT_THEME_CSS);
             Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
-            MaterialThemes.PURPLE_LIGHT.applyOn(scene);
         }
     }
 

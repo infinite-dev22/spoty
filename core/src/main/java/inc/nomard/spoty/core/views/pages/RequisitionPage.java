@@ -6,16 +6,16 @@ import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.RequisitionMasterForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
 import inc.nomard.spoty.core.views.previews.RequisitionPreviewController;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -51,7 +51,7 @@ public class RequisitionPage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<RequisitionMaster> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
     private TableColumn<RequisitionMaster, String> reference;
@@ -119,7 +119,7 @@ public class RequisitionPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -257,10 +257,10 @@ public class RequisitionPage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             RequisitionMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getSupplierName() + "'s requisition", this));
+        }, obj.getItem().getSupplierName() + "'s requisition").showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
@@ -304,7 +304,7 @@ public class RequisitionPage extends OutlinePage {
 
         dialogContent.setPrefHeight(screenHeight * .98);
         dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
+//        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
     }
 
     public void viewShow(RequisitionMaster requisitionMaster) {

@@ -1,12 +1,11 @@
 package inc.nomard.spoty.core.auto_updater.v2;
 
-import inc.nomard.spoty.core.views.pages.*;
-import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.SpotyLogger;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
+import javafx.util.Duration;
 
-import java.util.concurrent.*;
-
-import javafx.concurrent.*;
-import javafx.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class UpdateScheduler {
     private static final ScheduledService<Void> scheduledService;

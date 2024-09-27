@@ -14,7 +14,7 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -54,7 +54,7 @@ public class PointOfSalePage extends OutlinePage {
     private TableColumn<SaleDetail, SaleDetail> cartSubTotal;
     private TableColumn<SaleDetail, SaleDetail> cartActions;
     private ComboBox<Tax> tax;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private Long availableProductQuantity = 0L;
 
 
@@ -104,7 +104,7 @@ public class PointOfSalePage extends OutlinePage {
 
     // Header UI.
     private HBox buildLeftHeaderPane() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

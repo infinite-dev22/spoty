@@ -9,7 +9,7 @@ import inc.nomard.spoty.core.views.pages.sale.tabs.SaleReturnPage;
 import inc.nomard.spoty.core.views.pos.PointOfSalePage;
 import inc.nomard.spoty.core.views.settings.AppSettingPage;
 import inc.nomard.spoty.core.views.settings.BranchPage;
-import inc.nomard.spoty.core.views.settings.CompanyDetailPage;
+import inc.nomard.spoty.core.views.settings.TenantSettingsPage;
 import inc.nomard.spoty.core.views.settings.RolePage;
 import inc.nomard.spoty.core.views.util.Page;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
@@ -71,7 +71,7 @@ public class Navigation {
         // SETTINGS
         map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", AppSettingPage.class));
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", BranchPage.class));
-        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", CompanyDetailPage.class));
+        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", TenantSettingsPage.class));
         map.put("ROLES", NavTree.NavTreeItem.page("Roles", RolePage.class));
 
         return map;

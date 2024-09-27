@@ -5,14 +5,14 @@ import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.DiscountForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Discount;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -38,7 +38,7 @@ public class DiscountPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Discount> masterTable;
     private Button createBtn;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private TableColumn<Discount, String> name;
     private TableColumn<Discount, String> percentage;
     private TableColumn<Discount, Discount> createdBy;
@@ -77,7 +77,7 @@ public class DiscountPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -227,10 +227,10 @@ public class DiscountPage extends OutlinePage {
 
     private MenuItem getDeleteContextMenuItem(TableRow<Discount> obj) {
         var delete = new MenuItem("Delete");
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             DiscountViewModel.deleteDiscount(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         return delete;
     }
 

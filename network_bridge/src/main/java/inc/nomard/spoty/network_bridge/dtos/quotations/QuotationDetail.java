@@ -1,8 +1,8 @@
 package inc.nomard.spoty.network_bridge.dtos.quotations;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter

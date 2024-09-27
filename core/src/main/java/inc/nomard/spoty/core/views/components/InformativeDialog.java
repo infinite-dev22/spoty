@@ -1,50 +1,38 @@
 package inc.nomard.spoty.core.views.components;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
-import inc.nomard.spoty.core.GlobalActions;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-public class InformativeDialog extends MFXStageDialog {
-    public InformativeDialog(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer, Stage stage, Pane ownerNode) {
-        this.setContent(buildDialogContent(parameterlessConsumer));
-        this.initOwner(stage);
-        this.initModality(Modality.WINDOW_MODAL);
-        this.setOwnerNode(ownerNode);
-        this.setScrimPriority(ScrimPriority.WINDOW);
-        this.setScrimOwner(true);
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(this.getScene());
-        this.showAndWait();
-    }
+public class InformativeDialog extends BorderPane {
+    private final ModalPane modalPane;
 
-    private MFXGenericDialog buildDialogContent(SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer) {
-        var dialogContent = new MFXGenericDialog();
-        dialogContent.setPrefSize(500.0, 250.0);
-        dialogContent.setPadding(new Insets(10.0));
-        dialogContent.setTop(buildTop());
-        dialogContent.setCenter(buildCenter());
-        dialogContent.setBottom(buildBottom(parameterlessConsumer));
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+    public InformativeDialog(ModalPane modalPane, SpotyGotFunctional.ParameterlessConsumer parameterlessConsumer) {
+        this.modalPane = modalPane;
+        this.setPrefSize(500.0, 250.0);
+        this.setPadding(new Insets(10.0));
+        this.setTop(buildTop());
+        this.setCenter(buildCenter());
+        this.setBottom(buildBottom(parameterlessConsumer));
+        this.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
                 SpotyCoreResourceLoader.load("styles/MFXColors.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
                 SpotyCoreResourceLoader.load("styles/toolitip.css"));
-        return dialogContent;
     }
 
     private VBox buildCenter() {
@@ -67,14 +55,14 @@ public class InformativeDialog extends MFXStageDialog {
         cancelBtn.setDefaultButton(true);
         cancelBtn.setText("No, Cancel");
         cancelBtn.getStyleClass().add("primary-color");
-        cancelBtn.setOnAction(GlobalActions::closeDialog);
+        cancelBtn.setOnAction(event -> dispose());
         var deleteBtn = new Button();
         deleteBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         deleteBtn.setText("Yes, Proceed");
         deleteBtn.getStyleClass().add("secondary-color");
         deleteBtn.setOnAction(event -> {
             parameterlessConsumer.run();
-            GlobalActions.closeDialog(event);
+            dispose();
         });
         var hbox = new HBox(cancelBtn, deleteBtn);
         hbox.setAlignment(Pos.CENTER);
@@ -87,13 +75,27 @@ public class InformativeDialog extends MFXStageDialog {
         var circle = new Circle();
         circle.getStyleClass().add("dialog-top-icon-background");
         StackPane.setAlignment(circle, Pos.CENTER);
-        var informationIcon = new MFXFontIcon();
-        informationIcon.setDescription("fas-circle-info");
-        informationIcon.setSize(45);
-        informationIcon.setColor(Color.LIGHTBLUE);
+        var informationIcon = new FontIcon(FontAwesomeRegular.QUESTION_CIRCLE);
+        informationIcon.setIconColor(Color.LIGHTBLUE);
+        informationIcon.setIconSize(45);
+        informationIcon.getStyleClass().add("dialog-top-icon");
         StackPane.setAlignment(informationIcon, Pos.CENTER);
         var stackPane = new StackPane(circle, informationIcon);
         BorderPane.setAlignment(stackPane, Pos.CENTER);
         return stackPane;
+    }
+
+    public void showDialog() {
+        var dialog = new ModalContentHolder(450, 225);
+        dialog.getChildren().add(this);
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.CENTER);
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
+    }
+
+    private void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
     }
 }

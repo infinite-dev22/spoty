@@ -12,7 +12,7 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -41,7 +41,7 @@ public class AdjustmentPage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<AdjustmentMaster> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private Button createBtn;
     private TableColumn<AdjustmentMaster, String> reference;
     private TableColumn<AdjustmentMaster, String> note;
@@ -102,7 +102,7 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

@@ -1,10 +1,14 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.leave;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.text.*;
-import java.time.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
+
+import java.text.DateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter

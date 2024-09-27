@@ -1,18 +1,26 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations;
 
-import com.google.gson.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.end_points.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
-import inc.nomard.spoty.utils.adapters.*;
-import java.net.*;
-import java.net.http.*;
-import java.time.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.end_points.EndPoints;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.interfaces.SimpleRepository;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import lombok.extern.java.Log;
 
-import java.util.*;
-import java.util.concurrent.*;
-import lombok.extern.java.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 @Log
 public class RequisitionsRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
@@ -24,6 +32,7 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Simp
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
+
     @Override
     public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
         if (pageNo == null) {

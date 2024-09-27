@@ -1,10 +1,14 @@
 package inc.nomard.spoty.utils;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.logging.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 @Log
 public class SpotyLogger {

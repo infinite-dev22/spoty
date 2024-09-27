@@ -1,10 +1,12 @@
 package inc.nomard.spoty.utils.adapters;
 
-import com.google.gson.*;
-import com.google.gson.stream.*;
-import java.io.*;
-import java.time.*;
-import lombok.extern.java.*;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import lombok.extern.java.Log;
+
+import java.io.IOException;
+import java.time.Duration;
 
 @Log
 public class DurationTypeAdapter extends TypeAdapter<Duration> {

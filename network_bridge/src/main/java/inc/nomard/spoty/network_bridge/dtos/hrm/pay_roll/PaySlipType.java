@@ -1,9 +1,10 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
+
+import java.util.ArrayList;
 
 @Getter
 @Setter

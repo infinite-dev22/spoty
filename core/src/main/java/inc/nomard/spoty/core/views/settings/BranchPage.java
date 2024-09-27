@@ -1,27 +1,30 @@
 package inc.nomard.spoty.core.views.settings;
 
 import atlantafx.base.controls.CustomTextField;
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.util.Animations;
-import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.BrandViewModel;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.BranchForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
@@ -35,13 +38,29 @@ import java.util.Objects;
 @SuppressWarnings("unchecked")
 @Log
 public class BranchPage extends OutlinePage {
+    private final ModalPane modalPane;
     private CustomTextField searchBar;
     private TableView<Branch> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private Button createBtn;
 
     public BranchPage() {
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+        AccountViewModel.getAllAccounts(this::onDataInitializationSuccess, this::errorMessage, null, null);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
@@ -51,12 +70,11 @@ public class BranchPage extends OutlinePage {
         setIcons();
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -85,6 +103,7 @@ public class BranchPage extends OutlinePage {
     private HBox buildRightTop() {
         createBtn = new Button("Create");
         createBtn.setDefaultButton(true);
+        createBtn.setOnAction(event -> showDialog(0));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -174,25 +193,30 @@ public class BranchPage extends OutlinePage {
         var edit = new MenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             BranchViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
-                    BranchViewModel.getItem(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
+                    BranchViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
                     e.consume();
                 });
         contextMenu.getItems().addAll(edit, delete);
         return contextMenu;
     }
 
-    private void createBtnAction() {
-        createBtn.setOnAction(event -> {
-            BranchViewModel.setTitle(Labels.CREATE);
-            SpotyDialog.createDialog(new BranchForm(), this).showAndWait();
-        });
+    private void showDialog(Integer reason) {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new BranchForm(modalPane, reason));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {

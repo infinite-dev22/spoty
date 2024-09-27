@@ -1,10 +1,10 @@
 package inc.nomard.spoty.core;
 
-import java.io.*;
-import java.net.*;
+import javafx.fxml.FXMLLoader;
+import lombok.extern.java.Log;
 
-import javafx.fxml.*;
-import lombok.extern.java.*;
+import java.io.InputStream;
+import java.net.URL;
 
 @Log
 public class SpotyCoreResourceLoader {

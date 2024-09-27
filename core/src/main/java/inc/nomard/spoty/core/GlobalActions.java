@@ -1,9 +1,9 @@
 package inc.nomard.spoty.core;
 
-import javafx.event.*;
-import javafx.scene.*;
-import javafx.stage.*;
-import lombok.extern.java.*;
+import javafx.event.Event;
+import javafx.scene.Node;
+import javafx.stage.Stage;
+import lombok.extern.java.Log;
 
 @Log
 public class GlobalActions {

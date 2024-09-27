@@ -1,7 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.payments;
 
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter

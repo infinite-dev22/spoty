@@ -1,10 +1,12 @@
 package inc.nomard.spoty.network_bridge.dtos.adjustments;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import java.time.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Getter
 @Setter

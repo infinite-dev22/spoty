@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.UserProfile;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import io.github.palexdev.mfxcore.controls.Label;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,10 +29,10 @@ public class UserPreviewController implements Initializable {
     @FXML
     public Label dobLbl;
 
-    public void init(UserProfile supplier) {
-        if (Objects.nonNull(supplier.getAvatar()) && !supplier.getAvatar().isEmpty() && !supplier.getAvatar().isBlank()) {
+    public void init(Employee employee) {
+        if (Objects.nonNull(employee.getAvatar()) && !employee.getAvatar().isEmpty() && !employee.getAvatar().isBlank()) {
             var image = new Image(
-                    supplier.getAvatar(),
+                    employee.getAvatar(),
                     10000,
                     10000,
                     true,
@@ -50,11 +50,9 @@ public class UserPreviewController implements Initializable {
             imageHolder.setFill(new ImagePattern(image));
         }
 
-        nameLbl.setText(supplier.getName());
-        emailLbl.setText(supplier.getEmail());
-        phoneLbl.setText(supplier.getPhone());
-        genderLbl.setText(supplier.getGender());
-        dobLbl.setText(supplier.getDob());
+        nameLbl.setText(employee.getName());
+        emailLbl.setText(employee.getEmail());
+        phoneLbl.setText(employee.getPhone());
     }
 
     @Override

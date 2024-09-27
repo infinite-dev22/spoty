@@ -14,7 +14,7 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -42,7 +42,7 @@ public class PurchaseReturnPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<PurchaseReturnMaster> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private TableColumn<PurchaseReturnMaster, String> reference;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> supplier;
     private TableColumn<PurchaseReturnMaster, PurchaseReturnMaster> purchaseDate;
@@ -82,7 +82,7 @@ public class PurchaseReturnPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -234,10 +234,10 @@ public class PurchaseReturnPage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             PurchaseReturnMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getSupplierName() + "'s purchase", this));
+        }, obj.getItem().getSupplierName() + "'s purchase").showDialog());
 
         // View
         view.setOnAction(

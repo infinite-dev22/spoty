@@ -5,11 +5,10 @@ import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.viewModels.TaxViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.views.layout.ModalPage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
@@ -21,6 +20,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.NumberStringConverter;
 import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class TaxForm extends BorderPane {
         percentage = new ValidatableTextField();
         var label = new Label("Percentage");
         percentage.setPrefWidth(1000d);
-        percentage.setRight(new MFXFontIcon("fas-percent"));
+        percentage.setRight(new FontIcon(FontAwesomeSolid.PERCENT));
         percentage.textProperty().bindBidirectional(TaxViewModel.percentageProperty(), new NumberStringConverter());
         percentage.setPromptText("0.00");
         // Validation.

@@ -9,7 +9,7 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
 import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.LeaveStatusRepositoryImpl;
+import inc.nomard.spoty.network_bridge.repositories.implementations.LeaveRepositoryImpl;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.connectivity.Connectivity;
@@ -59,7 +59,7 @@ public class LeaveStatusViewModel {
     private static final StringProperty leaveType = new SimpleStringProperty();
     private static final StringProperty attachment = new SimpleStringProperty("");
     private static final CharProperty status = new CharProperty();
-    private static final LeaveStatusRepositoryImpl leaveStatusRepository = new LeaveStatusRepositoryImpl();
+    private static final LeaveRepositoryImpl leaveStatusRepository = new LeaveRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);

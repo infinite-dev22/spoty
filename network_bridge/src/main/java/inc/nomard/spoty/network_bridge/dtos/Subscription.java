@@ -1,6 +1,5 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
-import com.google.gson.annotations.SerializedName;
 import lombok.*;
 import lombok.extern.java.Log;
 

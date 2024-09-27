@@ -1,14 +1,15 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations;
 
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.end_points.*;
-import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
-import java.net.*;
-import java.net.http.*;
-import java.util.concurrent.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.end_points.EndPoints;
+import inc.nomard.spoty.network_bridge.repositories.interfaces.DashboardRepository;
+import lombok.extern.java.Log;
 
-import javafx.util.Duration;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 
 @Log
 public class DashboardRepositoryImpl extends ProtectedGlobals implements DashboardRepository {

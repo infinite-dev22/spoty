@@ -1,6 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.response;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Setter
 @Getter

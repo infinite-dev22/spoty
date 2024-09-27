@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.layout;
 
+import atlantafx.base.controls.ModalPane;
 import inc.nomard.spoty.core.views.layout.navigation.Navigation;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -23,4 +24,7 @@ public class AppManager {
     @Getter
     @Setter
     private static Scene scene;
+    @Getter
+    @Setter
+    private static ModalPane globalModalPane;
 }

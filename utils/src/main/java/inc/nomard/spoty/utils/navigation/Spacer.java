@@ -1,8 +1,11 @@
 package inc.nomard.spoty.utils.navigation;
 
-import javafx.geometry.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import javafx.geometry.Orientation;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import lombok.extern.java.Log;
 
 @Log
 public class Spacer extends Region {

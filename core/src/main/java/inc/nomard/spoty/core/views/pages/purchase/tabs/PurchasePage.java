@@ -9,6 +9,7 @@ import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.PurchaseMasterForm;
 import inc.nomard.spoty.core.views.forms.PurchaseReturnMasterForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.pages.EmployeePage;
@@ -19,7 +20,7 @@ import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -48,7 +49,7 @@ public class PurchasePage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<PurchaseMaster> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private TableColumn<PurchaseMaster, String> reference;
     private TableColumn<PurchaseMaster, PurchaseMaster> supplier;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseDate;
@@ -110,7 +111,7 @@ public class PurchasePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -285,10 +286,10 @@ public class PurchasePage extends OutlinePage {
         var view = new MenuItem("View");
         var returnPurchase = new MenuItem("Return");
 
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             PurchaseMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getSupplierName() + "'s purchase", this));
+        }, obj.getItem().getSupplierName() + "'s purchase").showDialog());
         edit.setOnAction(
                 e -> {
                     PurchaseMasterViewModel.getPurchaseMaster(obj.getItem().getId(), this::showForm, this::errorMessage);

@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
 import inc.nomard.spoty.core.views.components.label_components.skins.LabeledComboBoxSkin;
-import io.github.palexdev.materialfx.validation.MFXValidator;
-import io.github.palexdev.materialfx.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,7 +14,7 @@ import javafx.scene.control.Skin;
 import javafx.util.StringConverter;
 
 public class LabeledComboBox<T> extends Control implements Validated {
-    protected final MFXValidator validator;
+    protected final Validator validator;
 
     private final StringProperty labelText = new SimpleStringProperty(this, "labelText");
     private final ObjectProperty<T> value = new SimpleObjectProperty<>(this, "value");
@@ -25,7 +25,7 @@ public class LabeledComboBox<T> extends Control implements Validated {
     public LabeledComboBox() {
         super();
         this.getStyleClass().add("labeled-combo-box");
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
     }
 
     public String getLabelText() {
@@ -82,7 +82,7 @@ public class LabeledComboBox<T> extends Control implements Validated {
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 }

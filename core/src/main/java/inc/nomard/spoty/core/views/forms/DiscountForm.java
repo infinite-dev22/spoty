@@ -2,30 +2,31 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
 import inc.nomard.spoty.core.viewModels.TaxViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.views.layout.ModalPage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.NumberStringConverter;
 import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 
 @Log
-public class DiscountForm extends ModalPage {
+public class DiscountForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;
     public ValidatableTextField name,
@@ -65,7 +66,7 @@ public class DiscountForm extends ModalPage {
         percentage = new ValidatableTextField();
         var label = new Label("Percentage");
         percentage.setPrefWidth(1000d);
-        percentage.setRight(new MFXFontIcon("fas-percent"));
+        percentage.setRight(new FontIcon(FontAwesomeSolid.PERCENT));
         percentage.setPromptText("0.00");
         percentage.textProperty().bindBidirectional(DiscountViewModel.percentageProperty(), new NumberStringConverter());
         // Validation.
@@ -108,9 +109,6 @@ public class DiscountForm extends ModalPage {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {

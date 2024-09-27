@@ -1,7 +1,7 @@
 package inc.nomard.spoty.utils;
 
 
-import java.util.*;
+import java.util.Objects;
 
 public class OSUtil {
     private static OS os = null;

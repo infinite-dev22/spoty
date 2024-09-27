@@ -3,6 +3,7 @@ package inc.nomard.spoty.database.dao;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
+
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import org.junit.jupiter.api.*;
 

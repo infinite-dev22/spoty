@@ -1,14 +1,21 @@
 package inc.nomard.spoty.core.views.settings;
 
+import atlantafx.base.controls.RingProgressIndicator;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
-import inc.nomard.spoty.core.viewModels.settings.system_settings.CompanyDetailsViewModel;
+import inc.nomard.spoty.core.viewModels.TenantSettingViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledTextField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.pages.EmployeePage;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.UIUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.utils.StringUtils;
@@ -20,7 +27,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -37,13 +47,14 @@ import lombok.extern.java.Log;
 
 import java.util.Currency;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Log
-public class CompanyDetailPage extends OutlinePage {
-    public Button cancelBtn,
-            saveBtn;
+public class TenantSettingsPage extends OutlinePage {
+    private final SideModalPane modalPane;
+    public CustomButton saveBtn;
     public Circle companyLogo;
     public Label companyName,
             companyWeblink,
@@ -71,8 +82,42 @@ public class CompanyDetailPage extends OutlinePage {
     private VBox companyLogoBtn;
     private FileChooser fileChooser;
 
-    public CompanyDetailPage() {
-        addNode(init());
+    public TenantSettingsPage() {
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
+        progress();
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(CurrencyViewModel::getAllCurrencies),
+                CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
+    }
+
+    private void onDataInitializationSuccess() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+    }
+
+    public void progress() {
+        var dialog = new ModalContentHolder(50, 50);
+        dialog.getChildren().add(new RingProgressIndicator());
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.CENTER);
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private AnchorPane init() {
@@ -219,17 +264,10 @@ public class CompanyDetailPage extends OutlinePage {
     }
 
     private HBox buildCompanyProfile() {
-        // Cancel button.
-        cancelBtn = new Button("Cancel");
-        cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
         // Save button.
-        saveBtn = new Button("_Save Changes");
+        saveBtn = new CustomButton("_Save Changes");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setMnemonicParsing(true);
-        var hbox1 = new HBox();
-        hbox1.setAlignment(Pos.CENTER_RIGHT);
-        hbox1.setSpacing(16d);
-        hbox1.getChildren().addAll(cancelBtn, saveBtn);
+        saveBtn.setOnAction(mouseEvent -> TenantSettingViewModel.updateTenantSettings(this::onSuccess, SpotyUtils::successMessage, this::errorMessage));
         var hbox = new HBox();
         hbox.setSpacing(16d);
         hbox.setAlignment(Pos.CENTER_LEFT);
@@ -237,8 +275,12 @@ public class CompanyDetailPage extends OutlinePage {
                 buildSectionTitle("Company profile",
                         "Update your company logo and details here."),
                 new Spacer(),
-                hbox1);
+                saveBtn);
         return hbox;
+    }
+
+    private void onSuccess() {
+        TenantSettingViewModel.getTenantSettings(null, null);
     }
 
     private HBox buildCompanyPublicProfiles() {
@@ -451,48 +493,47 @@ public class CompanyDetailPage extends OutlinePage {
     private void prefillForms() {
         companyNameTxt
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.nameProperty());
+                .bindBidirectional(TenantSettingViewModel.nameProperty());
         companyWebLinkTxt
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.websiteProperty());
+                .bindBidirectional(TenantSettingViewModel.websiteLinkProperty());
         companyPhoneTxt
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.phoneProperty());
+                .bindBidirectional(TenantSettingViewModel.phoneNumberProperty());
         companyEmailTxt
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.emailProperty());
+                .bindBidirectional(TenantSettingViewModel.emailProperty());
         companyPostalAddressTxt
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.postalAddressProperty());
+                .bindBidirectional(TenantSettingViewModel.postalAddressProperty());
         companyAddressTxt
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.physicalAddressProperty());
+                .bindBidirectional(TenantSettingViewModel.physicalAddressProperty());
         companyTagLine
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.tagLineProperty());
-//        Company logo.
-//        CompanyTagLine
-//                .textProperty()
-//                .bindBidirectional(CompanyDetailsViewModel.tagLineProperty());
-//        reportsCheck.selectedProperty()
-//                .bindBidirectional(CompanyDetailsViewModel.logoOnReportsProperty());
-//        emailsCheck
-//                .selectedProperty()
-//                .bindBidirectional(CompanyDetailsViewModel.logoOnEmailsProperty());
-//        receiptsCheck
-//                .selectedProperty()
-//                .bindBidirectional(CompanyDetailsViewModel.logoOnReceiptsProperty());
+                .bindBidirectional(TenantSettingViewModel.tagLineProperty());
+        companyTagLine
+                .textProperty()
+                .bindBidirectional(TenantSettingViewModel.tagLineProperty());
+        reportsCheck.selectedProperty()
+                .bindBidirectional(TenantSettingViewModel.reportLogoProperty());
+        emailsCheck
+                .selectedProperty()
+                .bindBidirectional(TenantSettingViewModel.emailLogoProperty());
+        receiptsCheck
+                .selectedProperty()
+                .bindBidirectional(TenantSettingViewModel.receiptLogoProperty());
         companyTwitter
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.twitterProperty());
+                .bindBidirectional(TenantSettingViewModel.twitterProperty());
         companyFacebook
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.facebookProperty());
+                .bindBidirectional(TenantSettingViewModel.facebookProperty());
         companyLinkedin
                 .textProperty()
-                .bindBidirectional(CompanyDetailsViewModel.linkedinProperty());
+                .bindBidirectional(TenantSettingViewModel.linkedInProperty());
 
-        defaultCurrencyPicker.setValue(CompanyDetailsViewModel.getDefaultCurrency());
+        defaultCurrencyPicker.setValue(TenantSettingViewModel.getDefaultCurrency());
     }
 
     private void setupComboBoxes() {
@@ -519,9 +560,9 @@ public class CompanyDetailPage extends OutlinePage {
     }
 
     private void showData() {
-        if (Objects.nonNull(CompanyDetailsViewModel.getLogo()) && !CompanyDetailsViewModel.getLogo().isEmpty() && !CompanyDetailsViewModel.getLogo().isBlank()) {
+        if (Objects.nonNull(TenantSettingViewModel.getLogo()) && !TenantSettingViewModel.getLogo().isEmpty() && !TenantSettingViewModel.getLogo().isBlank()) {
             var image = new Image(
-                    CompanyDetailsViewModel.getLogo(),
+                    TenantSettingViewModel.getLogo(),
                     10000,
                     10000,
                     true,
@@ -540,19 +581,19 @@ public class CompanyDetailPage extends OutlinePage {
             companyLogo.setFill(new ImagePattern(image));
             currentCompanyLogo.setFill(new ImagePattern(image));
         }
-        if (CompanyDetailsViewModel.nameProperty().get().isEmpty()) {
+        if (TenantSettingViewModel.nameProperty().get().isEmpty()) {
             companyName.setText("Company Name");
         } else {
             companyName
                     .textProperty()
-                    .bindBidirectional(CompanyDetailsViewModel.nameProperty());
+                    .bindBidirectional(TenantSettingViewModel.nameProperty());
         }
-        if (CompanyDetailsViewModel.nameProperty().get().isEmpty()) {
+        if (TenantSettingViewModel.nameProperty().get().isEmpty()) {
             companyWeblink.setText("Company Website");
         } else {
             companyWeblink
                     .textProperty()
-                    .bindBidirectional(CompanyDetailsViewModel.websiteProperty());
+                    .bindBidirectional(TenantSettingViewModel.websiteLinkProperty());
         }
     }
 

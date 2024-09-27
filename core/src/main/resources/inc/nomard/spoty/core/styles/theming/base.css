@@ -4,6 +4,7 @@
 .chart-plot-background {
     -fx-background-color: transparent;
 }
+
 .chart-bar {
     -fx-background-radius: 50;
     -fx-border-radius: 50;
@@ -12,10 +13,12 @@
     -fx-background-width: 50;
     -fx-background-position: left center;
 }
+
 .default-color0.chart-bar {
     -fx-bar-fill: #4EE29B;
     -fx-border-color: darkgreen;
 }
+
 .default-color0.chart-bar:hover {
     -fx-bar-fill: darkgreen;
     -fx-border-color: #4EE29B;
@@ -44,11 +47,11 @@
  * Window Header
 **************************************************/
 .close-icon {
-    -mfx-color: -mfx-red;
+    -fx-icon-color: -mfx-red;
 }
 
 .minimize-icon {
-    -mfx-color: -mfx-orange;
+    -fx-icon-color: -mfx-orange;
 }
 
 /**************************************************
@@ -119,7 +122,7 @@
 
 /*POS PRODUCT CARD*/
 .pos-product-card {
-   -fx-border-color: -border-disabled;
+    -fx-border-color: -border-disabled;
 }
 
 .rounded-border {
@@ -132,7 +135,7 @@
 }
 
 .pos-product-card {
-   -fx-border-color: -border-disabled;
+    -fx-border-color: -border-disabled;
 }
 
 .rounded-border {
@@ -163,18 +166,18 @@
     -fx-border-color: -spoty-accent-color;
 }
 
-.green-bg{
+.green-bg {
     -fx-background-color: green;
 }
 
-.red-bg{
+.red-bg {
     -fx-background-color: red;
 }
 
-.orange-bg{
+.orange-bg {
     -fx-background-color: orange;
 }
 
-.hero-image{
+.hero-image {
     -fx-background-color: -mfx-charcoal;
 }

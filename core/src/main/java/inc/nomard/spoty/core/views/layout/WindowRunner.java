@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.layout;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.GlobalActions;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
@@ -11,7 +12,6 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.auth.SubscriptionProbe;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -20,17 +20,28 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public class WindowRunner extends ApplicationWindowImpl {
     final VBox vBox = new VBox();
+    private final ModalPane modalPane;
     private final Stage stage = AppManager.getPrimaryStage();
 
     public WindowRunner() {
         super();
-        addNode(new MainLayer());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, new MainLayer());
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+        AppManager.setGlobalModalPane(modalPane);
         CompletableFuture.runAsync(() -> SubscriptionViewModel.troll(this::clubBouncer, null))
                 .exceptionally(this::onDataInitializationFailure);
     }
@@ -92,11 +103,11 @@ public class WindowRunner extends ApplicationWindowImpl {
             vBox.setAlignment(Pos.CENTER);
             vBox.getChildren().addAll(hBox1, hBox2);
             vBox.setSpacing(100);
-            var closeIcon = new MFXFontIcon("fas-xmark");
-            closeIcon.setColor(Color.RED);
+            var closeIcon = new FontIcon(FontAwesomeSolid.CROSS);
+            closeIcon.setIconColor(Color.RED);
             close.setGraphic(closeIcon);
             close.getStyleClass().add(Styles.BUTTON_OUTLINED);
-            close.setOnAction(actionEvent -> new InformativeDialog(() -> {
+            close.setOnAction(actionEvent -> new InformativeDialog(modalPane, () -> {
                 GlobalActions.closeDialog(actionEvent);
                 this.setMorph(false);
                 this.getChildren().removeAll(vBox);
@@ -104,7 +115,7 @@ public class WindowRunner extends ApplicationWindowImpl {
                 stage.close();
                 SpotyThreader.disposeSpotyThreadPool();
                 Platform.exit();
-            }, stage, vBox));
+            }).showDialog());
             StackPane.setAlignment(hBox1, Pos.CENTER);
             StackPane.setAlignment(hBox2, Pos.BOTTOM_CENTER);
             vBox.getStyleClass().add("shade-app");

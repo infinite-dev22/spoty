@@ -1,14 +1,19 @@
 package inc.nomard.spoty.utils;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import javax.xml.parsers.*;
-
 import inc.nomard.spoty.utils.flavouring.AppConfig;
-import lombok.extern.java.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import lombok.extern.java.Log;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 @Log
 public class SeamlessUpdater {

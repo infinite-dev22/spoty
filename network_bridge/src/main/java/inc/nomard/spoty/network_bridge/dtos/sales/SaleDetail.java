@@ -1,9 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.sales;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import javafx.beans.property.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import javafx.beans.property.SimpleBooleanProperty;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter

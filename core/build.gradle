@@ -236,8 +236,6 @@ dependencies {
     implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-feather-pack:$ikonLi"
     implementation "fr.brouillard.oss:cssfx:$cssfx"
-    implementation "io.github.palexdev:virtualizedfx:$virtualizedFX"
-    implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
     implementation "org.junit.jupiter:junit-jupiter-api:$junit"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
     testCompileOnly "org.projectlombok:lombok:$lombok"

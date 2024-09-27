@@ -1,7 +1,9 @@
 package inc.nomard.spoty.utils;
 
-import java.util.concurrent.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Log
 public class SpotyThreader {

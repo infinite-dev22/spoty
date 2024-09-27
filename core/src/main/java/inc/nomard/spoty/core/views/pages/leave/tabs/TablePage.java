@@ -4,16 +4,14 @@ import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
-import inc.nomard.spoty.core.views.forms.LeaveRequestForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -38,7 +36,7 @@ import java.util.stream.Stream;
 public class TablePage extends OutlinePage {
     private TextField searchBar;
     private TableView<LeaveStatus> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private Button createBtn;
     private TableColumn<LeaveStatus, LeaveStatus> employeeName;
     private TableColumn<LeaveStatus, LeaveStatus> dateAndTime;
@@ -71,7 +69,7 @@ public class TablePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -198,14 +196,14 @@ public class TablePage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             LeaveStatusViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getEmployeeName() + "'s leave request", this));
+        }, obj.getItem().getEmployeeName() + "'s leave request").showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
-                    LeaveStatusViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new LeaveRequestForm(), this).showAndWait(), this::errorMessage);
+//                    LeaveStatusViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new LeaveRequestForm()).showDialog().showAndWait(), this::errorMessage);
                     e.consume();
                 });
         contextMenu.getItems().addAll(edit, delete);
@@ -214,7 +212,7 @@ public class TablePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new LeaveRequestForm(), this).showAndWait());
+//        createBtn.setOnAction(event -> SpotyDialog.createDialog(new LeaveRequestForm()).showDialog().showAndWait());
     }
 
     private void onSuccess() {

@@ -1,7 +1,7 @@
 package inc.nomard.spoty.utils.connectivity;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.InetAddress;
 
 public class Connectivity {
     public static boolean isConnectedToInternet() {

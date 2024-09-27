@@ -7,7 +7,7 @@ import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import io.github.palexdev.materialfx.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Constraint;
 import javafx.beans.property.Property;
 import javafx.css.PseudoClass;
 import javafx.event.Event;

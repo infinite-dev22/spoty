@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
 import inc.nomard.spoty.core.views.components.label_components.skins.LabeledTextFieldSkin;
-import io.github.palexdev.materialfx.validation.MFXValidator;
-import io.github.palexdev.materialfx.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,7 +12,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 
 public class LabeledTextField extends Control implements Validated {
-    protected final MFXValidator validator;
+    protected final Validator validator;
     private final StringProperty labelText = new SimpleStringProperty(this, "labelText");
     private final StringProperty text = new SimpleStringProperty(this, "text");
     private final ObjectProperty<Node> right = new SimpleObjectProperty<>(this, "right");
@@ -20,7 +20,7 @@ public class LabeledTextField extends Control implements Validated {
 
     public LabeledTextField() {
         super();
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
         this.getStyleClass().add("labeled-text-field");
     }
 
@@ -70,7 +70,7 @@ public class LabeledTextField extends Control implements Validated {
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 }
@@ -83,8 +83,9 @@ import javafx.beans.property.*;
 import javafx.scene.control.*;
 import lombok.*;
 
+import inc.nomard.spoty.core.views.layout.AppManager;
 public class LabeledTextField extends CustomTextField implements Validated {
-    protected final MFXValidator validator;
+    protected final Validator validator;
     private final StringProperty text;
     @Setter
     @Getter
@@ -92,13 +93,13 @@ public class LabeledTextField extends CustomTextField implements Validated {
 
     public LabeledTextField() {
         super();
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
         this.text = new SimpleStringProperty();
     }
 
     public LabeledTextField(String label) {
         super();
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
         this.text = new SimpleStringProperty(label);
     }
 
@@ -112,13 +113,14 @@ public class LabeledTextField extends CustomTextField implements Validated {
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 }*/
 
-    /*public class LabeledTextField extends VBox implements Validated {
-        protected final MFXValidator validator;
+    /*import inc.nomard.spoty.core.views.layout.AppManager;
+public class LabeledTextField extends VBox implements Validated {
+        protected final Validator validator;
         private final StringProperty labelProperty = new SimpleStringProperty();
         private final StringProperty promptTextProperty = new SimpleStringProperty();
         private final DoubleProperty minWidthProperty = new SimpleDoubleProperty();
@@ -127,7 +129,7 @@ public class LabeledTextField extends CustomTextField implements Validated {
         private CustomTextField textField;
 
         public LabeledTextField() {
-            this.validator = new MFXValidator();
+            this.validator = new Validator();
             init();
         }
 
@@ -181,7 +183,7 @@ public class LabeledTextField extends CustomTextField implements Validated {
         }
 
         @Override
-        public MFXValidator getValidator() {
+        public Validator getValidator() {
             return this.validator;
         }
     }*/

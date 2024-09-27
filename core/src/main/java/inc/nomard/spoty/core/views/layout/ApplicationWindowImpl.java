@@ -52,12 +52,13 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
 
     @Override
     public void setStyleSheets() {
-        this.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+        this.getStylesheets().addAll(
+                SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
-                SpotyCoreResourceLoader.load("styles/Progress.css"),
-                SpotyCoreResourceLoader.load("styles/Splash.css"),
+                SpotyCoreResourceLoader.load("styles/toolitip.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
-                SpotyCoreResourceLoader.load("styles/theming/base.css"));
+                SpotyCoreResourceLoader.load("styles/theming/base.css")
+        );
     }
 
     @Override

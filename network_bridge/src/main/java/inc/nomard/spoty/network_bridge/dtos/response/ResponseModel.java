@@ -1,7 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.response;
 
-import java.util.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
 
 @Setter
 @Getter

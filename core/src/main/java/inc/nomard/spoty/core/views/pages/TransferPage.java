@@ -1,27 +1,22 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.Animations;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
+import inc.nomard.spoty.core.viewModels.BranchViewModel;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.TransferMasterForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
-import inc.nomard.spoty.core.views.previews.PurchasePreview;
-import inc.nomard.spoty.core.views.previews.TransferPreviewController;
 import inc.nomard.spoty.core.views.util.OutlinePage;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import inc.nomard.spoty.network_bridge.dtos.transfers.TransferMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import atlantafx.base.controls.RingProgressIndicator;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -34,21 +29,17 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.stage.Screen;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -57,7 +48,7 @@ public class TransferPage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<TransferMaster> masterTable;
-    private MFXProgressSpinner progress;
+    private RingProgressIndicator progress;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
     private TableColumn<TransferMaster, String> reference;
@@ -120,7 +111,7 @@ public class TransferPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new RingProgressIndicator();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -261,10 +252,10 @@ public class TransferPage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             TransferMasterViewModel.deleteTransfer(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getFromBranchName() + " - " + obj.getItem().getToBranchName() + " transfer", this));
+        }, obj.getItem().getFromBranchName() + " - " + obj.getItem().getToBranchName() + " transfer").showDialog());
         // Edit
         edit.setOnAction(
                 e -> {

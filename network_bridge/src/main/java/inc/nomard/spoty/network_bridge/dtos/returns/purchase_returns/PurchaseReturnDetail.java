@@ -1,9 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter
