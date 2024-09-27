@@ -1,15 +1,14 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
 import inc.nomard.spoty.core.views.forms.AccountForm;
-import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.core.views.layout.SpotyDialog;
-import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
-import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.accounting.Account;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
@@ -19,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,8 +26,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import lombok.extern.java.Log;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.LinkedList;
 import java.util.Objects;
@@ -35,6 +33,7 @@ import java.util.stream.Stream;
 
 @Log
 public class AccountPage extends OutlinePage {
+    private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Account> masterTable;
     private MFXProgressSpinner progress;
@@ -48,7 +47,16 @@ public class AccountPage extends OutlinePage {
 
     public AccountPage() {
         super();
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
         AccountViewModel.getAllAccounts(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
@@ -165,11 +173,11 @@ public class AccountPage extends OutlinePage {
         description.setSortable(true);
 
         accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         credit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         debit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
 
         setupTableColumns();
 
@@ -210,37 +218,45 @@ public class AccountPage extends OutlinePage {
         // Actions
         // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+            AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getAccountName(), this));
         // Edit
         edit.setOnAction(
                 event -> {
-                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
+                    AccountViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
                     event.consume();
                 });
         // Deposit
         deposit.setOnAction(
                 event -> {
-                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
+                    AccountViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(2), this::errorMessage);
                     event.consume();
                 });
-        contextMenu.getItems().addAll(edit, delete);
+        contextMenu.getItems().addAll(edit, deposit, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog(0));
+    }
+
+    private void showDialog(Integer reason) {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new AccountForm(modalPane, reason));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
         AccountViewModel.getAllAccounts(null, null, null, null);
     }
-
-//    private void setIcons() {
-//        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
-//    }
 
     public void setSearchBar() {
         searchBar.textProperty().addListener((observableValue, ov, nv) -> {
@@ -259,12 +275,10 @@ public class AccountPage extends OutlinePage {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        SpotyUtils.errorMessage(message);
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void setupTableColumns() {
@@ -275,6 +289,7 @@ public class AccountPage extends OutlinePage {
             @Override
             public void updateItem(Account item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCredit()));
             }
         });
@@ -283,6 +298,7 @@ public class AccountPage extends OutlinePage {
             @Override
             public void updateItem(Account item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getDebit()));
             }
         });
@@ -291,28 +307,11 @@ public class AccountPage extends OutlinePage {
             @Override
             public void updateItem(Account item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
                 setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getBalance()));
             }
         });
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
-    }
-
-    private void displayNotification(String message, MessageVariants type, Ikon icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     private Pagination buildPagination() {
