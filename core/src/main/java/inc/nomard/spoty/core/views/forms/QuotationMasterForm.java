@@ -100,6 +100,7 @@ public class QuotationMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add Product");
         addBtn.setDefaultButton(true);
+        addBtn.setPrefWidth(10000d);
         addBtn.setOnAction(event -> this.showForm());
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
