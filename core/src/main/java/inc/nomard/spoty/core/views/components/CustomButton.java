@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class CustomButton extends HBox {
-    private StringProperty text;
     private final Label label;
     private final MFXProgressSpinner progressSpinner;
     private final ObjectProperty<EventHandler<MouseEvent>> onAction;
@@ -72,11 +71,7 @@ public class CustomButton extends HBox {
     }
 
     public final StringProperty textProperty() {
-        if (this.text == null) {
-            this.text = new SimpleStringProperty(this, "text", "");
-        }
-
-        return this.text;
+        return this.label.textProperty();
     }
 
     public final void setText(String var1) {
@@ -84,7 +79,7 @@ public class CustomButton extends HBox {
     }
 
     public final String getText() {
-        return this.text == null ? "" : this.text.getValue();
+        return this.textProperty().getValue();
     }
 
     private void setButtonEventProperty() {
