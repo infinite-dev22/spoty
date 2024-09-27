@@ -87,6 +87,19 @@ public class AccountRepositoryImplAccount extends ProtectedGlobals implements Ac
     }
 
     @Override
+    public CompletableFuture<HttpResponse<String>> deposit(Object object) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Accounts.accountDeposit))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
     public CompletableFuture<HttpResponse<String>> delete(FindModel findModel) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Accounts.deleteAccount))

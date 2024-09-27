@@ -3,6 +3,8 @@ package inc.nomard.spoty.core.viewModels.accounting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.accounting.Account;
 import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
 import inc.nomard.spoty.network_bridge.models.FindModel;
@@ -227,20 +229,7 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
                 }
             }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void clearAccountData() {
@@ -274,36 +263,10 @@ public class AccountViewModel {
                         onSuccess.run();
                     }
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void getItem(
@@ -326,36 +289,10 @@ public class AccountViewModel {
                     setBalance(account.getBalance());
                     onSuccess.run();
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void searchItem(
@@ -376,36 +313,10 @@ public class AccountViewModel {
                     accountsList.addAll(accountList);
                     onSuccess.run();
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -445,20 +356,29 @@ public class AccountViewModel {
                     Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
                 }
             }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
+    }
+
+    public static void deposit(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                               SpotyGotFunctional.MessageConsumer successMessage,
+                               SpotyGotFunctional.MessageConsumer errorMessage) {
+        var account = Account.builder()
+                .id(getId())
+                .balance(getBalance())
+                .build();
+        CompletableFuture<HttpResponse<String>> responseFuture = accountsRepository.deposit(account);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Account deposit successful");
+                });
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void deleteItem(
@@ -475,35 +395,54 @@ public class AccountViewModel {
                     onSuccess.run();
                     successMessage.showMessage("Account deleted successfully");
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, AccountViewModel.class);
-            return null;
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
+    }
+
+    private static void handleResponse(HttpResponse<String> response, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                       SpotyGotFunctional.MessageConsumer successMessage,
+                                       SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
+        Platform.runLater(() -> {
+            switch (response.statusCode()) {
+                case 200:
+                case 201:
+                case 204:
+                    if (onSuccess != null) {
+                        onSuccess.run();
+                    }
+                    if (successMessage != null) {
+                        successMessage.showMessage("Operation successful");
+                    }
+                    break;
+                default:
+                    handleNon200Status(response, errorMessage);
+                    break;
+            }
         });
+    }
+
+    private static void handleNon200Status(HttpResponse<String> response, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
+        Platform.runLater(() -> {
+            String message = SpotyUtils.getHTTPStatus(response.statusCode(), null);
+            if (errorMessage != null) {
+                errorMessage.showMessage(message);
+            }
+        });
+    }
+
+    private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.severe(throwable.getMessage());
+        Platform.runLater(() -> {
+            SpotyLogger.writeToFile(throwable, PurchaseReturnMasterViewModel.class);
+            String message = Connectivity.isConnectedToInternet() ? "An error occurred" : "No Internet Connection";
+            if (errorMessage != null) {
+                errorMessage.showMessage(message);
+            }
+        });
+        return null;
     }
 }
