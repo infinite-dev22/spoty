@@ -5,8 +5,8 @@ import inc.nomard.spoty.core.views.components.label_components.controls.LabeledC
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatablePasswordField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 

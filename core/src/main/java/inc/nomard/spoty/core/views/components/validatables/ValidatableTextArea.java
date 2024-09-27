@@ -1,26 +1,26 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
-import io.github.palexdev.materialfx.validation.MFXValidator;
-import io.github.palexdev.materialfx.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validator;
 import javafx.scene.control.TextArea;
 
 import java.util.Objects;
 
 public class ValidatableTextArea extends TextArea implements Validated {
     private static int MAX_CHARACTERS = 350;
-    protected final MFXValidator validator;
+    protected final Validator validator;
 
     public ValidatableTextArea() {
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
     }
 
     public ValidatableTextArea(String text) {
         super(text);
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 

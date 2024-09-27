@@ -1,27 +1,27 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
 import atlantafx.base.controls.CustomTextField;
-import io.github.palexdev.materialfx.validation.MFXValidator;
-import io.github.palexdev.materialfx.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validator;
 
 import java.util.Objects;
 
 public class ValidatableTextField extends CustomTextField implements Validated {
     private static int MAX_CHARACTERS = 40;
-    protected final MFXValidator validator;
+    protected final Validator validator;
 
     public ValidatableTextField() {
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
         this.setMaxHeight(45);
     }
 
     public ValidatableTextField(String text) {
         super(text);
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 
