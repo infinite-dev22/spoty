@@ -60,6 +60,7 @@ public class CustomButton extends HBox {
         this.progressSpinner.setMinSize(22d, 22d);
         this.progressSpinner.setPrefSize(22d, 22d);
         this.progressSpinner.setMaxSize(22d, 22d);
+        this.progressSpinner.getStyleClass().add("button_busy");
     }
 
     public final StringProperty textProperty() {
