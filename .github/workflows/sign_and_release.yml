@@ -39,21 +39,16 @@ jobs:
 
       # Build the project using Gradle
       - name: Build core project with Gradle
-        run: ./gradlew :core:clean :core:build
+        run: ./gradlew :clean :core:build
 
       # Run jpackage for platform-specific build
-      - name: Package with jpackage for Linux or macOS
+      - name: Package with jpackage for Linux
         if: runner.os != 'Windows'
-        run: |
-          if [ $RUNNER_OS == "Linux" ]; then
-            ./gradlew :core:jpackage --args="--installer-type deb"
-          elif [ $RUNNER_OS == "macOS" ]; then
-            ./gradlew :core:jpackage --args="--installer-type pkg"
-          fi
+        run: ./gradlew :core:jpackage
 
       - name: Package with jpackage for Windows
         if: runner.os == 'Windows'
-        run: ./gradlew :core:jpackage --args="--installer-type exe"
+        run: ./gradlew :core:jpackage
 
       # Code sign the Windows executables
       - name: Code signing for Windows
