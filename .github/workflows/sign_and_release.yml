@@ -1,4 +1,4 @@
-name: JPackage and Code Signing
+name: Build and Package with jpackage
 
 on:
   push:
@@ -10,17 +10,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Change to 'windows-latest' or 'macos-latest' based on your target OS
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up JDK (required for jpackage)
+      # Set up JDK 17 (required for jpackage)
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          distribution: 'liberica'
+          distribution: 'temurin'
           java-version: '21'
 
       # Cache Gradle dependencies
@@ -34,33 +37,33 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
-      # Build the core project with Gradle
+      # Build the project using Gradle
       - name: Build core project with Gradle
         run: ./gradlew :core:clean :core:build
 
-      # Run jpackage on the core subproject
-      - name: Package core project with jpackage
-        run: ./gradlew :core:jpackage
+      # Run jpackage for platform-specific build
+      - name: Package with jpackage for Linux or macOS
+        if: runner.os != 'Windows'
+        run: |
+          if [ $RUNNER_OS == "Linux" ]; then
+            ./gradlew :core:jpackage --args="--installer-type deb"
+          elif [ $RUNNER_OS == "macOS" ]; then
+            ./gradlew :core:jpackage --args="--installer-type pkg"
+          fi
 
-      # Code sign the executables based on the OS
-      - name: Code signing for Windows (if applicable)
+      - name: Package with jpackage for Windows
+        if: runner.os == 'Windows'
+        run: ./gradlew :core:jpackage --args="--installer-type exe"
+
+      # Code sign the Windows executables
+      - name: Code signing for Windows
         if: runner.os == 'Windows'
         run: |
           signtool sign /f ${{ secrets.CERTIFICATE_PFX }} /p ${{ secrets.CERTIFICATE_PASSWORD }} /tr http://timestamp.digicert.com /td sha256 /fd sha256 "core/build/jpackage/*.exe"
 
-      - name: Code signing for macOS (if applicable)
-        if: runner.os == 'macOS'
-        run: |
-          security create-keychain -p mypassword build.keychain
-          security import ${{ secrets.CERTIFICATE_P12 }} -k build.keychain -P ${{ secrets.CERTIFICATE_PASSWORD }} -T /usr/bin/codesign
-          security list-keychains -s build.keychain
-          security unlock-keychain -p mypassword build.keychain
-          codesign --deep --force --verbose --sign "Developer ID Application: Your Name (Team ID)" core/build/jpackage/*.app
-          codesign --deep --force --verbose --sign "Developer ID Application: Your Name (Team ID)" core/build/jpackage/*.pkg
-
-      # Upload artifact (signed installer)
-      - name: Upload signed installers
+      # Upload artifact (signed or unsigned installers)
+      - name: Upload signed or unsigned installers
         uses: actions/upload-artifact@v3
         with:
-          name: signed-installers
+          name: installers-${{ runner.os }}
           path: core/build/jpackage
