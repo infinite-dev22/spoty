@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up JDK 17 (required for jpackage)
+      # Set up JDK 21 (required for jpackage)
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
@@ -41,20 +41,30 @@ jobs:
       - name: Build core project with Gradle
         run: ./gradlew :clean :core:build
 
-      # Run jpackage for platform-specific build
+      # Run jpackage for platform-specific build (Linux)
       - name: Package with jpackage for Linux
         if: runner.os != 'Windows'
         run: ./gradlew :core:jpackage
 
+      # Run jpackage for platform-specific build (Windows)
       - name: Package with jpackage for Windows
         if: runner.os == 'Windows'
         run: ./gradlew :core:jpackage
 
-      # Code sign the Windows executables
-      - name: Code signing for Windows
+      # Install cosign for signing (only on Windows)
+      - name: Install cosign
         if: runner.os == 'Windows'
+        uses: sigstore/cosign-installer@v2
+        with:
+          cosign-release: 'v2.0.0'
+
+      # Code signing the Windows executables with cosign (Keyless Signing)
+      - name: Code signing for Windows using Sigstore
+        if: runner.os == 'Windows'
+        env:
+          COSIGN_EXPERIMENTAL: "true"  # Enable keyless signing
         run: |
-          signtool sign /f ${{ secrets.CERTIFICATE_PFX }} /p ${{ secrets.CERTIFICATE_PASSWORD }} /tr http://timestamp.digicert.com /td sha256 /fd sha256 "core/build/jpackage/*.exe"
+          cosign sign --keyless core/build/jpackage/*.exe
 
       # Upload artifact (signed or unsigned installers)
       - name: Upload signed or unsigned installers
