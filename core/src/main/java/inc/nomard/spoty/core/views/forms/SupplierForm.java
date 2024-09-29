@@ -2,12 +2,13 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatablePhoneField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import inc.nomard.spoty.core.util.validation.Constraint;
 import javafx.beans.property.Property;
 import javafx.css.PseudoClass;
 import javafx.event.Event;
@@ -64,7 +65,7 @@ public class SupplierForm extends BorderPane {
         otherName = createTextField();
         lastName = createTextField();
         email = createTextField();
-        phone = createTextField();
+        phone = createPhoneField();
         country = createTextField();
         city = createTextField();
         address = createTextField();
@@ -125,6 +126,12 @@ public class SupplierForm extends BorderPane {
         return textField;
     }
 
+    private ValidatablePhoneField createPhoneField() {
+        ValidatablePhoneField textField = new ValidatablePhoneField();
+        textField.setPrefWidth(1000);
+        return textField;
+    }
+
     private VBox buildFieldBox(Control control, String floatingText, Label validationLabel) {
         var label = new Label(floatingText);
         return new VBox(label, control, validationLabel);
@@ -138,9 +145,6 @@ public class SupplierForm extends BorderPane {
     private void setupPhoneField() {
         phone.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
-        });
-        phone.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) phone.setLeft(new Label("+"));
         });
     }
 

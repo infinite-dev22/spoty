@@ -3,6 +3,8 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
@@ -10,14 +12,13 @@ import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatablePhoneField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import io.github.palexdev.mfxcore.utils.StringUtils;
 import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter;
 import javafx.beans.property.Property;
@@ -81,7 +82,7 @@ public class EmployeeForm extends BorderPane {
         otherName = createTextField();
         salary = createTextField();
         email = createTextField();
-        phone = createTextField();
+        phone = createPhoneField();
 
         department = createFilterComboBox(DepartmentViewModel.getDepartments());
         designation = createFilterComboBox(DesignationViewModel.getDesignations());
@@ -106,7 +107,7 @@ public class EmployeeForm extends BorderPane {
     }
 
     private void setupLayout() {
-        HBox buttonBox = new HBox(20, saveBtn, cancelBtn);
+        var buttonBox = new HBox(20, saveBtn, cancelBtn);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10, 10, 10, 10));
 
@@ -134,7 +135,7 @@ public class EmployeeForm extends BorderPane {
     }
 
     private Label createValidationLabel() {
-        Label label = new Label();
+        var label = new Label();
         label.setManaged(false);
         label.setVisible(false);
         label.setWrapText(true);
@@ -143,13 +144,19 @@ public class EmployeeForm extends BorderPane {
     }
 
     private ValidatableTextField createTextField() {
-        ValidatableTextField textField = new ValidatableTextField();
-        textField.setPrefWidth(300);
+        var textField = new ValidatableTextField();
+        textField.setPrefWidth(1000);
+        return textField;
+    }
+
+    private ValidatablePhoneField createPhoneField() {
+        var textField = new ValidatablePhoneField();
+        textField.setPrefWidth(1000);
         return textField;
     }
 
     private <T> ValidatableComboBox<T> createFilterComboBox(ObservableList<T> items) {
-        ValidatableComboBox<T> comboBox = new ValidatableComboBox<>();
+        var comboBox = new ValidatableComboBox<T>();
         comboBox.setPrefWidth(1000);
         comboBox.setItems(items);
         return comboBox;
@@ -168,9 +175,6 @@ public class EmployeeForm extends BorderPane {
     private void setupPhoneField() {
         phone.textProperty().addListener((observable, oldValue, newValue) -> {
             if (Objects.nonNull(newValue) && !newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
-        });
-        phone.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) phone.setLeft(new Label("+"));
         });
     }
 
