@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.components.validatables;
 
+import inc.nomard.spoty.core.values.strings.Values;
+
 import java.util.Objects;
 
 public class ValidatableNumberField extends ValidatableTextField {
@@ -7,6 +9,8 @@ public class ValidatableNumberField extends ValidatableTextField {
 
     public ValidatableNumberField() {
         super();
+        this.setMaxHeight(Values.FIELD_HEIGHT);
+        this.setMinHeight(Values.FIELD_HEIGHT);
     }
 
     @Override

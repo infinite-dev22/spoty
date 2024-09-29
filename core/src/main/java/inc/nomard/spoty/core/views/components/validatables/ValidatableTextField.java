@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.components.validatables;
 import atlantafx.base.controls.CustomTextField;
 import inc.nomard.spoty.core.util.validation.Validated;
 import inc.nomard.spoty.core.util.validation.Validator;
+import inc.nomard.spoty.core.values.strings.Values;
 
 import java.util.Objects;
 
@@ -12,7 +13,8 @@ public class ValidatableTextField extends CustomTextField implements Validated {
 
     public ValidatableTextField() {
         this.validator = new Validator();
-        this.setMaxHeight(45);
+        this.setMaxHeight(Values.FIELD_HEIGHT);
+        this.setMinHeight(Values.FIELD_HEIGHT);
         validationListener();
     }
 

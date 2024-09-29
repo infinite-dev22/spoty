@@ -517,3 +517,8 @@
 .button_busy {
     -fx-foreground-color: white;
 }
+
+.password-field {
+    -fx-font-family: 'Varela Round';
+    -fx-font-size: 12;
+}

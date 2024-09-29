@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.views.components.validatables;
 
 import inc.nomard.spoty.core.util.validation.Validated;
 import inc.nomard.spoty.core.util.validation.Validator;
+import inc.nomard.spoty.core.values.strings.Values;
 import javafx.scene.control.PasswordField;
 
 import java.util.Objects;
@@ -13,6 +14,8 @@ public class ValidatablePasswordField extends PasswordField implements Validated
     public ValidatablePasswordField() {
         this.validator = new Validator();
         validationListener();
+        this.setMaxHeight(Values.FIELD_HEIGHT);
+        this.setMinHeight(Values.FIELD_HEIGHT);
     }
 
     @Override
