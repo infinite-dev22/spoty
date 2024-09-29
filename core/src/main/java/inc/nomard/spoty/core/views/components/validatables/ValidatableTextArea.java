@@ -17,6 +17,11 @@ public class ValidatableTextArea extends TextArea implements Validated {
     public ValidatableTextArea(String text) {
         super(text);
         this.validator = new Validator();
+        validationListener();
+    }
+
+    private void validationListener() {
+        this.textProperty().addListener((observable, oldValue, newValue) -> this.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false));
     }
 
     @Override

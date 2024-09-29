@@ -12,6 +12,7 @@ public class ValidatablePasswordField extends PasswordField implements Validated
 
     public ValidatablePasswordField() {
         this.validator = new Validator();
+        validationListener();
     }
 
     @Override
@@ -39,6 +40,10 @@ public class ValidatablePasswordField extends PasswordField implements Validated
             return newLength <= MAX_CHARACTERS;
         }
         return true;
+    }
+
+    private void validationListener() {
+        this.textProperty().addListener((observable, oldValue, newValue) -> this.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false));
     }
 
     public void setMaxLength(int value) {

@@ -13,6 +13,11 @@ public class ValidatableTextField extends CustomTextField implements Validated {
     public ValidatableTextField() {
         this.validator = new Validator();
         this.setMaxHeight(45);
+        validationListener();
+    }
+
+    private void validationListener() {
+        this.textProperty().addListener((observable, oldValue, newValue) -> this.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false));
     }
 
     public ValidatableTextField(String text) {

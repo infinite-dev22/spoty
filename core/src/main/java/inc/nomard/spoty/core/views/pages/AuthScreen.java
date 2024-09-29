@@ -830,7 +830,7 @@ public class AuthScreen extends BorderPane {
                 signUpPasswordValidationLabel,
                 "Password can not be empty",
                 "Password must be at least 8 digits long",
-                "Password must contain Uppercase and Lowercase letter, digits and a symbol");
+                "Password must contain Uppercase and Lowercase letters, digits and a symbol");
         Validators.requiredValidator(confirmPassword, confirmPasswordValidationLabel, "Confirm password is required");
         Validators.matchingValidator(signUpPassword, confirmPassword, confirmPasswordValidationLabel, "Password does not match");
     }
