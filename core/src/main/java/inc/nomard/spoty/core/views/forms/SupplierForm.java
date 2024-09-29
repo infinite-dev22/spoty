@@ -79,7 +79,6 @@ public class SupplierForm extends BorderPane {
     }
 
     private void initializeComponentProperties() {
-        setupPhoneField();
         setupBindings();
         setupValidators();
         setupListeners();
@@ -140,12 +139,6 @@ public class SupplierForm extends BorderPane {
     private VBox buildFieldBox(ValidatableTextField textField, String floatingText) {
         var label = new Label(floatingText);
         return new VBox(label, textField);
-    }
-
-    private void setupPhoneField() {
-        phone.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
-        });
     }
 
     private void setupBindings() {

@@ -99,7 +99,6 @@ public class EmployeeForm extends BorderPane {
     }
 
     private void initializeComponentProperties() {
-        setupPhoneField();
         setupBindings();
         setupValidators();
         setupListeners();
@@ -170,12 +169,6 @@ public class EmployeeForm extends BorderPane {
     private VBox buildFieldBox(Control control, String floatingText) {
         var label = new Label(floatingText);
         return new VBox(label, control);
-    }
-
-    private void setupPhoneField() {
-        phone.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (Objects.nonNull(newValue) && !newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
-        });
     }
 
     private void setupBindings() {
