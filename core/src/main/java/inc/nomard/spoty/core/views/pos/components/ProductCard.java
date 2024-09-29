@@ -5,11 +5,11 @@ import inc.nomard.spoty.core.values.PreloadedData;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.mfxcore.controls.Label;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
@@ -60,7 +60,6 @@ public class ProductCard extends VBox {
     }
 
     private void initializeLabels() {
-        productNameLbl.setWrappingWidth(LABEL_WIDTH);
         productNameLbl.setWrapText(true);
         productNameLbl.setLabelFor(this);
         productPriceLbl.setLabelFor(this);

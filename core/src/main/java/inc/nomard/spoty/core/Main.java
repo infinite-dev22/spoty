@@ -13,9 +13,6 @@ import inc.nomard.spoty.core.views.pages.AuthScreen;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.theming.JavaFXThemes;
-import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
-import io.github.palexdev.materialfx.theming.UserAgentBuilder;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.ColorScheme;
@@ -35,7 +32,7 @@ public class Main extends Application {
     private static final String DARK_THEME_CSS = SpotyCoreResourceLoader.load("styles/theming/dark-theme.css");
 
     private static void initializePrimaryStage(Stage primaryStage) {
-        configureUserAgent();
+//        configureUserAgent();
         CSSFX.start();
         AppManager.setPrimaryStage(primaryStage);
 
@@ -46,15 +43,15 @@ public class Main extends Application {
         AppManager.setScene(scene);
     }
 
-    private static void configureUserAgent() {
-        UserAgentBuilder.builder()
-                .themes(JavaFXThemes.MODENA)
-                .themes(MaterialFXStylesheets.forAssemble(true))
-                .setDeploy(true)
-                .setResolveAssets(true)
-                .build()
-                .setGlobal();
-    }
+//    private static void configureUserAgent() {
+//        UserAgentBuilder.builder()
+//                .themes(JavaFXThemes.MODENA)
+//                .themes(MaterialFXStylesheets.forAssemble(true))
+//                .setDeploy(true)
+//                .setResolveAssets(true)
+//                .build()
+//                .setGlobal();
+//    }
 
     private static Scene createPrimaryScene(Stage primaryStage) {
         Parent root = new AuthScreen(primaryStage);

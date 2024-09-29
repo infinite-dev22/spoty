@@ -9,7 +9,6 @@ import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapColumn;
 import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapPane;
 import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapRow;
 import inc.nomard.spoty.utils.responsiveness.layouts.Breakpoint;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -55,7 +54,7 @@ public class DashboardPage extends OutlinePage {
         kpisContainer = new BootstrapPane();
         kpisContainer.setHgap(20.0);
         kpisContainer.setVgap(20.0);
-        MFXScrollPane scrollPane = new MFXScrollPane(kpisContainer);
+        var scrollPane = new ScrollPane(kpisContainer);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

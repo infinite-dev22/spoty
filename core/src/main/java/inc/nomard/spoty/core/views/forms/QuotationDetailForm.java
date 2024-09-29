@@ -7,10 +7,10 @@ import inc.nomard.spoty.core.viewModels.quotations.QuotationDetailViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.binding.BooleanExpression;
@@ -31,7 +31,7 @@ import lombok.extern.java.Log;
 import java.util.List;
 import java.util.function.Function;
 
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
 public class QuotationDetailForm extends BorderPane {

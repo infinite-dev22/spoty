@@ -2,9 +2,9 @@ package inc.nomard.spoty.core.views.previews;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
-import io.github.palexdev.mfxcore.controls.Label;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;

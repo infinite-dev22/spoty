@@ -5,7 +5,6 @@ import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.CalendarView;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import lombok.extern.java.Log;
 
@@ -15,8 +14,6 @@ import java.time.LocalTime;
 @SuppressWarnings("unchecked")
 @Log
 public class CalendarPage extends OutlinePage {
-    @FXML
-    public BorderPane contentPane;
 
     public CalendarPage() {
         super();

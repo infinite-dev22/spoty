@@ -16,7 +16,6 @@ import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.utils.connectivity.Connectivity;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import io.github.palexdev.mfxcore.base.properties.CharProperty;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -53,7 +52,7 @@ public class PaySlipViewModel {
     private static final ObjectProperty<LocalDateTime> startDate = new SimpleObjectProperty<>();
     private static final ObjectProperty<LocalDateTime> endDate = new SimpleObjectProperty<>();
     private static final IntegerProperty salariesQuantity = new SimpleIntegerProperty();
-    private static final CharProperty status = new CharProperty();
+    private static final StringProperty status = new SimpleStringProperty();
     private static final ObjectProperty<LocalDateTime> createdOn = new SimpleObjectProperty<>();
     private static final StringProperty message = new SimpleStringProperty("");
     private static final PaySlipRepositoryImpl paySlipRepository = new PaySlipRepositoryImpl();
@@ -109,15 +108,15 @@ public class PaySlipViewModel {
         return salariesQuantity;
     }
 
-    public static char getStatus() {
+    public static String getStatus() {
         return status.get();
     }
 
-    public static void setStatus(char status) {
+    public static void setStatus(String status) {
         PaySlipViewModel.status.set(status);
     }
 
-    public static CharProperty statusProperty() {
+    public static StringProperty statusProperty() {
         return status;
     }
 
@@ -198,7 +197,6 @@ public class PaySlipViewModel {
         setStartDate(null);
         setEndDate(null);
         setSalariesQuantity(0);
-        setStatus('P');
         setCreatedDate(null);
         setMessage("");
     }

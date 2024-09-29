@@ -8,6 +8,7 @@ import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -44,8 +45,8 @@ public class Orders extends AnchorPane {
         return hbox;
     }
 
-    private io.github.palexdev.mfxcore.controls.Label buildTitle() {
-        var label = new io.github.palexdev.mfxcore.controls.Label(Labels.RECENT_ORDERS);
+    private Label buildTitle() {
+        var label = new Label(Labels.RECENT_ORDERS);
         label.getStyleClass().add("card-title");
         UIUtils.anchor(label, 0d, null, 0d, 0d);
         return label;

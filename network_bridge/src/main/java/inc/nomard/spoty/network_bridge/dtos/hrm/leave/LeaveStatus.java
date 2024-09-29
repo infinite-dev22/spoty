@@ -26,7 +26,7 @@ public class LeaveStatus {
     private Duration duration;
     private String leaveType;
     private String attachment;
-    private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed
+    private String status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed
     private Employee createdBy;
     private LocalDateTime createdAt;
     private Employee updatedBy;
@@ -46,16 +46,5 @@ public class LeaveStatus {
 
     public String getDesignationName() {
         return designation.getName();
-    }
-
-    public String getStatusName() {
-        return switch (status) {
-            case 'P' -> "Pending";
-            case 'R' -> "Rejected";
-            case 'A' -> "Approved";
-            case 'E' -> "Returned";
-            case 'V' -> "Viewed";
-            default -> throw new IllegalStateException("Unexpected value: " + status);
-        };
     }
 }

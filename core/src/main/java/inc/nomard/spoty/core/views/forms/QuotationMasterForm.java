@@ -14,6 +14,7 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberFiel
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
@@ -21,8 +22,6 @@ import inc.nomard.spoty.network_bridge.dtos.Discount;
 import inc.nomard.spoty.network_bridge.dtos.Tax;
 import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
 import inc.nomard.spoty.utils.AppUtils;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -45,7 +44,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -155,7 +154,7 @@ public class QuotationMasterForm extends VBox {
         Function<String, Predicate<Customer>> customerFilterFunction =
                 searchStr ->
                         customer ->
-                                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
+                                customerConverter.toString(customer).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         customer.setConverter(customerConverter);
@@ -186,7 +185,7 @@ public class QuotationMasterForm extends VBox {
         Function<String, Predicate<Tax>> taxFilterFunction =
                 searchStr ->
                         tax ->
-                                StringUtils.containsIgnoreCase(taxConverter.toString(tax), searchStr);
+                                taxConverter.toString(tax).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         tax.setConverter(taxConverter);
@@ -216,7 +215,7 @@ public class QuotationMasterForm extends VBox {
         Function<String, Predicate<Discount>> discountFilterFunction =
                 searchStr ->
                         discount ->
-                                StringUtils.containsIgnoreCase(discountConverter.toString(discount), searchStr);
+                                discountConverter.toString(discount).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         discount.setConverter(discountConverter);

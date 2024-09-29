@@ -17,7 +17,7 @@ public class PaySlip {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int salariesQuantity;
-    private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed, G - Generated, g - Generating, S - Sent
+    private String status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed, G - Generated, g - Generating, S - Sent
     private LocalDateTime createdOn;
     private String message;
 
@@ -31,16 +31,5 @@ public class PaySlip {
 
     public String getLocaleCreatedDate() {
         return DateFormat.getDateInstance().format(createdOn);
-    }
-
-    public String getStatusName() {
-        return switch (status) {
-            case 'P' -> "Pending";
-            case 'R' -> "Rejected";
-            case 'A' -> "Approved";
-            case 'E' -> "Returned";
-            case 'V' -> "Viewed";
-            default -> throw new IllegalStateException("Unexpected value: " + status);
-        };
     }
 }

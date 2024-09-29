@@ -14,7 +14,6 @@ import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.connectivity.Connectivity;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import io.github.palexdev.mfxcore.base.properties.CharProperty;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -58,7 +57,7 @@ public class LeaveStatusViewModel {
     private static final StringProperty duration = new SimpleStringProperty("");
     private static final StringProperty leaveType = new SimpleStringProperty();
     private static final StringProperty attachment = new SimpleStringProperty("");
-    private static final CharProperty status = new CharProperty();
+    private static final StringProperty status = new SimpleStringProperty();
     private static final LeaveRepositoryImpl leaveStatusRepository = new LeaveRepositoryImpl();
     private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
     private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
@@ -198,15 +197,15 @@ public class LeaveStatusViewModel {
         return attachment;
     }
 
-    public static char getStatus() {
+    public static String getStatus() {
         return status.get();
     }
 
-    public static void setStatus(char status) {
+    public static void setStatus(String status) {
         LeaveStatusViewModel.status.set(status);
     }
 
-    public static CharProperty statusProperty() {
+    public static StringProperty statusProperty() {
         return status;
     }
 
@@ -268,7 +267,6 @@ public class LeaveStatusViewModel {
         setDuration("");
         setLeaveType("null");
         setAttachment("");
-        setStatus('P');
     }
 
     public static void saveLeaveStatus(SpotyGotFunctional.ParameterlessConsumer onSuccess,

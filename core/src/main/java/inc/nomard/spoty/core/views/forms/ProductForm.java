@@ -3,21 +3,18 @@ package inc.nomard.spoty.core.views.forms;
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.SpotyImageUtils;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
-import io.github.palexdev.mfxresources.fonts.IconsProviders;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.collections.ListChangeListener;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
@@ -42,6 +39,8 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
@@ -335,15 +334,15 @@ public class ProductForm extends BorderPane {
         Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
                 searchStr ->
                         unitOfMeasure ->
-                                StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
+                                uomConverter.toString(unitOfMeasure).toLowerCase().contains(searchStr);
         Function<String, Predicate<ProductCategory>> productCategoryFilterFunction =
                 searchStr ->
                         productCategory ->
-                                StringUtils.containsIgnoreCase(
-                                        productCategoryConverter.toString(productCategory), searchStr);
+
+                                productCategoryConverter.toString(productCategory).toLowerCase().contains(searchStr);
         Function<String, Predicate<Brand>> brandFilterFunction =
                 searchStr ->
-                        brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
+                        brand -> brandConverter.toString(brand).toLowerCase().contains(searchStr);
         // Unit of measure combo box
         unitOfMeasure.setConverter(uomConverter);
         if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
@@ -461,11 +460,9 @@ public class ProductForm extends BorderPane {
     }
 
     private void addImage() {
-        var upload = new MFXFontIcon();
-        upload.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-        upload.setDescription("far-file-image");
-        upload.setSize(60);
-        upload.setColor(Color.web("#C2C2C2"));
+        var upload = new FontIcon(FontAwesomeRegular.FILE_IMAGE);
+        upload.setIconSize(60);
+        upload.setIconColor(Color.web("#C2C2C2"));
         imageIcon.getChildren().add(upload);
 
         if (Objects.equals(fileChooser, null)) {

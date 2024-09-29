@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.components.title.Title;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.PermissionsViewModel;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
@@ -10,9 +12,6 @@ import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,7 +33,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
 public class RoleFormController implements Initializable {
@@ -353,8 +352,6 @@ public class RoleFormController implements Initializable {
                         errorLabel.setVisible(true);
                         errorLabel.setText(constraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                         return;
                     }
                     if (PermissionsViewModel.getPermissionsList().isEmpty()) {

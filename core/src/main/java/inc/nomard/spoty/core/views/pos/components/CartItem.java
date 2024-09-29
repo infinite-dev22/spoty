@@ -2,13 +2,11 @@ package inc.nomard.spoty.core.views.pos.components;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXSpinner;
-import io.github.palexdev.materialfx.controls.models.spinner.IntegerSpinnerModel;
-import io.github.palexdev.mfxcore.controls.Label;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -17,6 +15,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import lombok.Setter;
 import lombok.extern.java.Log;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
@@ -82,7 +81,7 @@ public class CartItem extends HBox {
         // Components one.
         var hBox1 = new HBox();
         var label1 = new Label();
-        var icon = new MFXFontIcon();
+        var icon = new FontIcon();
         label1.setText(productName);
         label1.getStyleClass().add("product-name");
         hBox1.getChildren().setAll(label1, new Spacer(), icon);
@@ -90,12 +89,12 @@ public class CartItem extends HBox {
         // Components two.
         var hBox2 = new HBox();
         var label2 = new Label();
-        var spinner = new MFXSpinner<Integer>();
+        var spinner = new Spinner<Integer>();
         label2.setText(productPrice);
         label2.getStyleClass().add("product-price");
         spinner.setEditable(true);
-        spinner.setGraphicTextGap(0);
-        spinner.setSpinnerModel(new IntegerSpinnerModel(1));
+//        spinner.setGraphicTextGap(0);
+//        spinner.setSpinnerModel(new IntegerSpinnerModel(1));
         hBox2.getChildren().setAll(label2, new Spacer(), spinner);
         hBox2.setAlignment(Pos.CENTER);
         // Body component.

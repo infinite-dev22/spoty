@@ -16,8 +16,6 @@ import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import atlantafx.base.controls.RingProgressIndicator;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -53,7 +51,6 @@ public class RequisitionPage extends OutlinePage {
     private TableView<RequisitionMaster> masterTable;
     private RingProgressIndicator progress;
     private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
     private TableColumn<RequisitionMaster, String> reference;
     private TableColumn<RequisitionMaster, RequisitionMaster> supplier;
     private TableColumn<RequisitionMaster, RequisitionMaster> status;
@@ -64,11 +61,6 @@ public class RequisitionPage extends OutlinePage {
     private TableColumn<RequisitionMaster, RequisitionMaster> updatedAt;
 
     public RequisitionPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         modalPane1 = new SideModalPane();
         modalPane2 = new SideModalPane();
 
@@ -270,7 +262,7 @@ public class RequisitionPage extends OutlinePage {
         // View
         view.setOnAction(
                 event -> {
-                    viewShow(obj.getItem());
+//                    viewShow(obj.getItem());
                     event.consume();
                 });
         contextMenu.getItems().addAll(view, edit, delete);
@@ -294,24 +286,24 @@ public class RequisitionPage extends OutlinePage {
         RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/RequisitionPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new RequisitionPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-//        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
-    }
-
-    public void viewShow(RequisitionMaster requisitionMaster) {
-        RequisitionPreviewController controller = viewFxmlLoader.getController();
-        controller.init(requisitionMaster);
-        viewDialog.showAndWait();
-    }
+//    private void viewDialogPane() throws IOException {
+//        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+//        viewFxmlLoader = fxmlLoader("views/previews/RequisitionPreview.fxml");
+//        viewFxmlLoader.setControllerFactory(c -> new RequisitionPreviewController());
+//        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+//        dialogContent.setShowMinimize(false);
+//        dialogContent.setShowAlwaysOnTop(false);
+//
+//        dialogContent.setPrefHeight(screenHeight * .98);
+//        dialogContent.setPrefWidth(700);
+////        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
+//    }
+//
+//    public void viewShow(RequisitionMaster requisitionMaster) {
+//        RequisitionPreviewController controller = viewFxmlLoader.getController();
+//        controller.init(requisitionMaster);
+//        viewDialog.showAndWait();
+//    }
 
     private void errorMessage(String message) {
         SpotyUtils.errorMessage(message);

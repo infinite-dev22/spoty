@@ -2,13 +2,13 @@ package inc.nomard.spoty.core.views.components;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.wrappers.DashboardKPIModelWrapper;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class KPICard extends AnchorPane {
     private final StringProperty name = new SimpleStringProperty();
@@ -17,7 +17,7 @@ public class KPICard extends AnchorPane {
 
     private final Label title;
     private final Label subTitle;
-    private final MFXFontIcon icon;
+    private final FontIcon icon;
 
     public KPICard() {
         this.title = buildTitle();
@@ -56,8 +56,8 @@ public class KPICard extends AnchorPane {
         return label;
     }
 
-    private MFXFontIcon buildIcon() {
-        MFXFontIcon icon = new MFXFontIcon();
+    private FontIcon buildIcon() {
+        FontIcon icon = new FontIcon();
         AnchorPane.setTopAnchor(icon, 36.0);
         AnchorPane.setBottomAnchor(icon, 36.0);
         AnchorPane.setRightAnchor(icon, 10.0);

@@ -15,6 +15,7 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Discount;
@@ -22,8 +23,6 @@ import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.Tax;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
 import inc.nomard.spoty.utils.AppUtils;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.application.Platform;
@@ -54,7 +53,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
 public class PurchaseMasterForm extends VBox {
@@ -298,7 +297,7 @@ public class PurchaseMasterForm extends VBox {
 
     private void configureSupplierComboBox() {
         StringConverter<Supplier> supplierConverter = FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
-        Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr -> supplier -> StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
+        Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr -> supplier -> supplierConverter.toString(supplier).toLowerCase().contains(searchStr);
 
         supplier.setConverter(supplierConverter);
 

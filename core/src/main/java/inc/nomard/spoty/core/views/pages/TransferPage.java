@@ -1,5 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.controls.RingProgressIndicator;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -16,12 +17,9 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.transfers.TransferMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -49,8 +47,6 @@ public class TransferPage extends OutlinePage {
     private TextField searchBar;
     private TableView<TransferMaster> masterTable;
     private RingProgressIndicator progress;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
     private TableColumn<TransferMaster, String> reference;
     private TableColumn<TransferMaster, TransferMaster> fromBranch;
     private TableColumn<TransferMaster, TransferMaster> toBranch;

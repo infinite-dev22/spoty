@@ -18,7 +18,6 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import atlantafx.base.controls.RingProgressIndicator;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -32,6 +31,7 @@ import javafx.util.Duration;
 import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
@@ -250,7 +250,7 @@ public class BranchPage extends OutlinePage {
     }
 
     private void setIcons() {
-        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
+        searchBar.setRight(new FontIcon(FontAwesomeSolid.SEARCH));
     }
 
     public void setSearchBar() {

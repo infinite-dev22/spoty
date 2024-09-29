@@ -9,7 +9,6 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.css.PseudoClass;
@@ -143,16 +142,12 @@ public class EmploymentStatusForm extends BorderPane {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!colorConstraints.isEmpty()) {
                         colorPickerValidationLabel.setManaged(true);
                         colorPickerValidationLabel.setVisible(true);
                         colorPickerValidationLabel.setText(colorConstraints.getFirst().getMessage());
                         colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) colorPicker.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty() &
                             colorConstraints.isEmpty()) {

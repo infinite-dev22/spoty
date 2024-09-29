@@ -15,11 +15,8 @@ import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.mfxresources.fonts.IconsProviders;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.geometry.Insets;
@@ -42,13 +39,15 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
 import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.Objects;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
 public class LeaveRequestForm extends BorderPane {
@@ -235,32 +234,24 @@ public class LeaveRequestForm extends BorderPane {
                         employeeValidationLabel.setVisible(true);
                         employeeValidationLabel.setText(employeeConstraints.getFirst().getMessage());
                         employee.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) employee.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!leaveTypeConstraints.isEmpty()) {
                         leaveTypeValidationLabel.setManaged(true);
                         leaveTypeValidationLabel.setVisible(true);
                         leaveTypeValidationLabel.setText(leaveTypeConstraints.getFirst().getMessage());
                         leaveType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) leaveType.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!fromDateConstraints.isEmpty()) {
                         fromDateValidationLabel.setManaged(true);
                         fromDateValidationLabel.setVisible(true);
                         fromDateValidationLabel.setText(fromDateConstraints.getFirst().getMessage());
                         fromDate.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) fromDate.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!toDateConstraints.isEmpty()) {
                         toDateValidationLabel.setManaged(true);
                         toDateValidationLabel.setVisible(true);
                         toDateValidationLabel.setText(toDateConstraints.getFirst().getMessage());
                         toDate.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) toDate.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (employeeConstraints.isEmpty()
                             && leaveTypeConstraints.isEmpty()
@@ -285,11 +276,9 @@ public class LeaveRequestForm extends BorderPane {
     }
 
     private void addDocument() {
-        var upload = new MFXFontIcon();
-        upload.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-        upload.setDescription("far-file-pdf");
-        upload.setSize(60);
-        upload.setColor(Color.web("#C2C2C2"));
+        var upload = new FontIcon(FontAwesomeRegular.FILE_PDF);
+        upload.setIconSize(60);
+        upload.setIconColor(Color.web("#C2C2C2"));
         uploadIcon.getChildren().add(upload);
 
         if (Objects.equals(fileChooser, null)) {

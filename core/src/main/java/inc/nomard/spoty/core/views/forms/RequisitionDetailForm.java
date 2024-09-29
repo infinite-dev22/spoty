@@ -7,11 +7,10 @@ import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.collections.ListChangeListener;
@@ -30,7 +29,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @Log
 public class RequisitionDetailForm extends BorderPane {
@@ -66,8 +65,7 @@ public class RequisitionDetailForm extends BorderPane {
         Function<String, Predicate<Product>> productVariantFilterFunction =
                 searchStr ->
                         productDetail ->
-                                StringUtils.containsIgnoreCase(
-                                        productVariantConverter.toString(productDetail), searchStr);
+                                productVariantConverter.toString(productDetail).toLowerCase().contains(searchStr);
 
         // ComboBox properties.
         product.setConverter(productVariantConverter);

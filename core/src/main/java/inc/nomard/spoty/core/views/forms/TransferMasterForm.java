@@ -12,6 +12,7 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
@@ -19,8 +20,6 @@ import inc.nomard.spoty.network_bridge.dtos.transfers.TransferDetail;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -44,7 +43,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -163,7 +162,7 @@ public class TransferMasterForm extends VBox {
         Function<String, Predicate<Branch>> fromBranchFilterFunction =
                 searchStr ->
                         fromBranch ->
-                                StringUtils.containsIgnoreCase(fromBranchConverter.toString(fromBranch), searchStr);
+                                fromBranchConverter.toString(fromBranch).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         fromBranch.setConverter(fromBranchConverter);
@@ -194,7 +193,7 @@ public class TransferMasterForm extends VBox {
         Function<String, Predicate<Branch>> toBranchFilterFunction =
                 searchStr ->
                         toBranch ->
-                                StringUtils.containsIgnoreCase(toBranchConverter.toString(toBranch), searchStr);
+                                toBranchConverter.toString(toBranch).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         toBranch.setConverter(toBranchConverter);

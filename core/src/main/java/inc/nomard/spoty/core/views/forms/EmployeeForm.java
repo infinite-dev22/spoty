@@ -14,13 +14,12 @@ import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatablePhoneField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
-import io.github.palexdev.mfxcore.utils.StringUtils;
-import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter;
 import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -351,16 +350,16 @@ public class EmployeeForm extends BorderPane {
         // ComboBox Filter Functions.
         Function<String, Predicate<Role>> roleFilterFunction =
                 searchStr ->
-                        role -> StringUtils.containsIgnoreCase(roleConverter.toString(role), searchStr);
+                        role -> roleConverter.toString(role).toLowerCase().contains(searchStr);
         Function<String, Predicate<Department>> departmentFilterFunction =
                 searchStr ->
-                        department -> StringUtils.containsIgnoreCase(departmentConverter.toString(department), searchStr);
+                        department -> departmentConverter.toString(department).toLowerCase().contains(searchStr);
         Function<String, Predicate<Designation>> designationFilterFunction =
                 searchStr ->
-                        designation -> StringUtils.containsIgnoreCase(designationConverter.toString(designation), searchStr);
+                        designation -> designationConverter.toString(designation).toLowerCase().contains(searchStr);
         Function<String, Predicate<EmploymentStatus>> employmentStatusFilterFunction =
                 searchStr ->
-                        employmentStatus -> StringUtils.containsIgnoreCase(employmentStatusConverter.toString(employmentStatus), searchStr);
+                        employmentStatus -> employmentStatusConverter.toString(employmentStatus).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         role.setConverter(roleConverter);

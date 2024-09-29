@@ -12,16 +12,13 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.pages.EmployeePage;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.UIUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.mfxresources.fonts.IconsProviders;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -44,6 +41,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.java.Log;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeBrands;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Currency;
 import java.util.Objects;
@@ -424,25 +425,19 @@ public class TenantSettingsPage extends OutlinePage {
 
     private HBox buildCompanySocialProfiles() {
         // Twitter text box.
-        var twitterIcon = new MFXFontIcon();
-        twitterIcon.setIconsProvider(IconsProviders.FONTAWESOME_BRANDS);
-        twitterIcon.setDescription("fab-twitter");
+        var twitterIcon = new FontIcon(FontAwesomeBrands.TWITTER);
         companyTwitter = new LabeledTextField();
         companyTwitter.setPrefWidth(400d);
         companyTwitter.setLabel("Twitter(X)");
         companyTwitter.setRight(twitterIcon);
         // Facebook text box.
-        var facebookIcon = new MFXFontIcon();
-        facebookIcon.setIconsProvider(IconsProviders.FONTAWESOME_BRANDS);
-        facebookIcon.setDescription("fab-facebook");
+        var facebookIcon = new FontIcon(FontAwesomeBrands.FACEBOOK_F);
         companyFacebook = new LabeledTextField();
         companyFacebook.setPrefWidth(400d);
         companyFacebook.setLabel("Facebook");
         companyFacebook.setRight(facebookIcon);
         // LinkedIn text box.
-        var linkedinIcon = new MFXFontIcon();
-        linkedinIcon.setIconsProvider(IconsProviders.FONTAWESOME_BRANDS);
-        linkedinIcon.setDescription("fab-linkedin");
+        var linkedinIcon = new FontIcon(FontAwesomeBrands.LINKEDIN);
         companyLinkedin = new LabeledTextField();
         companyLinkedin.setPrefWidth(400d);
         companyLinkedin.setLabel("LinkedIn");
@@ -477,7 +472,8 @@ public class TenantSettingsPage extends OutlinePage {
     }
 
     private void setIcons() {
-        var link = new MFXFontIcon("fas-link", Color.web("#00AEFF"));
+        var link = new FontIcon(FontAwesomeSolid.LINK);
+        link.setIconColor(Color.web("#00AEFF"));
         linkIcon.getChildren().add(link);
     }
 
@@ -545,7 +541,7 @@ public class TenantSettingsPage extends OutlinePage {
         Function<String, Predicate<Currency>> currencyFilterFunction =
                 searchStr ->
                         currency ->
-                                StringUtils.containsIgnoreCase(currencyConverter.toString(currency), searchStr);
+                                currencyConverter.toString(currency).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         defaultCurrencyPicker.setConverter(currencyConverter);
@@ -598,11 +594,9 @@ public class TenantSettingsPage extends OutlinePage {
     }
 
     private void addDocument() {
-        var upload = new MFXFontIcon();
-        upload.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-        upload.setDescription("far-file-image");
-        upload.setSize(60);
-        upload.setColor(Color.web("#C2C2C2"));
+        var upload = new FontIcon(FontAwesomeRegular.FILE_IMAGE);
+        upload.setIconSize(60);
+        upload.setIconColor(Color.web("#C2C2C2"));
         uploadIcon.getChildren().add(upload);
 
         if (Objects.equals(fileChooser, null)) {

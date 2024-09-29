@@ -7,12 +7,10 @@ import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.collections.ListChangeListener;
@@ -100,8 +98,6 @@ public class UOMForm extends BorderPane {
                             if (baseUnit.getValue() != null) {
                                 formsHolder.setVisible(true);
                                 formsHolder.setManaged(true);
-                                MFXStageDialog dialog = (MFXStageDialog) baseUnit.getScene().getWindow();
-                                dialog.sizeToScene();
                             } else {
                                 formsHolder.setManaged(false);
                                 formsHolder.setVisible(false);
@@ -118,7 +114,7 @@ public class UOMForm extends BorderPane {
         Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
                 searchStr ->
                         unitOfMeasure ->
-                                StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
+                                uomConverter.toString(unitOfMeasure).toLowerCase().contains(searchStr);
 
         // ComboBox properties.
         baseUnit.setConverter(uomConverter);

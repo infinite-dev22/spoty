@@ -13,8 +13,6 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.Salary;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import atlantafx.base.controls.RingProgressIndicator;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -45,7 +43,6 @@ public class SalaryPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Salary> masterTable;
     private RingProgressIndicator progress;
-    private MFXStageDialog viewDialog;
     private FXMLLoader viewFxmlLoader;
     private TableColumn<Salary, Salary> payslip;
     private TableColumn<Salary, Salary> employee;
@@ -54,11 +51,6 @@ public class SalaryPage extends OutlinePage {
     private TableColumn<Salary, String> netSalary;
 
     public SalaryPage() {
-        try {
-            salaryViewDialogPane();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
@@ -153,20 +145,20 @@ public class SalaryPage extends OutlinePage {
         return centerHolder;
     }
 
-    private void salaryViewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/SalaryPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new SalaryPreviewController());
-
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setShowClose(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-//        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
-    }
+//    private void salaryViewDialogPane() throws IOException {
+//        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+//        viewFxmlLoader = fxmlLoader("views/previews/SalaryPreview.fxml");
+//        viewFxmlLoader.setControllerFactory(c -> new SalaryPreviewController());
+//
+//        MFXGenericDialog dialogContent = viewFxmlLoader.load();
+//        dialogContent.setShowMinimize(false);
+//        dialogContent.setShowAlwaysOnTop(false);
+//        dialogContent.setShowClose(false);
+//
+//        dialogContent.setPrefHeight(screenHeight * .98);
+//        dialogContent.setPrefWidth(700);
+////        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
+//    }
 
     private void setupTable() {
         payslip = new TableColumn<>("Status");
@@ -220,7 +212,7 @@ public class SalaryPage extends OutlinePage {
         // View
         view.setOnAction(event -> {
             try {
-                salaryViewShow(obj.getItem());
+//                salaryViewShow(obj.getItem());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -240,11 +232,11 @@ public class SalaryPage extends OutlinePage {
         SalaryViewModel.getAllSalaries(null, null, null, null);
     }
 
-    public void salaryViewShow(Salary salary) {
-        SalaryPreviewController controller = viewFxmlLoader.getController();
-        controller.init(salary);
-        viewDialog.showAndWait();
-    }
+//    public void salaryViewShow(Salary salary) {
+//        SalaryPreviewController controller = viewFxmlLoader.getController();
+//        controller.init(salary);
+//        viewDialog.showAndWait();
+//    }
 
     private void successMessage(String message) {
         displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
