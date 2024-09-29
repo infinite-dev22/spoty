@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatablePasswordField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatablePhoneField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.WindowRunner;
@@ -71,40 +72,33 @@ import java.util.stream.Stream;
 public class AuthScreen extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final Stage stage;
-    public ValidatableTextField email,
+    private ValidatableTextField email,
             signUpEmail,
-            phoneNumber,
             otherName,
             lastName,
             firstName;
-    public ValidatablePasswordField password,
+    private ValidatablePhoneField phoneNumber;
+    private ValidatablePasswordField password,
             confirmPassword,
             signUpPassword;
-    public Label forgotPassword,
-            emailValidationLabel,
-            passwordValidationLabel,
-            loginAppNameLbl,
-            loginPoweredByLbl,
-            signUpEmailValidationLabel,
-            phoneNumberValidationLabel,
-            lastNameValidationLabel,
-            firstNameValidationLabel,
-            loginLink,
-            confirmPasswordValidationLabel,
-            signUpPasswordValidationLabel,
-            signUpLink;
-    public CustomButton loginBtn, registerBtn;
-    public Button nextBtn,
-            backBtn,
-            signUpBack;
-    public FontIcon closeLoginIcon,
+    private Label forgotPassword;
+    private Label emailValidationLabel;
+    private Label passwordValidationLabel;
+    private Label signUpEmailValidationLabel;
+    private Label phoneNumberValidationLabel;
+    private Label lastNameValidationLabel;
+    private Label firstNameValidationLabel;
+    private Label confirmPasswordValidationLabel;
+    private Label signUpPasswordValidationLabel;
+    private CustomButton loginBtn, registerBtn;
+    private Button nextBtn;
+    private FontIcon closeLoginIcon,
             closeSignupIcon;
-    public Pane contentPane;
-    public AnchorPane actualContentPane;
-    public VBox loginScreen,
+    private AnchorPane actualContentPane;
+    private VBox loginScreen,
             kycScreen,
             authCreateScreen;
-    public HBox registerScreen;
+    private HBox registerScreen;
 
     public AuthScreen(Stage primaryStage) {
         stage = primaryStage;
@@ -113,13 +107,13 @@ public class AuthScreen extends BorderPane {
 
     // App branding.
     private VBox buildAppBranding() {
-        loginAppNameLbl = new Label();
+        var loginAppNameLbl = new Label();
         loginAppNameLbl.setAlignment(Pos.CENTER);
         loginAppNameLbl.setContentDisplay(ContentDisplay.CENTER);
         loginAppNameLbl.getStyleClass().add("app-label");
         loginAppNameLbl.setText(Labels.APP_NAME);
         VBox.setVgrow(loginAppNameLbl, Priority.ALWAYS);
-        loginPoweredByLbl = new Label();
+        var loginPoweredByLbl = new Label();
         loginPoweredByLbl.setAlignment(Pos.CENTER);
         loginPoweredByLbl.setContentDisplay(ContentDisplay.CENTER);
         loginPoweredByLbl.getStyleClass().add("company-label");
@@ -199,7 +193,7 @@ public class AuthScreen extends BorderPane {
         var label = new Label("Don't have an account? ");
         label.setAlignment(Pos.CENTER);
         label.setContentDisplay(ContentDisplay.CENTER);
-        signUpLink = new Label("Create one");
+        var signUpLink = new Label("Create one");
         signUpLink.getStyleClass().add(Styles.ACCENT);
         signUpLink.setUnderline(true);
         signUpLink.setCursor(Cursor.HAND);
@@ -297,7 +291,7 @@ public class AuthScreen extends BorderPane {
     // Phone number input.
     private VBox buildPhoneName() {
         // Input.
-        phoneNumber = new ValidatableTextField();
+        phoneNumber = new ValidatablePhoneField();
         var label = new Label("Phone number");
         phoneNumber.setPrefWidth(350d);
         phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
@@ -328,9 +322,9 @@ public class AuthScreen extends BorderPane {
 
     // Back button.
     private HBox buildKYCBackButton() {
-        backBtn = new Button("Back to Login");
+        var backBtn = new Button("Switch to Login");
         backBtn.setPrefWidth(150d);
-        backBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
+        backBtn.getStyleClass().add(Styles.FLAT);
         backBtn.setOnAction(event -> backToLogin());
         var hbox = new HBox(backBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -340,7 +334,7 @@ public class AuthScreen extends BorderPane {
 
     // Next button.
     private HBox buildKYCNextButton() {
-        nextBtn = new Button("Proceed");
+        nextBtn = new Button("Next");
         nextBtn.setPrefWidth(120d);
         nextBtn.setDefaultButton(true);
         nextBtn.setOnAction(event -> goNext());
@@ -374,8 +368,8 @@ public class AuthScreen extends BorderPane {
                 buildOtherName(),
                 buildPhoneName(),
                 buildKYCEmail(),
-                buildKYCButtons(),
-                buildAppBranding());
+                buildKYCButtons()/*,
+                buildAppBranding()*/);
         return kycScreen;
     }
 
@@ -420,7 +414,7 @@ public class AuthScreen extends BorderPane {
 
     // Back button.
     private HBox buildRegisterBackButton() {
-        signUpBack = new Button("Back");
+        var signUpBack = new Button("Back");
         signUpBack.setPrefWidth(120d);
         signUpBack.getStyleClass().add(Styles.BUTTON_OUTLINED);
         signUpBack.setOnAction(event -> signUpBack());
@@ -454,7 +448,7 @@ public class AuthScreen extends BorderPane {
         var label = new Label("Already have an account? ");
         label.setAlignment(Pos.CENTER);
         label.setContentDisplay(ContentDisplay.CENTER);
-        loginLink = new Label("Login");
+        var loginLink = new Label("Login");
         loginLink.getStyleClass().add(Styles.ACCENT);
         loginLink.setUnderline(true);
         loginLink.setCursor(Cursor.HAND);
@@ -522,13 +516,13 @@ public class AuthScreen extends BorderPane {
     }
 
     // Screen background design.
-    private Rectangle createRectangle(double layoutX, double layoutY, double rotate, double width, double height, double arcWidth, double arcHeight, Stop[] stops) {
-        Rectangle rectangle = new Rectangle(width, height);
+    private Rectangle createRectangle(double layoutX, double layoutY, double rotate, double width, Stop[] stops) {
+        Rectangle rectangle = new Rectangle(width, 400);
         rectangle.setLayoutX(layoutX);
         rectangle.setLayoutY(layoutY);
         rectangle.setRotate(rotate);
-        rectangle.setArcWidth(arcWidth);
-        rectangle.setArcHeight(arcHeight);
+        rectangle.setArcWidth(50);
+        rectangle.setArcHeight(50);
         rectangle.setStroke(Color.TRANSPARENT);
         rectangle.setStrokeLineCap(StrokeLineCap.ROUND);
         rectangle.setStrokeLineJoin(StrokeLineJoin.ROUND);
@@ -540,40 +534,40 @@ public class AuthScreen extends BorderPane {
     }
 
     private List<Rectangle> buildBackground() {
-        Rectangle rectangle1 = createRectangle(35, -186, -59, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle1 = createRectangle(35, -186, -59, 306, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(0.33725491166114807, 0, 0.6000000238418579))
         });
 
-        Rectangle rectangle2 = createRectangle(234, 249, 121, 370, 400, 50, 50, new Stop[]{
+        Rectangle rectangle2 = createRectangle(234, 249, 121, 370, new Stop[]{
                 new Stop(0, Color.color(0.33725491166114807, 0, 0.6000000238418579)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
         rectangle2.setY(30);
 
-        Rectangle rectangle3 = createRectangle(-161, 118, 59, 339, 400, 50, 50, new Stop[]{
+        Rectangle rectangle3 = createRectangle(-161, 118, 59, 339, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
         rectangle3.setRotationAxis(new Point3D(0, 0, -37));
 
-        Rectangle rectangle4 = createRectangle(454, -42, -59, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle4 = createRectangle(454, -42, -59, 306, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
 
-        Rectangle rectangle5 = createRectangle(625, -343, -60, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle5 = createRectangle(625, -343, -60, 306, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(0.33725491166114807, 0, 0.6000000238418579))
         });
         rectangle5.setY(17);
 
-        Rectangle rectangle6 = createRectangle(938, -27, -60, 339, 400, 50, 50, new Stop[]{
+        Rectangle rectangle6 = createRectangle(938, -27, -60, 339, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
 
-        Rectangle rectangle7 = createRectangle(770, 254, -60, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle7 = createRectangle(770, 254, -60, 306, new Stop[]{
                 new Stop(0, Color.color(0.33725491166114807, 0, 0.6000000238418579)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
@@ -601,7 +595,7 @@ public class AuthScreen extends BorderPane {
 
     // Content pane.
     private Pane buildContentPane() {
-        contentPane = new Pane(buildActualContentPane());
+        var contentPane = new Pane(buildActualContentPane());
         contentPane.setMinHeight(500d);
         contentPane.setPrefHeight(500d);
         contentPane.setMaxHeight(500d);
@@ -691,7 +685,7 @@ public class AuthScreen extends BorderPane {
         return null;
     }
 
-    public void onLoginSuccess() {
+    private void onLoginSuccess() {
 //        initData();
         this.loadMainView();
         loginBtn.stopLoading();
@@ -794,7 +788,7 @@ public class AuthScreen extends BorderPane {
         backToLogin();
     }
 
-    public void closeIconClicked() {
+    private void closeIconClicked() {
         stage.hide();
         stage.close();
         SpotyThreader.disposeSpotyThreadPool();
@@ -1001,7 +995,7 @@ public class AuthScreen extends BorderPane {
         LoginViewModel.resetProperties();
     }
 
-    public void backToLogin() {
+    private void backToLogin() {
         closeSignupIcon.setVisible(false);
         closeSignupIcon.setManaged(false);
         registerScreen.setVisible(false);
@@ -1014,7 +1008,7 @@ public class AuthScreen extends BorderPane {
         SignupViewModel.resetProperties();
     }
 
-    public void goNext() {
+    private void goNext() {
         List<Constraint> firstNameConstraints = firstName.validate();
         List<Constraint> lastNameConstraints = lastName.validate();
         List<Constraint> phoneNumberConstraints = phoneNumber.validate();
@@ -1054,14 +1048,14 @@ public class AuthScreen extends BorderPane {
         }
     }
 
-    public void signUpBack() {
+    private void signUpBack() {
         authCreateScreen.setVisible(false);
         authCreateScreen.setManaged(false);
         kycScreen.setVisible(true);
         kycScreen.setManaged(true);
     }
 
-    public void registerUser() {
+    private void registerUser() {
         List<Constraint> signUpPasswordConstraints = signUpPassword.validate();
         List<Constraint> confirmPasswordConstraints = confirmPassword.validate();
         if (!signUpPasswordConstraints.isEmpty()) {
