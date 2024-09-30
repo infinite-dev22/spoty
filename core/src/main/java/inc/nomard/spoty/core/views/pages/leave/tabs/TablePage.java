@@ -11,7 +11,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 public class TablePage extends OutlinePage {
     private TextField searchBar;
     private TableView<LeaveStatus> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
     private TableColumn<LeaveStatus, LeaveStatus> employeeName;
     private TableColumn<LeaveStatus, LeaveStatus> dateAndTime;
@@ -69,7 +69,7 @@ public class TablePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

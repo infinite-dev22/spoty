@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.pages;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.forms.CustomerForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
@@ -12,7 +13,7 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -35,7 +36,7 @@ public class CustomerPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<Customer> tableView;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
     private TableColumn<Customer, String> name;
     private TableColumn<Customer, String> phone;
@@ -76,7 +77,7 @@ public class CustomerPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

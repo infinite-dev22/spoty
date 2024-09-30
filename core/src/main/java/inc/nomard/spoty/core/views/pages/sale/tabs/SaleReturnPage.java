@@ -14,7 +14,7 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -41,7 +41,7 @@ public class SaleReturnPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<SaleReturnMaster> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleCustomer;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleDate;
     private TableColumn<SaleReturnMaster, SaleReturnMaster> saleGrandTotal;
@@ -83,7 +83,7 @@ public class SaleReturnPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.util;
 
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -36,7 +36,7 @@ public interface Page {
         @Setter
         private SpotyGotFunctional.ParameterlessConsumer onTextEmpty, onSearchAction;
         private TextField searchBar;
-        private RingProgressIndicator progress;
+        private SpotyProgressSpinner progress;
         private Button createBtn;
 
         public PageHeader() {
@@ -50,7 +50,7 @@ public interface Page {
 
 
         private HBox buildLeftTop() {
-            progress = new RingProgressIndicator();
+            progress = new SpotyProgressSpinner();
             progress.setMinSize(30d, 30d);
             progress.setPrefSize(30d, 30d);
             progress.setMaxSize(30d, 30d);

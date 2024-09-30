@@ -17,7 +17,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -41,7 +41,7 @@ public class BranchPage extends OutlinePage {
     private final ModalPane modalPane;
     private CustomTextField searchBar;
     private TableView<Branch> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
 
     public BranchPage() {
@@ -74,7 +74,7 @@ public class BranchPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

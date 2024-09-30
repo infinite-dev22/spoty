@@ -20,7 +20,7 @@ import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -49,7 +49,7 @@ public class PurchasePage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<PurchaseMaster> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private TableColumn<PurchaseMaster, String> reference;
     private TableColumn<PurchaseMaster, PurchaseMaster> supplier;
     private TableColumn<PurchaseMaster, PurchaseMaster> purchaseDate;
@@ -111,7 +111,7 @@ public class PurchasePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

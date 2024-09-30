@@ -1,6 +1,5 @@
 package inc.nomard.spoty.core.views.components;
 
-import atlantafx.base.controls.RingProgressIndicator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -12,17 +11,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 public class CustomButton extends HBox {
     private final Label label;
-    private final RingProgressIndicator progressSpinner;
+    private final SpotyProgressSpinner progressSpinner;
     private final ObjectProperty<EventHandler<MouseEvent>> onAction;
 
     public CustomButton(String text) {
         this.onAction = new SimpleObjectProperty<>();
         this.label = new Label(text);
-        this.progressSpinner = new RingProgressIndicator();
+        this.progressSpinner = new SpotyProgressSpinner();
         this.progressSpinner.setVisible(false);
         this.progressSpinner.setManaged(false);
 
@@ -61,6 +59,7 @@ public class CustomButton extends HBox {
         this.progressSpinner.setPrefSize(22d, 22d);
         this.progressSpinner.setMaxSize(22d, 22d);
         this.progressSpinner.getStyleClass().add("button_busy");
+        this.progressSpinner.setStyle("-fx-progress-color: white;");
     }
 
     public final StringProperty textProperty() {

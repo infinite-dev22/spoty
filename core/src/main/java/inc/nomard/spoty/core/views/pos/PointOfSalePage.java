@@ -15,7 +15,7 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleListProperty;
@@ -54,7 +54,7 @@ public class PointOfSalePage extends OutlinePage {
     private TableColumn<SaleDetail, SaleDetail> cartSubTotal;
     private TableColumn<SaleDetail, SaleDetail> cartActions;
     private ComboBox<Tax> tax;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private Long availableProductQuantity = 0L;
 
 
@@ -104,7 +104,7 @@ public class PointOfSalePage extends OutlinePage {
 
     // Header UI.
     private HBox buildLeftHeaderPane() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

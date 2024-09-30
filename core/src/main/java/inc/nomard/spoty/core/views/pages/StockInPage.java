@@ -12,7 +12,7 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -41,7 +41,7 @@ public class StockInPage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<StockInMaster> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private TableColumn<StockInMaster, String> reference;
     private TableColumn<StockInMaster, String> note;
     private TableColumn<StockInMaster, StockInMaster> approvalStatus;
@@ -99,7 +99,7 @@ public class StockInPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.settings.app_settings;
 
 import atlantafx.base.controls.ModalPane;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
@@ -46,7 +46,7 @@ public class EmailPage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Expense> tableView;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
     private TableColumn<Expense, Expense> accountName;
     private TableColumn<Expense, String> expenseName;
@@ -98,7 +98,7 @@ public class EmailPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

@@ -13,7 +13,7 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -39,7 +39,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<UnitOfMeasure> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
     private TableColumn<UnitOfMeasure, String> uomName;
     private TableColumn<UnitOfMeasure, String> uomShortName;
@@ -82,7 +82,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.settings;
 
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
@@ -114,7 +114,7 @@ public class TenantSettingsPage extends OutlinePage {
 
     public void progress() {
         var dialog = new ModalContentHolder(50, 50);
-        dialog.getChildren().add(new RingProgressIndicator());
+        dialog.getChildren().add(new SpotyProgressSpinner());
         dialog.setPadding(new Insets(5d));
         modalPane.setAlignment(Pos.CENTER);
         modalPane.show(dialog);

@@ -12,7 +12,7 @@ import inc.nomard.spoty.core.views.previews.SalaryPreviewController;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.Salary;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -42,7 +42,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class SalaryPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Salary> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private TableColumn<Salary, Salary> payslip;
     private TableColumn<Salary, Salary> employee;
@@ -73,7 +73,7 @@ public class SalaryPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

@@ -10,7 +10,7 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.accounting.AccountTransaction;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 public class AccountTransactionPage extends OutlinePage {
     private TextField searchBar;
     private TableView<AccountTransaction> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private TableColumn<AccountTransaction, AccountTransaction> accountName;
     private TableColumn<AccountTransaction, String> transactionType;
     private TableColumn<AccountTransaction, AccountTransaction> credit;
@@ -65,7 +65,7 @@ public class AccountTransactionPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

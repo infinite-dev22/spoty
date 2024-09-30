@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -46,7 +46,7 @@ public class TransferPage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<TransferMaster> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private TableColumn<TransferMaster, String> reference;
     private TableColumn<TransferMaster, TransferMaster> fromBranch;
     private TableColumn<TransferMaster, TransferMaster> toBranch;
@@ -107,7 +107,7 @@ public class TransferPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

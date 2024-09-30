@@ -15,7 +15,7 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -49,7 +49,7 @@ public class RequisitionPage extends OutlinePage {
     private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<RequisitionMaster> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private FXMLLoader viewFxmlLoader;
     private TableColumn<RequisitionMaster, String> reference;
     private TableColumn<RequisitionMaster, RequisitionMaster> supplier;
@@ -111,7 +111,7 @@ public class RequisitionPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

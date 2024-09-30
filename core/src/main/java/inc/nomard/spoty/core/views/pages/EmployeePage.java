@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.controls.ModalPane;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
@@ -42,7 +42,7 @@ public class EmployeePage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Employee> masterTable;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
     private TableColumn<Employee, Employee> employeeName;
     private TableColumn<Employee, Employee> phone;
@@ -99,7 +99,7 @@ public class EmployeePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

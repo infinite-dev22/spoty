@@ -208,7 +208,7 @@ public class SupplierForm extends BorderPane {
         if (firstNameConstraints.isEmpty()
                 && lastNameConstraints.isEmpty()
                 && emailConstraints.isEmpty()
-                && phoneConstraints.isEmpty()) {
+                && (!phone.getText().isEmpty() && phoneConstraints.isEmpty())) {
             saveBtn.startLoading();
             if (SupplierViewModel.getId() > 0) {
                 SupplierViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);

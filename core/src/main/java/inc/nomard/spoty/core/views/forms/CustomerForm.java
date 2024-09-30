@@ -208,7 +208,7 @@ public class CustomerForm extends BorderPane {
         if (firstNameConstraints.isEmpty()
                 && lastNameConstraints.isEmpty()
                 && emailConstraints.isEmpty()
-                && phoneConstraints.isEmpty()) {
+                && (!phone.getText().isEmpty() && phoneConstraints.isEmpty())) {
             saveBtn.startLoading();
             if (CustomerViewModel.getId() > 0) {
                 CustomerViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);

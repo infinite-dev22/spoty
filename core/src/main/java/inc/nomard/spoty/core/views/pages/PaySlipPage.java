@@ -8,7 +8,7 @@ import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
@@ -28,7 +28,7 @@ public class PaySlipPage extends OutlinePage {
     public VBox paySlipItemHolder;
     public ScrollPane scrollPane;
     private TextField searchBar;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
 
     public PaySlipPage() {
         addNode(init());
@@ -58,7 +58,7 @@ public class PaySlipPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);

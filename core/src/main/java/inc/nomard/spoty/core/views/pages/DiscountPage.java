@@ -12,7 +12,7 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Discount;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import atlantafx.base.controls.RingProgressIndicator;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -38,7 +38,7 @@ public class DiscountPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Discount> masterTable;
     private Button createBtn;
-    private RingProgressIndicator progress;
+    private SpotyProgressSpinner progress;
     private TableColumn<Discount, String> name;
     private TableColumn<Discount, String> percentage;
     private TableColumn<Discount, Discount> createdBy;
@@ -77,7 +77,7 @@ public class DiscountPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new RingProgressIndicator();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
