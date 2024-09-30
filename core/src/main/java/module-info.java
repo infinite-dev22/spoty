@@ -1,8 +1,6 @@
 module spoty.core {
     requires MaterialFX;
-    requires VirtualizedFX;
     requires fr.brouillard.oss.cssfx;
-    requires mfx.resources;
     requires java.logging;
     requires org.kordamp.ikonli.javafx;
     requires java.prefs;
