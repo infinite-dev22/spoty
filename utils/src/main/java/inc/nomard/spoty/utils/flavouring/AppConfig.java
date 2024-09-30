@@ -21,7 +21,7 @@ public class AppConfig {
             return AppFlavor.valueOf(flavorString);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, AppConfig.class);
-            return AppFlavor.MVP;
+            return AppFlavor.PROD;
         }
     }
 

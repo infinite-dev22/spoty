@@ -9,8 +9,8 @@ import inc.nomard.spoty.core.views.pages.sale.tabs.SaleReturnPage;
 import inc.nomard.spoty.core.views.pos.PointOfSalePage;
 import inc.nomard.spoty.core.views.settings.AppSettingPage;
 import inc.nomard.spoty.core.views.settings.BranchPage;
-import inc.nomard.spoty.core.views.settings.TenantSettingsPage;
 import inc.nomard.spoty.core.views.settings.RolePage;
+import inc.nomard.spoty.core.views.settings.TenantSettingsPage;
 import inc.nomard.spoty.core.views.util.Page;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.flavouring.AppFlavor;
@@ -122,18 +122,32 @@ public class Navigation {
                         NAV_TREE.get("CUSTOMERS"));
 
         var inventory = NavTree.NavTreeItem.group("Inventory", FontAwesomeSolid.CUBES);
-        inventory
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("CATEGORY"),
-                        NAV_TREE.get("BRAND"),
-                        NAV_TREE.get("UNIT"),
-                        NAV_TREE.get("PRODUCTS"),
-                        NAV_TREE.get("REQUISITIONS"),
-                        NAV_TREE.get("PURCHASES"),
-                        NAV_TREE.get("STOCK_INS"),
-                        NAV_TREE.get("TRANSFERS"),
-                        NAV_TREE.get("ADJUSTMENTS"));
+        if (flavor == AppFlavor.DEV) {
+            inventory
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("CATEGORY"),
+                            NAV_TREE.get("BRAND"),
+                            NAV_TREE.get("UNIT"),
+                            NAV_TREE.get("PRODUCTS"),
+                            NAV_TREE.get("REQUISITIONS"),
+                            NAV_TREE.get("PURCHASES"),
+                            NAV_TREE.get("STOCK_INS"),
+                            NAV_TREE.get("TRANSFERS"),
+                            NAV_TREE.get("ADJUSTMENTS"));
+        } else {
+            inventory
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("CATEGORY"),
+                            NAV_TREE.get("BRAND"),
+                            NAV_TREE.get("UNIT"),
+                            NAV_TREE.get("PRODUCTS"),
+                            NAV_TREE.get("REQUISITIONS"),
+                            NAV_TREE.get("PURCHASES"),
+                            NAV_TREE.get("STOCK_INS"),
+                            NAV_TREE.get("ADJUSTMENTS"));
+        }
 
         var humanResourceManagement = NavTree.NavTreeItem.group("HRM");
         humanResourceManagement
@@ -188,13 +202,18 @@ public class Navigation {
                             NAV_TREE.get("APP_SETTINGS"),
                             NAV_TREE.get("COMPANY"),
                             NAV_TREE.get("ROLES"));
-        } else {
+        } else if (flavor == AppFlavor.DEV) {
             settings
                     .getChildren()
                     .setAll(
                             NAV_TREE.get("APP_SETTINGS"),
                             NAV_TREE.get("COMPANY"),
                             NAV_TREE.get("ROLES"));
+        } else {
+            settings
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("COMPANY"));
         }
 
         var root = NavTree.NavTreeItem.root();
