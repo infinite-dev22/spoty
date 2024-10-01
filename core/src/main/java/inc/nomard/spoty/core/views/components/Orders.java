@@ -3,26 +3,32 @@ package inc.nomard.spoty.core.views.components;
 import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
+import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
 
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Log
 public class Orders extends AnchorPane {
     public TableView<SaleMaster> saleOrders;
+    private TableColumn<SaleMaster, SaleMaster> saleCustomer;
+    private TableColumn<SaleMaster, SaleMaster> saleStatus;
+    private TableColumn<SaleMaster, SaleMaster> salePaymentStatus;
+    private TableColumn<SaleMaster, SaleMaster> saleGrandTotal;
+    private TableColumn<SaleMaster, SaleMaster> saleAmountPaid;
 
     public Orders() {
         this.setMinHeight(351d);
@@ -65,17 +71,19 @@ public class Orders extends AnchorPane {
     }
 
     private void setupTable() {
-        TableColumn<SaleMaster, String> saleCustomer = new TableColumn<>("Customer");
-        TableColumn<SaleMaster, String> saleStatus = new TableColumn<>("Order Status");
-        TableColumn<SaleMaster, String> salePaymentStatus = new TableColumn<>("Pay Status");
-        TableColumn<SaleMaster, String> saleGrandTotal = new TableColumn<>("Total Amount");
-        TableColumn<SaleMaster, String> saleAmountPaid = new TableColumn<>("Paid Amount");
+        saleCustomer = new TableColumn<>("Customer");
+        saleStatus = new TableColumn<>("Order Status");
+        salePaymentStatus = new TableColumn<>("Pay Status");
+        saleGrandTotal = new TableColumn<>("Total Amount");
+        saleAmountPaid = new TableColumn<>("Paid Amount");
 
         saleCustomer.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
         saleStatus.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
         salePaymentStatus.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
         saleGrandTotal.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
         saleAmountPaid.prefWidthProperty().bind(saleOrders.widthProperty().multiply(.25));
+
+        setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(saleCustomer,
                 saleStatus,
@@ -86,14 +94,7 @@ public class Orders extends AnchorPane {
         saleOrders.getColumns().addAll(columnList);
         styleSaleMasterTable();
 
-        if (DashboardViewModel.getRecentOrders().isEmpty()) {
-            DashboardViewModel.getRecentOrders()
-                    .addListener(
-                            (ListChangeListener<SaleMaster>)
-                                    c -> saleOrders.setItems(DashboardViewModel.getRecentOrders()));
-        } else {
-            saleOrders.itemsProperty().bindBidirectional(DashboardViewModel.recentOrdersProperty());
-        }
+        saleOrders.setItems(DashboardViewModel.getRecentOrders());
     }
 
     private void styleSaleMasterTable() {
@@ -102,17 +103,132 @@ public class Orders extends AnchorPane {
         saleOrders.setRowFactory(
                 t -> {
                     TableRow<SaleMaster> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
+                    EventHandler<MouseEvent> eventHandler =
                             event -> {
-//                                showContextMenu((TableRow<SaleMaster>) event.getSource())
-//                                        .show(
-//                                                saleOrders.getScene().getWindow(),
-//                                                event.getScreenX(),
-//                                                event.getScreenY());
+                                if (Objects.equals(event.getEventType(), MouseEvent.MOUSE_CLICKED)) {
+                                    log.info("Row with Customer \"" + row.getItem().getCustomerName() + "\" has been clicked.");
+                                }
                                 event.consume();
                             };
-                    row.setOnContextMenuRequested(eventHandler);
+                    row.setOnMouseClicked(eventHandler);
                     return row;
                 });
+    }
+
+    private void setupTableColumns() {
+        saleCustomer.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleCustomer.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getCustomerName());
+            }
+        });
+        saleStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleStatus.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getSaleStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
+                    switch (item.getSaleStatus().toLowerCase()) {
+                        case "completed" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "ordered" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
+        salePaymentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        salePaymentStatus.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getPaymentStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
+                    switch (item.getPaymentStatus().toLowerCase()) {
+                        case "paid" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "unpaid" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "partial" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
+        saleGrandTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleGrandTotal.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
+        saleAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
+            }
+        });
     }
 }

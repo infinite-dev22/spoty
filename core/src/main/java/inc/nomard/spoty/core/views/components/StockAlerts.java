@@ -3,26 +3,31 @@ package inc.nomard.spoty.core.views.components;
 import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.StockAlertModel;
+import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.input.ContextMenuEvent;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import lombok.extern.java.Log;
 
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Log
 public class StockAlerts extends AnchorPane {
     public TableView<StockAlertModel> stockAlert;
+    private TableColumn<StockAlertModel, String> name;
+    private TableColumn<StockAlertModel, StockAlertModel> totalQuantity;
+    private TableColumn<StockAlertModel, StockAlertModel> costPrice;
 
     public StockAlerts() {
         this.setMinHeight(351d);
@@ -46,7 +51,7 @@ public class StockAlerts extends AnchorPane {
     }
 
     private Label buildTitle() {
-        var label = new Label(Labels.RECENT_ORDERS);
+        var label = new Label(Labels.STOCK_ALERTS);
         label.getStyleClass().add("card-title");
         UIUtils.anchor(label, 0d, null, 0d, 0d);
         return label;
@@ -65,26 +70,22 @@ public class StockAlerts extends AnchorPane {
     }
 
     private void setupTable() {
-        TableColumn<StockAlertModel, String> name = new TableColumn<>("Name");
-        TableColumn<StockAlertModel, String> totalQuantity = new TableColumn<>("Quantity");
-        TableColumn<StockAlertModel, String> costPrice = new TableColumn<>("Cost Price");
+        name = new TableColumn<>("Name");
+        totalQuantity = new TableColumn<>("Quantity");
+        costPrice = new TableColumn<>("Cost Price");
 
         name.prefWidthProperty().bind(stockAlert.widthProperty().multiply(.4));
         totalQuantity.prefWidthProperty().bind(stockAlert.widthProperty().multiply(.4));
         costPrice.prefWidthProperty().bind(stockAlert.widthProperty().multiply(.4));
+
+        setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(name, totalQuantity, costPrice).toList());
         stockAlert.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         stockAlert.getColumns().addAll(columnList);
         styleTable();
 
-        if (DashboardViewModel.getStockAlerts().isEmpty()) {
-            DashboardViewModel.getStockAlerts().addListener(
-                    (ListChangeListener<StockAlertModel>)
-                            c -> stockAlert.setItems(DashboardViewModel.getStockAlerts()));
-        } else {
-            stockAlert.itemsProperty().bindBidirectional(DashboardViewModel.stockAlertsProperty());
-        }
+        stockAlert.setItems(DashboardViewModel.getStockAlerts());
     }
 
     private void styleTable() {
@@ -93,17 +94,37 @@ public class StockAlerts extends AnchorPane {
         stockAlert.setRowFactory(
                 t -> {
                     TableRow<StockAlertModel> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
+                    EventHandler<MouseEvent> eventHandler =
                             event -> {
-//                                showContextMenu((TableRow<StockAlertModel>) event.getSource())
-//                                        .show(
-//                                                customers.getScene().getWindow(),
-//                                                event.getScreenX(),
-//                                                event.getScreenY());
+                                if (Objects.equals(event.getEventType(), MouseEvent.MOUSE_CLICKED)) {
+                                    log.info("Row with Product \"" + row.getItem().getName() + "\" has been clicked.");
+                                }
                                 event.consume();
                             };
-                    row.setOnContextMenuRequested(eventHandler);
+                    row.setOnMouseClicked(eventHandler);
                     return row;
                 });
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        totalQuantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        totalQuantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(StockAlertModel item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotalQuantity()));
+            }
+        });
+        costPrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        costPrice.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(StockAlertModel item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCostPrice()));
+            }
+        });
     }
 }
