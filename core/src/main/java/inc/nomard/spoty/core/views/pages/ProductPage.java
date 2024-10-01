@@ -211,7 +211,6 @@ public class ProductPage extends OutlinePage {
                 discount,
                 createdBy,
                 createdAt).toList());
-        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleTable();
 
