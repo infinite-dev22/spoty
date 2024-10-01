@@ -58,12 +58,7 @@ public class StockInDetailForm extends BorderPane {
         StringConverter<Product> productConverter = FunctionalStringConverter.to(
                 productDetail -> productDetail == null ? "" : productDetail.getName());
         product.setConverter(productConverter);
-
-        if (ProductViewModel.getProducts().isEmpty()) {
-            ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> product.setItems(ProductViewModel.getProducts()));
-        } else {
-            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
-        }
+        product.setItems(ProductViewModel.getProducts());
         // Validation.
         productValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();

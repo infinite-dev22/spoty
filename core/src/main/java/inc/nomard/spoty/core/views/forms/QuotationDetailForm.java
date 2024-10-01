@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.quotations.QuotationDetailViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
@@ -11,11 +13,7 @@ import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.binding.BooleanExpression;
-import javafx.beans.property.ListProperty;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.geometry.Insets;
@@ -55,7 +53,7 @@ public class QuotationDetailForm extends BorderPane {
         // Input.
         product = new ValidatableComboBox<>();
         var label = new Label("Product");
-        product.setPrefWidth(400d);
+        product.setPrefWidth(1000d);
         product.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         // Validation.
         productValidationLabel = Validators.buildValidationLabel();
@@ -70,7 +68,7 @@ public class QuotationDetailForm extends BorderPane {
         // Input.
         quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
-        quantity.setPrefWidth(400d);
+        quantity.setPrefWidth(1000d);
         quantity.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
         // Validation.
         quantityValidationLabel = Validators.buildValidationLabel();
@@ -117,19 +115,11 @@ public class QuotationDetailForm extends BorderPane {
 
     private void setupComboBoxes() {
         product.setConverter(createStringConverter(Product::getName));
-        bindComboBoxItems(product, ProductViewModel.getProducts(), ProductViewModel.productsProperty());
+        product.setItems(ProductViewModel.getProducts());
     }
 
     private <T> StringConverter<T> createStringConverter(Function<T, String> toStringFunction) {
         return FunctionalStringConverter.to(obj -> (obj == null) ? "" : toStringFunction.apply(obj));
-    }
-
-    private <T> void bindComboBoxItems(ValidatableComboBox<T> comboBox, ObservableList<T> items, ListProperty<T> itemsProperty) {
-        if (items.isEmpty()) {
-            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
-        } else {
-            comboBox.itemsProperty().bindBidirectional(itemsProperty);
-        }
     }
 
     private void setupValidators() {

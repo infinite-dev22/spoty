@@ -69,14 +69,7 @@ public class RequisitionDetailForm extends BorderPane {
 
         // ComboBox properties.
         product.setConverter(productVariantConverter);
-        if (ProductViewModel.getProducts().isEmpty()) {
-            ProductViewModel.getProducts()
-                    .addListener(
-                            (ListChangeListener<Product>)
-                                    c -> product.setItems(ProductViewModel.getProducts()));
-        } else {
-            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
-        }
+        product.setItems(ProductViewModel.getProducts());
         // Validation.
         productValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();

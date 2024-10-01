@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.values.SharedResources;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -13,9 +15,6 @@ import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -29,8 +28,8 @@ import lombok.extern.java.Log;
 
 import java.util.List;
 
-import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 
 @Log
 public class AdjustmentDetailForm extends BorderPane {
@@ -135,13 +134,7 @@ public class AdjustmentDetailForm extends BorderPane {
                 productDetail -> (productDetail == null) ? "" : productDetail.getName() + " - (" + productDetail.getQuantity() + " Pcs)");
 
         product.setConverter(productConverter);
-
-        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c ->
-                product.setItems(ProductViewModel.getProducts())
-        );
-        if (!ProductViewModel.getProducts().isEmpty()) {
-            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
-        }
+        product.setItems(ProductViewModel.getProducts());
     }
 
     private void setupTypeComboBox() {

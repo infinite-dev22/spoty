@@ -52,7 +52,7 @@ public class PurchaseDetailForm extends BorderPane {
         // Input.
         product = new ValidatableComboBox<>();
         var label = new Label("Product");
-        product.setPrefWidth(400d);
+        product.setPrefWidth(1000d);
         product.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
         setupProductComboBox();
         // Validation.
@@ -68,7 +68,7 @@ public class PurchaseDetailForm extends BorderPane {
         // Input.
         quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
-        quantity.setPrefWidth(400d);
+        quantity.setPrefWidth(1000d);
         quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
         // Validation.
         quantityValidationLabel = Validators.buildValidationLabel();
@@ -117,13 +117,7 @@ public class PurchaseDetailForm extends BorderPane {
                 productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
         product.setConverter(productConverter);
-
-        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c ->
-                product.setItems(ProductViewModel.getProducts())
-        );
-        if (!ProductViewModel.getProducts().isEmpty()) {
-            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
-        }
+        product.setItems(ProductViewModel.getProducts());
     }
 
     private void requiredValidator() {
