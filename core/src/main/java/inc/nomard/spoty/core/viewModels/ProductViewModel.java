@@ -47,7 +47,6 @@ public class ProductViewModel {
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
-    private static final ListProperty<Product> products = new SimpleListProperty<>(productsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<ProductCategory> category = new SimpleObjectProperty<>(null);
@@ -204,11 +203,11 @@ public class ProductViewModel {
     }
 
     public static ObservableList<Product> getProducts() {
-        return products.get();
+        return productsList;
     }
 
-    public static void setProducts(ObservableList<Product> products) {
-        ProductViewModel.products.set(products);
+    public static void setProducts(ObservableList<Product> productsList) {
+        ProductViewModel.productsList.setAll(productsList);
     }
 
     public static Brand getBrand() {
@@ -277,10 +276,6 @@ public class ProductViewModel {
 
     public static void setSerial(String serial) {
         ProductViewModel.serial.set(serial);
-    }
-
-    public static ListProperty<Product> productsProperty() {
-        return products;
     }
 
     public static Integer getTotalPages() {
