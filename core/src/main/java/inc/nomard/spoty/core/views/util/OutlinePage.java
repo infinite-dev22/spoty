@@ -5,40 +5,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public abstract class OutlinePage extends StackPane implements Page {
-
-    protected static final int OUTLINE_WIDTH = 200;
-    protected final StackPane userContentArea = new StackPane();
     protected boolean isRendered = false;
 
     protected OutlinePage() {
         super();
-
-        getStyleClass().add("outline-page");
-
         createPageLayout();
     }
 
     protected void createPageLayout() {
-        var pageBody = new StackPane();
-        pageBody.getChildren().setAll(userContentArea);
-        pageBody.getStyleClass().add("body");
-
-//        setMinWidth(Page.MAX_WIDTH);
-        getChildren().setAll(pageBody);
+        getStyleClass().add("body");
     }
 
-    protected void addNode(Node node) {
-        userContentArea.getChildren().add(node);
+    protected void addNode(Node... node) {
+        getChildren().addAll(node);
     }
 
     @Override
     public Pane getView() {
         return this;
-    }
-
-    @Override
-    public Node getSnapshotTarget() {
-        return userContentArea;
     }
 
     @Override

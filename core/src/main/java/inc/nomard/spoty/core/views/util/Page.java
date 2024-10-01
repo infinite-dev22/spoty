@@ -18,15 +18,7 @@ import lombok.Setter;
 import java.util.Objects;
 
 public interface Page {
-    int MAX_WIDTH = 1053;
-    int HGAP_20 = 20;
-    int HGAP_30 = 30;
-    int VGAP_10 = 10;
-    int VGAP_20 = 20;
-
     Parent getView();
-
-    Node getSnapshotTarget();
 
     void reset();
 
