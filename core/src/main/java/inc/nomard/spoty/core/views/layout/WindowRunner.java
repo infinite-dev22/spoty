@@ -109,7 +109,7 @@ public class WindowRunner extends ApplicationWindowImpl {
             close.getStyleClass().add(Styles.BUTTON_OUTLINED);
             close.setOnAction(actionEvent -> new InformativeDialog(modalPane, () -> {
                 GlobalActions.closeDialog(actionEvent);
-                this.setMorph(false);
+//                this.setMorph(false);
                 this.getChildren().removeAll(vBox);
                 stage.hide();
                 stage.close();
@@ -129,7 +129,7 @@ public class WindowRunner extends ApplicationWindowImpl {
     }
 
     private void onSuccess() {
-        this.setMorph(false);
+//        this.setMorph(false);
         this.getChildren().removeAll(vBox);
     }
 }

@@ -15,6 +15,4 @@ public interface ApplicationWindow {
     void dispose();
 
     void setStyleSheets();
-
-    void setMorph(Boolean morph);
 }

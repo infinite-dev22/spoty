@@ -5,15 +5,12 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.effect.GaussianBlur;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 public class ApplicationWindowImpl extends StackPane implements ApplicationWindow {
     protected final StackPane window1 = new StackPane();
-    protected final GlassPane contentLayer = new GlassPane();
+    protected final AnchorPane contentLayer = new AnchorPane();
     protected boolean isRendered = false;
 
     protected ApplicationWindowImpl() {
@@ -56,11 +53,6 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
                 SpotyCoreResourceLoader.load("styles/theming/base.css")
         );
-    }
-
-    @Override
-    public void setMorph(Boolean morph) {
-        contentLayer.morph(morph);
     }
 
     @Override
