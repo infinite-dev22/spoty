@@ -6,6 +6,9 @@ import inc.nomard.spoty.utils.SpotyThreader;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,6 +29,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -149,16 +153,15 @@ public class SideBar extends VBox {
     }
 
     private Button buildSidebarToggle() {
-        var toggle = new Button(null/*, new FontIcon(FontAwesomeSolid.ANGLE_LEFT)*/);
-        toggle.setGraphic(new FontIcon(FontAwesomeSolid.ANGLE_LEFT));
-        var arrowIcon = new FontIcon("fas-angle-left");
+        var arrowIcon = new FontIcon(FontAwesomeSolid.ANGLE_LEFT);
         arrowIcon.getStyleClass().add("nav-toggle-arrow");
+        var toggle = new Button(null);
         toggle.setGraphic(arrowIcon);
         toggle.getStyleClass().add("nav-toggle");
         StackPane.setAlignment(toggle, Pos.CENTER_RIGHT);
         StackPane.setMargin(toggle, new Insets(40d, -45d, 0d, 0d));
-        toggle.setVisible(false);
-        toggle.setManaged(false);
+//        toggle.setVisible(false);
+//        toggle.setManaged(false);
         toggle.setOnAction(event -> this.toggleSidebar());
         return toggle;
     }
@@ -220,13 +223,26 @@ public class SideBar extends VBox {
         logOut.setOnAction(event -> action.run());
     }
 
+//    private void toggleSidebar() {
+//        if (isMinimised) {
+//            this.setPrefWidth(250);
+//            this.isMinimised = false;
+//        } else {
+//            this.setPrefWidth(100);
+//            this.isMinimised = true;
+//        }
+//    }
+
     private void toggleSidebar() {
-        if (isMinimised) {
-            this.setPrefWidth(250);
-            this.isMinimised = false;
-        } else {
-            this.setPrefWidth(100);
-            this.isMinimised = true;
-        }
+        double targetWidth = isMinimised ? this.getPrefWidth() : 100;
+
+        // Animate width change
+        var timeline = new Timeline();
+        var keyValue = new KeyValue(this.prefWidthProperty(), targetWidth);
+        var keyFrame = new KeyFrame(Duration.millis(300), keyValue);
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
+
+        isMinimised = !isMinimised;
     }
 }

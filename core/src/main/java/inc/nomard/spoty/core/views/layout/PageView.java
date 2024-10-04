@@ -22,7 +22,9 @@ public class PageView extends StackPane {
     }
 
     protected void add(Node node) {
-        this.getChildren().add(node);
+        if (!this.getChildren().contains(node)) {
+            this.getChildren().add(node);
+        }
     }
 
     protected void remove(Node node) {
