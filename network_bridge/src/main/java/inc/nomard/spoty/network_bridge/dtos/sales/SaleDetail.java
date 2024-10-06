@@ -3,14 +3,14 @@ package inc.nomard.spoty.network_bridge.dtos.sales;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class SaleDetail {
     private Long id;
     private Product product;

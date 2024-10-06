@@ -17,9 +17,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class DashboardPage extends OutlinePage {
     private BootstrapPane kpisContainer;
 

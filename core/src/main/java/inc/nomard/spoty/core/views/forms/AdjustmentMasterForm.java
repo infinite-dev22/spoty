@@ -25,12 +25,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class AdjustmentMasterForm extends VBox {
     private final ModalPane modalPane1;
     private final ModalPane modalPane2;

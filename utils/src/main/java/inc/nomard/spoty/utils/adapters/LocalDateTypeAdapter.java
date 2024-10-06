@@ -1,13 +1,13 @@
 package inc.nomard.spoty.utils.adapters;
 
 import com.google.gson.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@Log
+@Log4j2
 public class LocalDateTypeAdapter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 

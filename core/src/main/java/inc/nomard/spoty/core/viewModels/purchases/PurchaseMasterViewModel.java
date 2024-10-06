@@ -23,7 +23,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
@@ -36,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
 
-@Log
+@Log4j2
 public class PurchaseMasterViewModel {
     @Getter
     public static final ObservableList<PurchaseMaster> purchasesList = FXCollections.observableArrayList();
@@ -461,7 +461,7 @@ public class PurchaseMasterViewModel {
     }
 
     private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
-        log.severe(throwable.getMessage());
+        log.error(throwable.getMessage());
         Platform.runLater(() -> {
             SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
             String message = Connectivity.isConnectedToInternet() ? "An in-app error occurred" : "No Internet Connection";

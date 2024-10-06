@@ -5,6 +5,7 @@ import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.sales.SaleDetailViewModel;
 import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.pages.EmployeePage;
 import inc.nomard.spoty.core.views.pos.components.ProductCard;
 import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
@@ -15,7 +16,7 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import io.github.palexdev.virtualizedfx.grid.VFXGrid;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleListProperty;
@@ -27,7 +28,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -38,7 +39,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@Log
+@Log4j2
 public class PointOfSalePage extends OutlinePage {
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
     private ToggleGroup toggleGroup;
@@ -175,16 +176,8 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     // Product CardHolder UI.
-    private ScrollPane buildProductCardHolderUI() {
-        var productScrollPane = new ScrollPane();
-        productScrollPane.setFitToHeight(true);
-        productScrollPane.setFitToWidth(true);
-        productScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        productScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        configureProductScrollPane(productScrollPane);
-        updateProductsGridView(productScrollPane);
-        setProductsGridView(productScrollPane);
-        return productScrollPane;
+    private VFXGrid buildProductCardHolderUI() {
+        return setProductsGridView();
     }
 
     // Product UI.
@@ -413,57 +406,41 @@ public class PointOfSalePage extends OutlinePage {
         }
     }
 
-    private void updateProductsGridView(ScrollPane scrollPane) {
-        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> setProductsGridView(scrollPane));
-    }
-
-    private void setProductsGridView(ScrollPane scrollPane) {
-        var productsGridView = new GridPane();
-        productsGridView.setHgap(5);
-        productsGridView.setVgap(5);
+    private VFXGrid setProductsGridView() {
+        var productsGridView = new VFXGrid<>();
+        productsGridView.autoArrange();
+        productsGridView.makeScrollable();
+        productsGridView.setSpacing(5d, 5d);
         productsGridView.setPadding(new Insets(5));
+
+        productsGridView.setPrefSize(400, 400);
+        productsGridView.setColumnsNum(3); // Set the number of columns
 
         productsGridView.widthProperty().addListener((obs, oldWidth, newWidth) -> {
             progress.setManaged(true);
             progress.setVisible(true);
-            productsGridView.getChildren().clear();
+            productsGridView.getItems().clear();
             loadAllProducts(productsGridView);
             progress.setManaged(false);
             progress.setVisible(false);
         });
 
-        loadAllProducts(productsGridView);
+        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> loadAllProducts(productsGridView));
 
-        scrollPane.setContent(productsGridView);
+        loadAllProducts(productsGridView);
+        return productsGridView;
     }
 
-    private void addProductToGridPane(GridPane productsGridView, Product product) {
+    private void addProductToGridPane(VFXGrid productsGridView, Product product) {
         ProductCard productCard = new ProductCard(product);
         configureProductCardAction(productCard);
-
-        // Dynamically calculate the position
-        int itemIndex = productsGridView.getChildren().size();
-        int numColumns = 6; // Fixed number of columns, adjust as needed
-
-        int column = itemIndex % numColumns;
-        int row = itemIndex / numColumns;
-
-        productsGridView.add(productCard, column, row);
-        GridPane.setMargin(productCard, new Insets(10));
+        productsGridView.getItems().addAll(productCard);
     }
 
-    private void loadAllProducts(GridPane productsGridView) {
+    private void loadAllProducts(VFXGrid productsGridView) {
         for (Product product : ProductViewModel.getProducts()) {
             addProductToGridPane(productsGridView, product);
         }
-    }
-
-    private void configureProductScrollPane(ScrollPane scrollPane) {
-        scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-            if (event.getDeltaX() != 0) {
-                event.consume();
-            }
-        });
     }
 
     private void configureFilterScrollPane(ScrollPane scrollPane) {

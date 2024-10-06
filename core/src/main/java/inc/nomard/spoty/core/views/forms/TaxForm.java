@@ -18,7 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -26,7 +26,7 @@ import java.util.List;
 
 import static inc.nomard.spoty.core.viewModels.TaxViewModel.saveTax;
 
-@Log
+@Log4j2
 public class TaxForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;

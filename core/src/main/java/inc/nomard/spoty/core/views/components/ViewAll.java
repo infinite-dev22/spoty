@@ -4,9 +4,9 @@ import atlantafx.base.theme.Styles;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class ViewAll extends VBox {
     public ViewAll() {
         Label label = new Label("View All");

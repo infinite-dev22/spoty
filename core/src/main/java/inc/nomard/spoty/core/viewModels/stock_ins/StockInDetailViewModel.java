@@ -14,7 +14,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ import java.util.Objects;
 
 import static inc.nomard.spoty.core.values.SharedResources.*;
 
-@Log
+@Log4j2
 public class StockInDetailViewModel {
     @Getter
     public static final ObservableList<StockInDetail> stockInDetailsList =

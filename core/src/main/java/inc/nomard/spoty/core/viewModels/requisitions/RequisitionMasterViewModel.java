@@ -21,7 +21,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
 
-@Log
+@Log4j2
 public class RequisitionMasterViewModel {
     @Getter
     public static final ObservableList<RequisitionMaster> requisitionsList =

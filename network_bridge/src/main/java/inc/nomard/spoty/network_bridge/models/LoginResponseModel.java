@@ -3,14 +3,14 @@ package inc.nomard.spoty.network_bridge.models;
 import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class LoginResponseModel {
     @Builder.Default
     private int status = 0;

@@ -8,13 +8,13 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-@Log
+@Log4j2
 public class UserPreviewController implements Initializable {
     @FXML
     public Circle imageHolder;

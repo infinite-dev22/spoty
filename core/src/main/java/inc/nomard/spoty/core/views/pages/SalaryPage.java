@@ -25,7 +25,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
-@Log
+@Log4j2
 public class SalaryPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Salary> masterTable;

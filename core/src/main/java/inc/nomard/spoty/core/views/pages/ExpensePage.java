@@ -29,7 +29,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
@@ -41,7 +41,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class ExpensePage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;

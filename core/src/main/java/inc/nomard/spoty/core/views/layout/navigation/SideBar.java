@@ -47,7 +47,7 @@ public class SideBar extends VBox {
 
     public SideBar(Navigation navigation) {
         super();
-        navTree = new NavTree(navigation);
+        navTree = navigation.createNavigation();
         init();
 
         navigation.selectedPageProperty().addListener((obs, old, val) -> {

@@ -2,7 +2,7 @@ package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class Designation {
     private Long id;
     private ArrayList<Branch> branches;

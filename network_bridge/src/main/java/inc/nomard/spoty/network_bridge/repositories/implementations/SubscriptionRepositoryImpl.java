@@ -2,7 +2,7 @@ package inc.nomard.spoty.network_bridge.repositories.implementations;
 
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.network_bridge.end_points.EndPoints;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -10,7 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class SubscriptionRepositoryImpl extends ProtectedGlobals {
     public CompletableFuture<HttpResponse<String>> getStatus() {
         var request = HttpRequest.newBuilder()

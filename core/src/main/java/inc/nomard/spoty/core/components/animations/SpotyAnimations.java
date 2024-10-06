@@ -5,9 +5,9 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class SpotyAnimations {
     public static void pulsate(Node node, Duration duration, double size, int cycleCount) {
         var transition = new ScaleTransition(duration);

@@ -21,7 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -31,7 +31,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log
+@Log4j2
 public class QuotationPreview extends BorderPane {
     static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<QuotationDetail> quotationDetails = new SimpleListProperty<>(quotationDetailsList);

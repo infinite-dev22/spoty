@@ -1,7 +1,7 @@
 package inc.nomard.spoty.utils;
 
 import inc.nomard.spoty.utils.flavouring.AppConfig;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
-@Log
+@Log4j2
 public class SeamlessUpdater {
 
     private static final String UPDATE_URL = "https://your-server.com/version_info.xml";

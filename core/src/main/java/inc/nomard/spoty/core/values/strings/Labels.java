@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.values.strings;
 
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class Labels {
     public static final String APP_NAME = "OpenSale ERP";
     public static final String COMPANY_NAME = "nomard Inc.";

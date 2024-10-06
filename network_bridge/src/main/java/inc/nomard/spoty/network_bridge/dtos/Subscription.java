@@ -1,14 +1,14 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 @ToString
 public class Subscription {
     private Boolean canTry;

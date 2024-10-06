@@ -15,14 +15,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.Objects;
 
-@Log
+@Log4j2
 public class NavTree extends TreeView<Nav> {
     public static final double SIDEBAR_WIDTH = 250.0;
     public static final String EDGE_TO_EDGE = "edge-to-edge";
@@ -38,15 +38,15 @@ public class NavTree extends TreeView<Nav> {
                 .selectedItemProperty()
                 .addListener((obs, old, val) -> {
                     if (!(val instanceof NavTreeItem navTreeItem)) {
-                        log.warning("Selected item is not of type NavTreeItem: " + (val != null ? val.getClass() : "null"));
+                        log.warn("Selected item is not of type NavTreeItem: {}", val != null ? val.getClass() : "null");
                         return;
                     }
 
                     if (!navTreeItem.isGroup()) {
-                        log.info("Navigating to view: " + navTreeItem.view().getName());
+                        log.info("Navigating to view: {}", navTreeItem.view().getName());
                         navigation.navigate(navTreeItem.view());
                     } else {
-                        log.info("Selected item is a group: " + navTreeItem.nav.title());
+                        log.info("Selected item is a group: {}", navTreeItem.nav.title());
                     }
 
                     // Collapse an already expanded node when another is clicked
@@ -124,12 +124,12 @@ public class NavTree extends TreeView<Nav> {
 
             root.setOnMouseClicked(e -> {
                 if (getTreeItem() == null) {
-                    log.warning("TreeItem is null.");
+                    log.warn("TreeItem is null.");
                     return;
                 }
 
                 if (!(getTreeItem() instanceof NavTreeItem navTreeItem)) {
-                    log.warning("TreeItem is not of type NavTreeItem: " + getTreeItem().getClass());
+                    log.warn("TreeItem is not of type NavTreeItem: " + getTreeItem().getClass());
                     return;
                 }
 
@@ -149,7 +149,7 @@ public class NavTree extends TreeView<Nav> {
             treeItemProperty()
                     .addListener((obs, oldTreeItem, newTreeItem) -> {
                         pseudoClassStateChanged(SUB_ITEM, newTreeItem != null && newTreeItem.getParent() != getTreeView().getRoot());
-                        log.info("TreeItem changed from " + oldTreeItem + " to " + newTreeItem);
+                        log.info("TreeItem changed from {} to {}", oldTreeItem, newTreeItem);
                     });
 
             getStyleClass().add("nav-tree-cell");
@@ -168,7 +168,7 @@ public class NavTree extends TreeView<Nav> {
                 tagLabel.setText(null);
                 titleLabel.setGraphic(null);
             } else {
-                log.info("Updating item: " + nav.title());
+                log.info("Updating item: {}", nav.title());
                 setGraphic(root);
                 titleLabel.setGraphic(nav.graphic());
                 titleLabel.setText(nav.title());
@@ -186,7 +186,7 @@ public class NavTree extends TreeView<Nav> {
         public NavTreeItem(Nav nav) {
             this.nav = Objects.requireNonNull(nav, "nav");
             setValue(nav);
-            log.info("Created NavTreeItem: " + nav.title());
+            log.info("Created NavTreeItem: {}", nav.title());
         }
 
         public static NavTreeItem root() {

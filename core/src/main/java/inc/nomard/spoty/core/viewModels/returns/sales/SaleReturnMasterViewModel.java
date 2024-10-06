@@ -25,7 +25,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
@@ -39,7 +39,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
 
-@Log
+@Log4j2
 public class SaleReturnMasterViewModel {
     @Getter
     public static final ObservableList<SaleReturnMaster> saleReturnsList =
@@ -503,7 +503,7 @@ public class SaleReturnMasterViewModel {
     }
 
     private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
-        log.severe(throwable.getMessage());
+        log.error(throwable.getMessage());
         Platform.runLater(() -> {
             SpotyLogger.writeToFile(throwable, PurchaseReturnMasterViewModel.class);
             String message = Connectivity.isConnectedToInternet() ? "An error occurred" : "No Internet Connection";

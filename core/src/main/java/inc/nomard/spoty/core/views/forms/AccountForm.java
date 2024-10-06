@@ -25,12 +25,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Objects;
 
-@Log
+@Log4j2
 public class AccountForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;

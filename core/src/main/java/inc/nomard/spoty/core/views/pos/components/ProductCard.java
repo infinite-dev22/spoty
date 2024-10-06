@@ -16,9 +16,9 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class ProductCard extends VBox {
     private static final double IMAGE_SIZE = 160;
     private static final double ARC_SIZE = 20;

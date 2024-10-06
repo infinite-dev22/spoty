@@ -6,7 +6,7 @@ import inc.nomard.spoty.network_bridge.dtos.Tax;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +18,7 @@ import java.util.Locale;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class SaleReturnMaster {
     private Long id;
     private String ref;

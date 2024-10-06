@@ -10,13 +10,13 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Objects;
 
 import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
 
-@Log
+@Log4j2
 public class QuotationDetailViewModel {
     // TODO: Add more fields according to DB design and necessity.
     @Getter

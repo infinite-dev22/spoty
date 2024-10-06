@@ -14,13 +14,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import lombok.Setter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
 @Setter
-@Log
+@Log4j2
 public class CartItem extends HBox {
     private static String logo;
     private static String productName;

@@ -26,7 +26,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
@@ -37,7 +37,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class PurchaseReturnPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;

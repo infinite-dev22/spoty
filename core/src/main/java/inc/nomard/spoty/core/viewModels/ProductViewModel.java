@@ -19,7 +19,7 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static inc.nomard.spoty.core.values.SharedResources.setTempId;
 
-@Log
+@Log4j2
 public class ProductViewModel {
     public static final ObservableList<Product> productsList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()

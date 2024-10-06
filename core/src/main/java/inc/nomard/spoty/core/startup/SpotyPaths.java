@@ -2,14 +2,14 @@ package inc.nomard.spoty.core.startup;
 
 import inc.nomard.spoty.utils.OSUtil;
 import inc.nomard.spoty.utils.SpotyLogger;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Log
+@Log4j2
 public class SpotyPaths {
     public static void createPaths() {
         // Create DB Location path on system.

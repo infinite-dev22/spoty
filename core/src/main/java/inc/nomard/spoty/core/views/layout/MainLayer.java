@@ -14,13 +14,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
-@Log
+@Log4j2
 public class MainLayer extends BorderPane {
     private final PageView subLayerPane = new PageView();  // Handles pages
     private final WindowHeader windowHeader = new WindowHeader();  // Top header section
@@ -86,7 +86,7 @@ public class MainLayer extends BorderPane {
             subLayerPane.add(nextPage.getView());
             subLayerPane.remove(prevPage.getView());  // Remove the old page
         } catch (Exception e) {
-            log.severe("Exception: " + e.getMessage());
+            log.error("Exception: " + e.getMessage());
             throw new RuntimeException(e);  // Catch any reflection exceptions and rethrow
         }
     }

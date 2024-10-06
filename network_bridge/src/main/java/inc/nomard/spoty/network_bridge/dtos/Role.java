@@ -2,7 +2,7 @@ package inc.nomard.spoty.network_bridge.dtos;
 
 
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class Role {
     private Long id;
     private String name;

@@ -15,13 +15,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log
+@Log4j2
 public class TopProducts extends AnchorPane {
     public TableView<ProductSalesModel> products;
     private TableColumn<ProductSalesModel, String> name;

@@ -23,9 +23,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class Main extends Application {
 
     private static final String LIGHT_THEME_CSS = SpotyCoreResourceLoader.load("styles/theming/light-theme.css");

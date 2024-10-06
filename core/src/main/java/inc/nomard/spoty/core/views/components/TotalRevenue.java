@@ -19,9 +19,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class TotalRevenue extends AnchorPane {
     private final ToggleButton monthlyViewBtn;
     private final ToggleButton weeklyViewBtn;

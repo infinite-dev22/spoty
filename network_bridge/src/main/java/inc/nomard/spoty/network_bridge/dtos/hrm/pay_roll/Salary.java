@@ -2,14 +2,14 @@ package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class Salary {
     private Long id;
     private Employee employee;

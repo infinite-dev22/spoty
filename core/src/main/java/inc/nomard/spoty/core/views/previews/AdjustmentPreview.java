@@ -20,7 +20,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log
+@Log4j2
 public class AdjustmentPreview extends BorderPane {
     static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<AdjustmentDetail> adjustmentDetails = new SimpleListProperty<>(adjustmentDetailsList);

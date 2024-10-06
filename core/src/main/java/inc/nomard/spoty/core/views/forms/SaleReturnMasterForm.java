@@ -26,13 +26,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log
+@Log4j2
 public class SaleReturnMasterForm extends VBox {
     private final ModalPane modalPane;
     public CustomButton saveBtn;

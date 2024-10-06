@@ -30,7 +30,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class RequisitionPage extends OutlinePage {
     private final SideModalPane modalPane1;
     private final SideModalPane modalPane2;

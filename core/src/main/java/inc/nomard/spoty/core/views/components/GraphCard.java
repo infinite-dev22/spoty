@@ -20,9 +20,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class GraphCard extends AnchorPane {
     private static final Double AXIS_WIDTH = 25d;
     private static final Double AXIS_HEIGHT = 25d;

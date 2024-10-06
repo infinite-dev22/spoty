@@ -10,7 +10,7 @@ import inc.nomard.spoty.network_bridge.repositories.interfaces.SimpleRepository;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -22,7 +22,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class SuppliersRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class,

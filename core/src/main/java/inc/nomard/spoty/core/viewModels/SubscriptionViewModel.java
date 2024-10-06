@@ -13,7 +13,7 @@ import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.utils.connectivity.Connectivity;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import javafx.application.Platform;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class SubscriptionViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

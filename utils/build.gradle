@@ -3,7 +3,7 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version "$jfx_plugin"
     id 'io.freefair.lombok' version "$lombok_plugin"
-    id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
+    // id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
 }
 
 apply plugin: 'java'
@@ -28,12 +28,23 @@ test {
 }
 
 dependencies {
+    implementation "com.google.code.gson:gson:$gson"
+    implementation "net.coobird:thumbnailator:$thumbnailator"
+    // Lombok
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     implementation "org.projectlombok:lombok:$lombok"
-    implementation "com.google.code.gson:gson:$gson"
-    implementation "net.coobird:thumbnailator:$thumbnailator"
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+    // Lombok Tests
+    testCompileOnly "org.projectlombok:lombok:$lombok"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombok"
+    // Log4j2 dependencies
+    implementation "org.apache.logging.log4j:log4j-api:$log4j2"
+    implementation "org.apache.logging.log4j:log4j-core:$log4j2"
+    // Async logging support in Log4j2
+    implementation "org.apache.logging.log4j:log4j-jul:$log4j2"
+    // Async logging (Disruptor) dependency
+    // implementation "com.lmax:disruptor:3.4.4"
+    // Unit Tests
+    implementation "org.junit.jupiter:junit-jupiter-api:$junit"
+    implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
 }

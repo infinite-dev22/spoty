@@ -38,7 +38,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.SneakyThrows;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -50,7 +50,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@Log
+@Log4j2
 public class ProductForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;
@@ -86,7 +86,6 @@ public class ProductForm extends BorderPane {
             unitOfMeasureConstraints,
             barcodeTypeConstraints;
 
-    @SneakyThrows
     public ProductForm(ModalPane modalPane) {
         this.modalPane = modalPane;
         createDialog();
@@ -95,10 +94,14 @@ public class ProductForm extends BorderPane {
         dialogOnActions();
         addImage();
         requiredValidator();
-        ProductViewModel.setImageFile(
-                SpotyImageUtils.getFileFromResource(
-                        SpotyCoreResourceLoader.loadURL("images/product-image-placeholder.png")
-                ));
+        try {
+            ProductViewModel.setImageFile(
+                    SpotyImageUtils.getFileFromResource(
+                            SpotyCoreResourceLoader.loadURL("images/product-image-placeholder.png")
+                    ));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         customizeFields();
     }
 

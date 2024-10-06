@@ -17,13 +17,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.Objects;
 
-@Log
+@Log4j2
 public class PaySlipPage extends OutlinePage {
     public VBox paySlipItemHolder;
     public ScrollPane scrollPane;

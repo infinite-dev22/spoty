@@ -15,13 +15,13 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log
+@Log4j2
 public class Orders extends AnchorPane {
     public TableView<SaleMaster> saleOrders;
     private TableColumn<SaleMaster, SaleMaster> saleCustomer;

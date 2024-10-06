@@ -1,9 +1,9 @@
 package inc.nomard.spoty.network_bridge.end_points;
 
 import inc.nomard.spoty.utils.flavouring.AppConfig;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class EndPoints {
     public static final String appDNS = AppConfig.getAppHostUrl();
     public static final String apiUrl = appDNS + "/api/v1";

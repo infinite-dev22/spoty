@@ -14,14 +14,14 @@ import javafx.scene.paint.Color;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 
 @Setter
 @Getter
 @Builder
-@Log
+@Log4j2
 public class PaymentPlanCard extends VBox {
     private String imageUrl;
     private String planName;

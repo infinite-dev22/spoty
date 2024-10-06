@@ -3,7 +3,7 @@ package inc.nomard.spoty.network_bridge.dtos.accounting;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class Expense implements Serializable {
     private Long id;
     private LocalDate date;

@@ -17,6 +17,9 @@ module spoty.core {
     requires com.dlsc.gemsfx;
     requires org.kordamp.ikonli.materialdesign;
     requires org.kordamp.ikonli.feather;
+    requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.core;
+    requires org.apache.logging.log4j.jul;
 
     opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;

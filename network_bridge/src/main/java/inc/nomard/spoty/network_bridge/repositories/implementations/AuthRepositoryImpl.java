@@ -5,7 +5,7 @@ import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.models.LoginModel;
 import inc.nomard.spoty.network_bridge.models.SignupModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.AuthRepository;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,7 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public CompletableFuture<HttpResponse<String>> login(LoginModel loginModel) {

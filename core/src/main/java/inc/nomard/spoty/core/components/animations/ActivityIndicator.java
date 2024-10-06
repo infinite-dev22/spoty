@@ -8,11 +8,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Objects;
 
-@Log
+@Log4j2
 public class ActivityIndicator extends HBox {
     private Color color;
 

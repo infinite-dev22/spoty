@@ -1,14 +1,14 @@
 package inc.nomard.spoty.network_bridge.dtos.payments;
 
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class CardModel {
     private String card;
     private String cvv;

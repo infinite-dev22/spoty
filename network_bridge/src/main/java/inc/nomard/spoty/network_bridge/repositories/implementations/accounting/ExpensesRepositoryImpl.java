@@ -11,7 +11,7 @@ import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

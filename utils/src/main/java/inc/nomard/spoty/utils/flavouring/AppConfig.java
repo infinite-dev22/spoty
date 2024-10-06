@@ -1,12 +1,12 @@
 package inc.nomard.spoty.utils.flavouring;
 
 import inc.nomard.spoty.utils.SpotyLogger;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.util.Properties;
 
-@Log
+@Log4j2
 public class AppConfig {
 
     private static final String CONFIG_FILE = "config.properties";

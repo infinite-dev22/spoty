@@ -3,7 +3,7 @@ package inc.nomard.spoty.network_bridge.repositories.implementations;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.DashboardRepository;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,7 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class DashboardRepositoryImpl extends ProtectedGlobals implements DashboardRepository {
     @Override
     public CompletableFuture<HttpResponse<String>> kpiEarnings() {

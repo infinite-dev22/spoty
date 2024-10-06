@@ -5,7 +5,6 @@ import inc.nomard.spoty.core.views.pages.*;
 import inc.nomard.spoty.core.views.pages.leave.LeaveMainPage;
 import inc.nomard.spoty.core.views.pages.purchase.PurchaseMainPage;
 import inc.nomard.spoty.core.views.pages.sale.SalesMainPage;
-import inc.nomard.spoty.core.views.pages.sale.tabs.OrderPage;
 import inc.nomard.spoty.core.views.pos.PointOfSalePage;
 import inc.nomard.spoty.core.views.settings.AppSettingPage;
 import inc.nomard.spoty.core.views.settings.BranchPage;
@@ -16,8 +15,7 @@ import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.flavouring.AppFlavor;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.scene.control.TreeView;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +24,7 @@ import java.util.Objects;
 
 import static org.kordamp.ikonli.fontawesome5.FontAwesomeSolid.*;
 
-@Log
+@Log4j2
 public class Navigation {
     public static final Class<? extends Page> DEFAULT_PAGE = DashboardPage.class;
     private static final Map<Class<? extends Page>, NavTree.NavTreeItem> NAV_TREE = createNavItems();
@@ -67,7 +65,7 @@ public class Navigation {
                 Map.entry(TenantSettingsPage.class, NavTree.NavTreeItem.page("Company Details", TenantSettingsPage.class)));  // Immutable map
     }
 
-    public TreeView<Nav> createNavigation() {
+    public NavTree createNavigation() {
         return new NavTree(this);
     }
 
@@ -99,7 +97,7 @@ public class Navigation {
         var sale = NavTree.NavTreeItem.group("Sale", BALANCE_SCALE);
         sale.getChildren().setAll(
                 NAV_TREE.get(PointOfSalePage.class),
-                NAV_TREE.get(OrderPage.class));
+                NAV_TREE.get(SalesMainPage.class));
         return sale;
     }
 
@@ -156,8 +154,8 @@ public class Navigation {
                 NAV_TREE.get(EmployeePage.class)
         ));
         if (flavor == AppFlavor.DEV) {
-            items.add(NavTree.NavTreeItem.page("Leave", LeaveMainPage.class));
-            items.add(NavTree.NavTreeItem.page("PayRoll", PaySlipPage.class));
+            items.add(NAV_TREE.get(LeaveMainPage.class));
+            items.add(NAV_TREE.get(PaySlipPage.class));
         }
         return items;
     }

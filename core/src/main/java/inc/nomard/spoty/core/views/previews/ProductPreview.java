@@ -25,7 +25,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Log
+@Log4j2
 public class ProductPreview extends BorderPane {
     private static final double IMAGE_SIZE = 160;
     private static final double ARC_SIZE = 20;
@@ -147,13 +147,13 @@ public class ProductPreview extends BorderPane {
                     centerImage();
                 });
             } else {
-                log.warning("Image is null, using placeholder.");
+                log.warn("Image is null, using placeholder.");
                 Platform.runLater(this::updateProductImageHolderWithPlaceholder);
             }
         });
 
         loadImageTask.setOnFailed(event -> {
-            log.warning("Failed to load image from URL: " + imagePath + ". " + loadImageTask.getException());
+            log.warn("Failed to load image from URL: " + imagePath + ". " + loadImageTask.getException());
             Platform.runLater(this::updateProductImageHolderWithPlaceholder);
         });
 

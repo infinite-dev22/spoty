@@ -12,12 +12,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-@Log
+@Log4j2
 public class TransferPreviewController implements Initializable {
     static final ObservableList<TransferDetail> transferDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<TransferDetail> transferDetails =

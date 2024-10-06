@@ -28,7 +28,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -36,7 +36,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class BranchPage extends OutlinePage {
     private final ModalPane modalPane;
     private CustomTextField searchBar;

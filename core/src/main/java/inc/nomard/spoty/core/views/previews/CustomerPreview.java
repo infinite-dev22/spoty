@@ -20,13 +20,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
-@Log
+@Log4j2
 public class CustomerPreview extends BorderPane {
     private static final StringProperty nameProperty = new SimpleStringProperty();
     private static final StringProperty emailProperty = new SimpleStringProperty();

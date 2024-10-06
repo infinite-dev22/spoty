@@ -3,14 +3,14 @@ package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class PurchaseReturnDetail {
     private Long id;
     private double cost;

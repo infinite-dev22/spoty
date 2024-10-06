@@ -19,13 +19,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.util.StringConverter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.LinkedList;
 
-@Log
+@Log4j2
 public class GraphCard2 extends AnchorPane {
     private static final Double AXIS_WIDTH = 25d;
     private static final Double AXIS_HEIGHT = 25d;

@@ -19,7 +19,7 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class DesignationViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

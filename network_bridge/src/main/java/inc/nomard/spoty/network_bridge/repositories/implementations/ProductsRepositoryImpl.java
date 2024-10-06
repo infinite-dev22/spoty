@@ -11,7 +11,7 @@ import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -33,7 +33,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
-@Log
+@Log4j2
 public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class,
