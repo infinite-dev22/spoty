@@ -4,8 +4,7 @@ plugins {
     id "application"
     id "org.openjfx.javafxplugin" version "$jfx_plugin"
     id "org.beryx.jlink" version "$jlink_plugin"
-//    id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
-    id "com.gluonhq.gluonfx-gradle-plugin" version "$gluon_plugin"
+    id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
     id "io.freefair.lombok" version "$lombok_plugin"
     id "com.github.mrcjkb.module-finder" version "$module_finder_plugin"
 }
@@ -27,57 +26,47 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-//graalvmNative {
-//    binaries.all {
-//        resources.autodetect()
-//    }
-//    toolchainDetection = true
-//    agent {
-//        defaultMode = "standard"
-//        enabled = true
-//        modes {
-//            standard {
-//            }
-//        }
-//        builtinCallerFilter = true
-//        builtinHeuristicFilter = true
-//        enableExperimentalPredefinedClasses = false
-//        enableExperimentalUnsafeAllocationTracing = false
-//        trackReflectionMetadata = true
-//        metadataCopy {
-//            inputTaskNames.add("test")
-//            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
-//            mergeWithExisting = true
-//        }
-//    }
-//    binaries {
-//        main {
-//            imageName = "OpenSale-ERP"
-//            mainClass = "inc.nomard.spoty.core.Main"
-//            debug = true
-//            verbose = true
-//            fallback = false
-//            sharedLibrary = false
-//            quickBuild = false
-//            richOutput = false
-//            buildArgs.add("-O4")
-//        }
-//    }
-//    binaries.configureEach {
-//        buildArgs.add("--verbose")
-//        resources.autodetect()
-//    }
-//}
-
-//gluon {
-//    target = "host" // 'ios', 'android', 'host', etc. depending on your target platform
-//    javafxStaticSdkVersion = "$jfx" // Set to match your JavaFX version
-//}
-
-gluonfx {
-    mainClassName = "inc.nomard.spoty.core.Main" // Change this to your app's main class
-    target = "host" // or "ios", "android", etc.
-//    graalvmHome = "/home/infinite/.sdkman/candidates/java/current"
+graalvmNative {
+    binaries.all {
+        resources.autodetect()
+    }
+    toolchainDetection = true
+    agent {
+        defaultMode = "standard"
+        enabled = true
+        modes {
+            standard {
+            }
+        }
+        builtinCallerFilter = true
+        builtinHeuristicFilter = true
+        enableExperimentalPredefinedClasses = false
+        enableExperimentalUnsafeAllocationTracing = false
+        trackReflectionMetadata = true
+        metadataCopy {
+            inputTaskNames.add("test")
+            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
+            mergeWithExisting = true
+        }
+    }
+    binaries {
+        main {
+            imageName = "OpenSale-ERP"
+            mainClass = "inc.nomard.spoty.core.Main"
+            debug = true
+            verbose = true
+            fallback = false
+            sharedLibrary = false
+            quickBuild = false
+            richOutput = false
+            buildArgs.add("-O4")
+            buildArgs.add("--initialize-at-build-time=org.apache.logging.log4j.*")
+        }
+    }
+    binaries.configureEach {
+        buildArgs.add("--verbose")
+        resources.autodetect()
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -93,35 +82,35 @@ test {
     useJUnitPlatform()
 }
 
-//run {
-//    jvmArgs = [
-//            "-XX:NewRatio=1",
-//            "-Xms256m",
-//            "-Xmx1G",
-//            "-XX:ReservedCodeCacheSize=128m",
-//            "-XX:MaxGCPauseMillis=200",
-//            "-XX:SoftRefLRUPolicyMSPerMB=50",
-//            "-XX:+HeapDumpOnOutOfMemoryError",
-//            "-Djbr.catch.SIGABRT=true",
-//            "-Djdk.attach.allowAttachSelf=true",
-//            "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
-//            "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
-//            "-XX:+TieredCompilation",
-//            "-XX:+UseStringDeduplication",
-//            "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
-//            "-Djava.security.egd=file:/dev/urandom",
-//            "-XX:+AlwaysPreTouch",
-//            "-Dprism.marlinratserizer=true",
-//            "-Dprism.forceGPU=true",
-//            "-Dprism.text=t2k",
-//            "-Dprism.verbose=true",
-//            "-Djavafx.platform=gtk3",
-//            "-Dsun.java2d.opengl=true",
-////            "-XX:+AutoCreateSharedArchive",
-//            "-XX:SharedArchiveFile=spoty.jsa",
-//            "-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector"
-//    ]
-//}
+run {
+    jvmArgs = [
+            "-XX:NewRatio=1",
+            "-Xms256m",
+            "-Xmx1G",
+            "-XX:ReservedCodeCacheSize=128m",
+            "-XX:MaxGCPauseMillis=200",
+            "-XX:SoftRefLRUPolicyMSPerMB=50",
+            "-XX:+HeapDumpOnOutOfMemoryError",
+            "-Djbr.catch.SIGABRT=true",
+            "-Djdk.attach.allowAttachSelf=true",
+            "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
+            "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
+            "-XX:+TieredCompilation",
+            "-XX:+UseStringDeduplication",
+            "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
+            "-Djava.security.egd=file:/dev/urandom",
+            "-XX:+AlwaysPreTouch",
+            "-Dprism.marlinratserizer=true",
+            "-Dprism.forceGPU=true",
+            "-Dprism.text=t2k",
+            "-Dprism.verbose=true",
+            "-Djavafx.platform=gtk3",
+            "-Dsun.java2d.opengl=true",
+            "-XX:+AutoCreateSharedArchive",
+            "-XX:SharedArchiveFile=spoty.jsa",
+            "-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector"
+    ]
+}
 
 jar {
     manifest {
