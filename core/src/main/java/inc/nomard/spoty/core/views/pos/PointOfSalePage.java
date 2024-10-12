@@ -16,6 +16,11 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.SpotyLogger;
+import io.github.palexdev.mfxcore.utils.fx.CSSFragment;
+import io.github.palexdev.virtualizedfx.VFXResources;
+import io.github.palexdev.virtualizedfx.base.VFXScrollable;
+import io.github.palexdev.virtualizedfx.controls.VFXScrollPane;
+import io.github.palexdev.virtualizedfx.enums.ScrollPaneEnums;
 import io.github.palexdev.virtualizedfx.grid.VFXGrid;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -41,6 +46,7 @@ import java.util.stream.Stream;
 
 @Log4j2
 public class PointOfSalePage extends OutlinePage {
+    private static Long availableProductQuantity = 0L;
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
     private ToggleGroup toggleGroup;
     private TableView<SaleDetail> cart;
@@ -56,7 +62,6 @@ public class PointOfSalePage extends OutlinePage {
     private TableColumn<SaleDetail, SaleDetail> cartActions;
     private ComboBox<Tax> tax;
     private SpotyProgressSpinner progress;
-    private Long availableProductQuantity = 0L;
 
 
     public PointOfSalePage() {
@@ -77,14 +82,114 @@ public class PointOfSalePage extends OutlinePage {
                 .exceptionally(this::onDataInitializationFailure);
     }
 
+    private static void handleProductCardClick(ProductCard productCard) {
+        Optional<SaleDetail> existingSaleDetail = SaleDetailViewModel.getSaleDetails().stream()
+                .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct()).findAny();
+
+        existingSaleDetail.ifPresentOrElse(saleDetail -> updateExistingSaleDetail(saleDetail, productCard),
+                () -> addNewSaleDetail(productCard));
+    }
+
+    private static void updateExistingSaleDetail(SaleDetail saleDetail, ProductCard productCard) {
+        try {
+            long quantity = calculateQuantity(saleDetail);
+            availableProductQuantity = quantity;
+
+            if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
+                SaleDetailViewModel.getCartSale(saleDetail);
+                updateSaleDetail(saleDetail, productCard, quantity);
+            } else {
+                SpotyUtils.errorMessage("Product out of stock");
+            }
+        } catch (Exception e) {
+            SpotyLogger.writeToFile(e, PointOfSalePage.class);
+        }
+    }
+
+    private static void updateSaleDetail(SaleDetail saleDetail, ProductCard productCard, long quantity) {
+        SaleDetailViewModel.setProduct(productCard.getProduct());
+        SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
+        SaleDetailViewModel.setQuantity(quantity);
+        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()) + saleDetail.getUnitPrice());
+        SaleDetailViewModel.updateCartSale((long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
+    }
+
+    private static void addNewSaleDetail(ProductCard productCard) {
+        if (productCard.getProduct().getQuantity() > 0) {
+            SaleDetailViewModel.setProduct(productCard.getProduct());
+            SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
+            SaleDetailViewModel.setQuantity(1L);
+            availableProductQuantity = 1L;
+            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+            SaleDetailViewModel.addSaleDetail();
+        } else {
+            SpotyUtils.errorMessage("Product out of stock");
+        }
+    }
+
+    private static double calculateSubTotal(Product product) {
+        double subTotal = product.getSalePrice();
+
+        if (Objects.nonNull(product.getTax()) && product.getTax().getPercentage() > 0) {
+            subTotal += (product.getTax().getPercentage() / 100) * subTotal;
+        }
+        if (Objects.nonNull(product.getDiscount()) && product.getDiscount().getPercentage() > 0) {
+            subTotal += (product.getDiscount().getPercentage() / 100) * subTotal;
+        }
+        return subTotal;
+    }
+
+    private static long calculateQuantity(SaleDetail saleDetail) {
+        return saleDetail.getQuantity() + 1;
+    }
+
+    private static VFXScrollPane buildGridScrollPane(VFXGrid<Product, ProductCard> grid) {
+        var sp = grid.makeScrollable();
+        sp.setSmoothScroll(true);
+        sp.setDragToScroll(true);
+        sp.setDragSmoothScroll(true);
+        sp.setShowButtons(true);
+        sp.getStylesheets().add(VFXResources.loadResource("VFXScrollPane.css"));
+        sp.setHBarPolicy(ScrollPaneEnums.ScrollBarPolicy.NEVER);
+        VFXScrollable.setSpeed(sp, grid, 0.1, true);
+        CSSFragment.Builder.build()
+                .addSelector(".vfx-scroll-pane")
+                .padding("10px")
+                .background("transparent")
+                .closeSelector()
+                .applyOn(sp);
+        CSSFragment.Builder.build()
+                .addSelector(".vfx-scroll-pane")
+                .background("transparent")
+                .closeSelector()
+                .applyOn(sp);
+        return sp;
+    }
+
+    private static VFXGrid<Product, ProductCard> buildGrid() {
+        var grid = new VFXGrid<>(ProductViewModel.getProducts(), product -> {
+            var cell = new ProductCard();
+            cell.setProduct(product);
+            cell.setOnMouseClicked(_ -> handleProductCardClick(cell));
+            return cell;
+        });
+        grid.autoArrange();
+        grid.setSpacing(25d, 25d);
+        grid.setCellSize(160, 250);
+        grid.setPrefSize(1000, 1000);
+        grid.setColumnsNum(6);
+        // grid.setBufferSize(BufferSize.MEDIUM);
+        return grid;
+    }
+
     private Void onDataInitializationFailure(Throwable throwable) {
         SpotyLogger.writeToFile(throwable, EmployeePage.class);
-        this.errorMessage("An error occurred while loading view");
+        this.errorMessage();
         return null;
     }
 
-    private void errorMessage(String message) {
-        SpotyUtils.errorMessage(message);
+    private void errorMessage() {
+        SpotyUtils.errorMessage("An error occurred while loading view");
         progress.setManaged(false);
         progress.setVisible(false);
     }
@@ -165,19 +270,14 @@ public class PointOfSalePage extends OutlinePage {
         updateCategoryFilters(filterPane);
 
         var scroll = new ScrollPane(filterPane);
-        scroll.maxHeight(120d);
-        scroll.prefHeight(100d);
+        scroll.maxHeight(200d);
+        scroll.prefHeight(160d);
         scroll.minHeight(80d);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         VBox.setVgrow(scroll, Priority.ALWAYS);
         configureFilterScrollPane(scroll);
         return scroll;
-    }
-
-    // Product CardHolder UI.
-    private VFXGrid buildProductCardHolderUI() {
-        return setProductsGridView();
     }
 
     // Product UI.
@@ -188,11 +288,11 @@ public class PointOfSalePage extends OutlinePage {
         VBox.setVgrow(vbox, Priority.ALWAYS);
 
         var vbox1 = new VBox(buildFilterUI());
-        vbox1.maxHeight(120d);
-        vbox1.prefHeight(100d);
+        vbox1.maxHeight(200d);
+        vbox1.prefHeight(160d);
         vbox1.minHeight(80d);
 
-        vbox.getChildren().addAll(vbox1, buildProductCardHolderUI());
+        vbox.getChildren().addAll(vbox1, buildGridScrollPane(buildGrid()));
         return vbox;
     }
 
@@ -280,7 +380,7 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private void cartListeners() {
-        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<? super SaleDetail>) change -> {
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<? super SaleDetail>) _ -> {
             if (SaleDetailViewModel.getSaleDetails().isEmpty()) {
                 checkOutBtn.setDisable(true);
                 emptyCartBtn.setDisable(true);
@@ -316,13 +416,13 @@ public class PointOfSalePage extends OutlinePage {
     // Cart Buttons UI.
     private HBox buildButtons() {
         checkOutBtn = new CustomButton("CheckOut $0.00");
-        checkOutBtn.setOnAction(event -> savePOSSale());
+        checkOutBtn.setOnAction(_ -> savePOSSale());
         checkOutBtn.setPrefWidth(650d);
         checkOutBtn.getStyleClass().add(Styles.ACCENT);
         checkOutBtn.setDisable(true);
         bindTotalLabels();
         emptyCartBtn = new Button("Empty Cart");
-        emptyCartBtn.setOnAction(event -> clearCart());
+        emptyCartBtn.setOnAction(_ -> clearCart());
         emptyCartBtn.setPrefWidth(400d);
         emptyCartBtn.getStyleClass().addAll(Styles.DANGER);
         emptyCartBtn.setDisable(true);
@@ -368,7 +468,6 @@ public class PointOfSalePage extends OutlinePage {
         return pane;
     }
 
-
     private void setPOSComboBoxes() {
         setupComboBox(discount, DiscountViewModel.getDiscounts(), SaleMasterViewModel.discountProperty(), discount -> (discount == null) ? "" : discount.getName() + " (" + discount.getPercentage() + "%)");
         setupComboBox(tax, TaxViewModel.getTaxes(), SaleMasterViewModel.netTaxProperty(), tax -> (tax == null) ? "" : tax.getName() + " (" + tax.getPercentage() + "%)");
@@ -384,7 +483,7 @@ public class PointOfSalePage extends OutlinePage {
             comboBox.setConverter(itemConverter);
         }
         if (items.isEmpty()) {
-            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+            items.addListener((ListChangeListener<T>) _ -> comboBox.setItems(items));
         } else {
             comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
         }
@@ -400,46 +499,9 @@ public class PointOfSalePage extends OutlinePage {
             comboBox.setConverter(itemConverter);
         }
         if (items.isEmpty()) {
-            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+            items.addListener((ListChangeListener<T>) _ -> comboBox.setItems(items));
         } else {
             comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
-        }
-    }
-
-    private VFXGrid setProductsGridView() {
-        var productsGridView = new VFXGrid<>();
-        productsGridView.autoArrange();
-        productsGridView.makeScrollable();
-        productsGridView.setSpacing(5d, 5d);
-        productsGridView.setPadding(new Insets(5));
-
-        productsGridView.setPrefSize(400, 400);
-        productsGridView.setColumnsNum(3); // Set the number of columns
-
-        productsGridView.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-            progress.setManaged(true);
-            progress.setVisible(true);
-            productsGridView.getItems().clear();
-            loadAllProducts(productsGridView);
-            progress.setManaged(false);
-            progress.setVisible(false);
-        });
-
-        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> loadAllProducts(productsGridView));
-
-        loadAllProducts(productsGridView);
-        return productsGridView;
-    }
-
-    private void addProductToGridPane(VFXGrid productsGridView, Product product) {
-        ProductCard productCard = new ProductCard(product);
-        configureProductCardAction(productCard);
-        productsGridView.getItems().addAll(productCard);
-    }
-
-    private void loadAllProducts(VFXGrid productsGridView) {
-        for (Product product : ProductViewModel.getProducts()) {
-            addProductToGridPane(productsGridView, product);
         }
     }
 
@@ -451,73 +513,8 @@ public class PointOfSalePage extends OutlinePage {
         });
     }
 
-    private void configureProductCardAction(ProductCard productCard) {
-        productCard.setOnMouseClicked(event -> handleProductCardClick(productCard));
-    }
-
-    private void handleProductCardClick(ProductCard productCard) {
-        Optional<SaleDetail> existingSaleDetail = SaleDetailViewModel.getSaleDetails().stream()
-                .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct()).findAny();
-
-        existingSaleDetail.ifPresentOrElse(saleDetail -> updateExistingSaleDetail(saleDetail, productCard),
-                () -> addNewSaleDetail(productCard));
-    }
-
-    private void updateExistingSaleDetail(SaleDetail saleDetail, ProductCard productCard) {
-        try {
-            long quantity = calculateQuantity(saleDetail);
-            availableProductQuantity = quantity;
-
-            if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
-                SaleDetailViewModel.getCartSale(saleDetail);
-                updateSaleDetail(saleDetail, productCard, quantity);
-            } else {
-                SpotyUtils.errorMessage("Product out of stock");
-            }
-        } catch (Exception e) {
-            SpotyLogger.writeToFile(e, this.getClass());
-        }
-    }
-
-    private void updateSaleDetail(SaleDetail saleDetail, ProductCard productCard, long quantity) {
-        SaleDetailViewModel.setProduct(productCard.getProduct());
-        SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
-        SaleDetailViewModel.setQuantity(quantity);
-        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()) + saleDetail.getUnitPrice());
-        SaleDetailViewModel.updateCartSale((long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
-    }
-
-    private void addNewSaleDetail(ProductCard productCard) {
-        if (productCard.getProduct().getQuantity() > 0) {
-            SaleDetailViewModel.setProduct(productCard.getProduct());
-            SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
-            SaleDetailViewModel.setQuantity(1L);
-            availableProductQuantity = 1L;
-            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
-            SaleDetailViewModel.addSaleDetail();
-        } else {
-            SpotyUtils.errorMessage("Product out of stock");
-        }
-    }
-
-    private double calculateSubTotal(Product product) {
-        double subTotal = product.getSalePrice();
-
-        if (Objects.nonNull(product.getTax()) && product.getTax().getPercentage() > 0) {
-            subTotal += (product.getTax().getPercentage() / 100) * subTotal;
-        }
-        if (Objects.nonNull(product.getDiscount()) && product.getDiscount().getPercentage() > 0) {
-            subTotal += (product.getDiscount().getPercentage() / 100) * subTotal;
-        }
-        return subTotal;
-    }
-
     private double calculateTotal(ObservableList<SaleDetail> saleDetails) {
         return saleDetails.stream().mapToDouble(SaleDetail::getUnitPrice).sum();
-    }
-
-    private long calculateQuantity(SaleDetail saleDetail) {
-        return saleDetail.getQuantity() + 1;
     }
 
     private void setCategoryFilters(HBox node) {
@@ -528,7 +525,7 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private void updateCategoryFilters(HBox node) {
-        ProductCategoryViewModel.getCategories().addListener((ListChangeListener<ProductCategory>) c -> {
+        ProductCategoryViewModel.getCategories().addListener((ListChangeListener<ProductCategory>) _ -> {
             node.getChildren().clear();
             ProductCategoryViewModel.getCategories().forEach(productCategory -> {
                 ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
@@ -550,7 +547,7 @@ public class PointOfSalePage extends OutlinePage {
     private void setCheckoutProductsTable() {
         setupCartTableColumns();
 
-        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) c -> {
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) _ -> {
             cart.setItems(SaleDetailViewModel.getSaleDetails());
             enableUIOnSaleDetailsChange();
         });
@@ -558,7 +555,7 @@ public class PointOfSalePage extends OutlinePage {
 
     private void setupCartTableColumns() {
         cartName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        cartName.setCellFactory(tc -> new TableCell<>() {
+        cartName.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -567,7 +564,7 @@ public class PointOfSalePage extends OutlinePage {
         });
 
         cartQuantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        cartQuantity.setCellFactory(tableColumn -> new TableCell<>() {
+        cartQuantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -575,7 +572,7 @@ public class PointOfSalePage extends OutlinePage {
             }
         });
         cartSubTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        cartSubTotal.setCellFactory(tableColumn -> new TableCell<>() {
+        cartSubTotal.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -584,7 +581,7 @@ public class PointOfSalePage extends OutlinePage {
         });
 
         cartActions.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        cartActions.setCellFactory(param -> new TableCell<>() {
+        cartActions.setCellFactory(_ -> new TableCell<>() {
             final Button deleteIcon = new Button(null, new FontIcon(Feather.TRASH));
 
             @Override
@@ -595,13 +592,13 @@ public class PointOfSalePage extends OutlinePage {
                 } else {
                     deleteIcon.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT, Styles.DANGER);
                     setGraphic(deleteIcon);
-                    deleteIcon.setOnAction(event -> removeItemFromCart(item));
+                    deleteIcon.setOnAction(_ -> removeItemFromCart(item));
                 }
             }
         });
 
         productTax.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        productTax.setCellFactory(param -> new TableCell<>() {
+        productTax.setCellFactory(_ -> new TableCell<>() {
             final Label value = new Label();
 
             @Override
@@ -621,7 +618,7 @@ public class PointOfSalePage extends OutlinePage {
         });
 
         productDiscount.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        productDiscount.setCellFactory(param -> new TableCell<>() {
+        productDiscount.setCellFactory(_ -> new TableCell<>() {
             final Label value = new Label();
 
             @Override
@@ -662,7 +659,7 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     private void bindTotalLabels() {
-        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) listener ->
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) _ ->
                 checkOutBtn.setText("CheckOut: UGX " + AppUtils.decimalFormatter().format(calculateTotal(SaleDetailViewModel.getSaleDetails())))
         );
     }
@@ -708,7 +705,7 @@ public class PointOfSalePage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+        searchBar.textProperty().addListener((_, oldValue, newValue) -> {
             if (Objects.equals(oldValue, newValue)) {
                 return;
             }
