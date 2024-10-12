@@ -223,22 +223,34 @@ jlink {
 dependencies {
     implementation project(":network_bridge")
     implementation project(":utils")
+    // VirtualizedFX
     implementation 'io.github.palexdev:virtualizedfx:21.6.4'
+    // JFXtras
     implementation 'org.jfxtras:jfxtras-controls:17-r1'
+    // Jakarta Inject API
     implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"
+    // Measure Unit API
     implementation "javax.measure:unit-api:$measure_unit_api"
+    // GemsFX
     implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"
+    // CalendarFX
     implementation "com.calendarfx:view:11.12.7"
+    // FX Charts
     implementation "eu.hansolo.fx:charts:$fx_charts"
+    // AtlantaFX
     implementation "io.github.mkpaz:atlantafx-parent:$atlantafx"
     implementation "io.github.mkpaz:atlantafx-styles:$atlantafx"
     implementation "io.github.mkpaz:atlantafx-base:$atlantafx"
+    // GSon
     implementation "com.google.code.gson:gson:$gson"
+    // MaterialFX
     implementation "io.github.palexdev:materialfx:$materialfx"
+    // IkonLi
     implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-feather-pack:$ikonLi"
+    // CSSFX
     implementation "fr.brouillard.oss:cssfx:$cssfx"
     // Lombok
     implementation "org.projectlombok:lombok:$lombok"
