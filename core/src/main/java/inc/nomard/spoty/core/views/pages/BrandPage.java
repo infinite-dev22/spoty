@@ -1,34 +1,44 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.BrandViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.BrandForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.network_bridge.dtos.Brand;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class BrandPage extends OutlinePage {
+    private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Brand> masterTable;
-    private MFXProgressSpinner progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
     private TableColumn<Brand, String> name;
     private TableColumn<Brand, String> description;
@@ -38,10 +48,18 @@ public class BrandPage extends OutlinePage {
     private TableColumn<Brand, Brand> updatedAt;
 
     public BrandPage() {
-        addNode(init());
+        super();
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        BrandViewModel.getAllBrands(this::onDataInitializationSuccess, this::errorMessage);
+        BrandViewModel.getAllBrands(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -60,7 +78,7 @@ public class BrandPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -104,10 +122,33 @@ public class BrandPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (BrandViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        BrandViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (BrandViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -121,9 +162,9 @@ public class BrandPage extends OutlinePage {
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
 
         setupTableColumns();
 
@@ -160,14 +201,14 @@ public class BrandPage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            BrandViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
+            BrandViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
-                    BrandViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new BrandForm(), this).showAndWait(), this::errorMessage);
+                    BrandViewModel.getItem(obj.getItem().getId(), this::showDialog, this::errorMessage);
                     e.consume();
                 });
         contextMenu.getItems().addAll(edit, delete);
@@ -176,39 +217,29 @@ public class BrandPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new BrandForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog());
+    }
+
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new BrandForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
-        BrandViewModel.getAllBrands(null, null);
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        BrandViewModel.getAllBrands(null, null, null, null);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     public void setSearchBar() {
@@ -217,7 +248,7 @@ public class BrandPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                BrandViewModel.getAllBrands(null, null);
+                BrandViewModel.getAllBrands(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -244,7 +275,7 @@ public class BrandPage extends OutlinePage {
             @Override
             public void updateItem(Brand item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
@@ -256,7 +287,6 @@ public class BrandPage extends OutlinePage {
             @Override
             public void updateItem(Brand item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedBy()) ? null : item.getUpdatedBy().getName());
             }
         });
@@ -265,12 +295,51 @@ public class BrandPage extends OutlinePage {
             @Override
             public void updateItem(Brand item, boolean empty) {
                 super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+                this.setAlignment(Pos.CENTER_RIGHT);
 
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
 
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(BrandViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(BrandViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            BrandViewModel.getAllBrands(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, BrandViewModel.getPageSize());
+            BrandViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(BrandViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    BrandViewModel
+                            .getAllBrands(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    BrandViewModel.getPageNumber(),
+                                    t1);
+                    BrandViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

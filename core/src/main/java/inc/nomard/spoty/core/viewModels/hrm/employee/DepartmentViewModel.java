@@ -1,26 +1,38 @@
 package inc.nomard.spoty.core.viewModels.hrm.employee;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.DepartmentsRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class DepartmentViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
@@ -34,11 +46,14 @@ public class DepartmentViewModel {
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
-    private static final ObjectProperty<User> manager = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Employee> manager = new SimpleObjectProperty<>();
     private static final ObjectProperty<Department> parentDepartment = new SimpleObjectProperty<>();
     private static final StringProperty location = new SimpleStringProperty("");
     private static final BooleanProperty active = new SimpleBooleanProperty();
     private static final StringProperty description = new SimpleStringProperty("");
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
     public static ObservableList<Department> departmentsList = FXCollections.observableArrayList();
     private static final ListProperty<Department> departments = new SimpleListProperty<>(departmentsList);
     public static ObservableList<Department> departmentsComboBoxList = FXCollections.observableArrayList();
@@ -68,15 +83,15 @@ public class DepartmentViewModel {
         return name;
     }
 
-    public static User getManager() {
+    public static Employee getManager() {
         return manager.get();
     }
 
-    public static void setManager(User manager) {
+    public static void setManager(Employee manager) {
         DepartmentViewModel.manager.set(manager);
     }
 
-    public static ObjectProperty<User> managerProperty() {
+    public static ObjectProperty<Employee> managerProperty() {
         return manager;
     }
 
@@ -140,16 +155,48 @@ public class DepartmentViewModel {
         return departments;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        DepartmentViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        DepartmentViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        DepartmentViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void saveDepartment(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                       SpotyGotFunctional.MessageConsumer successMessage,
                                       SpotyGotFunctional.MessageConsumer errorMessage) {
         var department =
                 Department.builder()
                         .name(getName())
-                        .manager(getManager())
-                        .parentDepartment(getParentDepartment())
-                        .location(getLocation())
-                        .active(isActive())
                         .description(getDescription())
                         .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.post(department);
@@ -161,6 +208,11 @@ public class DepartmentViewModel {
                     onSuccess.run();
                     successMessage.showMessage("Department created successfully");
                 });
+            } else if (response.statusCode() == 400) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Malformed request"));
+                }
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
@@ -200,16 +252,20 @@ public class DepartmentViewModel {
     }
 
     public static void getAllDepartments(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.fetchAll();
+                                         SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Department>>() {
+                    Type type = new TypeToken<ResponseModel<Department>>() {
                     }.getType();
-                    ArrayList<Department> departmentList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Department> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Department> departmentList = responseModel.getContent();
                     departmentsList.clear();
                     departmentsList.addAll(departmentList);
                     if (Objects.nonNull(onSuccess)) {
@@ -352,10 +408,6 @@ public class DepartmentViewModel {
         var department = Department.builder()
                 .id(getId())
                 .name(getName())
-                .manager(getManager())
-                .parentDepartment(getParentDepartment())
-                .location(getLocation())
-                .active(isActive())
                 .description(getDescription())
                 .build();
         CompletableFuture<HttpResponse<String>> responseFuture = departmentsRepository.put(department);
@@ -367,6 +419,11 @@ public class DepartmentViewModel {
                     onSuccess.run();
                     successMessage.showMessage("Department updated successfully");
                 });
+            } else if (response.statusCode() == 400) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Malformed request"));
+                }
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {

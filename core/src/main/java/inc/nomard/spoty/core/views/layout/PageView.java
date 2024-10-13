@@ -1,11 +1,12 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.utils.*;
-import java.util.*;
-import java.util.function.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
+import inc.nomard.spoty.utils.UIUtils;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
+
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class PageView extends StackPane {
     public PageView() {
@@ -21,7 +22,9 @@ public class PageView extends StackPane {
     }
 
     protected void add(Node node) {
-        this.getChildren().add(node);
+        if (!this.getChildren().contains(node)) {
+            this.getChildren().add(node);
+        }
     }
 
     protected void remove(Node node) {

@@ -1,22 +1,21 @@
 package inc.nomard.spoty.network_bridge.dtos.quotations;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class QuotationDetail {
     private Long id;
     private Product product;
     private int quantity;
-    private Discount discount;
-    private Tax tax;
-    private double subTotal;
+    private double unitPrice;
+    private double totalPrice;
 
     public String getProductName() {
         return product.getName();

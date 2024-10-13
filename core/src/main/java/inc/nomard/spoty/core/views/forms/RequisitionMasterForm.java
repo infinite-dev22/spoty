@@ -1,49 +1,65 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.requisitions.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.SupplierViewModel;
+import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
+import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
-import io.github.palexdev.materialfx.utils.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
+
+@Log4j2
 public class RequisitionMasterForm extends VBox {
-    private final ModalPane modalPane;
+    private final ModalPane modalPane1;
+    private final ModalPane modalPane2;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<RequisitionDetail> tableView;
-    private TextArea note;
-    private Button saveBtn, cancelBtn, addBtn;
+    private ValidatableTextArea note;
+    private TableColumn<RequisitionDetail, RequisitionDetail> product;
+    private TableColumn<RequisitionDetail, RequisitionDetail> quantity;
 
-    public RequisitionMasterForm(ModalPane modalPane) {
-        this.modalPane = modalPane;
+    public RequisitionMasterForm(ModalPane modalPane1, ModalPane modalPane2) {
+        this.modalPane1 = modalPane1;
+        this.modalPane2 = modalPane2;
         init();
         initializeComponentProperties();
     }
@@ -85,10 +101,19 @@ public class RequisitionMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait());
+        addBtn.setOnAction(event -> this.showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(450, 250);
+        dialog.getChildren().add(new RequisitionDetailForm(modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane2.setAlignment(Pos.CENTER_RIGHT);
+        modalPane2.show(dialog);
+        modalPane2.setPersistent(true);
     }
 
     private TableView<RequisitionDetail> buildTable() {
@@ -117,15 +142,15 @@ public class RequisitionMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setMinHeight(100d);
         note.setWrapText(true);
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (!tableView.isDisabled() && RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
@@ -133,10 +158,11 @@ public class RequisitionMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
+                saveBtn.startLoading();
                 if (RequisitionMasterViewModel.getId() > 0) {
-                    RequisitionMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                    RequisitionMasterViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 } else {
-                    RequisitionMasterViewModel.saveRequisitionMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                    RequisitionMasterViewModel.saveRequisitionMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 }
             }
         });
@@ -169,7 +195,7 @@ public class RequisitionMasterForm extends VBox {
 
     private void configureSupplierComboBox() {
         StringConverter<Supplier> supplierConverter = FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
-        Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr -> supplier -> StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
+        Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr -> supplier -> supplierConverter.toString(supplier).toLowerCase().contains(searchStr);
 
         supplier.setConverter(supplierConverter);
 
@@ -205,21 +231,13 @@ public class RequisitionMasterForm extends VBox {
     }
 
     private void setupTableColumns() {
-        var product = new TableColumn<RequisitionDetail, RequisitionDetail>("Product");
-        var quantity = new TableColumn<RequisitionDetail, String>("Quantity");
+        product = new TableColumn<>("Product");
+        quantity = new TableColumn<>("Quantity");
 
         product.prefWidthProperty().bind(tableView.widthProperty().multiply(.7));
         quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
 
-        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(RequisitionDetail item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : item.getProductName());
-            }
-        });
-        quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        setupTableColumnData();
 
         var columnList = new LinkedList<>(Stream.of(product, quantity).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
@@ -237,7 +255,7 @@ public class RequisitionMasterForm extends VBox {
 
     private ContextMenu showContextMenu(TableRow<RequisitionDetail> row) {
         var contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(createMenuItem("Delete", event -> new DeleteConfirmationDialog(() -> handleDeleteAction(row), row.getItem().getProductName(), this)), createMenuItem("Edit", event -> handleEditAction(row)));
+        contextMenu.getItems().addAll(createMenuItem("Delete", event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> handleDeleteAction(row), row.getItem().getProductName()).showDialog()), createMenuItem("Edit", event -> handleEditAction(row)));
         return contextMenu;
     }
 
@@ -253,7 +271,7 @@ public class RequisitionMasterForm extends VBox {
 
     private void handleEditAction(TableRow<RequisitionDetail> row) {
         Platform.runLater(() -> RequisitionDetailViewModel.getRequisitionDetail(row.getItem().getId()));
-        SpotyDialog.createDialog(new RequisitionDetailForm(), this).showAndWait();
+        this.showForm();
     }
 
     private void bindTableItems() {
@@ -262,8 +280,7 @@ public class RequisitionMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        RequisitionMasterViewModel.getAllRequisitionMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null, null);
     }
 
     private void requiredValidator() {
@@ -287,35 +304,33 @@ public class RequisitionMasterForm extends VBox {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    private void setupTableColumnData() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(RequisitionDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
     }
 
     public void dispose() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        modalPane1.hide(true);
+        modalPane1.setPersistent(false);
         RequisitionMasterViewModel.resetProperties();
         supplierValidationLabel = null;
         supplier = null;

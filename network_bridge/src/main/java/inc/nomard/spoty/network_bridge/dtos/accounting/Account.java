@@ -1,7 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.accounting;
 
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
@@ -9,13 +9,13 @@ import lombok.extern.java.*;
 @NoArgsConstructor
 @Builder
 
-@Log
+@Log4j2
 public class Account {
     private Long id;
     private String accountName;
     private String accountNumber;
-    private String credit;
-    private String debit;
-    private String balance;
+    private Double credit;
+    private Double debit;
+    private Double balance;
     private String description;
 }

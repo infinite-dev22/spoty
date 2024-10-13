@@ -1,14 +1,21 @@
 package inc.nomard.spoty.utils;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import javax.xml.parsers.*;
-import lombok.extern.java.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import inc.nomard.spoty.utils.flavouring.AppConfig;
+import lombok.extern.log4j.Log4j2;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
-@Log
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+
+@Log4j2
 public class SeamlessUpdater {
 
     private static final String UPDATE_URL = "https://your-server.com/version_info.xml";
@@ -73,17 +80,15 @@ public class SeamlessUpdater {
             Document doc = builder.parse(connection.getInputStream());
 
             // Extract latest version from XML
-            NodeList nodes = doc.getElementsByTagName("version");
-            String latestVersion = nodes.item(0).getTextContent().trim();
+            String latestVersion = AppConfig.getAppVersion();
 
             // Get the currently installed version (replace with your logic)
-            String currentVersion = getInstalledVersion(); // Replace with your method to get the local version
+            String currentVersion = AppConfig.getAppVersion(); // Replace with your method to get the local version
 
             if (compareVersions(latestVersion, currentVersion) > 0) {
                 System.out.println("Update available: " + latestVersion);
                 // Extract release notes from XML (assuming structure)
-                nodes = doc.getElementsByTagName("releaseNotes");
-                String releaseNotes = nodes.getLength() > 0 ? nodes.item(0).getTextContent().trim() : "";
+                String releaseNotes = AppConfig.getVersionReleaseNotes();
                 System.out.println("Release notes:\n" + releaseNotes);
                 //  You can use this information to display a user notification
                 downloadUpdate();
@@ -130,15 +135,6 @@ public class SeamlessUpdater {
     }
 
     // Replace this with your logic to get the installed version of the application
-    public static String getInstalledVersion() {
-        try {
-            ResourceBundle resources = ResourceBundle.getBundle("version");
-            return resources.getString("application.version");
-        } catch (MissingResourceException e) {
-            System.out.println("Version information not found");
-            return "Unknown";
-        }
-    }
     // XML FILE DEMO.
     /*<?xml version="1.0"?>
     <versionInfo>

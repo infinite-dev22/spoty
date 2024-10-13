@@ -1,9 +1,11 @@
 package inc.nomard.spoty.utils;
 
-import java.util.concurrent.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+@Log4j2
 public class SpotyThreader {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 

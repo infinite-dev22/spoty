@@ -1,15 +1,14 @@
 package inc.nomard.spoty.network_bridge.repositories.interfaces;
 
-import inc.nomard.spoty.network_bridge.models.*;
-import java.net.http.*;
-import java.time.*;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
 
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 public interface SimpleRepository {
-    CompletableFuture<HttpResponse<String>> fetchAll();
+    CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize);
 
     CompletableFuture<HttpResponse<String>> fetch(FindModel findModel);
 

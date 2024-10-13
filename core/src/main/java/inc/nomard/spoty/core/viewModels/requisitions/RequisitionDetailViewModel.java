@@ -1,15 +1,17 @@
 package inc.nomard.spoty.core.viewModels.requisitions;
 
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
-import javafx.application.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import static inc.nomard.spoty.core.values.SharedResources.*;
+
+@Log4j2
 public class RequisitionDetailViewModel {
     @Getter
     public static final ObservableList<RequisitionDetail> requisitionDetailsList =

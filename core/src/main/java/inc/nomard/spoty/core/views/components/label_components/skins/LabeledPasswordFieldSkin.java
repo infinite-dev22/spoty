@@ -1,7 +1,9 @@
 package inc.nomard.spoty.core.views.components.label_components.skins;
 
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
-import javafx.scene.control.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.LabeledPasswordField;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.SkinBase;
 
 public class LabeledPasswordFieldSkin extends SkinBase<LabeledPasswordField> {
 

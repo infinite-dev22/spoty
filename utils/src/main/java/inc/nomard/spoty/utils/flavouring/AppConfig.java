@@ -1,11 +1,12 @@
 package inc.nomard.spoty.utils.flavouring;
 
-import inc.nomard.spoty.utils.*;
-import java.io.*;
-import java.util.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.utils.SpotyLogger;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.io.IOException;
+import java.util.Properties;
+
+@Log4j2
 public class AppConfig {
 
     private static final String CONFIG_FILE = "config.properties";
@@ -20,17 +21,25 @@ public class AppConfig {
             return AppFlavor.valueOf(flavorString);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, AppConfig.class);
-            return AppFlavor.MVP;
+            return AppFlavor.PROD;
         }
     }
-
-    ;
 
     public static String getAppVersion() {
         try {
             properties.load(AppConfig.class.getClassLoader().getResourceAsStream(APP_VERSION_FILE));
             String versionString = properties.getProperty("app.version");
             return "v" + versionString;
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, AppConfig.class);
+            return "";
+        }
+    }
+
+    public static String getVersionReleaseNotes() {
+        try {
+            properties.load(AppConfig.class.getClassLoader().getResourceAsStream(APP_VERSION_FILE));
+            return properties.getProperty("app.release-notes");
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, AppConfig.class);
             return "";

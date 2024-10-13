@@ -1,16 +1,17 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
 
-import java.time.*;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class Holiday {
     private long id;
     private String title;

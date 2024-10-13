@@ -1,75 +1,84 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.utils.navigation.*;
-import java.util.*;
-import javafx.beans.property.*;
-import javafx.beans.value.*;
-import javafx.css.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.*;
-import org.kordamp.ikonli.javafx.*;
+import inc.nomard.spoty.core.views.util.Page;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-@Log
+import java.util.List;
+import java.util.Objects;
+
+@Log4j2
 public class NavTree extends TreeView<Nav> {
     public static final double SIDEBAR_WIDTH = 250.0;
-
-    /**
-     * Removes external control borders.
-     */
     public static final String EDGE_TO_EDGE = "edge-to-edge";
 
     static ChangeListener<Boolean> expandedListener;
 
-    /**
-     * Creates a side navigation.
-     *
-     * @param navigation navigation
-     */
     public NavTree(Navigation navigation) {
         super();
 
+        log.info("Initializing NavTree with navigation: " + navigation);
+
         getSelectionModel()
                 .selectedItemProperty()
-                .addListener(
-                        (obs, old, val) -> {
-                            if (!(val instanceof NavTreeItem navTreeItem)) {
-                                return;
-                            }
+                .addListener((obs, old, val) -> {
+                    if (!(val instanceof NavTreeItem navTreeItem)) {
+                        log.warn("Selected item is not of type NavTreeItem: {}", val != null ? val.getClass() : "null");
+                        return;
+                    }
 
-                            if (!navTreeItem.isGroup()) {
-                                navigation.navigate(navTreeItem.view());
-                            }
-                            // Collapse an already expanded node when another is clicked
-                            if (navTreeItem.isGroup() && !navTreeItem.isInnerGroup()) {
-                                navTreeItem.expandedProperty().addListener(expandedListener);
-                            }
-                        });
+                    if (!navTreeItem.isGroup()) {
+                        log.info("Navigating to view: {}", navTreeItem.view().getName());
+                        navigation.navigate(navTreeItem.view());
+                    } else {
+                        log.info("Selected item is a group: {}", navTreeItem.nav.title());
+                    }
 
-        expandedListener =
-                (obs, wasExpanded, isNowExpanded) -> {
-                    if (isNowExpanded) {
-                        ReadOnlyProperty<?> expandedProperty = (ReadOnlyProperty<?>) obs;
-                        Object itemThatWasJustExpanded = expandedProperty.getBean();
-                        for (TreeItem<Nav> item : getRoot().getChildren()) {
-                            if (item != itemThatWasJustExpanded) {
-                                item.setExpanded(false);
-                                if (!item.getChildren().isEmpty()) {
-                                    item.getChildren().forEach(child -> {
-                                        if (Objects.nonNull(child) && child.isExpanded()) {
-                                            child.setExpanded(false);
-                                        }
-                                    });
-                                }
+                    // Collapse an already expanded node when another is clicked
+                    if (navTreeItem.isGroup() && !navTreeItem.isInnerGroup()) {
+                        navTreeItem.expandedProperty().removeListener(expandedListener);
+                        navTreeItem.expandedProperty().addListener(expandedListener);
+                    }
+                });
+
+        expandedListener = (obs, wasExpanded, isNowExpanded) -> {
+            if (isNowExpanded) {
+                ReadOnlyProperty<?> expandedProperty = (ReadOnlyProperty<?>) obs;
+                Object itemThatWasJustExpanded = expandedProperty.getBean();
+
+                if (getRoot() != null && getRoot().getChildren() != null) {
+                    for (TreeItem<Nav> item : getRoot().getChildren()) {
+                        if (item != itemThatWasJustExpanded) {
+                            log.info("Collapsing item: " + item.getValue().title());
+                            item.setExpanded(false);
+                            if (item.getChildren() != null && !item.getChildren().isEmpty()) {
+                                item.getChildren().forEach(child -> {
+                                    if (child != null && child.isExpanded()) {
+                                        log.info("Collapsing child item: " + child.getValue().title());
+                                        child.setExpanded(false);
+                                    }
+                                });
                             }
                         }
                     }
-                };
+                }
+            }
+        };
 
         getStyleClass().addAll(EDGE_TO_EDGE, "nav-tree");
         setShowRoot(false);
@@ -77,18 +86,10 @@ public class NavTree extends TreeView<Nav> {
         setCellFactory(p -> new NavTreeCell());
     }
 
-    /**
-     * Controls side navigation dropdown arrow visibility.
-     *
-     * @param icon dropdown icon.
-     * @param on   show icon(boolean).
-     */
     public static void toggleVisibility(Node icon, boolean on) {
         icon.setVisible(on);
         icon.setManaged(on);
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final class NavTreeCell extends TreeCell<Nav> {
         private static final PseudoClass GROUP = PseudoClass.getPseudoClass("group");
@@ -121,48 +122,53 @@ public class NavTree extends TreeView<Nav> {
             setPrefWidth(root.getPrefWidth());
             root.setPrefHeight(getPrefHeight());
 
-            // Expand dropdown on single click.
-            root.setOnMouseClicked(
-                    e -> {
-                        if (!(getTreeItem() instanceof NavTreeItem navTreeItem)) {
-                            return;
-                        }
+            root.setOnMouseClicked(e -> {
+                if (getTreeItem() == null) {
+                    log.warn("TreeItem is null.");
+                    return;
+                }
 
-                        if (navTreeItem.isGroup() && e.getButton() == MouseButton.PRIMARY) {
-                            navTreeItem.setExpanded(!navTreeItem.isExpanded());
-                            // scroll slightly above the target
-                            getTreeView().scrollTo(getTreeView().getRow(navTreeItem) - 10);
-                        }
-                    });
+                if (!(getTreeItem() instanceof NavTreeItem navTreeItem)) {
+                    log.warn("TreeItem is not of type NavTreeItem: " + getTreeItem().getClass());
+                    return;
+                }
+
+                if (navTreeItem.isGroup() && e.getButton() == MouseButton.PRIMARY) {
+                    navTreeItem.setExpanded(!navTreeItem.isExpanded());
+
+                    // Get the row index for scrolling
+                    int rowIndex = getTreeView().getRow(navTreeItem);
+                    log.info("Row index for navTreeItem: " + rowIndex);
+                    if (rowIndex >= 0) { // Ensure row index is valid
+                        log.info("Scrolling to row index: " + (rowIndex - 10));
+                        getTreeView().scrollTo(rowIndex - 10);
+                    }
+                }
+            });
 
             treeItemProperty()
-                    .addListener(
-                            (obs, oldTreeItem, newTreeItem) ->
-                                    pseudoClassStateChanged(
-                                            SUB_ITEM,
-                                            newTreeItem != null && newTreeItem.getParent() != getTreeView().getRoot()));
+                    .addListener((obs, oldTreeItem, newTreeItem) -> {
+                        pseudoClassStateChanged(SUB_ITEM, newTreeItem != null && newTreeItem.getParent() != getTreeView().getRoot());
+                        log.info("TreeItem changed from {} to {}", oldTreeItem, newTreeItem);
+                    });
 
             getStyleClass().add("nav-tree-cell");
         }
 
-        /**
-         * @param nav   The new item for the cell.
-         * @param empty whether this cell represents data from the list. If it
-         *              is empty, then it does not represent any domain data, but is a cell
-         *              being used to render an "empty" row.
-         */
         @Override
         protected void updateItem(Nav nav, boolean empty) {
             super.updateItem(nav, empty);
             setDisclosureNode(null);
 
             if (nav == null || empty) {
+                log.info("Updating item: cell is empty");
                 setText("");
                 setGraphic(null);
                 titleLabel.setText(null);
                 tagLabel.setText(null);
                 titleLabel.setGraphic(null);
             } else {
+                log.info("Updating item: {}", nav.title());
                 setGraphic(root);
                 titleLabel.setGraphic(nav.graphic());
                 titleLabel.setText(nav.title());
@@ -174,84 +180,43 @@ public class NavTree extends TreeView<Nav> {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     public static final class NavTreeItem extends TreeItem<Nav> {
         private final Nav nav;
 
-        /**
-         * <code>NavTreeItem</code> class constructor.
-         *
-         * @param nav nav
-         */
         public NavTreeItem(Nav nav) {
             this.nav = Objects.requireNonNull(nav, "nav");
             setValue(nav);
+            log.info("Created NavTreeItem: {}", nav.title());
         }
 
-        /**
-         * Treeview root item.
-         *
-         * @return NavTreeItem
-         */
         public static NavTreeItem root() {
             return new NavTreeItem(Nav.ROOT);
         }
 
-        /**
-         * Nested treeview.
-         *
-         * @param title display name on treeview item.
-         * @param icon  display icon on treeview item.
-         * @return NavTreeItem
-         */
         public static NavTreeItem group(String title, Ikon icon) {
             FontIcon node = new FontIcon(icon);
+            log.info("Creating group NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, node, null, null));
         }
 
-        /**
-         * Nested treeview.
-         *
-         * @param title display name on treeview item.
-         * @return NavTreeItem
-         */
         public static NavTreeItem group(String title) {
+            log.info("Creating group NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, null, null, null));
         }
 
-        /**
-         * Treeview item without child treeview items.
-         *
-         * @param title display name on treeview item.
-         * @param icon  display icon on treeview item.
-         * @param view  node to display on treeview item clicked.
-         * @return NavTreeItem
-         */
         public static NavTreeItem mainPage(String title, Ikon icon, Class<? extends Page> view) {
             FontIcon node = new FontIcon(icon);
+            log.info("Creating main page NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, node, view, null));
         }
 
-        /**
-         * Child treeview item of nested treeview.
-         *
-         * @param title display name on treeview item.
-         * @param view  node to display on treeview item clicked.
-         * @return NavTreeItem
-         */
         public static NavTreeItem page(String title, Class<? extends Page> view) {
+            log.info("Creating page NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, null, view, null));
         }
 
-        /**
-         * Child treeview item of nested treeview that can be searched.
-         *
-         * @param title display name on treeview item.
-         * @param view  node to display on treeview item clicked.
-         * @return NavTreeItem
-         */
         public static NavTreeItem page(String title, Class<? extends Page> view, String... searchKeywords) {
+            log.info("Creating searchable page NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, null, view, List.of(searchKeywords)));
         }
 

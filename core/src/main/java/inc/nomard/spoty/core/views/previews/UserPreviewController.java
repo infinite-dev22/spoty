@@ -1,17 +1,20 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import io.github.palexdev.mfxcore.controls.*;
-import java.net.*;
-import java.util.*;
-import javafx.fxml.*;
-import javafx.scene.image.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+@Log4j2
 public class UserPreviewController implements Initializable {
     @FXML
     public Circle imageHolder;
@@ -26,10 +29,10 @@ public class UserPreviewController implements Initializable {
     @FXML
     public Label dobLbl;
 
-    public void init(UserProfile supplier) {
-        if (Objects.nonNull(supplier.getAvatar()) && !supplier.getAvatar().isEmpty() && !supplier.getAvatar().isBlank()) {
+    public void init(Employee employee) {
+        if (Objects.nonNull(employee.getAvatar()) && !employee.getAvatar().isEmpty() && !employee.getAvatar().isBlank()) {
             var image = new Image(
-                    supplier.getAvatar(),
+                    employee.getAvatar(),
                     10000,
                     10000,
                     true,
@@ -47,11 +50,9 @@ public class UserPreviewController implements Initializable {
             imageHolder.setFill(new ImagePattern(image));
         }
 
-        nameLbl.setText(supplier.getName());
-        emailLbl.setText(supplier.getEmail());
-        phoneLbl.setText(supplier.getPhone());
-        genderLbl.setText(supplier.getGender());
-        dobLbl.setText(supplier.getDob());
+        nameLbl.setText(employee.getName());
+        emailLbl.setText(employee.getEmail());
+        phoneLbl.setText(employee.getPhone());
     }
 
     @Override

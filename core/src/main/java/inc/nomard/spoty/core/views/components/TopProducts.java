@@ -1,23 +1,33 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.viewModels.dashboard.*;
-import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import inc.nomard.spoty.core.values.strings.Labels;
+import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.ProductSalesModel;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.UIUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+@Log4j2
 public class TopProducts extends AnchorPane {
     public TableView<ProductSalesModel> products;
+    private TableColumn<ProductSalesModel, String> name;
+    private TableColumn<ProductSalesModel, ProductSalesModel> cost;
+    private TableColumn<ProductSalesModel, ProductSalesModel> price;
+    private TableColumn<ProductSalesModel, ProductSalesModel> totalSale;
 
     public TopProducts() {
         this.setMinHeight(351d);
@@ -60,29 +70,23 @@ public class TopProducts extends AnchorPane {
     }
 
     private void setupTable() {
-        TableColumn<ProductSalesModel, String> name = new TableColumn<>("Name");
-        TableColumn<ProductSalesModel, String> cost = new TableColumn<>("Cost");
-        TableColumn<ProductSalesModel, String> price = new TableColumn<>("Price");
-        TableColumn<ProductSalesModel, String> totalSale = new TableColumn<>("Total Sales");
+        name = new TableColumn<>("Name");
+        cost = new TableColumn<>("Cost");
+        price = new TableColumn<>("Price");
+        totalSale = new TableColumn<>("Total Sales");
 
         name.prefWidthProperty().bind(products.widthProperty().multiply(.3));
         cost.prefWidthProperty().bind(products.widthProperty().multiply(.25));
         price.prefWidthProperty().bind(products.widthProperty().multiply(.25));
         totalSale.prefWidthProperty().bind(products.widthProperty().multiply(.25));
+        setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(name, cost, price, totalSale).toList());
         products.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         products.getColumns().addAll(columnList);
         getTable();
 
-        if (DashboardViewModel.getTopProducts().isEmpty()) {
-            DashboardViewModel.getTopProducts()
-                    .addListener(
-                            (ListChangeListener<ProductSalesModel>)
-                                    c -> products.setItems(DashboardViewModel.getTopProducts()));
-        } else {
-            products.itemsProperty().bindBidirectional(DashboardViewModel.topProductsProperty());
-        }
+        products.setItems(DashboardViewModel.getTopProducts());
     }
 
     private void getTable() {
@@ -91,17 +95,44 @@ public class TopProducts extends AnchorPane {
         products.setRowFactory(
                 t -> {
                     TableRow<ProductSalesModel> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
+                    EventHandler<MouseEvent> eventHandler =
                             event -> {
-//                                showContextMenu((TableRow<Product>) event.getSource())
-//                                        .show(
-//                                                products.getScene().getWindow(),
-//                                                event.getScreenX(),
-//                                                event.getScreenY());
+                                if (Objects.equals(event.getEventType(), MouseEvent.MOUSE_CLICKED)) {
+                                    log.info("Row with Product \"" + row.getItem().getName() + "\" has been clicked.");
+                                }
                                 event.consume();
                             };
-                    row.setOnContextMenuRequested(eventHandler);
+                    row.setOnMouseClicked(eventHandler);
                     return row;
                 });
+    }
+
+    private void setupTableColumns() {
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        cost.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        cost.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(ProductSalesModel item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCostPrice()));
+            }
+        });
+        price.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        price.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(ProductSalesModel item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getSalePrice()));
+            }
+        });
+        totalSale.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        totalSale.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(ProductSalesModel item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotalQuantity()));
+            }
+        });
     }
 }

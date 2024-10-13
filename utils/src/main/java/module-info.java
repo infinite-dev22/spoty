@@ -5,6 +5,9 @@ module spoty.utils {
     requires java.xml;
     requires com.google.gson;
     requires net.coobird.thumbnailator;
+    requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.core;
+    requires org.apache.logging.log4j.jul;
 
     opens inc.nomard.spoty.utils;
 

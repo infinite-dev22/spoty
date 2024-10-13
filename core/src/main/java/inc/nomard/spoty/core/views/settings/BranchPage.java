@@ -1,40 +1,66 @@
 package inc.nomard.spoty.core.views.settings;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import atlantafx.base.controls.CustomTextField;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.BranchViewModel;
+import inc.nomard.spoty.core.viewModels.BrandViewModel;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.BranchForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class BranchPage extends OutlinePage {
+    private final ModalPane modalPane;
     private CustomTextField searchBar;
-    private MFXTableView<Branch> masterTable;
-    private MFXProgressSpinner progress;
+    private TableView<Branch> masterTable;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
 
     public BranchPage() {
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+        AccountViewModel.getAllAccounts(this::onDataInitializationSuccess, this::errorMessage, null, null);
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
@@ -44,12 +70,11 @@ public class BranchPage extends OutlinePage {
         setIcons();
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -78,6 +103,7 @@ public class BranchPage extends OutlinePage {
     private HBox buildRightTop() {
         createBtn = new Button("Create");
         createBtn.setDefaultButton(true);
+        createBtn.setOnAction(event -> showDialog(0));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -94,30 +120,35 @@ public class BranchPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
-        masterTable = new MFXTableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+    private VBox buildCenter() {
+        masterTable = new TableView<>();
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new inc.nomard.spoty.utils.navigation.Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        BrandViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (!(oldNum != null && (Integer) oldNum > 1) || !(newNum != null && (Integer) newNum > 1)) {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            } else {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     public void setupTable() {
         // TODO: Create ZipCode and Country Columns.
-        MFXTableColumn<Branch> branchName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Branch::getName));
-        MFXTableColumn<Branch> branchPhone =
-                new MFXTableColumn<>("Phone", false, Comparator.comparing(Branch::getPhone));
-        MFXTableColumn<Branch> branchCity =
-                new MFXTableColumn<>("City", false, Comparator.comparing(Branch::getCity));
-        MFXTableColumn<Branch> branchTown =
-                new MFXTableColumn<>("Town", false, Comparator.comparing(Branch::getTown));
-        MFXTableColumn<Branch> branchEmail =
-                new MFXTableColumn<>("Email", false, Comparator.comparing(Branch::getEmail));
-
-        branchName.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getName));
-        branchPhone.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getPhone));
-        branchCity.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getCity));
-        branchTown.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getTown));
-        branchEmail.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getEmail));
+        TableColumn<Branch, String> branchName = new TableColumn<>("Name");
+        TableColumn<Branch, String> branchPhone = new TableColumn<>("Phone");
+        TableColumn<Branch, String> branchCity = new TableColumn<>("City");
+        TableColumn<Branch, String> branchTown = new TableColumn<>("Town");
+        TableColumn<Branch, String> branchEmail = new TableColumn<>("Email");
 
         branchName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         branchPhone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.18));
@@ -125,18 +156,8 @@ public class BranchPage extends OutlinePage {
         branchTown.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         branchEmail.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
 
-        masterTable
-                .getTableColumns()
+        masterTable.getColumns()
                 .addAll(branchName, branchPhone, branchCity, branchTown, branchEmail);
-
-        masterTable
-                .getFilters()
-                .addAll(
-                        new StringFilter<>("Name", Branch::getName),
-                        new StringFilter<>("Phone", Branch::getPhone),
-                        new StringFilter<>("City", Branch::getCity),
-                        new StringFilter<>("Town", Branch::getTown),
-                        new StringFilter<>("Email", Branch::getEmail));
 
         getBranchTable();
 
@@ -151,16 +172,12 @@ public class BranchPage extends OutlinePage {
     }
 
     private void getBranchTable() {
-        masterTable.setPrefSize(1200, 1000);
-        masterTable.features().enableBounceEffect();
-        masterTable.features().enableSmoothScrolling(0.5);
-
-        masterTable.setTableRowFactory(
+        masterTable.setRowFactory(
                 t -> {
-                    MFXTableRow<Branch> row = new MFXTableRow<>(masterTable, t);
+                    TableRow<Branch> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event ->
-                                    showContextMenu((MFXTableRow<Branch>) event.getSource())
+                                    showContextMenu((TableRow<Branch>) event.getSource())
                                             .show(
                                                     this.getScene().getWindow(),
                                                     event.getScreenX(),
@@ -170,46 +187,51 @@ public class BranchPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Branch> obj) {
-        var contextMenu = new MFXContextMenu(masterTable);
-        var delete = new MFXContextMenuItem("Delete");
-        var edit = new MFXContextMenuItem("Edit");
+    private ContextMenu showContextMenu(TableRow<Branch> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            BranchViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
+            BranchViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getData().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
-                    BranchViewModel.getItem(obj.getData().getId(), this::createBtnAction, this::errorMessage);
+                    BranchViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
                     e.consume();
                 });
-        contextMenu.addItems(edit, delete);
+        contextMenu.getItems().addAll(edit, delete);
         return contextMenu;
     }
 
-    private void createBtnAction() {
-        createBtn.setOnAction(event -> {
-            BranchViewModel.setTitle(Labels.CREATE);
-            SpotyDialog.createDialog(new BranchForm(), this).showAndWait();
-        });
+    private void showDialog(Integer reason) {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new BranchForm(modalPane, reason));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
-        BranchViewModel.getAllBranches(null, null);
+        BranchViewModel.getAllBranches(null, null, null, null);
     }
 
     private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)
@@ -228,7 +250,7 @@ public class BranchPage extends OutlinePage {
     }
 
     private void setIcons() {
-        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
+        searchBar.setRight(new FontIcon(FontAwesomeSolid.SEARCH));
     }
 
     public void setSearchBar() {
@@ -237,7 +259,7 @@ public class BranchPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                BranchViewModel.getAllBranches(null, null);
+                BranchViewModel.getAllBranches(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -246,5 +268,44 @@ public class BranchPage extends OutlinePage {
                 progress.setManaged(false);
             }, this::errorMessage);
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(BrandViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(BrandViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            BrandViewModel.getAllBrands(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, BrandViewModel.getPageSize());
+            BrandViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(BrandViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    BrandViewModel
+                            .getAllBrands(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    BrandViewModel.getPageNumber(),
+                                    t1);
+                    BrandViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

@@ -24,9 +24,10 @@
  * Text Fields
 **************************************************/
 .mfx-text-field {
-	-fx-min-width: 130;
-	-fx-font-family: 'Open Sans Regular';
+    -fx-min-width: 130;
+    -fx-font-family: 'Open Sans Regular';
 }
+
 .mfx-text-field:invalid {
     -fx-border-color: -mfx-red;
 }
@@ -38,9 +39,9 @@
 }
 
 .mfx-text-field .floating-text {
-	-fx-font-family: 'Open Sans Regular';
+    -fx-font-family: 'Open Sans Regular';
 }
 
 .mfx-text-field:invalid .floating-text {
-	-fx-text-fill: -mfx-red;
+    -fx-text-fill: -mfx-red;
 }

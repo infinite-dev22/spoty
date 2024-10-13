@@ -1,25 +1,34 @@
 package inc.nomard.spoty.core.views.settings.app_settings;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
-import inc.nomard.spoty.utils.*;
-import java.util.*;
-import java.util.prefs.*;
-import java.util.stream.*;
-import javafx.collections.*;
-import javafx.css.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ToggleSwitch;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
+import inc.nomard.spoty.utils.SpotyLogger;
+import javafx.collections.FXCollections;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.*;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
+
+@Log4j2
 public class Appearance extends VBox {
     private final String darkTheme = SpotyCoreResourceLoader.load("images/dark.png");
     private final String lightTheme = SpotyCoreResourceLoader.load("images/light.png");

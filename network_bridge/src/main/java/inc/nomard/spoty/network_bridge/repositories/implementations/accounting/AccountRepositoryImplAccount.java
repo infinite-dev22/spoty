@@ -1,27 +1,33 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations.accounting;
 
-import com.google.gson.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.end_points.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
-import java.net.*;
-import java.net.http.*;
-import java.time.*;
+import com.google.gson.Gson;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.end_points.EndPoints;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.interfaces.AccountTransactionRepository;
+import lombok.extern.log4j.Log4j2;
 
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import lombok.extern.java.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
-import javafx.util.Duration;
-
-@Log
+@Log4j2
 public class AccountRepositoryImplAccount extends ProtectedGlobals implements AccountTransactionRepository {
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAll() {
+    public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 50;
+        }
+
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Accounts.allAccounts))
+                .uri(URI.create(EndPoints.Accounts.allAccounts + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -84,6 +90,19 @@ public class AccountRepositoryImplAccount extends ProtectedGlobals implements Ac
     }
 
     @Override
+    public CompletableFuture<HttpResponse<String>> deposit(Object object) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Accounts.accountDeposit))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .build();
+
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
     public CompletableFuture<HttpResponse<String>> delete(FindModel findModel) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Accounts.deleteAccount))
@@ -110,9 +129,9 @@ public class AccountRepositoryImplAccount extends ProtectedGlobals implements Ac
     }
 
     @Override
-    public CompletableFuture<HttpResponse<String>> fetchAllTransactions() {
+    public CompletableFuture<HttpResponse<String>> fetchAllTransactions(Integer pageNo, Integer pageSize) {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Accounts.transactions))
+                .uri(URI.create(EndPoints.Accounts.transactions + "?pageNo=" + pageNo + "&pageSize=" + pageSize))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

@@ -1,18 +1,18 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class Salary {
     private Long id;
-    private User employee;
+    private Employee employee;
     private PaySlip paySlip;
     private String status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed, G - Generated, S - Sent
     private Double salary;

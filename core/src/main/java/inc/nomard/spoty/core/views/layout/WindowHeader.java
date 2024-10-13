@@ -1,10 +1,13 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.utils.*;
-import java.util.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
+import inc.nomard.spoty.utils.UIUtils;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+
+import java.util.ArrayList;
 
 public class WindowHeader extends HBox {
     private HBox left;

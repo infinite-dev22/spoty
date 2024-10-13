@@ -1,26 +1,42 @@
 package inc.nomard.spoty.core.viewModels.dashboard;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.core.wrappers.*;
-import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.core.wrappers.DashboardKPIModelWrapper;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.DashboardKPIModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.LineChartModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.ProductSalesModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.StockAlertModel;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
+import inc.nomard.spoty.network_bridge.repositories.implementations.DashboardRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class DashboardViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

@@ -1,12 +1,13 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
-import java.net.*;
-import java.util.*;
-import javafx.fxml.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.Salary;
+import javafx.fxml.Initializable;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.net.URL;
+import java.util.ResourceBundle;
+
+@Log4j2
 public class SalaryPreviewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

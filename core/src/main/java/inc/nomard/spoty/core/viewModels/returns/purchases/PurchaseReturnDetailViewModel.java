@@ -1,14 +1,16 @@
 package inc.nomard.spoty.core.viewModels.returns.purchases;
 
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import javafx.application.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import static inc.nomard.spoty.core.values.SharedResources.*;
+
+@Log4j2
 public class PurchaseReturnDetailViewModel {
     private static final ListProperty<PurchaseDetail> purchaseReturnDetails =
             new SimpleListProperty<>(FXCollections.observableArrayList());

@@ -1,12 +1,16 @@
 package inc.nomard.spoty.utils;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.logging.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+@Log4j2
 public class SpotyLogger {
     public static <T> void writeToFile(Throwable throwable, Class<T> currentClass) {
         Logger logger = Logger.getLogger(currentClass.getName());

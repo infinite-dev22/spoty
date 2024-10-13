@@ -1,35 +1,49 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.components.title.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.net.*;
-import java.util.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.components.title.Title;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import inc.nomard.spoty.core.viewModels.PermissionsViewModel;
+import inc.nomard.spoty.core.viewModels.RoleViewModel;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
-@Log
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import static inc.nomard.spoty.core.GlobalActions.closeDialog;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
+
+@Log4j2
 public class RoleFormController implements Initializable {
     @FXML
     public ValidatableTextField name;
     @FXML
-    public TextArea description;
+    public ValidatableTextArea description;
     @FXML
-    public Button saveBtn,
-            cancelBtn;
+    public Button saveBtn;
+    public Button cancelBtn;
     // <editor-fold desc="Lots of CheckBoxes here 👇️">
     @FXML
     private CheckBox dashboardCheckbox,
@@ -338,8 +352,6 @@ public class RoleFormController implements Initializable {
                         errorLabel.setVisible(true);
                         errorLabel.setText(constraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                         return;
                     }
                     if (PermissionsViewModel.getPermissionsList().isEmpty()) {
@@ -1477,7 +1489,7 @@ public class RoleFormController implements Initializable {
     private void onSuccess() {
         resetCheckboxes();
         closeDialog(actionEvent);
-        RoleViewModel.getAllRoles(null, null);
+        RoleViewModel.getAllRoles(null, null, null, null);
     }
 
     public void requiredValidator() {
@@ -1510,14 +1522,14 @@ public class RoleFormController implements Initializable {
     }
 
     private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)

@@ -1,32 +1,43 @@
 package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import io.github.palexdev.mfxcore.base.properties.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.PaySlip;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.PaySlipRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class PaySlipViewModel {
     public static final ObservableList<PaySlip> paySlipsList = FXCollections.observableArrayList();
     public static final ListProperty<PaySlip> paySlips = new SimpleListProperty<>(paySlipsList);
-    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
-    public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
+    public static final ObservableList<Employee> USERS_LIST = FXCollections.observableArrayList();
+    public static final ListProperty<Employee> EMPLOYEES = new SimpleListProperty<>(USERS_LIST);
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
@@ -41,10 +52,13 @@ public class PaySlipViewModel {
     private static final ObjectProperty<LocalDateTime> startDate = new SimpleObjectProperty<>();
     private static final ObjectProperty<LocalDateTime> endDate = new SimpleObjectProperty<>();
     private static final IntegerProperty salariesQuantity = new SimpleIntegerProperty();
-    private static final CharProperty status = new CharProperty();
+    private static final StringProperty status = new SimpleStringProperty();
     private static final ObjectProperty<LocalDateTime> createdOn = new SimpleObjectProperty<>();
     private static final StringProperty message = new SimpleStringProperty("");
     private static final PaySlipRepositoryImpl paySlipRepository = new PaySlipRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -94,15 +108,15 @@ public class PaySlipViewModel {
         return salariesQuantity;
     }
 
-    public static char getStatus() {
+    public static String getStatus() {
         return status.get();
     }
 
-    public static void setStatus(char status) {
+    public static void setStatus(String status) {
         PaySlipViewModel.status.set(status);
     }
 
-    public static CharProperty statusProperty() {
+    public static StringProperty statusProperty() {
         return status;
     }
 
@@ -142,12 +156,47 @@ public class PaySlipViewModel {
         return paySlips;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        PaySlipViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        PaySlipViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        PaySlipViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
         setStartDate(null);
         setEndDate(null);
         setSalariesQuantity(0);
-        setStatus('P');
         setCreatedDate(null);
         setMessage("");
     }
@@ -205,16 +254,20 @@ public class PaySlipViewModel {
     }
 
     public static void getAllPaySlips(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                      SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = paySlipRepository.fetchAll();
+                                      SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = paySlipRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<PaySlip>>() {
+                    Type type = new TypeToken<ResponseModel<PaySlip>>() {
                     }.getType();
-                    ArrayList<PaySlip> paySlipList = gson.fromJson(response.body(), listType);
+                    ResponseModel<PaySlip> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<PaySlip> paySlipList = responseModel.getContent();
                     paySlipsList.clear();
                     paySlipsList.addAll(paySlipList);
                     if (Objects.nonNull(onSuccess)) {

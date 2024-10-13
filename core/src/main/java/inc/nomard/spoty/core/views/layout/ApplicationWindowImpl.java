@@ -1,15 +1,16 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.core.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.effect.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
 
 public class ApplicationWindowImpl extends StackPane implements ApplicationWindow {
-    protected final StackPane window = new StackPane();
-    protected final GlassPane contentLayer = new GlassPane();
+    protected final StackPane window1 = new StackPane();
+    protected final AnchorPane contentLayer = new AnchorPane();
     protected boolean isRendered = false;
 
     protected ApplicationWindowImpl() {
@@ -20,13 +21,13 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
         AppManager.setParent(this);
         createPageLayout();
         AppManager.setMorphPane(contentLayer);
-        blur();
     }
 
     protected void createPageLayout() {
         setMinWidth(ApplicationWindow.MAX_WIDTH);
         setMinHeight(ApplicationWindow.MAX_HEIGHT);
-        getChildren().setAll(window, contentLayer);
+        window1.getStyleClass().add("windows");
+        getChildren().setAll(window1, contentLayer);
     }
 
     protected void addNode(Node node) {
@@ -45,17 +46,13 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
 
     @Override
     public void setStyleSheets() {
-        this.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+        this.getStylesheets().addAll(
+                SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
-                SpotyCoreResourceLoader.load("styles/Progress.css"),
-                SpotyCoreResourceLoader.load("styles/Splash.css"),
+                SpotyCoreResourceLoader.load("styles/toolitip.css"),
                 SpotyCoreResourceLoader.load("styles/TextFields.css"),
-                SpotyCoreResourceLoader.load("styles/theming/base.css"));
-    }
-
-    @Override
-    public void setMorph(Boolean morph) {
-        contentLayer.morph(morph);
+                SpotyCoreResourceLoader.load("styles/theming/base.css")
+        );
     }
 
     @Override
@@ -72,18 +69,6 @@ public class ApplicationWindowImpl extends StackPane implements ApplicationWindo
 
         isRendered = true;
         onRendered();
-    }
-
-    public void blur() {
-        window.setEffect(new GaussianBlur(100));
-        window.setMinWidth(MAX_WIDTH);
-        window.setMinHeight(MAX_HEIGHT);
-        window.getStyleClass().add("window");
-        this.setBackground(
-                new Background(
-                        new BackgroundFill(Color.rgb(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)
-                )
-        );
     }
 
     // Some properties can only be obtained after node placed

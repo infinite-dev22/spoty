@@ -1,23 +1,26 @@
 package inc.nomard.spoty.core.views.pos.components;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.models.spinner.*;
-import io.github.palexdev.mfxcore.controls.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Objects;
 
 @Setter
-@Log
+@Log4j2
 public class CartItem extends HBox {
     private static String logo;
     private static String productName;
@@ -78,7 +81,7 @@ public class CartItem extends HBox {
         // Components one.
         var hBox1 = new HBox();
         var label1 = new Label();
-        var icon = new MFXFontIcon();
+        var icon = new FontIcon();
         label1.setText(productName);
         label1.getStyleClass().add("product-name");
         hBox1.getChildren().setAll(label1, new Spacer(), icon);
@@ -86,12 +89,12 @@ public class CartItem extends HBox {
         // Components two.
         var hBox2 = new HBox();
         var label2 = new Label();
-        var spinner = new MFXSpinner<Integer>();
+        var spinner = new Spinner<Integer>();
         label2.setText(productPrice);
         label2.getStyleClass().add("product-price");
         spinner.setEditable(true);
-        spinner.setGraphicTextGap(0);
-        spinner.setSpinnerModel(new IntegerSpinnerModel(1));
+//        spinner.setGraphicTextGap(0);
+//        spinner.setSpinnerModel(new IntegerSpinnerModel(1));
         hBox2.getChildren().setAll(label2, new Spacer(), spinner);
         hBox2.setAlignment(Pos.CENTER);
         // Body component.

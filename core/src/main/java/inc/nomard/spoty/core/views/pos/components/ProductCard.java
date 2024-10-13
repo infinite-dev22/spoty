@@ -1,45 +1,43 @@
 package inc.nomard.spoty.core.views.pos.components;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.values.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.mfxcore.controls.*;
-import java.util.*;
-import javafx.application.*;
-import javafx.concurrent.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.values.PreloadedData;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import io.github.palexdev.virtualizedfx.cells.base.VFXCell;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class ProductCard extends VBox {
-    private static final double IMAGE_SIZE = 160;
-    private static final double ARC_SIZE = 20;
-    private static final double SPACING = 10;
-    private static final double LABEL_WIDTH = 150;
-
-    private static final Map<String, Image> IMAGE_CACHE = new HashMap<>();
-
-    private final Rectangle productImageHolder = new Rectangle();
-    @Getter
-    private final Product product;
+@Log4j2
+public class ProductCard extends VBox implements VFXCell<Product> {
+    private static final Double IMAGE_SIZE = 160d;
+    private static final Double ARC_SIZE = 20d;
+    private static final Double SPACING = 10d;
+    protected final IntegerProperty indexProperty = new SimpleIntegerProperty();
     private final Label productNameLbl;
     private final Label productPriceLbl;
     private final Label productQuantityLbl;
-    private Image productImage;
+    private final ObjectProperty<Product> productProperty = new SimpleObjectProperty<>();
 
-    public ProductCard(Product product) {
-        this.product = product;
-
-        productNameLbl = new Label(product.getName());
-        productPriceLbl = new Label(String.valueOf(product.getSalePrice()));
-        productQuantityLbl = new Label(product.getQuantity() + " Pcs available");
+    public ProductCard() {
+        productNameLbl = new Label();
+        productPriceLbl = new Label();
+        productQuantityLbl = new Label();
 
         var labelsHolder = new VBox(
                 productNameLbl,
@@ -50,6 +48,8 @@ public class ProductCard extends VBox {
         labelsHolder.setMaxWidth(160);
 
         initializeLabels();
+        attachListeners();
+
         this.getStyleClass().add("pos-product-card");
 
         getChildren().addAll(
@@ -58,11 +58,35 @@ public class ProductCard extends VBox {
                 createSpacer()
         );
 
-        loadImageAsync(product.getImage());
+        this.setCache(true);
+        this.setCacheHint(CacheHint.SPEED);
+    }
+
+    public Product getProduct() {
+        return this.productProperty.get();
+    }
+
+    public void setProduct(Product product) {
+        this.productProperty.set(product);
+    }
+
+    public ObjectProperty<Product> productProperty() {
+        return this.productProperty;
+    }
+
+    public Integer getIndex() {
+        return this.indexProperty.get();
+    }
+
+    public void setIndex(Integer index) {
+        this.indexProperty.set(index);
+    }
+
+    public IntegerProperty indexProperty() {
+        return this.indexProperty;
     }
 
     private void initializeLabels() {
-        productNameLbl.setWrappingWidth(LABEL_WIDTH);
         productNameLbl.setWrapText(true);
         productNameLbl.setLabelFor(this);
         productPriceLbl.setLabelFor(this);
@@ -76,84 +100,84 @@ public class ProductCard extends VBox {
         setSpacing(SPACING);
     }
 
-    private Rectangle getProductImage() {
-        productImage = PreloadedData.productPlaceholderImage/*getCachedImage(image)*/;
-        updateProductImageHolder();
-        return productImageHolder;
+    private void attachListeners() {
+        this.productProperty.addListener((_, _, product) -> {
+            productNameLbl.setText(product.getName());
+            productPriceLbl.setText("UGX " + AppUtils.decimalFormatter().format(product.getSalePrice()));
+            productQuantityLbl.setText(AppUtils.decimalFormatter().format(product.getQuantity()) + " Pcs");
+        });
     }
 
-    private void updateProductImageHolder() {
-        if (productImage != null) {
-            productImageHolder.setFill(new ImagePattern(productImage));
-            productImageHolder.setWidth(IMAGE_SIZE);
-            productImageHolder.setHeight(IMAGE_SIZE);
-            productImageHolder.setCache(true);
-            productImageHolder.setCacheHint(CacheHint.SPEED);
-            productImageHolder.setArcWidth(ARC_SIZE);
-            productImageHolder.setArcHeight(ARC_SIZE);
-            centerImage();
-        }
-    }
+    private ImageView getProductImage() {
+        var clip = new Rectangle(IMAGE_SIZE, IMAGE_SIZE);
+        clip.setArcWidth(ARC_SIZE);
+        clip.setArcHeight(ARC_SIZE);
 
-    private void centerImage() {
-        if (productImage != null) {
-            double ratioX = productImageHolder.getWidth() / productImage.getWidth();
-            double ratioY = productImageHolder.getHeight() / productImage.getHeight();
-            double reduceCoeff = Math.min(ratioX, ratioY);
-            double w = productImage.getWidth() * reduceCoeff;
-            double h = productImage.getHeight() * reduceCoeff;
-            productImageHolder.setX((productImageHolder.getWidth() - w) / 2);
-            productImageHolder.setY((productImageHolder.getHeight() - h) / 2);
-        }
+        var imageView = new ImageView(PreloadedData.productPlaceholderImage);
+        imageView.setFitWidth(IMAGE_SIZE);
+        imageView.setFitHeight(IMAGE_SIZE);
+        imageView.setClip(clip);
+
+        productProperty.addListener((_, _, newValue) -> {
+            var image = new Image(newValue.getImage(), IMAGE_SIZE, IMAGE_SIZE, true, true, true);
+            image.progressProperty().addListener((_, _, newProgress) -> {
+                if (newProgress.doubleValue() >= 1.0 && !image.isError()) {
+                    imageView.setImage(image); // Set the loaded image
+                } else if (image.isError()) {
+                    imageView.setImage(PreloadedData.imageErrorPlaceholderImage);
+                }
+            });
+        });
+
+        return imageView;
     }
 
     private Region createSpacer() {
         return new Spacer(Orientation.VERTICAL);
     }
 
-    private void loadImageAsync(String imagePath) {
-        if (imagePath.isEmpty()) {
-            Platform.runLater(this::updateProductImageHolderWithPlaceholder);
-            return;
-        }
-
-        if (IMAGE_CACHE.containsKey(imagePath)) {
-            productImage = IMAGE_CACHE.get(imagePath);
-            Platform.runLater(this::updateProductImageHolder);
-            return;
-        }
-
-        Task<Image> loadImageTask = new Task<>() {
-            @Override
-            protected Image call() {
-                try {
-                    return new Image(imagePath, IMAGE_SIZE, IMAGE_SIZE, true, false);
-                } catch (IllegalArgumentException e) {
-                    log.warning("Invalid image URL: " + imagePath);
-                    return PreloadedData.imageErrorPlaceholderImage;
-                }
-            }
-        };
-
-        loadImageTask.setOnSucceeded(event -> {
-            productImage = loadImageTask.getValue();
-            IMAGE_CACHE.put(imagePath, productImage);
-            Platform.runLater(() -> {
-                productImageHolder.setFill(new ImagePattern(productImage));
-                centerImage();
-            });
-        });
-
-        loadImageTask.setOnFailed(event -> {
-            log.warning("Failed to load image from URL: " + imagePath + ". " + loadImageTask.getException());
-            Platform.runLater(this::updateProductImageHolderWithPlaceholder);
-        });
-
-        new Thread(loadImageTask).start();
+    @Override
+    public Node getStyleableNode() {
+        return super.getStyleableNode();
     }
 
-    private void updateProductImageHolderWithPlaceholder() {
-        productImage = PreloadedData.noImagePlaceholderImage;
-        updateProductImageHolder();
+    @Override
+    public Node toNode() {
+        return this;
+    }
+
+    @Override
+    public void updateIndex(int i) {
+        this.setIndex(i);
+    }
+
+    @Override
+    public void updateItem(Product product) {
+        this.setProduct(product);
+    }
+
+    @Override
+    public void beforeLayout() {
+        VFXCell.super.beforeLayout();
+    }
+
+    @Override
+    public void afterLayout() {
+        VFXCell.super.afterLayout();
+    }
+
+    @Override
+    public void onCache() {
+        VFXCell.super.onCache();
+    }
+
+    @Override
+    public void onDeCache() {
+        VFXCell.super.onDeCache();
+    }
+
+    @Override
+    public void dispose() {
+        VFXCell.super.dispose();
     }
 }

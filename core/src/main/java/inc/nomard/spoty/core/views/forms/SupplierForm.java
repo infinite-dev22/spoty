@@ -1,89 +1,113 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.viewModels.SupplierViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatablePhoneField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import javafx.beans.property.Property;
+import javafx.css.PseudoClass;
+import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class SupplierForm extends ModalPage {
-    public Button saveBtn,
-            cancelBtn;
-    public ValidatableTextField name,
+import java.util.List;
+
+@Log4j2
+public class SupplierForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
+    public ValidatableTextField firstName,
+            otherName,
+            lastName,
             email,
             phone,
             city,
             country,
             taxNumber,
             address;
-    public Label nameValidationLabel,
+    public Label firstNameValidationLabel,
+            lastNameValidationLabel,
             emailValidationLabel,
             phoneValidationLabel;
-    private List<Constraint> nameConstraints,
+    private List<Constraint> firstNameConstraints,
+            lastNameConstraints,
             emailConstraints,
             phoneConstraints;
-    private ActionEvent actionEvent = null;
 
-    public SupplierForm() {
+    public SupplierForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         initializeComponents();
         initializeComponentProperties();
         setupLayout();
     }
 
     private void initializeComponents() {
-        nameValidationLabel = createValidationLabel();
+        firstNameValidationLabel = createValidationLabel();
+        lastNameValidationLabel = createValidationLabel();
         emailValidationLabel = createValidationLabel();
         phoneValidationLabel = createValidationLabel();
 
-        name = createTextField();
+        firstName = createTextField();
+        otherName = createTextField();
+        lastName = createTextField();
         email = createTextField();
-        phone = createTextField();
+        phone = createPhoneField();
         country = createTextField();
         city = createTextField();
         address = createTextField();
         taxNumber = createTextField();
 
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
 
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
     }
 
     private void initializeComponentProperties() {
-        setupPhoneField();
         setupBindings();
         setupValidators();
         setupListeners();
     }
 
     private void setupLayout() {
-        GridPane gridPane = createGridPane();
-        addGridPaneContent(gridPane);
-
         HBox buttonBox = new HBox(20, saveBtn, cancelBtn);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(10, 10, 10, 10));
 
-        setCenter(gridPane);
+        setCenter(buildCenter());
         setBottom(buttonBox);
+    }
+
+    private VBox buildCenter() {
+        var vbox = new VBox();
+        vbox.setSpacing(8d);
+        vbox.setPadding(new Insets(10d));
+        vbox.getChildren().addAll(
+                buildFieldBox(firstName, "First name", firstNameValidationLabel),
+                buildFieldBox(otherName, "Middle name (Optional)"),
+                buildFieldBox(lastName, "Last name", lastNameValidationLabel),
+                buildFieldBox(email, "Email", emailValidationLabel),
+                buildFieldBox(phone, "Phone (Optional)"),
+                buildFieldBox(country, "Country (Optional)"),
+                buildFieldBox(city, "City (Optional)"),
+                buildFieldBox(address, "Address (Optional)"),
+                buildFieldBox(taxNumber, "Tax No. (Optional)"));
+        return vbox;
     }
 
     private Label createValidationLabel() {
@@ -97,8 +121,19 @@ public class SupplierForm extends ModalPage {
 
     private ValidatableTextField createTextField() {
         ValidatableTextField textField = new ValidatableTextField();
-        textField.setPrefWidth(300);
+        textField.setPrefWidth(1000);
         return textField;
+    }
+
+    private ValidatablePhoneField createPhoneField() {
+        ValidatablePhoneField textField = new ValidatablePhoneField();
+        textField.setPrefWidth(1000);
+        return textField;
+    }
+
+    private VBox buildFieldBox(Control control, String floatingText, Label validationLabel) {
+        var label = new Label(floatingText);
+        return new VBox(label, control, validationLabel);
     }
 
     private VBox buildFieldBox(ValidatableTextField textField, String floatingText) {
@@ -106,62 +141,10 @@ public class SupplierForm extends ModalPage {
         return new VBox(label, textField);
     }
 
-    private GridPane createGridPane() {
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(20);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(10, 10, 10, 10));
-
-        ColumnConstraints col1 = new ColumnConstraints();
-        col1.setHgrow(Priority.SOMETIMES);
-        ColumnConstraints col2 = new ColumnConstraints();
-        col2.setHgrow(Priority.SOMETIMES);
-
-        gridPane.getColumnConstraints().addAll(col1, col2);
-
-        for (int i = 0; i < 6; i++) {
-            RowConstraints row = new RowConstraints();
-            row.setVgrow(Priority.SOMETIMES);
-            gridPane.getRowConstraints().add(row);
-        }
-
-        return gridPane;
-    }
-
-    private void addGridPaneContent(GridPane gridPane) {
-        addFormRow(gridPane, 0, buildFieldBox(name, "Name"), nameValidationLabel, buildFieldBox(email, "Email"), emailValidationLabel);
-        addFormRow(gridPane, 1, buildFieldBox(phone, "Phone"), phoneValidationLabel, buildFieldBox(country, "Country (Optional)"), null);
-        addFormRow(gridPane, 2, buildFieldBox(city, "City (Optional)"), null, buildFieldBox(address, "Address (Optional)"), null);
-        addFormRow(gridPane, 3, buildFieldBox(taxNumber, "Tax No. (Optional)"), null, null, null);
-    }
-
-    private void addFormRow(GridPane gridPane, int rowIndex, Node leftControl, Label leftLabel, Node rightControl, Label rightLabel) {
-        addControlToGrid(gridPane, 0, rowIndex, leftControl, leftLabel);
-        addControlToGrid(gridPane, 1, rowIndex, rightControl, rightLabel);
-    }
-
-    private void addControlToGrid(GridPane gridPane, int colIndex, int rowIndex, Node control, Label validationLabel) {
-        if (control != null) {
-            VBox vbox = new VBox(5, control);
-            if (validationLabel != null) {
-                vbox.getChildren().add(validationLabel);
-            }
-            vbox.setPadding(new Insets(0, 0, 2.5, 0));
-            gridPane.add(vbox, colIndex, rowIndex);
-        }
-    }
-
-    private void setupPhoneField() {
-        phone.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) phone.setText(newValue.replaceAll("\\D", ""));
-        });
-        phone.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) phone.setLeft(new Label("+"));
-        });
-    }
-
     private void setupBindings() {
-        bindTextField(name, SupplierViewModel.nameProperty());
+        bindTextField(firstName, SupplierViewModel.firstNameProperty());
+        bindTextField(otherName, SupplierViewModel.otherNameProperty());
+        bindTextField(lastName, SupplierViewModel.lastNameProperty());
         bindTextField(email, SupplierViewModel.emailProperty());
         bindTextField(phone, SupplierViewModel.phoneProperty());
         bindTextField(country, SupplierViewModel.countryProperty());
@@ -175,10 +158,10 @@ public class SupplierForm extends ModalPage {
     }
 
     private void setupValidators() {
-        Validators.requiredValidator(name, nameValidationLabel, "Name is required");
+        Validators.requiredValidator(firstName, firstNameValidationLabel, "First name is required");
+        Validators.requiredValidator(lastName, lastNameValidationLabel, "Last name is required");
         Validators.requiredValidator(email, emailValidationLabel, "Email is required");
         Validators.emailValidator(email, emailValidationLabel, "Invalid email");
-        Validators.requiredValidator(phone, phoneValidationLabel, "Phone is required");
         Validators.phoneValidator(phone, phoneValidationLabel, "Invalid phone number");
     }
 
@@ -188,105 +171,84 @@ public class SupplierForm extends ModalPage {
 
     private void dialogOnActions() {
         saveBtn.setOnAction(this::onSave);
-        cancelBtn.setOnAction(this::onCancel);
+        cancelBtn.setOnAction(actionEvent -> this.dispose());
     }
 
-    private void onSave(ActionEvent event) {
-        nameConstraints = name.validate();
+    private void onSave(Event event) {
+        firstNameConstraints = firstName.validate();
+        lastNameConstraints = lastName.validate();
         emailConstraints = email.validate();
-        phoneConstraints = phone.validate();
-        if (!nameConstraints.isEmpty()) {
-            nameValidationLabel.setManaged(true);
-            nameValidationLabel.setVisible(true);
-            nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
-            name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-            dialog.sizeToScene();
+        if (!phone.getText().isEmpty()) {
+            phoneConstraints = phone.validate();
+        }
+        if (!firstNameConstraints.isEmpty()) {
+            firstNameValidationLabel.setManaged(true);
+            firstNameValidationLabel.setVisible(true);
+            firstNameValidationLabel.setText(firstNameConstraints.getFirst().getMessage());
+            firstName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!lastNameConstraints.isEmpty()) {
+            lastNameValidationLabel.setManaged(true);
+            lastNameValidationLabel.setVisible(true);
+            lastNameValidationLabel.setText(lastNameConstraints.getFirst().getMessage());
+            lastName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
         }
         if (!emailConstraints.isEmpty()) {
             emailValidationLabel.setManaged(true);
             emailValidationLabel.setVisible(true);
             emailValidationLabel.setText(emailConstraints.getFirst().getMessage());
             email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) email.getScene().getWindow();
-            dialog.sizeToScene();
         }
-        if (!phoneConstraints.isEmpty()) {
+        if (!phone.getText().isEmpty() && !phoneConstraints.isEmpty()) {
             phoneValidationLabel.setManaged(true);
             phoneValidationLabel.setVisible(true);
             phoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
             phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-            MFXStageDialog dialog = (MFXStageDialog) phone.getScene().getWindow();
-            dialog.sizeToScene();
         }
-        if (nameConstraints.isEmpty()
+        if (firstNameConstraints.isEmpty()
+                && lastNameConstraints.isEmpty()
                 && emailConstraints.isEmpty()
-                && phoneConstraints.isEmpty()) {
-            actionEvent = event;
+                && (!phone.getText().isEmpty() && phoneConstraints.isEmpty())) {
+            saveBtn.startLoading();
             if (SupplierViewModel.getId() > 0) {
-                SupplierViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                return;
+                SupplierViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+            } else {
+                SupplierViewModel.saveSupplier(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             }
-            SupplierViewModel.saveSupplier(this::onSuccess, this::successMessage, this::errorMessage);
         }
-    }
-
-    private void onCancel(ActionEvent event) {
-        closeDialog(event);
-        this.dispose();
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        SupplierViewModel.getAllSuppliers(null, null);
         this.dispose();
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        SupplierViewModel.getAllSuppliers(null, null, null, null);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        var notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
         SupplierViewModel.resetProperties();
         saveBtn = null;
         cancelBtn = null;
-        name = null;
+        firstName = null;
+        lastName = null;
         email = null;
         phone = null;
         city = null;
         country = null;
         taxNumber = null;
         address = null;
-        nameValidationLabel = null;
+        firstNameValidationLabel = null;
+        lastNameValidationLabel = null;
         emailValidationLabel = null;
         phoneValidationLabel = null;
-        nameConstraints = null;
+        firstNameConstraints = null;
+        lastNameConstraints = null;
         emailConstraints = null;
         phoneConstraints = null;
-        actionEvent = null;
     }
 }

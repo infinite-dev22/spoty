@@ -1,22 +1,30 @@
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.*;
-import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.concurrent.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import lombok.extern.java.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.models.LoginModel;
+import inc.nomard.spoty.network_bridge.models.LoginResponseModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.AuthRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class LoginViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class,
@@ -70,21 +78,17 @@ public class LoginViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = authRepository.login(loginDetails);
         responseFuture.thenAccept(response -> {
             var loginResponse = gson.fromJson(response.body(), LoginResponseModel.class);
-            if (loginResponse.getStatus() == 200) {
+            if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
                     ProtectedGlobals.authToken = loginResponse.getToken();
-                    ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
-                    ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
-                    ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
-                    ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
-                    ProtectedGlobals.message = loginResponse.getMessage();
                     ProtectedGlobals.user = loginResponse.getUser();
+                    ProtectedGlobals.role = loginResponse.getRole();
                     successMessage.showMessage("Authentication successful");
                     onSuccess.run();
                 });
-            } else if (loginResponse.getStatus() == 401) {
+            } else if (response.statusCode() == 401) {
                 Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-            } else if (loginResponse.getStatus() == 404) {
+            } else if (response.statusCode() == 404) {
                 Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
             } else if (response.statusCode() == 500 && loginResponse.getMessage().toLowerCase().contains("bad credentials")) {
                 Platform.runLater(() -> errorMessage.showMessage("Wrong email or password"));

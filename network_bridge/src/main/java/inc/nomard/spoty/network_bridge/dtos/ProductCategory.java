@@ -1,22 +1,23 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.time.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class ProductCategory {
     private Long id;
     private String name;
     private String description;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

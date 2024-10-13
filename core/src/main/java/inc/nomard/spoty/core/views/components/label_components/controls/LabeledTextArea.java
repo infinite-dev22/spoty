@@ -1,19 +1,23 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
-import inc.nomard.spoty.core.views.components.label_components.skins.*;
-import io.github.palexdev.materialfx.validation.*;
-import javafx.beans.property.*;
-import javafx.scene.control.*;
+import inc.nomard.spoty.core.views.components.label_components.skins.LabeledTextAreaSkin;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.util.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validator;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
 
 public class LabeledTextArea extends Control implements Validated {
-    protected final MFXValidator validator;
+    protected final Validator validator;
     private final StringProperty labelText = new SimpleStringProperty(this, "labelText");
     private final StringProperty text = new SimpleStringProperty(this, "text");
-    private final TextArea textArea = new TextArea();
+    private final ValidatableTextArea textArea = new ValidatableTextArea();
 
     public LabeledTextArea() {
         super();
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
         this.getStyleClass().add("labeled-text-area");
     }
 
@@ -41,7 +45,7 @@ public class LabeledTextArea extends Control implements Validated {
         return text;
     }
 
-    public TextArea getTextArea() {
+    public ValidatableTextArea getTextArea() {
         return textArea;
     }
 
@@ -51,7 +55,7 @@ public class LabeledTextArea extends Control implements Validated {
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 }

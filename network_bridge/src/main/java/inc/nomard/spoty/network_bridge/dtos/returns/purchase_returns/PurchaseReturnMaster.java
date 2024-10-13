@@ -1,20 +1,25 @@
 package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class PurchaseReturnMaster {
     private Long id;
     private String ref;
@@ -24,19 +29,21 @@ public class PurchaseReturnMaster {
     private Tax tax;
     private Discount discount;
     private double amountPaid;
-    private double total;
     private double amountDue;
+    private double shippingFee;
+    private double total;
     private double subTotal;
+    private String approvalStatus;
     private String purchaseStatus;
     private String paymentStatus;
     private String notes;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getSupplierName() {
-        return supplier.getName();
+        return supplier.getFirstName() + " " + supplier.getOtherName() + " " + supplier.getLastName();
     }
 
     public String getLocaleDate() {

@@ -1,45 +1,42 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.validation.*;
-import java.util.*;
-import javafx.css.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class DesignationForm extends MFXGenericDialog {
+import java.util.List;
+
+import static inc.nomard.spoty.core.GlobalActions.closeDialog;
+
+@Log4j2
+public class DesignationForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
-    @FXML
+    private final ModalPane modalPane;
     public ValidatableTextField name;
-    @FXML
     public Label nameValidationLabel;
-    @FXML
-    public TextArea description;
-    @FXML
-    public Button saveBtn;
-    @FXML
+    public ValidatableTextArea description;
+    public CustomButton saveBtn;
     public Button cancelBtn;
-    @FXML
-    public StackPane contentPane;
     private List<Constraint> constraints;
-    private ActionEvent actionEvent = null;
 
-    public DesignationForm() {
+    public DesignationForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         init();
     }
 
@@ -67,7 +64,7 @@ public class DesignationForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(DesignationViewModel.descriptionProperty());
@@ -87,9 +84,9 @@ public class DesignationForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -110,9 +107,6 @@ public class DesignationForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
@@ -132,24 +126,26 @@ public class DesignationForm extends MFXGenericDialog {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(constraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (constraints.isEmpty()) {
-                        actionEvent = event;
+                        saveBtn.startLoading();
                         if (DesignationViewModel.getId() > 0) {
-                            DesignationViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            return;
+                            DesignationViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            DesignationViewModel.saveDesignation(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        DesignationViewModel.saveDesignation(this::onSuccess, this::successMessage, this::errorMessage);
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        DesignationViewModel.clearDesignationData();
-        DesignationViewModel.getAllDesignations(null, null);
+        this.dispose();
+        DesignationViewModel.getAllDesignations(null, null, null, null);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void requiredValidator() {
@@ -175,29 +171,14 @@ public class DesignationForm extends MFXGenericDialog {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
-    private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        DesignationViewModel.clearDesignationData();
+        name = null;
+        nameValidationLabel = null;
+        description = null;
+        saveBtn = null;
+        cancelBtn = null;
     }
 }

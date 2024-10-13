@@ -1,50 +1,86 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import atlantafx.base.controls.ModalPane;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.RoleViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.EmployeeForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
+
+@Log4j2
 public class EmployeePage extends OutlinePage {
+    private final ModalPane modalPane;
     private TextField searchBar;
-    private TableView<User> masterTable;
-    private MFXProgressSpinner progress;
+    private TableView<Employee> masterTable;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
-    private TableColumn<User, User> employeeName;
-    private TableColumn<User, User> phone;
-    private TableColumn<User, String> email;
-    private TableColumn<User, User> employmentStatus;
-    private TableColumn<User, User> department;
-    private TableColumn<User, User> status;
-    private TableColumn<User, String> workShift;
-    private TableColumn<User, String> salary;
-    private TableColumn<User, User> role;
+    private TableColumn<Employee, Employee> employeeName;
+    private TableColumn<Employee, Employee> phone;
+    private TableColumn<Employee, String> email;
+    private TableColumn<Employee, Employee> employmentStatus;
+    private TableColumn<Employee, Employee> department;
+    private TableColumn<Employee, Employee> status;
+    private TableColumn<Employee, String> salary;
+    private TableColumn<Employee, Employee> role;
 
     public EmployeePage() {
         super();
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        UserViewModel.getAllUsers(this::onDataInitializationSuccess, this::errorMessage);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> DepartmentViewModel.getAllDepartments(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null, null, null)),
+                CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null, null)),
+                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null, null, null)),
+                CompletableFuture.runAsync(() -> EmployeeViewModel.getAllEmployees(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -63,7 +99,7 @@ public class EmployeePage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -107,10 +143,33 @@ public class EmployeePage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (EmployeeViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        EmployeeViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (EmployeeViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -120,7 +179,6 @@ public class EmployeePage extends OutlinePage {
         employmentStatus = new TableColumn<>("Employment Status");
         department = new TableColumn<>("Department");
         status = new TableColumn<>("Status");
-        workShift = new TableColumn<>("Work Shift");
         salary = new TableColumn<>("Salary");
         role = new TableColumn<>("Role");
 
@@ -130,7 +188,6 @@ public class EmployeePage extends OutlinePage {
         employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         department.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        workShift.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         role.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
@@ -143,25 +200,24 @@ public class EmployeePage extends OutlinePage {
                 employmentStatus,
                 department,
                 status,
-                workShift,
                 salary,
                 role).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
-        styleUserTable();
+        styleEmployeeTable();
 
-        masterTable.setItems(UserViewModel.getUsers());
+        masterTable.setItems(EmployeeViewModel.getEmployees());
     }
 
-    private void styleUserTable() {
+    private void styleEmployeeTable() {
         masterTable.setPrefSize(1200, 1000);
 
         masterTable.setRowFactory(
                 t -> {
-                    TableRow<User> row = new TableRow<>();
+                    TableRow<Employee> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((TableRow<User>) event.getSource())
+                                showContextMenu((TableRow<Employee>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -173,21 +229,21 @@ public class EmployeePage extends OutlinePage {
                 });
     }
 
-    private ContextMenu showContextMenu(TableRow<User> obj) {
+    private ContextMenu showContextMenu(TableRow<Employee> obj) {
         var contextMenu = new ContextMenu();
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            UserViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
+            EmployeeViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
-                    UserViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new UserForm(), this).showAndWait(), this::errorMessage);
+                    EmployeeViewModel.getItem(obj.getItem().getId(), this::showDialog, SpotyUtils::errorMessage);
                     e.consume();
                 });
         contextMenu.getItems().addAll(edit, delete);
@@ -196,11 +252,23 @@ public class EmployeePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new UserForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog());
+    }
+
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new EmployeeForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
-        UserViewModel.getAllUsers(null, null);
+        EmployeeViewModel.getAllEmployees(null, null, null, null);
     }
 
     public void setSearchBar() {
@@ -209,50 +277,28 @@ public class EmployeePage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                UserViewModel.getAllUsers(null, null);
+                EmployeeViewModel.getAllEmployees(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
-            UserViewModel.searchItem(nv, () -> {
+            EmployeeViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     private void setupTableColumns() {
         employeeName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employeeName.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getDesignationName())) {
                     var employeeName = new Label(item.getName());
@@ -270,16 +316,16 @@ public class EmployeePage extends OutlinePage {
         phone.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         phone.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty && Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getUserProfile().getPhone());
+                setText(empty && Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getPhone());
             }
         });
         email.setCellValueFactory(new PropertyValueFactory<>("email"));
         employmentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         employmentStatus.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getEmploymentStatusColor()) && !Objects.isNull(item.getEmploymentStatusName())) {
                     this.setAlignment(Pos.CENTER);
@@ -287,7 +333,7 @@ public class EmployeePage extends OutlinePage {
                     var chip = new Label(item.getEmploymentStatusName());
                     chip.setAlignment(Pos.CENTER);
                     chip.setPadding(new Insets(5, 10, 5, 10));
-                    chip.setPrefWidth(50);
+                    chip.setPrefWidth(150);
                     chip.setStyle("-fx-background-color: " + item.getEmploymentStatusColor() + ";"
                             + "-fx-foreground-color: white;"
                             + "-fx-background-radius: 50;"
@@ -303,19 +349,19 @@ public class EmployeePage extends OutlinePage {
         status.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         status.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
 
-                    var chip = new Label(item.isActive());
+                    var chip = new Label(item.getIsActive());
                     chip.setAlignment(Pos.CENTER);
                     chip.setPadding(new Insets(5, 10, 5, 10));
                     chip.setPrefWidth(150);
                     chip.setStyle("-fx-foreground-color: white;"
                             + "-fx-background-radius: 50;"
                             + "-fx-border-radius: 50;");
-                    if (item.getActive()) {
+                    if (item.isActive()) {
                         chip.getStyleClass().add(Styles.SUCCESS);
                     } else {
                         chip.getStyleClass().add(Styles.DANGER);
@@ -328,12 +374,11 @@ public class EmployeePage extends OutlinePage {
                 }
             }
         });
-        workShift.setCellValueFactory(new PropertyValueFactory<>("workShift"));
         salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
         role.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         role.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
@@ -347,7 +392,7 @@ public class EmployeePage extends OutlinePage {
         department.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         department.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
-            public void updateItem(User item, boolean empty) {
+            public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && Objects.nonNull(item)) {
                     this.setAlignment(Pos.CENTER);
@@ -358,5 +403,44 @@ public class EmployeePage extends OutlinePage {
                 }
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(EmployeeViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(EmployeeViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            EmployeeViewModel.getAllEmployees(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, EmployeeViewModel.getPageSize());
+            EmployeeViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(EmployeeViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    EmployeeViewModel
+                            .getAllEmployees(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    EmployeeViewModel.getPageNumber(),
+                                    t1);
+                    EmployeeViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

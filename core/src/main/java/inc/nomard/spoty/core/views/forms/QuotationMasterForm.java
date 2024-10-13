@@ -1,54 +1,71 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.quotations.*;
-import io.github.palexdev.materialfx.utils.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.*;
-import java.util.function.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.CustomerViewModel;
+import inc.nomard.spoty.core.viewModels.DiscountViewModel;
+import inc.nomard.spoty.core.viewModels.TaxViewModel;
+import inc.nomard.spoty.core.viewModels.quotations.QuotationDetailViewModel;
+import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.util.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.fontawesome5.*;
-import org.kordamp.ikonli.javafx.*;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class QuotationMasterForm extends VBox {
-    private final ModalPane modalPane;
+    private final ModalPane modalPane1;
+    private final ModalPane modalPane2;
     private ValidatableComboBox<Customer> customer;
     private ValidatableComboBox<Tax> tax;
     private ValidatableComboBox<Discount> discount;
     private TableView<QuotationDetail> table;
-    private CustomTextField shippingFee;
-    private TextArea note;
+    private ValidatableNumberField shippingFee;
+    private ValidatableTextArea note;
     private Label customerValidationLabel;
-    private Button saveBtn,
-            cancelBtn,
+    private CustomButton saveBtn;
+    private Button cancelBtn,
             addBtn;
+    private TableColumn<QuotationDetail, QuotationDetail> product, price, quantity;
 
-    public QuotationMasterForm(ModalPane modalPane) {
-        this.modalPane = modalPane;
+    public QuotationMasterForm(ModalPane modalPane1, ModalPane modalPane2) {
+        this.modalPane1 = modalPane1;
+        this.modalPane2 = modalPane2;
         init();
         initializeComponentProperties();
     }
@@ -82,9 +99,19 @@ public class QuotationMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add Product");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> SpotyDialog.createDialog(new QuotationDetailForm(), this).showAndWait());
+        addBtn.setPrefWidth(10000d);
+        addBtn.setOnAction(event -> this.showForm());
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(450, 250);
+        dialog.getChildren().add(new QuotationDetailForm(modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane2.setAlignment(Pos.CENTER_RIGHT);
+        modalPane2.show(dialog);
+        modalPane2.setPersistent(true);
     }
 
     private TableView<QuotationDetail> buildTable() {
@@ -127,7 +154,7 @@ public class QuotationMasterForm extends VBox {
         Function<String, Predicate<Customer>> customerFilterFunction =
                 searchStr ->
                         customer ->
-                                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
+                                customerConverter.toString(customer).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         customer.setConverter(customerConverter);
@@ -158,7 +185,7 @@ public class QuotationMasterForm extends VBox {
         Function<String, Predicate<Tax>> taxFilterFunction =
                 searchStr ->
                         tax ->
-                                StringUtils.containsIgnoreCase(taxConverter.toString(tax), searchStr);
+                                taxConverter.toString(tax).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         tax.setConverter(taxConverter);
@@ -188,7 +215,7 @@ public class QuotationMasterForm extends VBox {
         Function<String, Predicate<Discount>> discountFilterFunction =
                 searchStr ->
                         discount ->
-                                StringUtils.containsIgnoreCase(discountConverter.toString(discount), searchStr);
+                                discountConverter.toString(discount).toLowerCase().contains(searchStr);
 
         // Combo box properties.
         discount.setConverter(discountConverter);
@@ -205,15 +232,15 @@ public class QuotationMasterForm extends VBox {
 
     private VBox buildShippingFee() {
         var label = new Label("Shipping Fee");
-        shippingFee = new CustomTextField();
+        shippingFee = new ValidatableNumberField();
         shippingFee.setPrefWidth(1000d);
-        shippingFee.setLeft(new FontIcon(FontAwesomeSolid.DOLLAR_SIGN));
+        shippingFee.setLeft(new Label("UGX"));
         shippingFee.textProperty().bindBidirectional(QuotationMasterViewModel.shippingFeeProperty());
         return buildFieldHolder(label, shippingFee);
     }
 
     private VBox buildNote() {
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setPrefHeight(100d);
         note.setWrapText(true);
         var label = new Label("Note");
@@ -221,9 +248,9 @@ public class QuotationMasterForm extends VBox {
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             if (!table.isDisabled() && QuotationDetailViewModel.getQuotationDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
@@ -231,10 +258,11 @@ public class QuotationMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
+                saveBtn.startLoading();
                 if (QuotationMasterViewModel.getId() > 0) {
-                    QuotationMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                    QuotationMasterViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 } else {
-                    QuotationMasterViewModel.saveQuotationMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                    QuotationMasterViewModel.saveQuotationMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                 }
             }
         });
@@ -244,9 +272,7 @@ public class QuotationMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            this.dispose();
-        });
+        cancelBtn.setOnAction(event -> this.dispose());
         return cancelBtn;
     }
 
@@ -261,22 +287,22 @@ public class QuotationMasterForm extends VBox {
     }
 
     private void setupTable() {
-        TableColumn<QuotationDetail, String> productName = new TableColumn<>("Product");
-        TableColumn<QuotationDetail, String> productPrice = new TableColumn<>("Price");
-        TableColumn<QuotationDetail, String> productQuantity = new TableColumn<>("Quantity");
+        product = new TableColumn<>("Product");
+        price = new TableColumn<>("Price");
+        quantity = new TableColumn<>("Quantity");
 
-        productName.prefWidthProperty().bind(table.widthProperty().multiply(.4));
-        productPrice.prefWidthProperty().bind(table.widthProperty().multiply(.3));
-        productQuantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
+        product.prefWidthProperty().bind(table.widthProperty().multiply(.4));
+        price.prefWidthProperty().bind(table.widthProperty().multiply(.3));
+        quantity.prefWidthProperty().bind(table.widthProperty().multiply(.3));
 
-        table.getColumns().addAll(productName, productPrice, productQuantity);
+        setupTableColumnData();
+
+        table.getColumns().addAll(product, price, quantity);
         getQuotationDetailTable();
         table.setItems(QuotationDetailViewModel.getQuotationDetails());
     }
 
     private void getQuotationDetailTable() {
-//        table.setPrefSize(10000, 10000);
-
         table.setRowFactory(
                 quotationDetail -> {
                     TableRow<QuotationDetail> row = new TableRow<>();
@@ -301,17 +327,17 @@ public class QuotationMasterForm extends VBox {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             QuotationDetailViewModel.removeQuotationDetail(
                     obj.getItem().getId(),
                     QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getItem()));
             event.consume();
-        }, obj.getItem().getProductName(), this));
+        }, obj.getItem().getProductName()).showDialog());
         // Edit
         edit.setOnAction(
                 event -> {
                     QuotationDetailViewModel.getQuotationDetail(obj.getItem());
-                    SpotyDialog.createDialog(new QuotationDetailForm(), this).showAndWait();
+                    this.showForm();
                     event.consume();
                 });
 
@@ -340,8 +366,7 @@ public class QuotationMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        QuotationMasterViewModel.getAllQuotationMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null);
     }
 
     public void requiredValidator() {
@@ -367,35 +392,41 @@ public class QuotationMasterForm extends VBox {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    private void setupTableColumnData() {
+        product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        product.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : item.getProductName());
+            }
+        });
+        price.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        price.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getProductPrice()));
+            }
+        });
+        quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
     }
 
     public void dispose() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        modalPane1.hide(true);
+        modalPane1.setPersistent(false);
         QuotationMasterViewModel.resetProperties();
         customerValidationLabel = null;
         customer = null;

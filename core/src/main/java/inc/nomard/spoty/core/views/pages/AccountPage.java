@@ -1,44 +1,64 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.accounting.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.event.*;
-import javafx.geometry.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.AccountForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.network_bridge.dtos.accounting.Account;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+@Log4j2
 public class AccountPage extends OutlinePage {
+    private final ModalPane modalPane;
     private TextField searchBar;
     private TableView<Account> masterTable;
-    private MFXProgressSpinner progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
     private TableColumn<Account, String> accountName;
     private TableColumn<Account, String> accountNumber;
-    private TableColumn<Account, Double> credit;
-    private TableColumn<Account, Double> debit;
-    private TableColumn<Account, Double> balance;
+    private TableColumn<Account, Account> credit;
+    private TableColumn<Account, Account> debit;
+    private TableColumn<Account, Account> balance;
     private TableColumn<Account, String> description;
 
     public AccountPage() {
         super();
-        addNode(init());
-        AccountViewModel.getAllAccounts(this::onDataInitializationSuccess, this::errorMessage);
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+        AccountViewModel.getAllAccounts(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -58,7 +78,7 @@ public class AccountPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -102,10 +122,33 @@ public class AccountPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (AccountViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        AccountViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (AccountViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -131,11 +174,11 @@ public class AccountPage extends OutlinePage {
         description.setSortable(true);
 
         accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         credit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         debit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
 
         setupTableColumns();
 
@@ -175,38 +218,46 @@ public class AccountPage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
+            AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getAccountName(), this));
+        }, obj.getItem().getAccountName()).showDialog());
         // Edit
         edit.setOnAction(
                 event -> {
-                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
+                    AccountViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
                     event.consume();
                 });
         // Deposit
         deposit.setOnAction(
                 event -> {
-                    AccountViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait(), this::errorMessage);
+                    AccountViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(2), this::errorMessage);
                     event.consume();
                 });
-        contextMenu.getItems().addAll(edit, delete);
+        contextMenu.getItems().addAll(edit, deposit, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new AccountForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog(0));
+    }
+
+    private void showDialog(Integer reason) {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new AccountForm(modalPane, reason));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {
-        AccountViewModel.getAllAccounts(null, null);
+        AccountViewModel.getAllAccounts(null, null, null, null);
     }
-
-//    private void setIcons() {
-//        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
-//    }
 
     public void setSearchBar() {
         searchBar.textProperty().addListener((observableValue, ov, nv) -> {
@@ -214,7 +265,7 @@ public class AccountPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                AccountViewModel.getAllAccounts(null, null);
+                AccountViewModel.getAllAccounts(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -225,39 +276,82 @@ public class AccountPage extends OutlinePage {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void setupTableColumns() {
         accountName.setCellValueFactory(new PropertyValueFactory<>("accountName"));
         accountNumber.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
-        credit.setCellValueFactory(new PropertyValueFactory<>("credit"));
-        debit.setCellValueFactory(new PropertyValueFactory<>("debit"));
-        balance.setCellValueFactory(new PropertyValueFactory<>("balance"));
+        credit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        credit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Account item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCredit()));
+            }
+        });
+        debit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        debit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Account item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getDebit()));
+            }
+        });
+        balance.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        balance.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Account item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getBalance()));
+            }
+        });
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
+    private Pagination buildPagination() {
+        var pagination = new Pagination(AccountViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(AccountViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            AccountViewModel.getAllAccounts(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, AccountViewModel.getPageSize());
+            AccountViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
 
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(AccountViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    AccountViewModel
+                            .getAllAccounts(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    AccountViewModel.getPageNumber(),
+                                    t1);
+                    AccountViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 
     @Override

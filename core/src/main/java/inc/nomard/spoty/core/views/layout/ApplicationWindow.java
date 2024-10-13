@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.layout;
 
-import javafx.scene.*;
+import javafx.scene.Parent;
 
 public interface ApplicationWindow {
     int MAX_WIDTH = 32767;
@@ -15,6 +15,4 @@ public interface ApplicationWindow {
     void dispose();
 
     void setStyleSheets();
-
-    void setMorph(Boolean morph);
 }

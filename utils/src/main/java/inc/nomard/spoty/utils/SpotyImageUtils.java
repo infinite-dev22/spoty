@@ -1,9 +1,12 @@
 package inc.nomard.spoty.utils;
 
-import java.io.*;
-import java.net.*;
-import net.coobird.thumbnailator.*;
-import net.coobird.thumbnailator.name.*;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class SpotyImageUtils {
     public static File compress(File file) throws IOException {

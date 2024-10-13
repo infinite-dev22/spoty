@@ -1,46 +1,42 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.*;
-import static inc.nomard.spoty.core.viewModels.ProductCategoryViewModel.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class ProductCategoryForm extends MFXGenericDialog {
-    @FXML
+import java.util.List;
+
+import static inc.nomard.spoty.core.viewModels.ProductCategoryViewModel.updateItem;
+
+@Log4j2
+public class ProductCategoryForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
     public ValidatableTextField name;
-    @FXML
-    public Button saveBtn,
-            cancelBtn;
-    @FXML
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label nameValidationLabel;
-    @FXML
-    public TextArea description;
+    public ValidatableTextArea description;
     private List<Constraint> nameConstraints;
-    private ActionEvent actionEvent = null;
 
-    public ProductCategoryForm() {
-        init();
-    }
-
-    public void init() {
+    public ProductCategoryForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -51,7 +47,7 @@ public class ProductCategoryForm extends MFXGenericDialog {
         // Input.
         name = new ValidatableTextField();
         var label = new Label("Name");
-        name.setPrefWidth(400d);
+        name.setPrefWidth(1000d);
         name.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
         // Validation.
         nameValidationLabel = Validators.buildValidationLabel();
@@ -64,9 +60,9 @@ public class ProductCategoryForm extends MFXGenericDialog {
 
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description");
-        description.setPrefWidth(400d);
+        description.setPrefWidth(1000d);
         description.textProperty().bindBidirectional(ProductCategoryViewModel.descriptionProperty());
         description.setWrapText(true);
         var vbox = new VBox();
@@ -84,9 +80,9 @@ public class ProductCategoryForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -107,21 +103,10 @@ public class ProductCategoryForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    closeDialog(event);
-                    clearProductCategoryData();
-
-                    nameValidationLabel.setVisible(false);
-                    nameValidationLabel.setManaged(false);
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
+        cancelBtn.setOnAction((event) -> this.dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
@@ -130,25 +115,21 @@ public class ProductCategoryForm extends MFXGenericDialog {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()) {
+                        saveBtn.startLoading();
                         if (ProductCategoryViewModel.getId() > 0) {
-                            updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
-                            return;
+                            updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            ProductCategoryViewModel.saveProductCategory(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        ProductCategoryViewModel.saveProductCategory(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        ProductCategoryViewModel.clearProductCategoryData();
-        ProductCategoryViewModel.getAllProductCategories(null, null);
+        this.dispose();
+        ProductCategoryViewModel.getAllProductCategories(null, null, null, null);
     }
 
     public void requiredValidator() {
@@ -174,29 +155,19 @@ public class ProductCategoryForm extends MFXGenericDialog {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        ProductCategoryViewModel.clearProductCategoryData();
+        name = null;
+        nameValidationLabel = null;
+        description = null;
+        saveBtn = null;
+        cancelBtn = null;
     }
 }

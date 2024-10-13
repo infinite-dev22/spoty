@@ -1,43 +1,52 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.transfers.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.previews.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.transfers.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.BranchViewModel;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.TransferMasterForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.transfers.TransferMaster;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class TransferPage extends OutlinePage {
-    private final SideModalPane modalPane;
+    private final SideModalPane modalPane1;
+    private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<TransferMaster> masterTable;
-    private MFXProgressSpinner progress;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
+    private SpotyProgressSpinner progress;
     private TableColumn<TransferMaster, String> reference;
     private TableColumn<TransferMaster, TransferMaster> fromBranch;
     private TableColumn<TransferMaster, TransferMaster> toBranch;
@@ -49,23 +58,38 @@ public class TransferPage extends OutlinePage {
     private TableColumn<TransferMaster, TransferMaster> updatedAt;
 
     public TransferPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        modalPane = new SideModalPane();
-        getChildren().addAll(modalPane, init());
+        modalPane1 = new SideModalPane();
+        modalPane2 = new SideModalPane();
+        getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        TransferMasterViewModel.getAllTransferMasters(this::onDataInitializationSuccess, this::errorMessage);
 
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
-                modalPane.setAlignment(Pos.CENTER);
-                modalPane.usePredefinedTransitionFactories(null);
+                modalPane1.setAlignment(Pos.CENTER);
+                modalPane1.usePredefinedTransitionFactories(null);
             }
         });
+        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane2.setAlignment(Pos.CENTER);
+                modalPane2.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> BranchViewModel.getAllBranches(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -83,7 +107,7 @@ public class TransferPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -128,10 +152,33 @@ public class TransferPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (TransferMasterViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        TransferMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (TransferMasterViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -201,10 +248,10 @@ public class TransferPage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             TransferMasterViewModel.deleteTransfer(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getFromBranchName() + " - " + obj.getItem().getToBranchName() + " transfer", this));
+        }, obj.getItem().getFromBranchName() + " - " + obj.getItem().getToBranchName() + " transfer").showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
@@ -223,51 +270,42 @@ public class TransferPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        TransferMasterViewModel.getAllTransferMasters(null, null);
+        TransferMasterViewModel.getAllTransferMasters(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/TransferPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new TransferPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
+    public void viewShow(TransferMaster transfer) {
+        var scrollPane = new ScrollPane(/*new TransferPreviewController(transfer, modalPane1)*/);
+        scrollPane.setMaxHeight(10_000);
 
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
-    }
-
-    public void viewShow(TransferMaster transferMaster) {
-        TransferPreviewController controller = viewFxmlLoader.getController();
-        controller.init(transferMaster);
-        viewDialog.showAndWait();
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane1.show(dialog);
     }
 
     private void showForm() {
         var dialog = new ModalContentHolder(500, -1);
-        dialog.getChildren().add(new TransferMasterForm(modalPane));
+        dialog.getChildren().add(new TransferMasterForm(modalPane1, modalPane2));
         dialog.setPadding(new Insets(5d));
-        modalPane.setAlignment(Pos.TOP_RIGHT);
-        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-        modalPane.show(dialog);
-        modalPane.setPersistent(true);
+        modalPane1.setAlignment(Pos.TOP_RIGHT);
+        modalPane1.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane1.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane1.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane1.show(dialog);
+        modalPane1.setPersistent(true);
     }
 
     private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
         progress.setManaged(false);
         progress.setVisible(false);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)
@@ -291,7 +329,7 @@ public class TransferPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                TransferMasterViewModel.getAllTransferMasters(null, null);
+                TransferMasterViewModel.getAllTransferMasters(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -373,5 +411,44 @@ public class TransferPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(TransferMasterViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(TransferMasterViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            TransferMasterViewModel.getAllTransferMasters(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, TransferMasterViewModel.getPageSize());
+            TransferMasterViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(TransferMasterViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    TransferMasterViewModel
+                            .getAllTransferMasters(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    TransferMasterViewModel.getPageNumber(),
+                                    t1);
+                    TransferMasterViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }
