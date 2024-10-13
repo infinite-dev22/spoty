@@ -51,20 +51,20 @@ jobs:
         if: runner.os == 'Windows'
         run: ./gradlew :core:jpackage
 
-      # Install cosign for signing (only on Windows)
-      - name: Install cosign
-        if: runner.os == 'Windows'
-        uses: sigstore/cosign-installer@v2
-        with:
-          cosign-release: 'v2.0.0'
+      # # Install cosign for signing (only on Windows)
+      # - name: Install cosign
+      #   if: runner.os == 'Windows'
+      #   uses: sigstore/cosign-installer@v2
+      #   with:
+      #     cosign-release: 'v2.0.0'
 
-      # Code signing the Windows executables with cosign (Keyless Signing)
-      - name: Code signing for Windows using Sigstore
-        if: runner.os == 'Windows'
-        env:
-          COSIGN_EXPERIMENTAL: "true"  # Enable keyless signing
-        run: |
-          cosign sign --keyless core/build/jpackage/*.exe
+      # # Code signing the Windows executables with cosign (Keyless Signing)
+      # - name: Code signing for Windows using Sigstore
+      #   if: runner.os == 'Windows'
+      #   env:
+      #     COSIGN_EXPERIMENTAL: "true"  # Enable keyless signing
+      #   run: |
+      #     cosign sign --keyless core/build/jpackage/*.exe
 
       # Upload artifact (signed or unsigned installers)
       - name: Upload signed or unsigned installers
