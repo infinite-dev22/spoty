@@ -1,74 +1,99 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.previews.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.quotations.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.CustomerViewModel;
+import inc.nomard.spoty.core.viewModels.DiscountViewModel;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.TaxViewModel;
+import inc.nomard.spoty.core.viewModels.accounting.AccountTransactionViewModel;
+import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.QuotationMasterForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.previews.QuotationPreview;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationMaster;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class QuotationPage extends OutlinePage {
-    private final SideModalPane modalPane;
+    private final SideModalPane modalPane1;
+    private final SideModalPane modalPane2;
     private TextField searchBar;
     private TableView<QuotationMaster> masterTable;
-    private MFXProgressSpinner progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
     private TableColumn<QuotationMaster, String> reference;
     private TableColumn<QuotationMaster, QuotationMaster> customer;
-    private TableColumn<QuotationMaster, String> total;
-    private TableColumn<QuotationMaster, String> status;
+    private TableColumn<QuotationMaster, QuotationMaster> total;
+    private TableColumn<QuotationMaster, QuotationMaster> quotationStatus;
+    private TableColumn<QuotationMaster, QuotationMaster> approvalStatus;
     private TableColumn<QuotationMaster, QuotationMaster> createdBy;
     private TableColumn<QuotationMaster, QuotationMaster> createdAt;
     private TableColumn<QuotationMaster, QuotationMaster> updatedBy;
     private TableColumn<QuotationMaster, QuotationMaster> updatedAt;
 
     public QuotationPage() {
-        modalPane = new SideModalPane();
-
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        getChildren().addAll(modalPane, init());
+        modalPane1 = new SideModalPane();
+        modalPane2 = new SideModalPane();
+        getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        AccountTransactionViewModel.getAllTransactions(this::onDataInitializationSuccess, this::errorMessage);
-
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
-                modalPane.setAlignment(Pos.CENTER);
-                modalPane.usePredefinedTransitionFactories(null);
+                modalPane1.setAlignment(Pos.CENTER);
+                modalPane1.usePredefinedTransitionFactories(null);
             }
         });
+        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane2.setAlignment(Pos.CENTER);
+                modalPane2.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> AccountTransactionViewModel.getAllTransactions(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
     }
 
     private void onDataInitializationSuccess() {
@@ -87,7 +112,7 @@ public class QuotationPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -131,37 +156,63 @@ public class QuotationPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (QuotationMasterViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        QuotationMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (QuotationMasterViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
         reference = new TableColumn<>("Ref");
         customer = new TableColumn<>("Customer");
         total = new TableColumn<>("Total Amount");
-        status = new TableColumn<>("Status");
+        quotationStatus = new TableColumn<>("Quotation Status");
+        approvalStatus = new TableColumn<>("Approval Status");
         createdBy = new TableColumn<>("Created By");
         createdAt = new TableColumn<>("Created At");
         updatedBy = new TableColumn<>("Updated By");
         updatedAt = new TableColumn<>("Updated At");
 
-        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.05));
+        reference.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         customer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
         total.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        quotationStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        approvalStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         createdBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         updatedBy.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        updatedAt.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
 
         setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(reference,
                 customer,
                 total,
-                status,
+                quotationStatus,
+                approvalStatus,
                 createdBy,
                 createdAt,
                 updatedBy,
@@ -201,10 +252,10 @@ public class QuotationPage extends OutlinePage {
 
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            QuotationMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
+            QuotationMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getCustomerName() + "'s quotation", this));
+        }, obj.getItem().getCustomerName() + "'s quotation").showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
@@ -223,68 +274,37 @@ public class QuotationPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> {
-            var dialog = new ModalContentHolder(500, -1);
-            dialog.getChildren().add(new QuotationMasterForm(modalPane));
-            dialog.setPadding(new Insets(5d));
-            modalPane.setAlignment(Pos.TOP_RIGHT);
-            modalPane.usePredefinedTransitionFactories(Side.RIGHT);
-            modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
-            modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
-            modalPane.show(dialog);
-            modalPane.setPersistent(true);
-        });
+        createBtn.setOnAction(event -> showForm());
+    }
+
+    private void showForm() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new QuotationMasterForm(modalPane1, modalPane2));
+        dialog.setPadding(new Insets(5d));
+        modalPane1.setAlignment(Pos.TOP_RIGHT);
+        modalPane1.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane1.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane1.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane1.show(dialog);
+        modalPane1.setPersistent(true);
     }
 
     private void onSuccess() {
-        QuotationMasterViewModel.getAllQuotationMasters(null, null);
-    }
-
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/QuotationPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new QuotationPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null);
     }
 
     public void viewShow(QuotationMaster quotationMaster) {
-        QuotationPreviewController controller = viewFxmlLoader.getController();
-        controller.init(quotationMaster);
-        viewDialog.showAndWait();
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(new QuotationPreview(quotationMaster, modalPane1));
+        dialog.setPadding(new Insets(5d));
+        modalPane1.show(dialog);
+        modalPane1.setPersistent(true);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     public void setSearchBar() {
@@ -293,7 +313,7 @@ public class QuotationPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                QuotationMasterViewModel.getAllQuotationMasters(null, null);
+                QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -315,8 +335,102 @@ public class QuotationPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : item.getCustomerName());
             }
         });
-        total.setCellValueFactory(new PropertyValueFactory<>("total"));
-        status.setCellValueFactory(new PropertyValueFactory<>("status"));
+        total.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        total.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
+        quotationStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        quotationStatus.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
+                    switch (item.getStatus().toLowerCase()) {
+                        case "sent" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
+        approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(QuotationMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                if (!empty && !Objects.isNull(item)) {
+                    var chip = new Label(item.getApprovalStatus());
+                    chip.setPadding(new Insets(5, 10, 5, 10));
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
+                    switch (item.getApprovalStatus().toLowerCase()) {
+                        case "approved" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "pending" -> {
+                            col = Color.web("#9a1fe6");
+                            color = Color.web("#9a1fe6", .1);
+                        }
+                        case "rejected" -> {
+                            col = Color.rgb(255, 69, 58);
+                            color = Color.rgb(255, 69, 58, .1);
+                        }
+                        case "returned" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
+
+                    setGraphic(chip);
+                    setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         createdBy.setCellFactory(tableColumn -> new TableCell<>() {
             @Override
@@ -358,5 +472,44 @@ public class QuotationPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(QuotationMasterViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(QuotationMasterViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            QuotationMasterViewModel.getAllQuotationMasters(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, QuotationMasterViewModel.getPageSize());
+            QuotationMasterViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(QuotationMasterViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    QuotationMasterViewModel
+                            .getAllQuotationMasters(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    QuotationMasterViewModel.getPageNumber(),
+                                    t1);
+                    QuotationMasterViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

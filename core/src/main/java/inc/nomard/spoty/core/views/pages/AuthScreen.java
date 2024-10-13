@@ -1,85 +1,104 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.values.strings.*;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.viewModels.adjustments.*;
-import inc.nomard.spoty.core.viewModels.dashboard.*;
-import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.viewModels.quotations.*;
-import inc.nomard.spoty.core.viewModels.requisitions.*;
-import inc.nomard.spoty.core.viewModels.returns.purchases.*;
-import inc.nomard.spoty.core.viewModels.returns.sales.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.core.viewModels.stock_ins.*;
-import inc.nomard.spoty.core.viewModels.transfers.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.*;
-import javafx.animation.*;
-import javafx.application.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
+import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
+import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
+import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
+import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
+import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
+import inc.nomard.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
+import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnMasterViewModel;
+import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
+import inc.nomard.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
+import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatablePasswordField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatablePhoneField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.WindowRunner;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.SpotyThreader;
+import inc.nomard.spoty.utils.UIUtils;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.Cursor;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.shape.StrokeType;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-@Log
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
+
+@Log4j2
 public class AuthScreen extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final Stage stage;
-    public ValidatableTextField email,
+    private ValidatableTextField email,
             signUpEmail,
-            phoneNumber,
             otherName,
             lastName,
             firstName;
-    public ValidatablePasswordField password,
+    private ValidatablePhoneField phoneNumber;
+    private ValidatablePasswordField password,
             confirmPassword,
             signUpPassword;
-    public Label forgotPassword,
-            emailValidationLabel,
-            passwordValidationLabel,
-            loginAppNameLbl,
-            loginPoweredByLbl,
-            signUpEmailValidationLabel,
-            phoneNumberValidationLabel,
-            lastNameValidationLabel,
-            firstNameValidationLabel,
-            loginLink,
-            confirmPasswordValidationLabel,
-            signUpPasswordValidationLabel,
-            signUpLink;
-    public Button loginBtn,
-            nextBtn,
-            backBtn,
-            registerBtn,
-            signUpBack;
-    public MFXFontIcon closeLoginIcon,
+    private Label forgotPassword;
+    private Label emailValidationLabel;
+    private Label passwordValidationLabel;
+    private Label signUpEmailValidationLabel;
+    private Label phoneNumberValidationLabel;
+    private Label lastNameValidationLabel;
+    private Label firstNameValidationLabel;
+    private Label confirmPasswordValidationLabel;
+    private Label signUpPasswordValidationLabel;
+    private CustomButton loginBtn, registerBtn;
+    private Button nextBtn;
+    private FontIcon closeLoginIcon,
             closeSignupIcon;
-    public Pane contentPane;
-    public AnchorPane actualContentPane;
-    public VBox loginScreen,
+    private AnchorPane actualContentPane;
+    private VBox loginScreen,
             kycScreen,
             authCreateScreen;
-    public HBox registerScreen;
+    private HBox registerScreen;
 
     public AuthScreen(Stage primaryStage) {
         stage = primaryStage;
@@ -88,13 +107,13 @@ public class AuthScreen extends BorderPane {
 
     // App branding.
     private VBox buildAppBranding() {
-        loginAppNameLbl = new Label();
+        var loginAppNameLbl = new Label();
         loginAppNameLbl.setAlignment(Pos.CENTER);
         loginAppNameLbl.setContentDisplay(ContentDisplay.CENTER);
         loginAppNameLbl.getStyleClass().add("app-label");
         loginAppNameLbl.setText(Labels.APP_NAME);
         VBox.setVgrow(loginAppNameLbl, Priority.ALWAYS);
-        loginPoweredByLbl = new Label();
+        var loginPoweredByLbl = new Label();
         loginPoweredByLbl.setAlignment(Pos.CENTER);
         loginPoweredByLbl.setContentDisplay(ContentDisplay.CENTER);
         loginPoweredByLbl.getStyleClass().add("company-label");
@@ -160,9 +179,9 @@ public class AuthScreen extends BorderPane {
 
     // Login button.
     private HBox buildLoginButton() {
-        loginBtn = new Button("Login");
+        loginBtn = new CustomButton("Login");
         loginBtn.setPrefWidth(352d);
-        loginBtn.setDefaultButton(true);
+        loginBtn.getStyleClass().add(Styles.ACCENT);
         loginBtn.setOnAction(actionEvent -> onLoginPressed());
         var hbox = new HBox(loginBtn);
         hbox.setAlignment(Pos.CENTER);
@@ -174,7 +193,7 @@ public class AuthScreen extends BorderPane {
         var label = new Label("Don't have an account? ");
         label.setAlignment(Pos.CENTER);
         label.setContentDisplay(ContentDisplay.CENTER);
-        signUpLink = new Label("Create one");
+        var signUpLink = new Label("Create one");
         signUpLink.getStyleClass().add(Styles.ACCENT);
         signUpLink.setUnderline(true);
         signUpLink.setCursor(Cursor.HAND);
@@ -272,7 +291,7 @@ public class AuthScreen extends BorderPane {
     // Phone number input.
     private VBox buildPhoneName() {
         // Input.
-        phoneNumber = new ValidatableTextField();
+        phoneNumber = new ValidatablePhoneField();
         var label = new Label("Phone number");
         phoneNumber.setPrefWidth(350d);
         phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
@@ -303,9 +322,9 @@ public class AuthScreen extends BorderPane {
 
     // Back button.
     private HBox buildKYCBackButton() {
-        backBtn = new Button("Back to Login");
+        var backBtn = new Button("Switch to Login");
         backBtn.setPrefWidth(150d);
-        backBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
+        backBtn.getStyleClass().add(Styles.FLAT);
         backBtn.setOnAction(event -> backToLogin());
         var hbox = new HBox(backBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -315,7 +334,7 @@ public class AuthScreen extends BorderPane {
 
     // Next button.
     private HBox buildKYCNextButton() {
-        nextBtn = new Button("Proceed");
+        nextBtn = new Button("Next");
         nextBtn.setPrefWidth(120d);
         nextBtn.setDefaultButton(true);
         nextBtn.setOnAction(event -> goNext());
@@ -349,8 +368,8 @@ public class AuthScreen extends BorderPane {
                 buildOtherName(),
                 buildPhoneName(),
                 buildKYCEmail(),
-                buildKYCButtons(),
-                buildAppBranding());
+                buildKYCButtons()/*,
+                buildAppBranding()*/);
         return kycScreen;
     }
 
@@ -395,7 +414,7 @@ public class AuthScreen extends BorderPane {
 
     // Back button.
     private HBox buildRegisterBackButton() {
-        signUpBack = new Button("Back");
+        var signUpBack = new Button("Back");
         signUpBack.setPrefWidth(120d);
         signUpBack.getStyleClass().add(Styles.BUTTON_OUTLINED);
         signUpBack.setOnAction(event -> signUpBack());
@@ -407,9 +426,9 @@ public class AuthScreen extends BorderPane {
 
     // Register button.
     private HBox buildRegisterButton() {
-        registerBtn = new Button("Register");
+        registerBtn = new CustomButton("Register");
         registerBtn.setPrefWidth(150d);
-        registerBtn.setDefaultButton(true);
+        registerBtn.getStyleClass().add(Styles.ACCENT);
         registerBtn.setOnAction(event -> registerUser());
         var hbox = new HBox(registerBtn);
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -429,7 +448,7 @@ public class AuthScreen extends BorderPane {
         var label = new Label("Already have an account? ");
         label.setAlignment(Pos.CENTER);
         label.setContentDisplay(ContentDisplay.CENTER);
-        loginLink = new Label("Login");
+        var loginLink = new Label("Login");
         loginLink.getStyleClass().add(Styles.ACCENT);
         loginLink.setUnderline(true);
         loginLink.setCursor(Cursor.HAND);
@@ -476,19 +495,19 @@ public class AuthScreen extends BorderPane {
     }
 
     // Close button.
-    private MFXFontIcon buildLoginCloseButton() {
-        closeLoginIcon = new MFXFontIcon("fas-circle");
-        closeLoginIcon.setSize(15d);
+    private FontIcon buildLoginCloseButton() {
+        closeLoginIcon = new FontIcon(FontAwesomeSolid.CIRCLE);
         closeLoginIcon.getStyleClass().add("close-icon");
+        closeLoginIcon.setIconSize(15);
         closeLoginIcon.setOnMouseClicked(event -> closeIconClicked());
         UIUtils.anchor(closeLoginIcon, 10d, 10d, null, null);
         return closeLoginIcon;
     }
 
-    private MFXFontIcon buildSignupCloseButton() {
-        closeSignupIcon = new MFXFontIcon("fas-circle");
-        closeSignupIcon.setSize(15d);
+    private FontIcon buildSignupCloseButton() {
+        closeSignupIcon = new FontIcon(FontAwesomeSolid.CIRCLE);
         closeSignupIcon.getStyleClass().add("close-icon");
+        closeSignupIcon.setIconSize(15);
         closeSignupIcon.setVisible(false);
         closeSignupIcon.setManaged(false);
         closeSignupIcon.setOnMouseClicked(event -> closeIconClicked());
@@ -497,13 +516,13 @@ public class AuthScreen extends BorderPane {
     }
 
     // Screen background design.
-    private Rectangle createRectangle(double layoutX, double layoutY, double rotate, double width, double height, double arcWidth, double arcHeight, Stop[] stops) {
-        Rectangle rectangle = new Rectangle(width, height);
+    private Rectangle createRectangle(double layoutX, double layoutY, double rotate, double width, Stop[] stops) {
+        Rectangle rectangle = new Rectangle(width, 400);
         rectangle.setLayoutX(layoutX);
         rectangle.setLayoutY(layoutY);
         rectangle.setRotate(rotate);
-        rectangle.setArcWidth(arcWidth);
-        rectangle.setArcHeight(arcHeight);
+        rectangle.setArcWidth(50);
+        rectangle.setArcHeight(50);
         rectangle.setStroke(Color.TRANSPARENT);
         rectangle.setStrokeLineCap(StrokeLineCap.ROUND);
         rectangle.setStrokeLineJoin(StrokeLineJoin.ROUND);
@@ -515,40 +534,40 @@ public class AuthScreen extends BorderPane {
     }
 
     private List<Rectangle> buildBackground() {
-        Rectangle rectangle1 = createRectangle(35, -186, -59, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle1 = createRectangle(35, -186, -59, 306, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(0.33725491166114807, 0, 0.6000000238418579))
         });
 
-        Rectangle rectangle2 = createRectangle(234, 249, 121, 370, 400, 50, 50, new Stop[]{
+        Rectangle rectangle2 = createRectangle(234, 249, 121, 370, new Stop[]{
                 new Stop(0, Color.color(0.33725491166114807, 0, 0.6000000238418579)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
         rectangle2.setY(30);
 
-        Rectangle rectangle3 = createRectangle(-161, 118, 59, 339, 400, 50, 50, new Stop[]{
+        Rectangle rectangle3 = createRectangle(-161, 118, 59, 339, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
         rectangle3.setRotationAxis(new Point3D(0, 0, -37));
 
-        Rectangle rectangle4 = createRectangle(454, -42, -59, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle4 = createRectangle(454, -42, -59, 306, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
 
-        Rectangle rectangle5 = createRectangle(625, -343, -60, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle5 = createRectangle(625, -343, -60, 306, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(0.33725491166114807, 0, 0.6000000238418579))
         });
         rectangle5.setY(17);
 
-        Rectangle rectangle6 = createRectangle(938, -27, -60, 339, 400, 50, 50, new Stop[]{
+        Rectangle rectangle6 = createRectangle(938, -27, -60, 339, new Stop[]{
                 new Stop(0, Color.color(0.125490203499794, 0, 0.2235294133424759)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
 
-        Rectangle rectangle7 = createRectangle(770, 254, -60, 306, 400, 50, 50, new Stop[]{
+        Rectangle rectangle7 = createRectangle(770, 254, -60, 306, new Stop[]{
                 new Stop(0, Color.color(0.33725491166114807, 0, 0.6000000238418579)),
                 new Stop(1, Color.color(1, 0, 0.9019607901573181))
         });
@@ -576,7 +595,7 @@ public class AuthScreen extends BorderPane {
 
     // Content pane.
     private Pane buildContentPane() {
-        contentPane = new Pane(buildActualContentPane());
+        var contentPane = new Pane(buildActualContentPane());
         contentPane.setMinHeight(500d);
         contentPane.setPrefHeight(500d);
         contentPane.setMaxHeight(500d);
@@ -617,32 +636,32 @@ public class AuthScreen extends BorderPane {
 
     private void initData() {
         CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
-                CompletableFuture.runAsync(() -> AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null)),
-                CompletableFuture.runAsync(() -> BranchViewModel.getAllBranches(null, null)),
-                CompletableFuture.runAsync(() -> BrandViewModel.getAllBrands(null, null)),
-                CompletableFuture.runAsync(() -> AccountViewModel.getAllAccounts(null, null)),
-                CompletableFuture.runAsync(() -> CurrencyViewModel.getAllCurrencies(null, null)),
-                CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null)),
-                CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null)),
-                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null)),
-                CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null)),
-                CompletableFuture.runAsync(() -> ExpensesViewModel.getAllExpenses(null, null)),
+                CompletableFuture.runAsync(() -> AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> BranchViewModel.getAllBranches(null, null, null, null)),
+                CompletableFuture.runAsync(() -> BrandViewModel.getAllBrands(null, null, null, null)),
+                CompletableFuture.runAsync(() -> AccountViewModel.getAllAccounts(null, null, null, null)),
+                CompletableFuture.runAsync(CurrencyViewModel::getAllCurrencies),
+                CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null, null)),
+                CompletableFuture.runAsync(() -> ExpensesViewModel.getAllExpenses(null, null, null, null)),
                 CompletableFuture.runAsync(() -> PermissionsViewModel.getAllPermissions(null, null)),
-                CompletableFuture.runAsync(() -> ProductCategoryViewModel.getAllProductCategories(null, null)),
-                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null)),
-                CompletableFuture.runAsync(() -> PurchaseMasterViewModel.getAllPurchaseMasters(null, null)),
-                CompletableFuture.runAsync(() -> PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null)),
-                CompletableFuture.runAsync(() -> QuotationMasterViewModel.getAllQuotationMasters(null, null)),
-                CompletableFuture.runAsync(() -> RequisitionMasterViewModel.getAllRequisitionMasters(null, null)),
-                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null)),
-                CompletableFuture.runAsync(() -> SaleMasterViewModel.getAllSaleMasters(null, null)),
-                CompletableFuture.runAsync(() -> SaleReturnMasterViewModel.getSaleReturnMasters(null, null)),
-                CompletableFuture.runAsync(() -> StockInMasterViewModel.getAllStockInMasters(null, null)),
-                CompletableFuture.runAsync(() -> SupplierViewModel.getAllSuppliers(null, null)),
-                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null)),
-                CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null)),
-                CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null)),
-                CompletableFuture.runAsync(() -> UserViewModel.getAllUsers(null, null)),
+                CompletableFuture.runAsync(() -> ProductCategoryViewModel.getAllProductCategories(null, null, null, null)),
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProducts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> PurchaseReturnMasterViewModel.getAllPurchaseReturnMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> QuotationMasterViewModel.getAllQuotationMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null, null, null)),
+                CompletableFuture.runAsync(() -> SaleMasterViewModel.getAllSaleMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> SaleReturnMasterViewModel.getSaleReturnMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> StockInMasterViewModel.getAllStockInMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> SupplierViewModel.getAllSuppliers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TransferMasterViewModel.getAllTransferMasters(null, null, null, null)),
+                CompletableFuture.runAsync(() -> UOMViewModel.getAllUOMs(null, null, null, null)),
+                CompletableFuture.runAsync(() -> EmployeeViewModel.getAllEmployees(null, null, null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getTotalEarnings(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getTotalPurchases(null, null)),
                 CompletableFuture.runAsync(() -> DashboardViewModel.getCountProducts(null, null)),
@@ -657,7 +676,7 @@ public class AuthScreen extends BorderPane {
                 CompletableFuture.runAsync(() -> DashboardViewModel.getStockAlerts(null, null))
         );
 
-        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+        allDataInitialization.thenRun(this::loadMainView)
                 .exceptionally(this::onDataInitializationFailure);
     }
 
@@ -666,21 +685,16 @@ public class AuthScreen extends BorderPane {
         return null;
     }
 
-    private void onDataInitializationSuccess() {
-        Platform.runLater(() -> {
-            Timeline timeline = new Timeline(new KeyFrame(Duration.millis(3500), event -> loadMainView()));
-            timeline.play();
-        });
-    }
-
-    public void onLoginSuccess() {
-        initData();
+    private void onLoginSuccess() {
+//        initData();
+        this.loadMainView();
+        loginBtn.stopLoading();
     }
 
     private void loadMainView() {
         stage.hide();
         Parent root = new WindowRunner();
-        this.getScene().setRoot(root);
+        AppManager.getScene().setRoot(root);
         stage.setWidth(Screen.getPrimary().getVisualBounds().getWidth());
         stage.setHeight(Screen.getPrimary().getVisualBounds().getHeight());
         stage.show();
@@ -706,7 +720,7 @@ public class AuthScreen extends BorderPane {
                 && passwordConstraints.isEmpty()) {
             email.setDisable(true);
             password.setDisable(true);
-            loginBtn.setDisable(true);
+            loginBtn.startLoading();
             LoginViewModel.login(this::onLoginSuccess, this::successMessage, this::errorMessage);
         }
     }
@@ -715,10 +729,15 @@ public class AuthScreen extends BorderPane {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
+                        .icon(FontAwesomeSolid.CHECK_CIRCLE)
                         .type(MessageVariants.SUCCESS)
-                        .height(60)
                         .build();
+        notification.setMinWidth(250);
+        notification.setMinHeight(60);
+        notification.setPrefWidth(300);
+        notification.setPrefHeight(60);
+        notification.setMaxWidth(300);
+        notification.setMaxHeight(60);
         AnchorPane.setRightAnchor(notification, 40.0);
         AnchorPane.setTopAnchor(notification, 10.0);
 
@@ -733,15 +752,26 @@ public class AuthScreen extends BorderPane {
     private void errorMessage(String message) {
         email.setDisable(false);
         password.setDisable(false);
-        loginBtn.setDisable(false);
+        loginBtn.stopLoading();
+        registerBtn.stopLoading();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
+                        .icon(FontAwesomeSolid.EXCLAMATION_TRIANGLE)
                         .type(MessageVariants.ERROR)
-                        .height(60)
                         .build();
-        AnchorPane.setRightAnchor(notification, 40.0);
+        notification.setMinWidth(250);
+        notification.setMinHeight(60);
+        notification.setPrefWidth(300);
+        notification.setPrefHeight(60);
+        notification.setMaxWidth(300);
+        notification.setMaxHeight(60);
+        if (loginScreen.isVisible()) {
+            AnchorPane.setRightAnchor(notification, 40.0);
+        }
+        if (!loginScreen.isVisible()) {
+            AnchorPane.setLeftAnchor(notification, 40.0);
+        }
         AnchorPane.setTopAnchor(notification, 10.0);
 
         var in = Animations.slideInDown(notification, Duration.millis(250));
@@ -753,11 +783,12 @@ public class AuthScreen extends BorderPane {
     }
 
     private void onSignupSuccess() {
+        registerBtn.stopLoading();
         SignupViewModel.resetProperties();
         backToLogin();
     }
 
-    public void closeIconClicked() {
+    private void closeIconClicked() {
         stage.hide();
         stage.close();
         SpotyThreader.disposeSpotyThreadPool();
@@ -766,7 +797,7 @@ public class AuthScreen extends BorderPane {
     }
 
     private void delay(SpotyMessage message) {
-        Duration delay = Duration.seconds(3);
+        Duration delay = Duration.seconds(4);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             var out = Animations.slideOutUp(message, Duration.millis(250));
@@ -793,7 +824,7 @@ public class AuthScreen extends BorderPane {
                 signUpPasswordValidationLabel,
                 "Password can not be empty",
                 "Password must be at least 8 digits long",
-                "Password must contain Uppercase and Lowercase letter, digits and a symbol");
+                "Password must contain Uppercase and Lowercase letters, digits and a symbol");
         Validators.requiredValidator(confirmPassword, confirmPasswordValidationLabel, "Confirm password is required");
         Validators.matchingValidator(signUpPassword, confirmPassword, confirmPasswordValidationLabel, "Password does not match");
     }
@@ -964,7 +995,7 @@ public class AuthScreen extends BorderPane {
         LoginViewModel.resetProperties();
     }
 
-    public void backToLogin() {
+    private void backToLogin() {
         closeSignupIcon.setVisible(false);
         closeSignupIcon.setManaged(false);
         registerScreen.setVisible(false);
@@ -977,7 +1008,7 @@ public class AuthScreen extends BorderPane {
         SignupViewModel.resetProperties();
     }
 
-    public void goNext() {
+    private void goNext() {
         List<Constraint> firstNameConstraints = firstName.validate();
         List<Constraint> lastNameConstraints = lastName.validate();
         List<Constraint> phoneNumberConstraints = phoneNumber.validate();
@@ -1017,14 +1048,14 @@ public class AuthScreen extends BorderPane {
         }
     }
 
-    public void signUpBack() {
+    private void signUpBack() {
         authCreateScreen.setVisible(false);
         authCreateScreen.setManaged(false);
         kycScreen.setVisible(true);
         kycScreen.setManaged(true);
     }
 
-    public void registerUser() {
+    private void registerUser() {
         List<Constraint> signUpPasswordConstraints = signUpPassword.validate();
         List<Constraint> confirmPasswordConstraints = confirmPassword.validate();
         if (!signUpPasswordConstraints.isEmpty()) {
@@ -1041,6 +1072,7 @@ public class AuthScreen extends BorderPane {
         }
         if (signUpPasswordConstraints.isEmpty()
                 && confirmPasswordConstraints.isEmpty()) {
+            registerBtn.startLoading();
             SignupViewModel.registerUser(this::onSignupSuccess, this::successMessage, this::errorMessage);
         }
     }

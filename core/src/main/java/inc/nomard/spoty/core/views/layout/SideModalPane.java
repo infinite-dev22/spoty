@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.layout;
 
-import atlantafx.base.controls.*;
+import atlantafx.base.controls.ModalPane;
 
 public class SideModalPane extends ModalPane {
     public SideModalPane() {

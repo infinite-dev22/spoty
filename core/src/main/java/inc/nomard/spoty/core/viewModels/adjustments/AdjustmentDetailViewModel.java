@@ -14,16 +14,19 @@
 
 package inc.nomard.spoty.core.viewModels.adjustments;
 
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
-import javafx.application.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentMaster;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import static inc.nomard.spoty.core.values.SharedResources.*;
+
+@Log4j2
 public class AdjustmentDetailViewModel {
     @Getter
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =

@@ -1,19 +1,23 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.network_bridge.dtos.transfers.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import java.net.*;
-import java.util.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.network_bridge.dtos.transfers.TransferDetail;
+import inc.nomard.spoty.network_bridge.dtos.transfers.TransferMaster;
+import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.net.URL;
+import java.util.ResourceBundle;
+
+@Log4j2
 public class TransferPreviewController implements Initializable {
     static final ObservableList<TransferDetail> transferDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<TransferDetail> transferDetails =
@@ -23,7 +27,7 @@ public class TransferPreviewController implements Initializable {
     public Label transferRef;
     public Label fromBranch;
     public Label toBranch;
-    public MFXTableView<TransferDetail> itemsTable;
+    public TableView<TransferDetail> itemsTable;
     public Label doneBy;
     public Label transferNote;
 
@@ -42,34 +46,16 @@ public class TransferPreviewController implements Initializable {
 
     private void setupTable() {
         // Set table column titles.
-        MFXTableColumn<TransferDetail> product =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(TransferDetail::getProductName));
-        MFXTableColumn<TransferDetail> quantity =
-                new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
-
-        // Set table column data.
-        product.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(TransferDetail::getProductName);
-            cell.setAlignment(Pos.CENTER_LEFT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        quantity.setRowCellFactory(saleDetail -> {
-            var cell = new MFXTableRowCell<>(TransferDetail::getQuantity);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
+        TableColumn<TransferDetail, String> product = new TableColumn<>("Name");
+        TableColumn<TransferDetail, String> quantity = new TableColumn<>("Quantity");
 
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
         quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
         // Set table filter.
         itemsTable
-                .getTableColumns()
+                .getColumns()
                 .addAll(product, quantity);
-
-        styleTable();
 
         // Populate table.
         if (getTransferDetails().isEmpty()) {
@@ -80,13 +66,6 @@ public class TransferPreviewController implements Initializable {
         } else {
             itemsTable.itemsProperty().bindBidirectional(transferDetailsProperty());
         }
-    }
-
-    private void styleTable() {
-        itemsTable.setPrefSize(1000, 1000);
-        itemsTable.features().enableBounceEffect();
-        itemsTable.features().enableSmoothScrolling(0.5);
-        itemsTable.setFooterVisible(false);
     }
 
     public void init(TransferMaster transfer) {

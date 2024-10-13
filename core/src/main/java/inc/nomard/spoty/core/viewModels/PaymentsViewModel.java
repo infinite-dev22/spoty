@@ -1,20 +1,25 @@
 package inc.nomard.spoty.core.viewModels;
 
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.dtos.payments.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.net.http.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.dtos.payments.CardModel;
+import inc.nomard.spoty.network_bridge.dtos.payments.MoMoModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.PaymentsRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.net.http.HttpResponse;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class PaymentsViewModel {
     private static final StringProperty cardNumber = new SimpleStringProperty("");
     private static final StringProperty cvv = new SimpleStringProperty("");
@@ -499,7 +504,7 @@ public class PaymentsViewModel {
     public static void startTrial(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
-        var findModel = new FindModel(ProtectedGlobals.user.getUserProfile().getTenant().getId());
+        var findModel = new FindModel(ProtectedGlobals.user.getTenant().getId());
         CompletableFuture<HttpResponse<String>> responseFuture = paymentsRepository.startTrial(findModel);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {

@@ -7,6 +7,9 @@ module spoty.network_bridge {
     requires java.logging;
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpmime;
+    requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.core;
+    requires org.apache.logging.log4j.jul;
 
     opens inc.nomard.spoty.network_bridge.auth;
     opens inc.nomard.spoty.network_bridge.dtos;
@@ -51,4 +54,6 @@ module spoty.network_bridge {
     opens inc.nomard.spoty.network_bridge.dtos.accounting;
     exports inc.nomard.spoty.network_bridge.repositories.implementations.accounting;
     opens inc.nomard.spoty.network_bridge.repositories.implementations.accounting;
+    exports inc.nomard.spoty.network_bridge.dtos.response;
+    opens inc.nomard.spoty.network_bridge.dtos.response;
 }

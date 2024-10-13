@@ -1,11 +1,17 @@
 package inc.nomard.spoty.core.auto_updater.v2;
 
-import inc.nomard.spoty.core.startup.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.flavouring.*;
+import inc.nomard.spoty.core.startup.SpotyPaths;
+import inc.nomard.spoty.utils.OSUtil;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.flavouring.AppConfig;
+
 import java.io.*;
-import java.net.*;
-import java.nio.file.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class AutoUpdater {
 

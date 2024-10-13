@@ -1,38 +1,45 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.returns.sales.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.geometry.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.CustomerViewModel;
+import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnDetailViewModel;
+import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnMasterViewModel;
+import inc.nomard.spoty.core.viewModels.sales.SaleDetailViewModel;
+import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+@Log4j2
 public class SaleReturnMasterForm extends VBox {
     private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;
     private ValidatableComboBox<Customer> customer;
     private TableView<SaleDetail> tableView;
-    private TextArea note;
-    private Button saveBtn, cancelBtn, addBtn;
+    private ValidatableTextArea note;
 
     public SaleReturnMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -108,15 +115,15 @@ public class SaleReturnMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setMinHeight(100d);
         note.setWrapText(true);
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             processProducts();
             if (!tableView.isDisabled() && SaleReturnDetailViewModel.getSaleReturnDetails().isEmpty()) {
@@ -124,7 +131,8 @@ public class SaleReturnMasterForm extends VBox {
             }
 
             if (isValidForm()) {
-                SaleReturnMasterViewModel.saveSaleReturnMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                saveBtn.startLoading();
+                SaleReturnMasterViewModel.saveSaleReturnMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             }
         });
         return saveBtn;
@@ -260,34 +268,12 @@ public class SaleReturnMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        SaleMasterViewModel.getAllSaleMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void dispose() {

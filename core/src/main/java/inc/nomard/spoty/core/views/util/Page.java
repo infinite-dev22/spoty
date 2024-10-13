@@ -1,25 +1,24 @@
 package inc.nomard.spoty.core.views.util;
 
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.util.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import lombok.*;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import lombok.Setter;
+
+import java.util.Objects;
 
 public interface Page {
-    int MAX_WIDTH = 1053;
-    int HGAP_20 = 20;
-    int HGAP_30 = 30;
-    int VGAP_10 = 10;
-    int VGAP_20 = 20;
-
     Parent getView();
-
-    Node getSnapshotTarget();
 
     void reset();
 
@@ -29,7 +28,7 @@ public interface Page {
         @Setter
         private SpotyGotFunctional.ParameterlessConsumer onTextEmpty, onSearchAction;
         private TextField searchBar;
-        private MFXProgressSpinner progress;
+        private SpotyProgressSpinner progress;
         private Button createBtn;
 
         public PageHeader() {
@@ -43,7 +42,7 @@ public interface Page {
 
 
         private HBox buildLeftTop() {
-            progress = new MFXProgressSpinner();
+            progress = new SpotyProgressSpinner();
             progress.setMinSize(30d, 30d);
             progress.setPrefSize(30d, 30d);
             progress.setMaxSize(30d, 30d);

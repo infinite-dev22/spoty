@@ -1,29 +1,45 @@
 package inc.nomard.spoty.core.viewModels.returns.sales;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
+import inc.nomard.spoty.core.viewModels.sales.SaleDetailViewModel;
+import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.SaleReturnsRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+
+@Log4j2
 public class SaleReturnMasterViewModel {
     @Getter
     public static final ObservableList<SaleReturnMaster> saleReturnsList =
@@ -38,7 +54,7 @@ public class SaleReturnMasterViewModel {
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
-    private static final ListProperty<SaleReturnMaster> saleReturns = new SimpleListProperty<>(saleReturnsList);
+    private static final ListProperty<SaleReturnMaster> sales = new SimpleListProperty<>(saleReturnsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final StringProperty saleStatus = new SimpleStringProperty("");
@@ -53,6 +69,9 @@ public class SaleReturnMasterViewModel {
     private static final StringProperty paymentStatus = new SimpleStringProperty("");
     private static final StringProperty notes = new SimpleStringProperty("");
     private static final SaleReturnsRepositoryImpl saleReturnsRepository = new SaleReturnsRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -115,15 +134,15 @@ public class SaleReturnMasterViewModel {
     }
 
     public static ObservableList<SaleReturnMaster> getSales() {
-        return saleReturns.get();
+        return sales.get();
     }
 
-    public static void setSales(ObservableList<SaleReturnMaster> saleReturns) {
-        SaleReturnMasterViewModel.saleReturns.set(saleReturns);
+    public static void setSales(ObservableList<SaleReturnMaster> sales) {
+        SaleReturnMasterViewModel.sales.set(sales);
     }
 
-    public static ListProperty<SaleReturnMaster> saleReturnsProperty() {
-        return saleReturns;
+    public static ListProperty<SaleReturnMaster> salesProperty() {
+        return sales;
     }
 
     public static double getTotal() {
@@ -222,6 +241,42 @@ public class SaleReturnMasterViewModel {
         return shippingFee;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        SaleReturnMasterViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        SaleReturnMasterViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        SaleReturnMasterViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
@@ -255,7 +310,6 @@ public class SaleReturnMasterViewModel {
                 .discount(getDiscount())
                 .subTotal(0)
                 .amountDue(0)
-                .changeAmount(0)
                 .shippingFee(0)
                 .saleStatus(getSaleStatus())
                 .paymentStatus(getPaymentStatus())
@@ -273,86 +327,38 @@ public class SaleReturnMasterViewModel {
                     onSuccess.run();
                     successMessage.showMessage("Sale created successfully");
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, SaleReturnMasterViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void getSaleReturnMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                               SpotyGotFunctional.MessageConsumer errorMessage) {
+                                            SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
         setDefaultCustomer();
-        CompletableFuture<HttpResponse<String>> responseFuture = saleReturnsRepository.fetchAll();
+        CompletableFuture<HttpResponse<String>> responseFuture = saleReturnsRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<SaleReturnMaster>>() {
+                    Type type = new TypeToken<ResponseModel<SaleReturnMaster>>() {
                     }.getType();
-                    ArrayList<SaleReturnMaster> saleList = gson.fromJson(response.body(), listType);
+                    ResponseModel<SaleReturnMaster> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<SaleReturnMaster> saleList = responseModel.getContent();
                     saleReturnsList.clear();
                     saleReturnsList.addAll(saleList);
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, SaleReturnMasterViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void getSaleReturnMaster(
@@ -377,42 +383,15 @@ public class SaleReturnMasterViewModel {
                     setDiscount(saleMaster.getDiscount());
                     setSubTotal(saleMaster.getSubTotal());
                     setAmountDue(saleMaster.getAmountDue());
-                    setChangeAmount(saleMaster.getChangeAmount());
                     setShippingFee(saleMaster.getShippingFee());
                     SaleDetailViewModel.saleDetailsList.clear();
                     SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleReturnDetails());
                     onSuccess.run();
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, SaleReturnMasterViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void searchSaleReturnMaster(
@@ -433,36 +412,10 @@ public class SaleReturnMasterViewModel {
                     saleReturnsList.addAll(saleList);
                     onSuccess.run();
                 });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
             } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
+                handleNon200Status(response, errorMessage);
             }
-            SpotyLogger.writeToFile(throwable, SaleReturnMasterViewModel.class);
-            return null;
-        });
+        }).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void updateSaleReturnMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -481,44 +434,7 @@ public class SaleReturnMasterViewModel {
             sale.setSaleReturnDetails(SaleDetailViewModel.getSaleDetailsList());
         }
         CompletableFuture<HttpResponse<String>> responseFuture = saleReturnsRepository.put(sale);
-        responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
-                // Process the successful response
-                Platform.runLater(() -> {
-                    onSuccess.run();
-                    successMessage.showMessage("Sale updated successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
-            SpotyLogger.writeToFile(throwable, SaleReturnMasterViewModel.class);
-            return null;
-        });
+        responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage)).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void deleteSaleReturnMaster(
@@ -527,50 +443,74 @@ public class SaleReturnMasterViewModel {
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
         CompletableFuture<HttpResponse<String>> responseFuture = saleReturnsRepository.delete(findModel);
-        responseFuture.thenAccept(response -> {
-            // Handle successful response
-            if (response.statusCode() == 200 || response.statusCode() == 204) {
-                // Process the successful response
-                Platform.runLater(() -> {
-                    onSuccess.run();
-                    successMessage.showMessage("Sale deleted successfully");
-                });
-            } else if (response.statusCode() == 401) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
-                }
-            } else if (response.statusCode() == 404) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
-                }
-            } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
-                }
-            }
-        }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            if (Connectivity.isConnectedToInternet()) {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
-                }
-            } else {
-                if (Objects.nonNull(errorMessage)) {
-                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
-                }
-            }
-            SpotyLogger.writeToFile(throwable, SaleReturnMasterViewModel.class);
-            return null;
-        });
+        responseFuture.thenAccept(response -> handleResponse(response, onSuccess, successMessage, errorMessage)).exceptionally(throwable -> handleException(throwable, errorMessage));
     }
 
     public static void setDefaultCustomer() {
         var customer = new Customer();
         customer.setId(1L);
-        customer.setName("Walk In Customer");
+        customer.setFirstName("Walk-In");
+        customer.setLastName("Customer");
         setCustomer(customer);
+    }
+
+    private static void handleResponse(HttpResponse<String> response, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                       SpotyGotFunctional.MessageConsumer successMessage,
+                                       SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
+        Platform.runLater(() -> {
+            switch (response.statusCode()) {
+                case 200:
+                case 201:
+                case 204:
+                    if (onSuccess != null) {
+                        onSuccess.run();
+                    }
+                    if (successMessage != null) {
+                        successMessage.showMessage("Operation successful");
+                    }
+                    break;
+                default:
+                    handleNon200Status(response, errorMessage);
+                    break;
+            }
+        });
+    }
+
+    private static void handleNon200Status(HttpResponse<String> response, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + ", BODY: " + response.body());
+        Platform.runLater(() -> {
+            String message = switch (response.statusCode()) {
+                case 400 -> "Bad request";
+                case 401 -> "Access denied";
+                case 403 -> "Forbidden resource";
+                case 404 -> "Resource not found";
+                case 406 -> "Not acceptable content";
+                case 408 -> "Request timeout";
+                case 409 -> "Conflicting resources";
+                case 422 -> "Unprocessable Content";
+                case 429 -> "Too many requests";
+                case 500 -> "Server error";
+                case 502 -> "Bad gateway";
+                case 504 -> "Gateway timeout";
+                case 507 -> "Insufficient storage";
+                default -> "Client error";
+            };
+            if (errorMessage != null) {
+                errorMessage.showMessage(message);
+            }
+        });
+    }
+
+    private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.error(throwable.getMessage());
+        Platform.runLater(() -> {
+            SpotyLogger.writeToFile(throwable, PurchaseReturnMasterViewModel.class);
+            String message = Connectivity.isConnectedToInternet() ? "An error occurred" : "No Internet Connection";
+            if (errorMessage != null) {
+                errorMessage.showMessage(message);
+            }
+        });
+        return null;
     }
 }

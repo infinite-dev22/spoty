@@ -5,7 +5,6 @@ plugins {
     id "org.openjfx.javafxplugin" version "$jfx_plugin"
     id "org.beryx.jlink" version "$jlink_plugin"
     id "org.graalvm.buildtools.native" version "$native_build_tool_plugin"
-//    maven { url "https://jitpack.io" }
     id "io.freefair.lombok" version "$lombok_plugin"
     id "com.github.mrcjkb.module-finder" version "$module_finder_plugin"
 }
@@ -27,46 +26,48 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-//graalvmNative {
-//    toolchainDetection = true
-//    agent {
-//        defaultMode = "standard"
-//        enabled = true
-//        modes {
-//            standard {
-//            }
-//        }
-//        callerFilterFiles.from("filter.json")
-//        accessFilterFiles.from("filter.json")
-//        builtinCallerFilter = true
-//        builtinHeuristicFilter = true
-//        enableExperimentalPredefinedClasses = false
-//        enableExperimentalUnsafeAllocationTracing = false
-//        trackReflectionMetadata = true
-//        metadataCopy {
-//            inputTaskNames.add("test")
-//            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
-//            mergeWithExisting = true
-//        }
-//    }
-//    binaries {
-//        main {
-//            imageName = "OpenSale-ERP"
-//            mainClass = "inc.nomard.spoty.core.Main"
-//            debug = true
-//            verbose = true
-//            fallback = false
-//            sharedLibrary = false
-//            quickBuild = false
-//            richOutput = false
-//            buildArgs.add("-O4")
-//        }
-//    }
-//    binaries.configureEach {
-//        buildArgs.add("--verbose")
-//        resources.autodetect()
-//    }
-//}
+graalvmNative {
+    binaries.all {
+        resources.autodetect()
+    }
+    toolchainDetection = true
+    agent {
+        defaultMode = "standard"
+        enabled = true
+        modes {
+            standard {
+            }
+        }
+        builtinCallerFilter = true
+        builtinHeuristicFilter = true
+        enableExperimentalPredefinedClasses = false
+        enableExperimentalUnsafeAllocationTracing = false
+        trackReflectionMetadata = true
+        metadataCopy {
+            inputTaskNames.add("test")
+            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
+            mergeWithExisting = true
+        }
+    }
+    binaries {
+        main {
+            imageName = "OpenSale-ERP"
+            mainClass = "inc.nomard.spoty.core.Main"
+            debug = true
+            verbose = true
+            fallback = false
+            sharedLibrary = false
+            quickBuild = false
+            richOutput = false
+            buildArgs.add("-O4")
+            buildArgs.add("--initialize-at-build-time=org.apache.logging.log4j.*")
+        }
+    }
+    binaries.configureEach {
+        buildArgs.add("--verbose")
+        resources.autodetect()
+    }
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
@@ -100,12 +101,14 @@ run {
             "-Djava.security.egd=file:/dev/urandom",
             "-XX:+AlwaysPreTouch",
             "-Dprism.marlinratserizer=true",
+            "-Dprism.forceGPU=true",
+            "-Dprism.text=t2k",
             "-Dprism.verbose=true",
+            "-Djavafx.platform=gtk3",
             "-Dsun.java2d.opengl=true",
             "-XX:+AutoCreateSharedArchive",
             "-XX:SharedArchiveFile=spoty.jsa",
-            "-XX:+UseZGC",
-            "-XX:+ZGenerational"
+            "-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector"
     ]
 }
 
@@ -150,12 +153,14 @@ jlink {
                 "-Djava.security.egd=file:/dev/urandom",
                 "-XX:+AlwaysPreTouch",
                 "-Dprism.marlinratserizer=true",
+                "-Dprism.forceGPU=true",
+                "-Dprism.text=t2k",
                 "-Dprism.verbose=true",
+                "-Djavafx.platform=gtk3",
                 "-Dsun.java2d.opengl=true",
                 "-XX:+AutoCreateSharedArchive",
                 "-XX:SharedArchiveFile=spoty.jsa",
-                "-XX:+UseZGC",
-                "-XX:+ZGenerational"
+                "-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector"
         ]
     }
 
@@ -174,7 +179,7 @@ jlink {
         if (os.linux) {
             installerOptions += [
                     "--icon", linux_icon,
-                    "--type", linux_installer_type,
+                    "--type", deb_linux_installer_type  /*rpm_linux_installer_type*/,
                     "--linux-app-release", spoty_release,
                     "--linux-package-name", app_installer_name,
                     "--linux-deb-maintainer", app_deb_maintainer,
@@ -216,30 +221,52 @@ jlink {
 }
 
 dependencies {
-    // implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.9.1'
     implementation project(":network_bridge")
     implementation project(":utils")
+    // VirtualizedFX
+    implementation 'io.github.palexdev:virtualizedfx:21.6.4'
+    // JFXtras
+    implementation 'org.jfxtras:jfxtras-controls:17-r1'
+    // Jakarta Inject API
     implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"
+    // Measure Unit API
     implementation "javax.measure:unit-api:$measure_unit_api"
+    // GemsFX
     implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"
+    // CalendarFX
     implementation "com.calendarfx:view:11.12.7"
+    // FX Charts
     implementation "eu.hansolo.fx:charts:$fx_charts"
+    // AtlantaFX
     implementation "io.github.mkpaz:atlantafx-parent:$atlantafx"
     implementation "io.github.mkpaz:atlantafx-styles:$atlantafx"
     implementation "io.github.mkpaz:atlantafx-base:$atlantafx"
+    // GSon
     implementation "com.google.code.gson:gson:$gson"
-    implementation "org.projectlombok:lombok:$lombok"
-    compileOnly "org.projectlombok:lombok:$lombok"
-    annotationProcessor "org.projectlombok:lombok:$lombok"
+    // MaterialFX
     implementation "io.github.palexdev:materialfx:$materialfx"
+    // IkonLi
     implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
     implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
+    implementation "org.kordamp.ikonli:ikonli-feather-pack:$ikonLi"
+    // CSSFX
     implementation "fr.brouillard.oss:cssfx:$cssfx"
-    implementation "io.github.palexdev:virtualizedfx:$virtualizedFX"
-    implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
-    implementation "org.junit.jupiter:junit-jupiter-api:$junit"
-    implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
+    // Lombok
+    implementation "org.projectlombok:lombok:$lombok"
+    compileOnly "org.projectlombok:lombok:$lombok"
+    annotationProcessor "org.projectlombok:lombok:$lombok"
+    // Lombok Tests
     testCompileOnly "org.projectlombok:lombok:$lombok"
     testAnnotationProcessor "org.projectlombok:lombok:$lombok"
+    // Log4j2 dependencies
+    implementation "org.apache.logging.log4j:log4j-api:$log4j2"
+    implementation "org.apache.logging.log4j:log4j-core:$log4j2"
+    // Async logging support in Log4j2
+    implementation "org.apache.logging.log4j:log4j-jul:$log4j2"
+    // Async logging (Disruptor) dependency
+    implementation "com.lmax:disruptor:3.4.4"
+    // Unit Tests
+    implementation "org.junit.jupiter:junit-jupiter-api:$junit"
+    implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
 }

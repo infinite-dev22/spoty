@@ -1,20 +1,26 @@
 package inc.nomard.spoty.core.views.layout.message;
 
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import javafx.animation.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.*;
-import lombok.extern.java.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 @Setter
 @Getter
-@Log
+@Log4j2
 public class SpotyMessage extends StackPane {
     @Getter
     private static int layoutHeight;
@@ -39,19 +45,23 @@ public class SpotyMessage extends StackPane {
         messageLayout.setSpacing(10);
         messageLayout.setAlignment(Pos.CENTER_LEFT);
         messageLayout.setPadding(new Insets(10, 10, 10, 10));
-        messageLayout.setMinHeight(layoutHeight);
-        messageLayout.setMinWidth(layoutWidth);
+        messageLayout.setMinHeight(getMinHeight());
+        messageLayout.setMinWidth(getMinWidth());
+        messageLayout.setPrefHeight(getPrefHeight());
+        messageLayout.setPrefWidth(getPrefWidth());
+        messageLayout.setMaxHeight(getMaxHeight());
+        messageLayout.setMaxWidth(getMaxWidth());
         messageLayout.getChildren().addAll(icon, message);
 
         getStyleClass().add("message");
         getChildren().addAll(messageLayout);
 
         StackPane.setAlignment(this, Pos.TOP_RIGHT);
-        StackPane.setMargin(this, new Insets(10, 10, 0, 0));
+        StackPane.setMargin(this, new Insets(10, 0, 0, 0));
     }
 
     public static void delay(SpotyMessage message) {
-        Duration delay = Duration.seconds(3);
+        Duration delay = Duration.seconds(4);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             var out = Animations.slideOutUp(message, Duration.millis(250));
@@ -75,7 +85,7 @@ public class SpotyMessage extends StackPane {
         private final String message;
         private int height = 0;
         private int width = 300;
-        private MFXFontIcon icon;
+        private FontIcon icon;
         private Duration messageDuration;
         private String styleClass;
 
@@ -83,8 +93,8 @@ public class SpotyMessage extends StackPane {
             this.message = message;
         }
 
-        public MessageBuilder icon(String icon) {
-            this.icon = new MFXFontIcon(icon);
+        public MessageBuilder icon(Ikon icon) {
+            this.icon = new FontIcon(icon);
             return this;
         }
 

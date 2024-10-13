@@ -1,10 +1,13 @@
 package inc.nomard.spoty.utils.responsiveness.layouts;
 
-import java.util.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import javafx.scene.layout.GridPane;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@Log4j2
 public class BootstrapRow {
 
     private final List<BootstrapColumn> columns = new ArrayList<>();

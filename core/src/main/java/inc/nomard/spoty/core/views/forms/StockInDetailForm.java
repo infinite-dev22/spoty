@@ -1,44 +1,48 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.stock_ins.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.stock_ins.StockInDetailViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.collections.ListChangeListener;
+import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class StockInDetailForm extends ModalPage {
-    private ValidatableTextField quantity;
+import java.util.List;
+
+import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
+
+@Log4j2
+public class StockInDetailForm extends BorderPane {
+    private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
+    private ValidatableNumberField quantity;
     private ValidatableComboBox<Product> product;
-    private Button saveBtn, cancelBtn;
     private Label productValidationLabel, quantityValidationLabel;
     private List<Constraint> productConstraints, quantityConstraints;
 
-    public StockInDetailForm() {
-        init();
-    }
-
-    public void init() {
+    public StockInDetailForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         setupDialogActions();
         requiredValidator();
@@ -48,18 +52,13 @@ public class StockInDetailForm extends ModalPage {
         // Input.
         product = new ValidatableComboBox<>();
         var label = new Label("Product");
-        product.setPrefWidth(400d);
+        product.setPrefWidth(1000d);
         product.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
 
         StringConverter<Product> productConverter = FunctionalStringConverter.to(
                 productDetail -> productDetail == null ? "" : productDetail.getName());
         product.setConverter(productConverter);
-
-        if (ProductViewModel.getProducts().isEmpty()) {
-            ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> product.setItems(ProductViewModel.getProducts()));
-        } else {
-            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
-        }
+        product.setItems(ProductViewModel.getProducts());
         // Validation.
         productValidationLabel = Validators.buildValidationLabel();
         var vbox = new VBox();
@@ -71,9 +70,9 @@ public class StockInDetailForm extends ModalPage {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
-        quantity.setPrefWidth(400d);
+        quantity.setPrefWidth(1000d);
         quantity.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
         // Validation.
         quantityValidationLabel = Validators.buildValidationLabel();
@@ -84,30 +83,17 @@ public class StockInDetailForm extends ModalPage {
         return vbox;
     }
 
-    private VBox buildDescription() {
-        // Input.
-        var description = new TextArea();
-        var label = new Label("Description");
-        description.setPrefWidth(400d);
-        description.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, description);
-        return vbox;
-    }
-
     private VBox buildCenter() {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildProduct(), buildQuantity(), buildDescription());
+        vbox.getChildren().addAll(buildProduct(), buildQuantity());
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -128,48 +114,24 @@ public class StockInDetailForm extends ModalPage {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void setupDialogActions() {
-        cancelBtn.setOnAction(this::resetForm);
+        cancelBtn.setOnAction(event -> this.dispose());
         saveBtn.setOnAction(this::handleSaveAction);
     }
 
-    private void resetForm(ActionEvent event) {
-        closeDialog(event);
-        StockInDetailViewModel.resetProperties();
-        clearSelections();
-        hideValidationLabels();
-        dispose();
-    }
-
-    private void clearSelections() {
-        product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-    }
-
-    private void hideValidationLabels() {
-        productValidationLabel.setVisible(false);
-        quantityValidationLabel.setVisible(false);
-        productValidationLabel.setManaged(false);
-        quantityValidationLabel.setManaged(false);
-    }
-
-    private void handleSaveAction(ActionEvent event) {
+    private void handleSaveAction(Event event) {
         validateInputs();
         if (productConstraints.isEmpty() && quantityConstraints.isEmpty()) {
             if (tempIdProperty().get() > -1) {
                 StockInDetailViewModel.updateStockInDetail();
-                successMessage("Product changed successfully");
+                SpotyUtils.successMessage("Product changed successfully");
             } else {
                 StockInDetailViewModel.addStockInDetails();
-                successMessage("Product added successfully");
+                SpotyUtils.successMessage("Product added successfully");
             }
-            resetForm(event);
-            closeDialog(event);
+            this.dispose();
         }
     }
 
@@ -186,13 +148,11 @@ public class StockInDetailForm extends ModalPage {
         }
     }
 
-    private void showValidationLabel(Label label, String message, ValidatableTextField control) {
+    private void showValidationLabel(Label label, String message, ValidatableNumberField control) {
         label.setManaged(true);
         label.setVisible(true);
         label.setText(message);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-        MFXStageDialog dialog = (MFXStageDialog) control.getScene().getWindow();
-        dialog.sizeToScene();
     }
 
     private <T> void showValidationLabel(Label label, String message, ValidatableComboBox<T> control) {
@@ -200,19 +160,17 @@ public class StockInDetailForm extends ModalPage {
         label.setVisible(true);
         label.setText(message);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-        MFXStageDialog dialog = (MFXStageDialog) control.getScene().getWindow();
-        dialog.sizeToScene();
     }
 
     public void requiredValidator() {
-        setupValidator(product, "Product is required");
-        setupValidator(quantity, "Quantity is required");
+        setupValidator(product);
+        setupValidator(quantity);
     }
 
-    private void setupValidator(ValidatableTextField control, String message) {
+    private void setupValidator(ValidatableNumberField control) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Quantity is required")
                 .setCondition(control.textProperty().length().greaterThan(0))
                 .get();
         control.getValidator().constraint(constraint);
@@ -224,10 +182,10 @@ public class StockInDetailForm extends ModalPage {
         });
     }
 
-    private <T> void setupValidator(ValidatableComboBox<T> control, String message) {
+    private <T> void setupValidator(ValidatableComboBox<T> control) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Product is required")
                 .setCondition(control.valueProperty().isNotNull())
                 .get();
         control.getValidator().constraint(constraint);
@@ -250,31 +208,10 @@ public class StockInDetailForm extends ModalPage {
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        StockInDetailViewModel.resetProperties();
         this.product = null;
         this.quantity = null;
         this.cancelBtn = null;

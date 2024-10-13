@@ -1,21 +1,19 @@
 package inc.nomard.spoty.network_bridge.dtos.requisitions;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.text.*;
-import java.time.*;
-
-import java.time.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class RequisitionMaster {
     private Long id;
     private String ref;
@@ -23,16 +21,13 @@ public class RequisitionMaster {
     private List<RequisitionDetail> requisitionDetails;
     private String notes;
     private String status;
-    private User createdBy;
+    private String approvalStatus;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 
     public String getSupplierName() {
-        return supplier.getName();
-    }
-
-    public String doneBy() {
-        return createdBy.getUserProfile().getName();
+        return supplier.getFirstName() + " " + supplier.getOtherName() + " " + supplier.getLastName();
     }
 }

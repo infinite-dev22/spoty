@@ -1,14 +1,14 @@
 package inc.nomard.spoty.network_bridge.dtos.payments;
 
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class MoMoModel {
     private String amount;
     private String email;

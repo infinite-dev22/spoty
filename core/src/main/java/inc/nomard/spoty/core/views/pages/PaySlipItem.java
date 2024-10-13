@@ -1,16 +1,22 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-@Log
+@Log4j2
 public class PaySlipItem extends HBox {
     public Label payRunPeriod;
     public Label employeeCount;
@@ -20,7 +26,7 @@ public class PaySlipItem extends HBox {
     public Button viewSalariesBtn,
             exportBtn,
             sendBtn;
-    public MFXIconButton editBtn,
+    public Button editBtn,
             deleteBtn;
 
     public PaySlipItem() {
@@ -63,8 +69,8 @@ public class PaySlipItem extends HBox {
         return vbox;
     }
 
-    private HBox buildIcon(String description, String value) {
-        var icon = new MFXFontIcon(description);
+    private HBox buildIcon(Ikon description, String value) {
+        var icon = new FontIcon(description);
         var label = new Label(value);
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
@@ -81,15 +87,15 @@ public class PaySlipItem extends HBox {
         vbox.setSpacing(10d);
         HBox.setHgrow(vbox, Priority.ALWAYS);
         vbox.getChildren().addAll(payRunStatus,
-                buildIcon("fas-calendar", "10th/Mar/2024"),
-                buildIcon("fas-check", "Sent"),
-                buildIcon("fas-flag", "No Issues"));
+                buildIcon(FontAwesomeSolid.CALENDAR, "10th/Mar/2024"),
+                buildIcon(FontAwesomeSolid.CHECK, "Sent"),
+                buildIcon(FontAwesomeSolid.FLAG, "No Issues"));
         return vbox;
     }
 
     private HBox buildRight() {
-        editBtn = new MFXIconButton();
-        deleteBtn = new MFXIconButton();
+        editBtn = new Button();
+        deleteBtn = new Button();
         sendBtn = new Button("Send PaySlips");
         sendBtn.setDefaultButton(true);
 
@@ -102,19 +108,8 @@ public class PaySlipItem extends HBox {
     }
 
     private void buildIcons() {
-        MFXFontIcon downLoadIcon = new MFXFontIcon();
-        MFXFontIcon editIcon = new MFXFontIcon();
-        MFXFontIcon deleteIcon = new MFXFontIcon();
-
-        editIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-        deleteIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-
-        downLoadIcon.setDescription("fas-arrow-up-from-bracket");
-        editIcon.setDescription("far-pen-to-square");
-        deleteIcon.setDescription("far-trash-can");
-
-        deleteBtn.setIcon(deleteIcon);
-        editBtn.setIcon(editIcon);
-        exportBtn.setGraphic(downLoadIcon);
+        exportBtn.setGraphic(new FontIcon(FontAwesomeRegular.CARET_SQUARE_DOWN));
+        editBtn.setGraphic(new FontIcon(FontAwesomeRegular.EDIT));
+        deleteBtn.setGraphic(new FontIcon(FontAwesomeRegular.TRASH_ALT));
     }
 }

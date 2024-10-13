@@ -1,34 +1,44 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.accounting.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.geometry.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.accounting.AccountTransactionViewModel;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.accounting.AccountTransaction;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
-@Log
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+@Log4j2
 public class AccountTransactionPage extends OutlinePage {
     private TextField searchBar;
     private TableView<AccountTransaction> masterTable;
-    private MFXProgressSpinner progress;
+    private SpotyProgressSpinner progress;
     private TableColumn<AccountTransaction, AccountTransaction> accountName;
     private TableColumn<AccountTransaction, String> transactionType;
-    private TableColumn<AccountTransaction, Double> credit;
-    private TableColumn<AccountTransaction, Double> debit;
-    private TableColumn<AccountTransaction, Double> amount;
+    private TableColumn<AccountTransaction, AccountTransaction> credit;
+    private TableColumn<AccountTransaction, AccountTransaction> debit;
+    private TableColumn<AccountTransaction, AccountTransaction> amount;
     private TableColumn<AccountTransaction, String> note;
     private TableColumn<AccountTransaction, AccountTransaction> transactionDate;
 
@@ -37,7 +47,7 @@ public class AccountTransactionPage extends OutlinePage {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        AccountTransactionViewModel.getAllTransactions(this::onDataInitializationSuccess, this::errorMessage);
+        AccountTransactionViewModel.getAllTransactions(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -55,7 +65,7 @@ public class AccountTransactionPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -98,10 +108,33 @@ public class AccountTransactionPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (AccountTransactionViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        AccountTransactionViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (AccountTransactionViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -141,7 +174,7 @@ public class AccountTransactionPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                AccountTransactionViewModel.getAllTransactions(null, this::errorMessage);
+                AccountTransactionViewModel.getAllTransactions(null, this::errorMessage, null, null);
             }
             AccountTransactionViewModel.transactionsList.addAll(AccountTransactionViewModel.getTransactions().stream()
                     .filter(accountTransaction -> Objects.equals(accountTransaction.getAccountName(), nv))
@@ -151,12 +184,12 @@ public class AccountTransactionPage extends OutlinePage {
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
         progress.setManaged(false);
         progress.setVisible(false);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)
@@ -184,9 +217,30 @@ public class AccountTransactionPage extends OutlinePage {
             }
         });
         transactionType.setCellValueFactory(new PropertyValueFactory<>("transactionType"));
-        credit.setCellValueFactory(new PropertyValueFactory<>("credit"));
-        debit.setCellValueFactory(new PropertyValueFactory<>("debit"));
-        amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        credit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        credit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AccountTransaction item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getCredit()));
+            }
+        });
+        debit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        debit.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AccountTransaction item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getDebit()));
+            }
+        });
+        amount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        amount.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(AccountTransaction item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmount()));
+            }
+        });
         note.setCellValueFactory(new PropertyValueFactory<>("note"));
         transactionDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
         transactionDate.setCellFactory(tableColumn -> new TableCell<>() {
@@ -200,5 +254,44 @@ public class AccountTransactionPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getTransactionDate()) ? null : item.getTransactionDate().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(AccountTransactionViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(AccountTransactionViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            AccountTransactionViewModel.getAllTransactions(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, AccountTransactionViewModel.getPageSize());
+            AccountTransactionViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(AccountTransactionViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    AccountTransactionViewModel
+                            .getAllTransactions(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    AccountTransactionViewModel.getPageNumber(),
+                                    t1);
+                    AccountTransactionViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

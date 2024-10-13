@@ -34,13 +34,29 @@ app-root {
     -fx-background-color: #1c1c1e;
 }
 
-.window {
-    -fx-background-color: rgba(51, 51, 51, .9);
+.windows {
+    -fx-background-color: rgba(51, 51, 51);
 }
-.hero-image{
+
+.hero-image {
     -fx-background-color: -mfx-charcoal;
 }
 
 .shade-app {
     -fx-background-color: rgba(51, 51, 51, .9);
+}
+
+.pos-product-card {
+    -fx-background-color: rgb(28, 28, 30);
+}
+
+.pos-product-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.4), 10, 0.12, -1.0, 2.0);
+}
+
+.spoty-progress-spinner {
+    -mfx-color1: #2f96ff;
+    -mfx-color2: #2f96ff;
+    -mfx-color3: #2f96ff;
+    -mfx-color4: #2f96ff;
 }

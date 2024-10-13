@@ -1,18 +1,22 @@
 package inc.nomard.spoty.network_bridge.models;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.io.*;
-import java.time.*;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.Role;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
+
+import java.io.Serializable;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class UserModel implements Serializable {
     private Long id;
     private String firstName;
@@ -20,6 +24,7 @@ public class UserModel implements Serializable {
     private String otherName;
     private String email;
     private String phone;
+    private String salary;
     private Role role;
     private LocalDate dateOfBirth;
     private Branch branch;

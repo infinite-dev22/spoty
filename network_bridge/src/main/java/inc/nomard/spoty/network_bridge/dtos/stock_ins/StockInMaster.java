@@ -1,30 +1,26 @@
 package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.time.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class StockInMaster {
     private Long id;
     private String ref;
     private List<StockInDetail> stockInDetails;
-    private String shipping;
-    private Double total;
-    private User approvedBy;
-    private User recordedBy;
-    private LocalDateTime approvalDate;
-    private LocalDateTime recordDate;
+    private String approvalStatus;
     private String notes;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

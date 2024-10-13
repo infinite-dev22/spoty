@@ -1,43 +1,47 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.collections.ListChangeListener;
+import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class PurchaseDetailForm extends MFXGenericDialog {
-    public ValidatableTextField quantity;
+import java.util.List;
+
+import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
+
+@Log4j2
+public class PurchaseDetailForm extends BorderPane {
+    private final ModalPane modalPane;
+    public ValidatableNumberField quantity;
     public ValidatableComboBox<Product> product;
-    public Button saveBtn, cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public Label quantityValidationLabel, productValidationLabel;
 
-    public PurchaseDetailForm() {
-        init();
-    }
-
-    public void init() {
+    public PurchaseDetailForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -48,7 +52,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         // Input.
         product = new ValidatableComboBox<>();
         var label = new Label("Product");
-        product.setPrefWidth(400d);
+        product.setPrefWidth(1000d);
         product.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
         setupProductComboBox();
         // Validation.
@@ -62,9 +66,9 @@ public class PurchaseDetailForm extends MFXGenericDialog {
 
     private VBox buildQuantity() {
         // Input.
-        quantity = new ValidatableTextField();
+        quantity = new ValidatableNumberField();
         var label = new Label("Quantity");
-        quantity.setPrefWidth(400d);
+        quantity.setPrefWidth(1000d);
         quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
         // Validation.
         quantityValidationLabel = Validators.buildValidationLabel();
@@ -83,9 +87,9 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -106,9 +110,6 @@ public class PurchaseDetailForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void setupProductComboBox() {
@@ -116,13 +117,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
                 productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
         product.setConverter(productConverter);
-
-        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c ->
-                product.setItems(ProductViewModel.getProducts())
-        );
-        if (!ProductViewModel.getProducts().isEmpty()) {
-            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
-        }
+        product.setItems(ProductViewModel.getProducts());
     }
 
     private void requiredValidator() {
@@ -169,24 +164,11 @@ public class PurchaseDetailForm extends MFXGenericDialog {
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(this::resetForm);
+        cancelBtn.setOnAction(actionEvent -> dispose());
         saveBtn.setOnAction(this::saveForm);
     }
 
-    private void resetForm(ActionEvent event) {
-        closeDialog(event);
-        PurchaseDetailViewModel.resetProperties();
-        hideValidationLabels();
-    }
-
-    private void hideValidationLabels() {
-        productValidationLabel.setVisible(false);
-        productValidationLabel.setManaged(false);
-        quantityValidationLabel.setVisible(false);
-        quantityValidationLabel.setManaged(false);
-    }
-
-    private void saveForm(ActionEvent event) {
+    private void saveForm(Event event) {
         List<Constraint> productConstraints = product.validate();
         List<Constraint> quantityConstraints = quantity.validate();
 
@@ -198,7 +180,7 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         }
 
         if (productConstraints.isEmpty() && quantityConstraints.isEmpty()) {
-            processSave(event);
+            processSave();
         }
     }
 
@@ -207,40 +189,28 @@ public class PurchaseDetailForm extends MFXGenericDialog {
         validationLabel.setVisible(true);
         validationLabel.setText(message);
         control.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-        MFXStageDialog dialog = (MFXStageDialog) control.getScene().getWindow();
-        dialog.sizeToScene();
     }
 
-    private void processSave(ActionEvent event) {
-        String message;
-
+    private void processSave() {
         if (tempIdProperty().get() > -1) {
             PurchaseDetailViewModel.updatePurchaseDetail();
-            message = "Product changed successfully";
+            SpotyUtils.successMessage("Product changed successfully");
         } else {
             PurchaseDetailViewModel.addPurchaseDetail();
-            message = "Product added successfully";
+            SpotyUtils.successMessage("Product added successfully");
         }
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-        PurchaseDetailViewModel.resetProperties();
-        closeDialog(event);
+        dispose();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        PurchaseDetailViewModel.resetProperties();
+        this.product = null;
+        this.quantity = null;
+        this.cancelBtn = null;
+        this.saveBtn = null;
+        this.quantityValidationLabel = null;
+        this.productValidationLabel = null;
     }
 }

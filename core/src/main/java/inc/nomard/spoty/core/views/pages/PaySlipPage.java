@@ -1,31 +1,40 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.util.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.PaySlipViewModel;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.geometry.Insets;
+import javafx.geometry.NodeOrientation;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
-@Log
+import java.util.Objects;
+
+@Log4j2
 public class PaySlipPage extends OutlinePage {
     public VBox paySlipItemHolder;
     public ScrollPane scrollPane;
     private TextField searchBar;
-    private MFXProgressSpinner progress;
+    private SpotyProgressSpinner progress;
 
     public PaySlipPage() {
         addNode(init());
         progress.setManaged(true);
         progress.setVisible(true);
-        PaySlipViewModel.getAllPaySlips(this::onDataInitializationSuccess, this::errorMessage);
+        PaySlipViewModel.getAllPaySlips(this::onDataInitializationSuccess, this::errorMessage, null, null);
     }
 
     private void onDataInitializationSuccess() {
@@ -49,7 +58,7 @@ public class PaySlipPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -128,7 +137,7 @@ public class PaySlipPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                PaySlipViewModel.getAllPaySlips(null, null);
+                PaySlipViewModel.getAllPaySlips(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -140,12 +149,12 @@ public class PaySlipPage extends OutlinePage {
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
         progress.setManaged(false);
         progress.setVisible(false);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)

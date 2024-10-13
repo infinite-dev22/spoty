@@ -1,18 +1,27 @@
 package inc.nomard.spoty.core.views.components;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.viewModels.dashboard.*;
-import inc.nomard.spoty.network_bridge.dtos.dashboard.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.navigation.*;
-import javafx.application.*;
-import javafx.geometry.*;
-import javafx.scene.chart.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.network_bridge.dtos.dashboard.LineChartModel;
+import inc.nomard.spoty.utils.UIUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class TotalRevenue extends AnchorPane {
     private final ToggleButton monthlyViewBtn;
     private final ToggleButton weeklyViewBtn;

@@ -1,27 +1,40 @@
 package inc.nomard.spoty.core.viewModels.adjustments;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentMaster;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.AdjustmentRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+
+@Log4j2
 public class AdjustmentMasterViewModel {
     public static final ObservableList<AdjustmentMaster> adjustmentsList =
             FXCollections.observableArrayList();
@@ -43,6 +56,9 @@ public class AdjustmentMasterViewModel {
     private static final StringProperty status = new SimpleStringProperty("");
     private static final DoubleProperty totalAmount = new SimpleDoubleProperty();
     private static final AdjustmentRepositoryImpl adjustmentRepository = new AdjustmentRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -116,6 +132,42 @@ public class AdjustmentMasterViewModel {
         return totalAmount;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        AdjustmentMasterViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        AdjustmentMasterViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        AdjustmentMasterViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
@@ -176,16 +228,20 @@ public class AdjustmentMasterViewModel {
     }
 
     public static void getAllAdjustmentMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                               SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.fetchAll();
+                                               SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
+                    Type type = new TypeToken<ResponseModel<AdjustmentMaster>>() {
                     }.getType();
-                    ArrayList<AdjustmentMaster> adjustmentMasterList = gson.fromJson(response.body(), listType);
+                    ResponseModel<AdjustmentMaster> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<AdjustmentMaster> adjustmentMasterList = responseModel.getContent();
                     adjustmentsList.clear();
                     adjustmentsList.addAll(adjustmentMasterList);
                     if (Objects.nonNull(onSuccess)) {

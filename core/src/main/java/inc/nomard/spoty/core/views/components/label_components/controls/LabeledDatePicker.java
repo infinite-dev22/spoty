@@ -1,13 +1,20 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
-import inc.nomard.spoty.core.views.components.label_components.skins.*;
-import io.github.palexdev.materialfx.validation.*;
-import java.time.*;
-import javafx.beans.property.*;
-import javafx.scene.control.*;
+import inc.nomard.spoty.core.views.components.label_components.skins.LabeledDatePickerSkin;
+import inc.nomard.spoty.core.util.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validator;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.Control;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Skin;
+
+import java.time.LocalDate;
 
 public class LabeledDatePicker extends Control implements Validated {
-    protected final MFXValidator validator;
+    protected final Validator validator;
     private final StringProperty labelText = new SimpleStringProperty(this, "labelText");
     private final ObjectProperty<LocalDate> value = new SimpleObjectProperty<>(this, "value");
     private final DatePicker datePicker = new DatePicker();
@@ -15,7 +22,7 @@ public class LabeledDatePicker extends Control implements Validated {
     public LabeledDatePicker() {
         super();
         this.getStyleClass().add("labeled-date-picker");
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
     }
 
     public LocalDate getValue() {
@@ -52,7 +59,7 @@ public class LabeledDatePicker extends Control implements Validated {
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 }

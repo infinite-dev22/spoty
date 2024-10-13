@@ -1,49 +1,104 @@
 package inc.nomard.spoty.core.views.settings.app_settings;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.accounting.*;
-import io.github.palexdev.materialfx.controls.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.Node;
+import atlantafx.base.controls.ModalPane;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
+import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.ExpenseForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.pages.EmployeePage;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.accounting.Expense;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
-@Log
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
+
+@Log4j2
 public class EmailPage extends OutlinePage {
-    private CustomTextField searchBar;
-    private TableView<Account> masterTable;
-    private MFXProgressSpinner progress;
+    private final ModalPane modalPane;
+    private TextField searchBar;
+    private TableView<Expense> tableView;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
+    private TableColumn<Expense, Expense> accountName;
+    private TableColumn<Expense, String> expenseName;
+    private TableColumn<Expense, Expense> date;
+    private TableColumn<Expense, Expense> amount;
+    private TableColumn<Expense, String> note;
+    private TableColumn<Expense, Expense> createdBy;
+    private TableColumn<Expense, Expense> createdAt;
 
     public EmailPage() {
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
+        progress.setManaged(true);
+        progress.setVisible(true);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> AccountViewModel.getAllAccounts(null, null, null, null)),
+                CompletableFuture.runAsync(() -> ExpensesViewModel.getAllExpenses(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
+    }
+
+    private void onDataInitializationSuccess() {
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     public BorderPane init() {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-//        setIcons();
         setSearchBar();
         setupTable();
+        createBtnAction();
         return pane;
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -57,8 +112,8 @@ public class EmailPage extends OutlinePage {
     }
 
     private HBox buildCenterTop() {
-        searchBar = new CustomTextField();
-        searchBar.setPromptText("Search accounts");
+        searchBar = new TextField();
+        searchBar.setPromptText("Search expenses");
         searchBar.setMinWidth(300d);
         searchBar.setPrefWidth(500d);
         searchBar.setMaxWidth(700d);
@@ -87,60 +142,72 @@ public class EmailPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
-        masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+    private VBox buildCenter() {
+        tableView = new TableView<>();
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+        HBox.setHgrow(tableView, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (ExpensesViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        ExpensesViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (ExpensesViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(tableView, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
-        TableColumn<Account, String> accountName = new TableColumn<>("Account Name");
-        TableColumn<Account, String> accountNumber = new TableColumn<>("Account Number");
-        TableColumn<Account, Double> credit = new TableColumn<>("Credit");
-        TableColumn<Account, Double> debit = new TableColumn<>("Debit");
-        TableColumn<Account, Double> balance = new TableColumn<>("Balance");
-        TableColumn<Account, String> description = new TableColumn<>("Description");
+        accountName = new TableColumn<>("Account");
+        expenseName = new TableColumn<>("Name");
+        date = new TableColumn<>("Expense Date");
+        amount = new TableColumn<>("Amount");
+        note = new TableColumn<>("note");
+        createdBy = new TableColumn<>("Created By");
+        createdAt = new TableColumn<>("Created At");
 
-        accountName.setEditable(false);
-        accountNumber.setEditable(false);
-        credit.setEditable(false);
-        debit.setEditable(false);
-        balance.setEditable(false);
-        description.setEditable(false);
+        accountName.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        expenseName.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
+        date.prefWidthProperty().bind(tableView.widthProperty().multiply(.1));
+        amount.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        note.prefWidthProperty().bind(tableView.widthProperty().multiply(.25));
+        createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
+        createdAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
 
-        accountName.setSortable(true);
-        accountNumber.setSortable(true);
-        credit.setSortable(true);
-        debit.setSortable(true);
-        balance.setSortable(true);
-        description.setSortable(true);
+        setupTableColumns();
 
-        accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        credit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        debit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
-        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        var columnList = new LinkedList<>(Stream.of(accountName, expenseName, date, amount, note, createdBy, createdAt).toList());
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        tableView.getColumns().addAll(columnList);
+        styleExpenseTable();
 
-        var columnList = new LinkedList<>(Stream.of(accountName, accountNumber, credit, debit, balance, description).toList());
-        masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        masterTable.getColumns().addAll(columnList);
-        styleAccountTable();
-
-        masterTable.setItems(AccountViewModel.accountsList);
+        tableView.setItems(ExpensesViewModel.getExpenses());
     }
 
-    private void styleAccountTable() {
-        masterTable.setPrefSize(1000, 1000);
-
-        masterTable.setRowFactory(
+    private void styleExpenseTable() {
+        tableView.setPrefSize(1200, 1000);
+        tableView.setRowFactory(
                 t -> {
-                    TableRow<Account> row = new TableRow<>();
+                    TableRow<Expense> row = new TableRow<>();
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((TableRow<Account>) event.getSource())
+                                showContextMenu((TableRow<Expense>) event.getSource())
                                         .show(
-                                                masterTable.getScene().getWindow(),
+                                                tableView.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -150,32 +217,46 @@ public class EmailPage extends OutlinePage {
                 });
     }
 
-    private MFXContextMenu showContextMenu(TableRow<Account> obj) {
-        var contextMenu = new MFXContextMenu(masterTable);
-        var delete = new MFXContextMenuItem("Delete");
-        var edit = new MFXContextMenuItem("Edit");
-        var deposit = new MFXContextMenuItem("Deposit");
-
+    private ContextMenu showContextMenu(TableRow<Expense> obj) {
+        var contextMenu = new ContextMenu();
+        var delete = new MenuItem("Delete");
+        var edit = new MenuItem("Edit");
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
+            ExpensesViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getAccountName(), this));
-
-        contextMenu.addItems(deposit, edit, delete);
-
+        }, obj.getItem().getName()).showDialog());
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    ExpensesViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
+                    e.consume();
+                });
+        contextMenu.getItems().addAll(edit, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
 
-    private void onSuccess() {
-        AccountViewModel.getAllAccounts(null, null);
+    public void createBtnAction() {
+        createBtn.setOnAction(event -> this.showDialog(0));
     }
 
-//    private void setIcons() {
-//        searchBar.setRight(new MFXFontIcon("fas-magnifying-glass"));
-//    }
+    private void showDialog(Integer reason) {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new ExpenseForm(modalPane, reason));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
+    }
+
+    private void onSuccess() {
+        ExpensesViewModel.getAllExpenses(null, null, null, null);
+    }
 
     public void setSearchBar() {
         searchBar.textProperty().addListener((observableValue, ov, nv) -> {
@@ -183,11 +264,11 @@ public class EmailPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                AccountViewModel.getAllAccounts(null, null);
+                ExpensesViewModel.getAllExpenses(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
-            AccountViewModel.searchItem(nv, () -> {
+            ExpensesViewModel.searchItem(nv, () -> {
                 progress.setVisible(false);
                 progress.setManaged(false);
             }, this::errorMessage);
@@ -195,14 +276,16 @@ public class EmailPage extends OutlinePage {
     }
 
     private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)
@@ -220,8 +303,96 @@ public class EmailPage extends OutlinePage {
         }
     }
 
-    @Override
-    public Node getStyleableNode() {
-        return super.getStyleableNode();
+    private void setupTableColumns() {
+        accountName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        accountName.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getAccountName()) ? null : item.getAccountName());
+            }
+        });
+        expenseName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        date.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        date.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getDate()) ? null : item.getDate().format(dtf));
+            }
+        });
+        amount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        amount.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmount()));
+            }
+        });
+        note.setCellValueFactory(new PropertyValueFactory<>("note"));
+        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
+            }
+        });
+        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(Expense item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
+
+                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
+            }
+        });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(ExpensesViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(ExpensesViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            ExpensesViewModel.getAllExpenses(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, ExpensesViewModel.getPageSize());
+            ExpensesViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(ExpensesViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    ExpensesViewModel
+                            .getAllExpenses(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    ExpensesViewModel.getPageNumber(),
+                                    t1);
+                    ExpensesViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

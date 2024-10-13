@@ -1,75 +1,102 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
+import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.accounting.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.utils.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.time.*;
-import java.util.*;
-import java.util.function.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.Duration;
-import javafx.util.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.network_bridge.dtos.accounting.Account;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class ExpenseForm extends MFXGenericDialog {
-    public ValidatableTextField amount,
-            name;
-    public TextArea note;
-    public Button saveBtn,
-            cancelBtn;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+
+@Log4j2
+public class ExpenseForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
+    public ValidatableNumberField amount;
+    public ValidatableTextField name;
+    public ValidatableTextArea note;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     public ValidatableDatePicker date;
     public ValidatableComboBox<Account> account;
     public Label nameValidationLabel,
             dateValidationLabel,
             accountValidationLabel,
             amountValidationLabel;
+    private Integer reason;
+    private Text subTitle;
     private List<Constraint> nameConstraints,
             dateConstraints,
             categoryConstraints,
             amountConstraints;
-    private ActionEvent actionEvent = null;
 
-    public ExpenseForm() {
-        init();
-    }
-
-    public void init() {
+    public ExpenseForm(ModalPane modalPane, Integer reason) {
+        this.modalPane = modalPane;
+        this.reason = reason;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
+        setup();
+    }
+
+    private VBox buildTitle() {
+        var title = new Text("Expenses");
+        title.getStyleClass().add(Styles.TITLE_3);
+        subTitle = new Text("Create Form");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
+    }
+
+    private VBox buildFieldHolder(Node... nodes) {
+        VBox vbox = new VBox();
+        vbox.setSpacing(5d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(nodes);
+        HBox.setHgrow(vbox, Priority.ALWAYS);
+        return vbox;
+    }
+
+    private Separator buildSeparator() {
+        var separator = new Separator();
+        separator.setPrefWidth(200.0);
+        HBox.setHgrow(separator, Priority.ALWAYS);
+        return separator;
     }
 
     private VBox buildAccount() {
         // Input.
         account = new ValidatableComboBox<>();
         var label = new Label("Account");
-        account.setPrefWidth(400d);
+        account.setPrefWidth(1000d);
         account.valueProperty().bindBidirectional(ExpensesViewModel.accountProperty());
         // Converter
         StringConverter<Account> accountConverter =
                 FunctionalStringConverter.to(
                         account -> (account == null) ? "" : account.getAccountName());
-        // Filter function
-        Function<String, Predicate<Account>> accountFilterFunction =
-                searchStr ->
-                        account ->
-                                StringUtils.containsIgnoreCase(accountConverter.toString(account), searchStr);
 
         // Combo box properties.
         account.setItems(AccountViewModel.getAccounts());
@@ -86,8 +113,8 @@ public class ExpenseForm extends MFXGenericDialog {
     private VBox buildName() {
         // Input.
         name = new ValidatableTextField();
-        var label = new Label("Name");
-        name.setPrefWidth(400d);
+        var label = new Label("Name(Reason)");
+        name.setPrefWidth(1000d);
         name.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
         // Validation.
         nameValidationLabel = Validators.buildValidationLabel();
@@ -102,7 +129,7 @@ public class ExpenseForm extends MFXGenericDialog {
         // Input.
         date = new ValidatableDatePicker(LocalDate.now());
         var label = new Label("Expense Date");
-        date.setPrefWidth(400d);
+        date.setPrefWidth(1000d);
         date.valueProperty().bindBidirectional(ExpensesViewModel.dateProperty());
         // Validation.
         dateValidationLabel = Validators.buildValidationLabel();
@@ -115,9 +142,10 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildAmount() {
         // Input.
-        amount = new ValidatableTextField();
+        amount = new ValidatableNumberField();
         var label = new Label("Amount");
-        amount.setPrefWidth(400d);
+        amount.setPrefWidth(1000d);
+        amount.setLeft(new Label("UGX"));
         amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
         ExpensesViewModel.idProperty().addListener((observableValue, oV, nV) -> amount.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
         amountValidationLabel = Validators.buildValidationLabel();
@@ -130,9 +158,9 @@ public class ExpenseForm extends MFXGenericDialog {
 
     private VBox buildNote() {
         // Input.
-        note = new TextArea();
+        note = new ValidatableTextArea();
         var label = new Label("Note");
-        note.setPrefWidth(400d);
+        note.setPrefWidth(1000d);
         note.textProperty().bindBidirectional(ExpensesViewModel.noteProperty());
         note.setWrapText(true);
         var vbox = new VBox();
@@ -146,13 +174,13 @@ public class ExpenseForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildAccount(), buildName(), buildDate(), buildAmount(), buildNote());
+        vbox.getChildren().addAll(buildTitle(), buildAccount(), buildName(), buildDate(), buildAmount(), buildNote());
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -173,32 +201,10 @@ public class ExpenseForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    closeDialog(event);
-                    ExpensesViewModel.resetProperties();
-
-                    nameValidationLabel.setVisible(false);
-                    dateValidationLabel.setVisible(false);
-                    accountValidationLabel.setVisible(false);
-                    amountValidationLabel.setVisible(false);
-
-                    nameValidationLabel.setManaged(false);
-                    dateValidationLabel.setManaged(false);
-                    accountValidationLabel.setManaged(false);
-                    amountValidationLabel.setManaged(false);
-
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    account.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    amount.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
+        cancelBtn.setOnAction((event) -> dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
@@ -210,52 +216,42 @@ public class ExpenseForm extends MFXGenericDialog {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!dateConstraints.isEmpty()) {
                         dateValidationLabel.setManaged(true);
                         dateValidationLabel.setVisible(true);
                         dateValidationLabel.setText(dateConstraints.getFirst().getMessage());
                         date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) date.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!categoryConstraints.isEmpty()) {
                         accountValidationLabel.setManaged(true);
                         accountValidationLabel.setVisible(true);
                         accountValidationLabel.setText(categoryConstraints.getFirst().getMessage());
                         account.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) account.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!amountConstraints.isEmpty()) {
                         amountValidationLabel.setManaged(true);
                         amountValidationLabel.setVisible(true);
                         amountValidationLabel.setText(amountConstraints.getFirst().getMessage());
                         amount.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) amount.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && dateConstraints.isEmpty()
                             && categoryConstraints.isEmpty()
                             && amountConstraints.isEmpty()) {
-                        if (ExpensesViewModel.getId() > 0) {
-                            ExpensesViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
-                            return;
+                        saveBtn.startLoading();
+                        if (reason == 1) {
+                            ExpensesViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            ExpensesViewModel.saveExpense(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        ExpensesViewModel.saveExpense(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        ExpensesViewModel.resetProperties();
-        ExpensesViewModel.getAllExpenses(null, null);
+        this.dispose();
+        ExpensesViewModel.getAllExpenses(null, null, null, null);
     }
 
     public void requiredValidator() {
@@ -335,29 +331,41 @@ public class ExpenseForm extends MFXGenericDialog {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
+    public void dispose() {
+        modalPane.setPersistent(false);
+        modalPane.hide(true);
+        ExpensesViewModel.resetProperties();
+        amount = null;
+        name = null;
+        note = null;
+        saveBtn = null;
+        cancelBtn = null;
+        subTitle = null;
+        date = null;
+        account = null;
+        nameValidationLabel = null;
+        dateValidationLabel = null;
+        accountValidationLabel = null;
+        amountValidationLabel = null;
+        nameConstraints = null;
+        dateConstraints = null;
+        categoryConstraints = null;
+        amountConstraints = null;
+        reason = null;
+    }
 
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+    private void setup() {
+        if (reason == 1) {
+            saveBtn.textProperty().bindBidirectional(new SimpleStringProperty("Update"));
+            subTitle.textProperty().bindBidirectional(new SimpleStringProperty("Update Form"));
+        } else {
+            saveBtn.textProperty().bindBidirectional(new SimpleStringProperty("Create"));
+            subTitle.textProperty().bindBidirectional(new SimpleStringProperty("Create Form"));
         }
     }
 }

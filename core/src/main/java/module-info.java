@@ -1,9 +1,6 @@
 module spoty.core {
     requires MaterialFX;
-    requires VirtualizedFX;
     requires fr.brouillard.oss.cssfx;
-    requires mfx.components;
-    requires mfx.resources;
     requires java.logging;
     requires org.kordamp.ikonli.javafx;
     requires java.prefs;
@@ -19,6 +16,10 @@ module spoty.core {
     requires com.calendarfx.view;
     requires com.dlsc.gemsfx;
     requires org.kordamp.ikonli.materialdesign;
+    requires org.kordamp.ikonli.feather;
+    requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.core;
+    requires org.apache.logging.log4j.jul;
 
     opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;
@@ -26,7 +27,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.settings.app_settings;
     opens inc.nomard.spoty.core.views.settings;
     opens inc.nomard.spoty.core.views.forms;
-    opens inc.nomard.spoty.core.views.splash;
     opens inc.nomard.spoty.core.views.layout.navigation;
     opens inc.nomard.spoty.core.views.layout.message;
     opens inc.nomard.spoty.core.components.animations;

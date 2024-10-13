@@ -1,20 +1,25 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
-import inc.nomard.spoty.core.views.components.label_components.skins.*;
-import io.github.palexdev.materialfx.validation.*;
-import javafx.beans.property.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import inc.nomard.spoty.core.views.components.label_components.skins.LabeledPasswordFieldSkin;
+import inc.nomard.spoty.core.util.validation.Validated;
+import inc.nomard.spoty.core.util.validation.Validator;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.Node;
+import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
 
 public class LabeledPasswordField extends Control implements Validated {
-    protected final MFXValidator validator;
+    protected final Validator validator;
     private final StringProperty labelText = new SimpleStringProperty(this, "labelText");
     private final StringProperty text = new SimpleStringProperty(this, "text");
     private final ObjectProperty<Node> right = new SimpleObjectProperty<>(this, "right");
 
     public LabeledPasswordField() {
         super();
-        this.validator = new MFXValidator();
+        this.validator = new Validator();
         this.getStyleClass().add("labeled-text-field");
     }
 
@@ -56,7 +61,7 @@ public class LabeledPasswordField extends Control implements Validated {
     }
 
     @Override
-    public MFXValidator getValidator() {
+    public Validator getValidator() {
         return this.validator;
     }
 }

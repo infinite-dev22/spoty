@@ -1,12 +1,12 @@
 package inc.nomard.spoty.core.views.components;
 
-import atlantafx.base.theme.*;
-import io.github.palexdev.mfxcore.controls.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import lombok.extern.java.*;
+import atlantafx.base.theme.Styles;
+import javafx.scene.Cursor;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+@Log4j2
 public class ViewAll extends VBox {
     public ViewAll() {
         Label label = new Label("View All");

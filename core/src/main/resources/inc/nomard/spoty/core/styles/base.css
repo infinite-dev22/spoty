@@ -59,16 +59,19 @@
     -fx-background-insets: 1;
     -fx-indent: 35;
 }
+
 .navbar .tree-view .tree-cell {
     -fx-pref-height: 40;
     -fx-font-family: 'Visby Round CF Demi Bold';
     -fx-font-size: 13;
 }
+
 .nav-tree-cell > .container > .title {
     -fx-pref-height: 40;
     -fx-font-family: 'Visby Round CF Demi Bold';
     -fx-font-size: 13;
 }
+
 .navbar .tree-view .tree-cell:selected,
 .navbar .tree-view .tree-cell .container,
 .navbar .tree-view .tree-cell .container:group,
@@ -76,7 +79,7 @@
     -fx-background-radius: 10;
 }
 
-.navbar .tree-view .tree-cell .container{
+.navbar .tree-view .tree-cell .container {
     -fx-padding: 10 5 10 15;
 }
 
@@ -185,17 +188,12 @@
     -fx-border-radius: 10;
 }
 
-.pos-product-card:hover {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
-}
-
 .pos-product-label {
     -fx-background-radius: 5;
     -fx-border-radius: 5;
     -fx-padding: 2 10 2 10;
 }
+
 .pos-product-card-name {
     /* -fx-font-size: 12; */
     /* -fx-font-weight: 900; */
@@ -204,6 +202,7 @@
 .pos-product-card-price {
     -fx-font-weight: 900;
 }
+
 /*
 .pos-product-card-quantity {
     -fx-font-size: 12;
@@ -212,12 +211,14 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
+
 .modal-dialog-side {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-insets: 2 2 2 0;
     -fx-background-insets: 2 2 2 0;
 }
+
 .rounded-accent-border {
     -fx-background-radius: 500;
     -fx-border-radius: 500;
@@ -232,23 +233,28 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
+
 .card-flat-top {
     -fx-background-radius: 0 0 10 10;
     -fx-border-radius: 0 0 10 10;
 }
+
 .card-flat-bottom {
     -fx-background-radius: 10 10 0 0;
     -fx-border-radius: 10 10 0 0;
 }
+
 .card-flat-no-border {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
+
 .theme-item {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 2;
 }
+
 .card-raised {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
@@ -260,44 +266,53 @@
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
 }
+
 /* APPEARANCE STYLES */
-.header-title{
-     -fx-font-size: 18;
-     -fx-font-weight: bold;
-}
-.header-description{
-}
-.sub-header-title{
-     -fx-font-size: 16;
-     -fx-font-style: italic;
-}
-. preview-header{
-     -fx-font-weight: bold;
+.header-title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
 }
 
-.card-color-decor{
+.header-description {
+}
+
+.sub-header-title {
+    -fx-font-size: 16;
+    -fx-font-style: italic;
+}
+
+. preview-header {
+    -fx-font-weight: bold;
+}
+
+.card-color-decor {
     -fx-background-radius: 10 0 0 10;
 }
 
-.designation-label{
-     -fx-font-size: 13;
+.designation-label {
+    -fx-font-size: 13;
 }
-.username-label{
-     -fx-font-size: 16;
-     -fx-font-weight: bold;
+
+.username-label {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
 }
+
 .view-all {
-     -fx-font-size: 13;
+    -fx-font-size: 13;
 }
-.card-title{
-     -fx-font-size: 16;
-     -fx-font-weight: bold;
+
+.card-title {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
 }
-.card-sub-title{
-     -fx-font-size: 13;
-     -fx-font-weight: bold;
+
+.card-sub-title {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
 }
-.hero-image{
+
+.hero-image {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
@@ -316,12 +331,13 @@
     -fx-font-family: 'Varela Round';
     -fx-font-size: 11;
 }
+
 .default-color0.chart-bar {
     -fx-border-width: 2px;
     -fx-pref-width: 20;
 }
 
-.plan-card{
+.plan-card {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 5;
@@ -331,18 +347,22 @@
     -fx-font-family: 'Roboto Bold';
     -fx-font-size: 25;
 }
+
 .plan-sub-name {
     -fx-font-family: 'Comfortaa Light';
     -fx-font-size: 13;
 }
+
 .plan-highlight {
     -fx-font-family: 'Open Sans LightItalic';
     -fx-font-size: 13;
 }
+
 .plan-price {
     -fx-font-family: 'Open Sans ExtraBold';
     -fx-font-size: 40;
 }
+
 .plan-details {
     -fx-font-family: 'Comfortaa Medium';
     -fx-font-size: 13;
@@ -354,38 +374,46 @@
     -fx-font-weight: bold;
     -fx-font-size: 25;
 }
+
 .dialog-sub-title {
     -fx-font-family: 'Comfortaa Medium';
     -fx-font-size: 13;
 }
+
 .dialog-sub-title-item {
     -fx-font-family: 'Comfortaa Bold';
     -fx-font-size: 13;
 }
+
 .dialog-top-icon {
     -mfx-size: 30;
 }
+
 /*
 * LineChart Styling
 */
 .default-color0.chart-series-line {
     -fx-stroke: #00AEF5;
 }
+
 .default-color1.chart-series-line {
     -fx-stroke: #4EE29B;
 }
+
 .default-color0.chart-line-symbol {
     -fx-background-color: black, #00AEF5;
     -fx-background-insets: 0, 2;
     -fx-background-radius: 10px;
     -fx-padding: 5px;
 }
+
 .default-color1.chart-line-symbol {
-     -fx-background-color: black, #4EE29B;
-     -fx-background-insets: 0, 2;
-     -fx-background-radius: 10px;
-     -fx-padding: 5px;
+    -fx-background-color: black, #4EE29B;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px;
 }
+
 /*  ////////////////////////////////////////////////////////////////////////////////
 *   //                            New Organised CSS                               //
 *   ////////////////////////////////////////////////////////////////////////////////
@@ -438,29 +466,29 @@
     -fx-font-style: italic;
 }
 
-.text{
-     -fx-font-size: 1em;
-     -fx-line-height: 1.5;
+.text {
+    -fx-font-size: 1em;
+    -fx-line-height: 1.5;
 }
 
-.text-white{
-     -fx-text-fill: white;
+.text-white {
+    -fx-text-fill: white;
 }
 
-.text-black{
-     -fx-text-fill: black;
+.text-black {
+    -fx-text-fill: black;
 }
 
-.text-red{
-     -fx-text-fill: red;
+.text-red {
+    -fx-text-fill: red;
 }
 
-.text-orange{
-     -fx-text-fill: orange;
+.text-orange {
+    -fx-text-fill: orange;
 }
 
-.text-green{
-     -fx-text-fill: green;
+.text-green {
+    -fx-text-fill: green;
 }
 
 /*  ////////////////////////////////////////////////////////////////////////////////
@@ -484,4 +512,22 @@
 
 .validation-label {
     -fx-font-size: 11;
+}
+
+/*.button_busy .container .ring {
+    -fx-stroke: linear-gradient(from 0% 0% to 100% 100%,
+    transparent 20%,
+    white 80%);
+}*/
+
+.button_busy {
+    -mfx-color1: #ffffff;
+    -mfx-color2: #ffffff;
+    -mfx-color3: #ffffff;
+    -mfx-color4: #ffffff;
+}
+
+.password-field {
+    -fx-font-family: 'Varela Round';
+    -fx-font-size: 12;
 }

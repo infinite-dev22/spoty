@@ -1,45 +1,46 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.*;
-import static inc.nomard.spoty.core.viewModels.TaxViewModel.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import javafx.util.converter.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.TaxViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.converter.NumberStringConverter;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-@Log
-public class TaxForm extends ModalPage {
+import java.util.List;
+
+import static inc.nomard.spoty.core.viewModels.TaxViewModel.saveTax;
+
+@Log4j2
+public class TaxForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
     public ValidatableTextField name,
             percentage;
     public Label nameValidationLabel,
             percentageValidationLabel;
-    public Button saveBtn,
-            cancelBtn;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
     private List<Constraint> nameConstraints,
             percentageConstraints;
-    private ActionEvent actionEvent = null;
 
-    public TaxForm() {
-        init();
-    }
-
-    public void init() {
+    public TaxForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
@@ -50,7 +51,7 @@ public class TaxForm extends ModalPage {
         // Input.
         name = new ValidatableTextField();
         var label = new Label("Name");
-        name.setPrefWidth(400d);
+        name.setPrefWidth(1000d);
         name.textProperty().bindBidirectional(TaxViewModel.nameProperty());
         // Validation.
         nameValidationLabel = Validators.buildValidationLabel();
@@ -65,8 +66,8 @@ public class TaxForm extends ModalPage {
         // Input.
         percentage = new ValidatableTextField();
         var label = new Label("Percentage");
-        percentage.setPrefWidth(400d);
-        percentage.setRight(new MFXFontIcon("fas-percent"));
+        percentage.setPrefWidth(1000d);
+        percentage.setRight(new FontIcon(FontAwesomeSolid.PERCENT));
         percentage.textProperty().bindBidirectional(TaxViewModel.percentageProperty(), new NumberStringConverter());
         percentage.setPromptText("0.00");
         // Validation.
@@ -86,9 +87,9 @@ public class TaxForm extends ModalPage {
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -109,26 +110,10 @@ public class TaxForm extends ModalPage {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    resetProperties();
-                    closeDialog(event);
-
-                    nameValidationLabel.setVisible(false);
-                    percentageValidationLabel.setVisible(false);
-
-                    nameValidationLabel.setManaged(false);
-                    percentageValidationLabel.setManaged(false);
-
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    percentage.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
+        cancelBtn.setOnAction((event) -> this.dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
@@ -138,34 +123,32 @@ public class TaxForm extends ModalPage {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!percentageConstraints.isEmpty()) {
                         percentageValidationLabel.setManaged(true);
                         percentageValidationLabel.setVisible(true);
                         percentageValidationLabel.setText(percentageConstraints.getFirst().getMessage());
                         percentage.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) percentage.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && percentageConstraints.isEmpty()) {
                         if (TaxViewModel.getId() > 0) {
-                            TaxViewModel.updateTax(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
-                            return;
+                            TaxViewModel.updateTax(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            saveTax(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        saveTax(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        TaxViewModel.resetProperties();
-        TaxViewModel.getTaxes(null, null);
+        this.dispose();
+        TaxViewModel.getTaxes(null, null, null, null);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void requiredValidator() {
@@ -209,29 +192,17 @@ public class TaxForm extends ModalPage {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
-    private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        TaxViewModel.resetProperties();
+        name = null;
+        nameValidationLabel = null;
+        nameConstraints = null;
+        percentage = null;
+        percentageValidationLabel = null;
+        percentageConstraints = null;
+        saveBtn = null;
+        cancelBtn = null;
     }
 }

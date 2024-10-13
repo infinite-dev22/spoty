@@ -1,28 +1,43 @@
 package inc.nomard.spoty.core.viewModels.sales;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.SalesRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+
+@Log4j2
 public class SaleMasterViewModel {
     @Getter
     public static final ObservableList<SaleMaster> salesList =
@@ -52,6 +67,9 @@ public class SaleMasterViewModel {
     private static final StringProperty paymentStatus = new SimpleStringProperty("");
     private static final StringProperty notes = new SimpleStringProperty("");
     private static final SalesRepositoryImpl salesRepository = new SalesRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -221,6 +239,42 @@ public class SaleMasterViewModel {
         return shippingFee;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        SaleMasterViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        SaleMasterViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        SaleMasterViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
@@ -254,7 +308,6 @@ public class SaleMasterViewModel {
                 .discount(getDiscount())
                 .subTotal(0)
                 .amountDue(0)
-                .changeAmount(0)
                 .shippingFee(0)
                 .saleStatus(getSaleStatus())
                 .paymentStatus(getPaymentStatus())
@@ -305,17 +358,21 @@ public class SaleMasterViewModel {
     }
 
     public static void getAllSaleMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                         SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
         setDefaultCustomer();
-        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.fetchAll();
+        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<SaleMaster>>() {
+                    Type type = new TypeToken<ResponseModel<SaleMaster>>() {
                     }.getType();
-                    ArrayList<SaleMaster> saleList = gson.fromJson(response.body(), listType);
+                    ResponseModel<SaleMaster> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<SaleMaster> saleList = responseModel.getContent();
                     salesList.clear();
                     salesList.addAll(saleList);
                     if (Objects.nonNull(onSuccess)) {
@@ -376,7 +433,6 @@ public class SaleMasterViewModel {
                     setDiscount(saleMaster.getDiscount());
                     setSubTotal(saleMaster.getSubTotal());
                     setAmountDue(saleMaster.getAmountDue());
-                    setChangeAmount(saleMaster.getChangeAmount());
                     setShippingFee(saleMaster.getShippingFee());
                     SaleDetailViewModel.saleDetailsList.clear();
                     SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleDetails());
@@ -569,7 +625,8 @@ public class SaleMasterViewModel {
     public static void setDefaultCustomer() {
         var customer = new Customer();
         customer.setId(1L);
-        customer.setName("Walk In Customer");
+        customer.setFirstName("Walk-In");
+        customer.setLastName("Customer");
         setCustomer(customer);
     }
 }

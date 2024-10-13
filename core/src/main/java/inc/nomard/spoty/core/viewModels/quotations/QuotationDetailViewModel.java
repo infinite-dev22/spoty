@@ -1,17 +1,22 @@
 package inc.nomard.spoty.core.viewModels.quotations;
 
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.quotations.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import java.util.*;
-import javafx.application.*;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
+import inc.nomard.spoty.network_bridge.repositories.implementations.QuotationsRepositoryImpl;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.Objects;
+
+import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+
+@Log4j2
 public class QuotationDetailViewModel {
     // TODO: Add more fields according to DB design and necessity.
     @Getter
@@ -135,13 +140,9 @@ public class QuotationDetailViewModel {
     }
 
     public static void addQuotationDetails() {
-        var subTotal = getSubTotal() * getQuantity();
         var quotationDetail = QuotationDetail.builder()
                 .product(getProduct())
                 .quantity(getQuantity())
-                .discount(getDiscount())
-                .tax(getTax())
-                .subTotal(subTotal)
                 .build();
         quotationDetailsList.add(quotationDetail);
     }
@@ -153,7 +154,7 @@ public class QuotationDetailViewModel {
         }
         quotationDetail.setProduct(getProduct());
         quotationDetail.setQuantity(getQuantity());
-        quotationDetail.setSubTotal(getSubTotal());
+        quotationDetail.setUnitPrice(getSubTotal());
         quotationDetailsList.set(getTempId(), quotationDetail);
     }
 

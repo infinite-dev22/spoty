@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.values;
 
-import inc.nomard.spoty.core.*;
-import javafx.scene.image.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import javafx.scene.image.Image;
 
 public class PreloadedData {
     private static final String PLACEHOLDER_IMAGE = SpotyCoreResourceLoader.load("images/product-image-placeholder.png");
@@ -28,10 +28,10 @@ public class PreloadedData {
     public static Image icon512 = null;
 
     public static void preloadImages() {
-        userPlaceholderImage = new Image(USER_PLACEHOLDER_IMAGE, IMAGE_SIZE, IMAGE_SIZE, true, false);
-        productPlaceholderImage = new Image(PLACEHOLDER_IMAGE, IMAGE_SIZE, IMAGE_SIZE, true, false);
-        noImagePlaceholderImage = new Image(NO_IMAGE_PLACEHOLDER, IMAGE_SIZE, IMAGE_SIZE, true, false);
-        imageErrorPlaceholderImage = new Image(IMAGE_FAILED_TO_LOAD_PLACEHOLDER, IMAGE_SIZE, IMAGE_SIZE, true, false);
+        userPlaceholderImage = new Image(USER_PLACEHOLDER_IMAGE, IMAGE_SIZE, IMAGE_SIZE, true, true);
+        productPlaceholderImage = new Image(PLACEHOLDER_IMAGE, IMAGE_SIZE, IMAGE_SIZE, true, true);
+        noImagePlaceholderImage = new Image(NO_IMAGE_PLACEHOLDER, IMAGE_SIZE, IMAGE_SIZE, true, true);
+        imageErrorPlaceholderImage = new Image(IMAGE_FAILED_TO_LOAD_PLACEHOLDER, IMAGE_SIZE, IMAGE_SIZE, true, true);
         icon16 = new Image(ICON16, true);
         icon32 = new Image(ICON32, true);
         icon64 = new Image(ICON64, true);

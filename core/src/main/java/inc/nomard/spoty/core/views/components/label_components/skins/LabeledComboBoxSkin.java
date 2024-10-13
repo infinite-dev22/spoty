@@ -1,7 +1,9 @@
 package inc.nomard.spoty.core.views.components.label_components.skins;
 
-import inc.nomard.spoty.core.views.components.label_components.controls.*;
-import javafx.scene.control.*;
+import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.SkinBase;
 
 public class LabeledComboBoxSkin<T> extends SkinBase<LabeledComboBox<T>> {
 

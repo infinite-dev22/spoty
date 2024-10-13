@@ -1,27 +1,40 @@
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.ProductsRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.io.File;
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+import static inc.nomard.spoty.core.values.SharedResources.setTempId;
+
+@Log4j2
 public class ProductViewModel {
     public static final ObservableList<Product> productsList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
@@ -34,7 +47,6 @@ public class ProductViewModel {
             .registerTypeAdapter(LocalDateTime.class,
                     new LocalDateTimeTypeAdapter())
             .create();
-    private static final ListProperty<Product> products = new SimpleListProperty<>(productsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<ProductCategory> category = new SimpleObjectProperty<>(null);
@@ -51,8 +63,10 @@ public class ProductViewModel {
     private static final StringProperty taxType = new SimpleStringProperty("");
     private static final StringProperty stockAlert = new SimpleStringProperty();
     private static final StringProperty serial = new SimpleStringProperty("");
-    private static final StringProperty description = new SimpleStringProperty("");
     private static final ProductsRepositoryImpl productsRepository = new ProductsRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -189,11 +203,11 @@ public class ProductViewModel {
     }
 
     public static ObservableList<Product> getProducts() {
-        return products.get();
+        return productsList;
     }
 
-    public static void setProducts(ObservableList<Product> products) {
-        ProductViewModel.products.set(products);
+    public static void setProducts(ObservableList<Product> productsList) {
+        ProductViewModel.productsList.setAll(productsList);
     }
 
     public static Brand getBrand() {
@@ -264,20 +278,40 @@ public class ProductViewModel {
         ProductViewModel.serial.set(serial);
     }
 
-    public static String getDescription() {
-        return description.get();
+    public static Integer getTotalPages() {
+        return totalPages.get();
     }
 
-    public static void setDescription(String description) {
-        ProductViewModel.description.set(description);
+    public static void setTotalPages(Integer totalPages) {
+        ProductViewModel.totalPages.set(totalPages);
     }
 
-    public static StringProperty descriptionProperty() {
-        return description;
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
     }
 
-    public static ListProperty<Product> productsProperty() {
-        return products;
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        ProductViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        ProductViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
     }
 
     public static void saveProduct(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -366,14 +400,59 @@ public class ProductViewModel {
     }
 
     public static void getAllProducts(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                      SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.fetchAll();
-        responseFuture.thenAccept(response -> {
+                                      SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        productsRepository.fetchAll(pageNo, pageSize).thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Product>>() {
+                    Type type = new TypeToken<ResponseModel<Product>>() {
                     }.getType();
-                    ArrayList<Product> productList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Product> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Product> productList = responseModel.getContent();
+                    productsList.clear();
+                    productsList.addAll(productList);
+                    if (Objects.nonNull(onSuccess)) {
+                        onSuccess.run();
+                    }
+                });
+            } else if (response.statusCode() == 401) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
+            } else if (response.statusCode() == 404) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
+            } else if (response.statusCode() == 500) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
+            }
+        }).exceptionally(throwable -> {
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
+            SpotyLogger.writeToFile(throwable, ProductViewModel.class);
+            return null;
+        });
+    }
+
+    public static void getAllProductsNonPaged(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                              SpotyGotFunctional.MessageConsumer errorMessage) {
+        productsRepository.fetchAllNonPaged().thenAccept(response -> {
+            if (response.statusCode() == 200) {
+                Type type = new TypeToken<ArrayList<Product>>() {
+                }.getType();
+                ArrayList<Product> productList = gson.fromJson(response.body(), type);
+                Platform.runLater(() -> {
                     productsList.clear();
                     productsList.addAll(productList);
                     if (Objects.nonNull(onSuccess)) {

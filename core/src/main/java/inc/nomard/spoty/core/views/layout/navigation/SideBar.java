@@ -1,25 +1,37 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
-import atlantafx.base.theme.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.flavouring.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import javafx.application.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
-import org.kordamp.ikonli.fontawesome5.*;
-import org.kordamp.ikonli.javafx.*;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.utils.SpotyThreader;
+import inc.nomard.spoty.utils.flavouring.AppConfig;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.Cursor;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class SideBar extends VBox {
     final MenuItem viewProfile = new MenuItem("View profile");
@@ -35,7 +47,7 @@ public class SideBar extends VBox {
 
     public SideBar(Navigation navigation) {
         super();
-        navTree = new NavTree(navigation);
+        navTree = navigation.createNavigation();
         init();
 
         navigation.selectedPageProperty().addListener((obs, old, val) -> {
@@ -60,19 +72,19 @@ public class SideBar extends VBox {
         this.getStyleClass().addAll("sidebar");
     }
 
-    private MFXFontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
-        var icon = new MFXFontIcon("fas-circle");
-        icon.setSize(15.0);
+    private FontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
+        var icon = new FontIcon(FontAwesomeSolid.CIRCLE);
+        icon.setIconSize(15);
         icon.setOnMouseClicked(event -> onAction.run());
         icon.getStyleClass().add(styleClass);
         return icon;
     }
 
-    private MFXFontIcon buildCloseIcon() {
+    private FontIcon buildCloseIcon() {
         return buildFontIcon(this::closeWindow, "close-icon");
     }
 
-    private MFXFontIcon buildMinimizeIcon() {
+    private FontIcon buildMinimizeIcon() {
         return buildFontIcon(this::minimizeWindow, "minimize-icon");
     }
 
@@ -140,17 +152,16 @@ public class SideBar extends VBox {
         return hbox;
     }
 
-    private MFXCircleToggleNode buildSidebarToggle() {
-        var toggle = new MFXCircleToggleNode();
-        var arrowIcon = new FontIcon("fas-angle-left");
+    private Button buildSidebarToggle() {
+        var arrowIcon = new FontIcon(FontAwesomeSolid.ANGLE_LEFT);
         arrowIcon.getStyleClass().add("nav-toggle-arrow");
+        var toggle = new Button(null);
         toggle.setGraphic(arrowIcon);
         toggle.getStyleClass().add("nav-toggle");
-        toggle.setSize(15d);
         StackPane.setAlignment(toggle, Pos.CENTER_RIGHT);
         StackPane.setMargin(toggle, new Insets(40d, -45d, 0d, 0d));
-        toggle.setVisible(false);
-        toggle.setManaged(false);
+//        toggle.setVisible(false);
+//        toggle.setManaged(false);
         toggle.setOnAction(event -> this.toggleSidebar());
         return toggle;
     }
@@ -212,13 +223,26 @@ public class SideBar extends VBox {
         logOut.setOnAction(event -> action.run());
     }
 
+//    private void toggleSidebar() {
+//        if (isMinimised) {
+//            this.setPrefWidth(250);
+//            this.isMinimised = false;
+//        } else {
+//            this.setPrefWidth(100);
+//            this.isMinimised = true;
+//        }
+//    }
+
     private void toggleSidebar() {
-        if (isMinimised) {
-            this.setPrefWidth(250);
-            this.isMinimised = false;
-        } else {
-            this.setPrefWidth(100);
-            this.isMinimised = true;
-        }
+        double targetWidth = isMinimised ? this.getPrefWidth() : 100;
+
+        // Animate width change
+        var timeline = new Timeline();
+        var keyValue = new KeyValue(this.prefWidthProperty(), targetWidth);
+        var keyFrame = new KeyFrame(Duration.millis(300), keyValue);
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
+
+        isMinimised = !isMinimised;
     }
 }

@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.layout.navigation.event;
 
-import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.core.views.util.Page;
 
 public final class NavEvent extends Event {
 

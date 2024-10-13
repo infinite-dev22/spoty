@@ -1,28 +1,30 @@
 package inc.nomard.spoty.network_bridge.dtos.adjustments;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import java.time.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.java.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@ToString
+@EqualsAndHashCode
 public class AdjustmentMaster {
     private Long id;
     private String ref;
     private ArrayList<Branch> branches;
     private List<AdjustmentDetail> adjustmentDetails;
     private String notes;
-    private String status;
+    private String approvalStatus;
     private Double Total;
-    private User createdBy;
+    private Employee createdBy;
     private LocalDateTime createdAt;
-    private User updatedBy;
+    private Employee updatedBy;
     private LocalDateTime updatedAt;
 }

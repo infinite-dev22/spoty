@@ -1,46 +1,56 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.controls.*;
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.viewModels.returns.purchases.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.time.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.geometry.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.SupplierViewModel;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
+import inc.nomard.spoty.core.viewModels.returns.purchases.PurchaseReturnDetailViewModel;
+import inc.nomard.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.util.Duration;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
+
+@Log4j2
 public class PurchaseReturnMasterForm extends VBox {
     private final ModalPane modalPane;
+    public CustomButton saveBtn;
+    public Button cancelBtn, addBtn;
     private Label supplierValidationLabel;
     private Label dateValidationLabel;
     private ValidatableDatePicker date;
     private ValidatableComboBox<Supplier> supplier;
     private TableView<PurchaseDetail> tableView;
-    private TextArea note;
-    private Button saveBtn, cancelBtn, addBtn;
+    private ValidatableTextArea note;
 
     public PurchaseReturnMasterForm(ModalPane modalPane) {
         this.modalPane = modalPane;
@@ -126,15 +136,15 @@ public class PurchaseReturnMasterForm extends VBox {
 
     private VBox buildNote() {
         var label = new Label("Note");
-        note = new TextArea();
+        note = new ValidatableTextArea();
         note.setMinHeight(100d);
         note.setWrapText(true);
         return buildFieldHolder(label, note);
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         saveBtn.setOnAction(event -> {
             processProducts();
             if (!tableView.isDisabled() && PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty()) {
@@ -143,7 +153,8 @@ public class PurchaseReturnMasterForm extends VBox {
             validateFields();
 
             if (isValidForm()) {
-                    PurchaseReturnMasterViewModel.savePurchaseReturnMaster(this::onSuccess, this::successMessage, this::errorMessage);
+                saveBtn.startLoading();
+                PurchaseReturnMasterViewModel.savePurchaseReturnMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             }
         });
         return saveBtn;
@@ -152,9 +163,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            this.dispose();
-        });
+        cancelBtn.setOnAction(event -> this.dispose());
         return cancelBtn;
     }
 
@@ -305,19 +314,18 @@ public class PurchaseReturnMasterForm extends VBox {
 
     private void onSuccess() {
         this.dispose();
-        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
+        PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null, null);
     }
 
     private void requiredValidator() {
-        setupValidation(supplier, "Supplier is required", supplierValidationLabel);
-        setupValidation(date, "Date is required", dateValidationLabel);
+        setupValidation(supplier, supplierValidationLabel);
+        setupValidation(date, dateValidationLabel);
     }
 
-    private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
+    private <T> void setupValidation(ValidatableComboBox<T> field, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Supplier is required")
                 .setCondition(field.valueProperty().isNotNull())
                 .get();
 
@@ -331,10 +339,10 @@ public class PurchaseReturnMasterForm extends VBox {
         });
     }
 
-    private void setupValidation(ValidatableDatePicker field, String message, Label validationLabel) {
+    private void setupValidation(ValidatableDatePicker field, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Date is required")
                 .setCondition(field.valueProperty().isNotNull())
                 .get();
 
@@ -346,32 +354,11 @@ public class PurchaseReturnMasterForm extends VBox {
                 field.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
             }
         });
-    }
-
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void dispose() {

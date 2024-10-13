@@ -1,26 +1,38 @@
 package inc.nomard.spoty.core.viewModels.hrm.employee;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.EmploymentStatusesRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class EmploymentStatusViewModel {
     @Getter
     private static final ObservableList<String> colorsList = FXCollections.observableArrayList("Red", "Blue", "Green", "Orange", "Purple", "Brown");
@@ -38,6 +50,9 @@ public class EmploymentStatusViewModel {
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty color = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
     public static ObservableList<EmploymentStatus> employmentStatusesList = FXCollections.observableArrayList();
     private static final ListProperty<EmploymentStatus> employmentStatuses = new SimpleListProperty<>(employmentStatusesList);
     public static ObservableList<EmploymentStatus> employmentStatusesComboBoxList = FXCollections.observableArrayList();
@@ -103,6 +118,42 @@ public class EmploymentStatusViewModel {
         return employmentStatuses;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        EmploymentStatusViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        EmploymentStatusViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        EmploymentStatusViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void saveEmploymentStatus(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                             SpotyGotFunctional.MessageConsumer successMessage,
                                             SpotyGotFunctional.MessageConsumer errorMessage) {
@@ -160,16 +211,20 @@ public class EmploymentStatusViewModel {
     }
 
     public static void getAllEmploymentStatuses(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                                SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = employmentStatusesRepository.fetchAll();
+                                                SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = employmentStatusesRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<EmploymentStatus>>() {
+                    Type type = new TypeToken<ResponseModel<EmploymentStatus>>() {
                     }.getType();
-                    ArrayList<EmploymentStatus> employmentStatusList = gson.fromJson(response.body(), listType);
+                    ResponseModel<EmploymentStatus> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<EmploymentStatus> employmentStatusList = responseModel.getContent();
                     employmentStatusesList.clear();
                     employmentStatusesList.addAll(employmentStatusList);
                     if (Objects.nonNull(onSuccess)) {

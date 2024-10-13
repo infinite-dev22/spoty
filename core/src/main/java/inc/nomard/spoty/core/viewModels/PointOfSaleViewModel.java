@@ -1,15 +1,23 @@
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.adapters.*;
-import java.time.*;
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
+
+@Log4j2
 public class PointOfSaleViewModel {
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);
     private static final Gson gson = new GsonBuilder()

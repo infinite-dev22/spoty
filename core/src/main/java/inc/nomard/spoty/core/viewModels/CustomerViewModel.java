@@ -1,25 +1,37 @@
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.CustomersRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class CustomerViewModel {
     public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
     public static final ObservableList<Customer> customersComboBoxList =
@@ -36,7 +48,9 @@ public class CustomerViewModel {
             .create();
     private static final ListProperty<Customer> customers = new SimpleListProperty<>(customersList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty firstName = new SimpleStringProperty("");
+    private static final StringProperty otherName = new SimpleStringProperty("");
+    private static final StringProperty lastName = new SimpleStringProperty("");
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
@@ -44,6 +58,9 @@ public class CustomerViewModel {
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
     private static final CustomersRepositoryImpl customersRepository = new CustomersRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -57,16 +74,40 @@ public class CustomerViewModel {
         return id;
     }
 
-    public static String getName() {
-        return name.get();
+    public static String getFirstName() {
+        return firstName.get();
     }
 
-    public static void setName(String name) {
-        CustomerViewModel.name.set(name);
+    public static void setFirstName(String firstName) {
+        CustomerViewModel.firstName.set(firstName);
     }
 
-    public static StringProperty nameProperty() {
-        return name;
+    public static StringProperty firstNameProperty() {
+        return firstName;
+    }
+
+    public static String getOtherName() {
+        return otherName.get();
+    }
+
+    public static void setOtherName(String otherName) {
+        CustomerViewModel.otherName.set(otherName);
+    }
+
+    public static StringProperty otherNameProperty() {
+        return otherName;
+    }
+
+    public static String getLastName() {
+        return lastName.get();
+    }
+
+    public static void setLastName(String lastName) {
+        CustomerViewModel.lastName.set(lastName);
+    }
+
+    public static StringProperty lastNameProperty() {
+        return lastName;
     }
 
     public static String getEmail() {
@@ -153,9 +194,47 @@ public class CustomerViewModel {
         return customers;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        CustomerViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        CustomerViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        CustomerViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
-        setName("");
+        setFirstName("");
+        setOtherName("");
+        setLastName("");
         setEmail("");
         setPhone("");
         setCity("");
@@ -168,7 +247,9 @@ public class CustomerViewModel {
                                     SpotyGotFunctional.MessageConsumer successMessage,
                                     SpotyGotFunctional.MessageConsumer errorMessage) {
         var customer = Customer.builder()
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())
@@ -218,16 +299,20 @@ public class CustomerViewModel {
     }
 
     public static void getAllCustomers(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                       SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = customersRepository.fetchAll();
+                                       SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = customersRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Customer>>() {
+                    Type type = new TypeToken<ResponseModel<Customer>>() {
                     }.getType();
-                    ArrayList<Customer> customerList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Customer> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Customer> customerList = responseModel.getContent();
                     customersList.clear();
                     customersList.addAll(customerList);
                     if (Objects.nonNull(onSuccess)) {
@@ -278,7 +363,9 @@ public class CustomerViewModel {
                 Platform.runLater(() -> {
                     var customer = gson.fromJson(response.body(), Customer.class);
                     setId(customer.getId());
-                    setName(customer.getName());
+                    setFirstName(customer.getFirstName());
+                    setOtherName(customer.getOtherName());
+                    setLastName(customer.getLastName());
                     setEmail(customer.getEmail());
                     setPhone(customer.getPhone());
                     setCity(customer.getCity());
@@ -374,7 +461,9 @@ public class CustomerViewModel {
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var customer = Customer.builder()
                 .id(getId())
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())

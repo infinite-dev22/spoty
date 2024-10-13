@@ -1,49 +1,57 @@
 package inc.nomard.spoty.core.views.pages.sale.tabs;
 
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pos.*;
-import inc.nomard.spoty.core.views.previews.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.forms.SaleReturnMasterForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
+import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.pos.PointOfSalePage;
+import inc.nomard.spoty.core.views.previews.SalePreview;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class OrderPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<SaleMaster> masterTable;
-    private MFXProgressSpinner progress;
-    private MFXStageDialog dialog;
-    private FXMLLoader viewFxmlLoader;
+    private SpotyProgressSpinner progress;
     private TableColumn<SaleMaster, SaleMaster> saleCustomer;
     private TableColumn<SaleMaster, SaleMaster> saleDate;
-    private TableColumn<SaleMaster, String> saleGrandTotal;
-    private TableColumn<SaleMaster, String> saleAmountPaid;
-    private TableColumn<SaleMaster, String> saleAmountDue;
+    private TableColumn<SaleMaster, SaleMaster> saleGrandTotal;
+    private TableColumn<SaleMaster, SaleMaster> saleAmountPaid;
+    private TableColumn<SaleMaster, SaleMaster> saleAmountDue;
     private TableColumn<SaleMaster, String> saleStatus;
     private TableColumn<SaleMaster, String> salePaymentStatus;
     private TableColumn<SaleMaster, SaleMaster> createdBy;
@@ -52,18 +60,11 @@ public class OrderPage extends OutlinePage {
     private TableColumn<SaleMaster, SaleMaster> updatedAt;
 
     public OrderPage() {
-        try {
-            viewDialogPane();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         modalPane = new SideModalPane();
-
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        SaleMasterViewModel.getAllSaleMasters(this::onDataInitializationSuccess, this::errorMessage);
-
+        SaleMasterViewModel.getAllSaleMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
         modalPane.displayProperty().addListener((observableValue, closed, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
@@ -87,7 +88,7 @@ public class OrderPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -114,9 +115,9 @@ public class OrderPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        var createBtn = new Button("Create");
-        createBtn.setOnAction(actionEvent -> AppManager.getNavigation().navigate(PointOfSalePage.class));
-        var hbox = new HBox(createBtn);
+        var posBtn = new Button("POS", new FontIcon(Feather.SHOPPING_CART));
+        posBtn.setOnAction(actionEvent -> AppManager.getNavigation().navigate(PointOfSalePage.class));
+        var hbox = new HBox(posBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
         HBox.setHgrow(hbox, Priority.ALWAYS);
@@ -132,10 +133,33 @@ public class OrderPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         masterTable = new TableView<>();
-        NodeUtils.setAnchors(masterTable, new Insets(0d));
-        return new AnchorPane(masterTable);
+        VBox.setVgrow(masterTable, Priority.ALWAYS);
+        HBox.setHgrow(masterTable, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (SaleMasterViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        SaleMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (SaleMasterViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(masterTable, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -173,9 +197,7 @@ public class OrderPage extends OutlinePage {
                 saleStatus,
                 salePaymentStatus,
                 createdBy,
-                createdAt,
-                updatedBy,
-                updatedAt).toList());
+                createdAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleSaleMasterTable();
@@ -209,10 +231,10 @@ public class OrderPage extends OutlinePage {
         var view = new MenuItem("View");
         var returnSale = new MenuItem("Return");
 
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             SaleMasterViewModel.deleteSaleMaster(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getCustomerName() + "'s order", this));
+        }, obj.getItem().getCustomerName() + "'s order").showDialog());
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
@@ -241,42 +263,30 @@ public class OrderPage extends OutlinePage {
     }
 
     private void onSuccess() {
-        SaleMasterViewModel.getAllSaleMasters(null, null);
-    }
-
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/OrderPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new SalePreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-
-        dialog = SpotyDialog.createDialog(dialogContent, this);
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
     }
 
     public void viewShow(SaleMaster saleMaster) {
-        SalePreviewController controller = viewFxmlLoader.getController();
-        controller.init(saleMaster);
-        dialog.showAndWait();
+        var scrollPane = new ScrollPane(new SalePreview(saleMaster, modalPane));
+        scrollPane.setMaxHeight(10_000);
+
+        var dialog = new ModalContentHolder(710, -1);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
     }
 
     private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
     }
 
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        displayNotification(message, MessageVariants.ERROR, FontAwesomeSolid.EXCLAMATION_TRIANGLE);
         progress.setManaged(false);
         progress.setVisible(false);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
+    private void displayNotification(String message, MessageVariants type, Ikon icon) {
         SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
                 .duration(MessageDuration.SHORT)
                 .icon(icon)
@@ -300,7 +310,7 @@ public class OrderPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                SaleMasterViewModel.getAllSaleMasters(null, null);
+                SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -331,9 +341,30 @@ public class OrderPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
             }
         });
-        saleGrandTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-        saleAmountPaid.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
-        saleAmountDue.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        saleGrandTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleGrandTotal.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getTotal()));
+            }
+        });
+        saleAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountPaid()));
+            }
+        });
+        saleAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        saleAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleMaster item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getAmountDue()));
+            }
+        });
         saleStatus.setCellValueFactory(new PropertyValueFactory<>("saleStatus"));
         salePaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
@@ -377,5 +408,44 @@ public class OrderPage extends OutlinePage {
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
+    }
+
+    private Pagination buildPagination() {
+        var pagination = new Pagination(SaleMasterViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(SaleMasterViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            SaleMasterViewModel.getAllSaleMasters(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, SaleMasterViewModel.getPageSize());
+            SaleMasterViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
+        });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(SaleMasterViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    SaleMasterViewModel
+                            .getAllSaleMasters(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    SaleMasterViewModel.getPageNumber(),
+                                    t1);
+                    SaleMasterViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

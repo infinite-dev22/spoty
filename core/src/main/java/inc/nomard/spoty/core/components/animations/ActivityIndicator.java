@@ -1,16 +1,18 @@
 package inc.nomard.spoty.core.components.animations;
 
 
-import java.util.*;
-import javafx.animation.*;
-import javafx.geometry.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.animation.Timeline;
+import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.Objects;
+
+@Log4j2
 public class ActivityIndicator extends HBox {
     private Color color;
 

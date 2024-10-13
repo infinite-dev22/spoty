@@ -1,60 +1,73 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.values.strings.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.utils.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.function.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.input.*;
+import inc.nomard.spoty.utils.SpotyImageUtils;
+import javafx.collections.ListChangeListener;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-@Log
-public class ProductForm extends ModalPage {
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+@Log4j2
+public class ProductForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
     public ValidatableTextField name,
-            serialNumber,
-            salePrice,
+            serialNumber;
+    public ValidatableNumberField salePrice,
+            costPrice,
             stockAlert;
-    public TextArea description;
     public ValidatableComboBox<Brand> brand;
     public ValidatableComboBox<ProductCategory> category;
     public ValidatableComboBox<UnitOfMeasure> unitOfMeasure;
     public ValidatableComboBox<String> barcodeType;
-    public ValidatableTextField costPrice;
     public ValidatableComboBox<Discount> discount;
     public ValidatableComboBox<Tax> tax;
     public Rectangle productImageView;
-    public Button saveButton,
-            cancelButton;
+    public CustomButton saveButton;
+    public Button cancelButton;
     public Image productImage;
     public Label barcodeTypeValidationLabel,
             unitOfMeasureValidationLabel,
@@ -72,36 +85,36 @@ public class ProductForm extends ModalPage {
             categoryConstraints,
             unitOfMeasureConstraints,
             barcodeTypeConstraints;
-    private ActionEvent actionEvent = null;
 
-    public ProductForm() {
-        init();
-    }
-
-    @SneakyThrows
-    public void init() {
+    public ProductForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         createDialog();
         getFieldBindings();
         getComboBoxProperties();
         dialogOnActions();
         addImage();
         requiredValidator();
-        ProductViewModel.setImageFile(
-                SpotyImageUtils.getFileFromResource(
-                        SpotyCoreResourceLoader.loadURL("images/product-image-placeholder.png")
-                ));
+        try {
+            ProductViewModel.setImageFile(
+                    SpotyImageUtils.getFileFromResource(
+                            SpotyCoreResourceLoader.loadURL("images/product-image-placeholder.png")
+                    ));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        customizeFields();
     }
 
     public void createDialog() {
         GridPane root = new GridPane();
+        GridPane.setFillWidth(root, true);
         root.setHgap(30.0);
         root.setVgap(20.0);
         root.setPadding(new Insets(5.0));
 
         root.getColumnConstraints().addAll(
-                createColumnConstraints(300.0),
-                createColumnConstraints(300.0),
-                createColumnConstraints(220.0)
+                createColumnConstraints(1000d),
+                createColumnConstraints(1000d)
         );
 
         root.getRowConstraints().addAll(
@@ -113,29 +126,42 @@ public class ProductForm extends ModalPage {
                 createRowConstraints()
         );
 
-        root.add(createValidationBox(name = new ValidatableTextField(), "Name", nameValidationLabel = new Label(), 400.0), 0, 0);
-        root.add(createValidationBox(category = new ValidatableComboBox<>(), "Category", categoryValidationLabel = new Label(), 400.0), 1, 0);
-        root.add(createValidationBox(brand = new ValidatableComboBox<>(), "Brand", brandValidationLabel = new Label(), 400.0), 0, 1);
-        root.add(createValidationBox(unitOfMeasure = new ValidatableComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 400.0), 1, 1);
-        root.add(createSimpleBox(costPrice = new ValidatableTextField(), "Cost Price", 400.0), 0, 2);
-        root.add(createValidationBox(salePrice = new ValidatableTextField(), "Sale Price", priceValidationLabel = new Label(), 400.0), 1, 2);
-        root.add(createSimpleBox(discount = new ValidatableComboBox<>(), "Discount", 400.0), 0, 3);
-        root.add(createSimpleBox(tax = new ValidatableComboBox<>(), "Tax", 400.0), 1, 3);
-        root.add(createValidationBox(barcodeType = new ValidatableComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 400.0), 0, 4);
-        root.add(createSimpleBox(serialNumber = new ValidatableTextField(), "Serial/Batch", 400.0), 1, 4);
-        root.add(createSimpleBox(stockAlert = new ValidatableTextField(), "Stock Alert", 400.0), 0, 5);
-        root.add(createSimpleTextArea(description = new TextArea(), "Description", 400.0, 100.0), 1, 5);
+        root.add(createValidationBox(name = new ValidatableTextField(), "Name", nameValidationLabel = new Label(), 1000.0), 0, 0);
+        root.add(createValidationBox(category = new ValidatableComboBox<>(), "Category", categoryValidationLabel = new Label(), 1000.0), 1, 0);
+        root.add(createValidationBox(brand = new ValidatableComboBox<>(), "Brand", brandValidationLabel = new Label(), 1000.0), 0, 1);
+        root.add(createValidationBox(unitOfMeasure = new ValidatableComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 1000.0), 1, 1);
+        root.add(createSimpleBox(costPrice = new ValidatableNumberField(), "Cost Price (Optional)", 1000.0), 0, 2);
+        root.add(createValidationBox(salePrice = new ValidatableNumberField(), "Sale Price", priceValidationLabel = new Label(), 1000.0), 1, 2);
+        root.add(createSimpleBox(discount = new ValidatableComboBox<>(), "Discount (Optional)", 1000.0), 0, 3);
+        root.add(createSimpleBox(tax = new ValidatableComboBox<>(), "Tax (Optional)", 1000.0), 1, 3);
+        root.add(createValidationBox(barcodeType = new ValidatableComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 1000.0), 0, 4);
+        root.add(createSimpleBox(serialNumber = new ValidatableTextField(), "Serial/Batch (Optional)", 1000.0), 1, 4);
+        root.add(createSimpleBox(stockAlert = new ValidatableNumberField(), "Stock Alert (Optional)", 1000.0), 0, 5);
+        root.add(createSimpleBox(createUploadImageBox(), "Product Image (Optional)"), 0, 6, 2, 2);
 
-        root.add(createUploadImageBox(), 2, 0, 1, 6);
-
+        this.setTop(buildTop());
         this.setBottom(createBottomButtons());
         this.setCenter(root);
     }
 
+    private HBox buildTop() {
+        var text = new Text("Product Form");
+        text.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_BOLD);
+
+        var vbox = new VBox(text);
+        vbox.setAlignment(Pos.CENTER_LEFT);
+        return new HBox(vbox, new Separator());
+    }
+
+    private void customizeFields() {
+        costPrice.setLeft(new Label("UGX"));
+        salePrice.setLeft(new Label("UGX"));
+    }
+
     private ColumnConstraints createColumnConstraints(double prefWidth) {
         ColumnConstraints cc = new ColumnConstraints();
-        cc.setHgrow(Priority.SOMETIMES);
-        cc.setPrefWidth(prefWidth);
+        cc.setHgrow(Priority.ALWAYS);
+//        cc.setPrefWidth(prefWidth);
         return cc;
     }
 
@@ -169,7 +195,7 @@ public class ProductForm extends ModalPage {
         return box;
     }
 
-    private VBox createSimpleBox(ValidatableTextField textField, String promptText, double width) {
+    private VBox createSimpleBox(TextField textField, String promptText, double width) {
         var label = new Label(promptText);
         textField.setPrefWidth(width);
 
@@ -179,16 +205,12 @@ public class ProductForm extends ModalPage {
         return box;
     }
 
-    private VBox createSimpleTextArea(TextArea textArea, String promptText, double width, double height) {
+    private VBox createSimpleBox(AnchorPane pane, String promptText) {
         var label = new Label(promptText);
-        textArea.setPrefWidth(width);
-        textArea.setPrefHeight(height);
-
-        textArea.setWrapText(true);
 
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
-        box.getChildren().addAll(label, textArea);
+        box.getChildren().addAll(label, pane);
         return box;
     }
 
@@ -212,6 +234,7 @@ public class ProductForm extends ModalPage {
         uploadImageButton.getStyleClass().add("card-flat");
         uploadImageButton.setCursor(Cursor.HAND);
         uploadImageButton.setPadding(new Insets(16.0));
+        uploadImageButton.setPrefHeight(200d);
 
         imageIcon = new HBox();
         imageIcon.setAlignment(Pos.CENTER);
@@ -220,7 +243,8 @@ public class ProductForm extends ModalPage {
         uploadImageLabel.setTextAlignment(TextAlignment.CENTER);
         uploadImageLabel.setWrapText(true);
 
-        placeHolder = new VBox(imageIcon, uploadImageLabel);
+        placeHolder = new VBox(20, imageIcon, uploadImageLabel);
+        placeHolder.setAlignment(Pos.CENTER);
 
         productImageView = new Rectangle();
         productImageView.setArcHeight(25.0);
@@ -245,8 +269,8 @@ public class ProductForm extends ModalPage {
         box.setAlignment(Pos.CENTER_RIGHT);
         box.setPadding(new Insets(10.0));
 
-        saveButton = new Button("Create");
-        saveButton.setDefaultButton(true);
+        saveButton = new CustomButton("Create");
+        saveButton.getStyleClass().add(Styles.ACCENT);
 
         cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
@@ -274,7 +298,6 @@ public class ProductForm extends ModalPage {
         name.textProperty().bindBidirectional(ProductViewModel.nameProperty());
         serialNumber.textProperty().bindBidirectional(ProductViewModel.serialProperty());
         salePrice.textProperty().bindBidirectional(ProductViewModel.priceProperty());
-        description.textProperty().bindBidirectional(ProductViewModel.descriptionProperty());
         stockAlert.textProperty().bindBidirectional(ProductViewModel.stockAlertProperty());
         brand.valueProperty().bindBidirectional(ProductViewModel.brandProperty());
         category.valueProperty().bindBidirectional(ProductViewModel.categoryProperty());
@@ -314,15 +337,15 @@ public class ProductForm extends ModalPage {
         Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
                 searchStr ->
                         unitOfMeasure ->
-                                StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
+                                uomConverter.toString(unitOfMeasure).toLowerCase().contains(searchStr);
         Function<String, Predicate<ProductCategory>> productCategoryFilterFunction =
                 searchStr ->
                         productCategory ->
-                                StringUtils.containsIgnoreCase(
-                                        productCategoryConverter.toString(productCategory), searchStr);
+
+                                productCategoryConverter.toString(productCategory).toLowerCase().contains(searchStr);
         Function<String, Predicate<Brand>> brandFilterFunction =
                 searchStr ->
-                        brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
+                        brand -> brandConverter.toString(brand).toLowerCase().contains(searchStr);
         // Unit of measure combo box
         unitOfMeasure.setConverter(uomConverter);
         if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
@@ -378,12 +401,7 @@ public class ProductForm extends ModalPage {
     }
 
     private void dialogOnActions() {
-        cancelButton.setOnAction(
-                (event) -> {
-                    closeDialog(event);
-                    ProductViewModel.resetProperties();
-                    this.dispose();
-                });
+        cancelButton.setOnAction((event) -> this.dispose());
         saveButton.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
@@ -397,48 +415,36 @@ public class ProductForm extends ModalPage {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!priceConstraints.isEmpty()) {
                         priceValidationLabel.setManaged(true);
                         priceValidationLabel.setVisible(true);
                         priceValidationLabel.setText(priceConstraints.getFirst().getMessage());
                         salePrice.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) salePrice.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!brandConstraints.isEmpty()) {
                         brandValidationLabel.setManaged(true);
                         brandValidationLabel.setVisible(true);
                         brandValidationLabel.setText(brandConstraints.getFirst().getMessage());
                         brand.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) brand.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!categoryConstraints.isEmpty()) {
                         categoryValidationLabel.setManaged(true);
                         categoryValidationLabel.setVisible(true);
                         categoryValidationLabel.setText(categoryConstraints.getFirst().getMessage());
                         category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) category.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!unitOfMeasureConstraints.isEmpty()) {
                         unitOfMeasureValidationLabel.setManaged(true);
                         unitOfMeasureValidationLabel.setVisible(true);
                         unitOfMeasureValidationLabel.setText(unitOfMeasureConstraints.getFirst().getMessage());
                         unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) unitOfMeasure.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!barcodeTypeConstraints.isEmpty()) {
                         barcodeTypeValidationLabel.setManaged(true);
                         barcodeTypeValidationLabel.setVisible(true);
                         barcodeTypeValidationLabel.setText(barcodeTypeConstraints.getFirst().getMessage());
                         barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) barcodeType.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && priceConstraints.isEmpty()
@@ -446,22 +452,20 @@ public class ProductForm extends ModalPage {
                             && categoryConstraints.isEmpty()
                             && unitOfMeasureConstraints.isEmpty()
                             && barcodeTypeConstraints.isEmpty()) {
-                        actionEvent = event;
+                        saveButton.startLoading();
                         if (ProductViewModel.getId() > 0) {
-                            ProductViewModel.updateProduct(this::onSuccess, this::successMessage, this::errorMessage);
-                            return;
+                            ProductViewModel.updateProduct(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            ProductViewModel.saveProduct(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        ProductViewModel.saveProduct(this::onSuccess, this::successMessage, this::errorMessage);
                     }
                 });
     }
 
     private void addImage() {
-        var upload = new MFXFontIcon();
-        upload.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
-        upload.setDescription("far-file-image");
-        upload.setSize(60);
-        upload.setColor(Color.web("#C2C2C2"));
+        var upload = new FontIcon(FontAwesomeRegular.FILE_IMAGE);
+        upload.setIconSize(60);
+        upload.setIconColor(Color.web("#C2C2C2"));
         imageIcon.getChildren().add(upload);
 
         if (Objects.equals(fileChooser, null)) {
@@ -519,10 +523,9 @@ public class ProductForm extends ModalPage {
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        ProductViewModel.resetProperties();
-        ProductViewModel.getAllProducts(null, null);
+        saveButton.stopLoading();
         this.dispose();
+        ProductViewModel.getAllProducts(null, null, null, null);
     }
 
     public void requiredValidator() {
@@ -638,40 +641,19 @@ public class ProductForm extends ModalPage {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        saveButton.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
-    @Override
     public void dispose() {
-        super.dispose();
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        ProductViewModel.resetProperties();
         name = null;
         serialNumber = null;
         salePrice = null;
         stockAlert = null;
-        description = null;
         brand = null;
         category = null;
         unitOfMeasure = null;
@@ -699,6 +681,5 @@ public class ProductForm extends ModalPage {
         categoryConstraints = null;
         unitOfMeasureConstraints = null;
         barcodeTypeConstraints = null;
-        actionEvent = null;
     }
 }

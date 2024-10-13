@@ -1,21 +1,27 @@
 package inc.nomard.spoty.core.views.layout;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.util.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import lombok.*;
-import lombok.extern.java.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+
+import java.util.ArrayList;
 
 @Setter
 @Getter
 @Builder
-@Log
+@Log4j2
 public class PaymentPlanCard extends VBox {
     private String imageUrl;
     private String planName;

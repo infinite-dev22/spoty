@@ -1,74 +1,204 @@
 package inc.nomard.spoty.core.views.pos;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
+import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.sales.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.pos.components.*;
-import inc.nomard.spoty.core.views.util.*;
+import inc.nomard.spoty.core.viewModels.sales.SaleDetailViewModel;
+import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import inc.nomard.spoty.core.views.pages.EmployeePage;
+import inc.nomard.spoty.core.views.pos.components.ProductCard;
+import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
+import inc.nomard.spoty.core.views.util.NodeUtils;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.geometry.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
+import inc.nomard.spoty.utils.AppUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
+import io.github.palexdev.mfxcore.utils.fx.CSSFragment;
+import io.github.palexdev.virtualizedfx.VFXResources;
+import io.github.palexdev.virtualizedfx.base.VFXScrollable;
+import io.github.palexdev.virtualizedfx.controls.VFXScrollPane;
+import io.github.palexdev.virtualizedfx.enums.ScrollPaneEnums;
+import io.github.palexdev.virtualizedfx.grid.VFXGrid;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-@Log
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+@Log4j2
 public class PointOfSalePage extends OutlinePage {
-    private final ToggleGroup toggleGroup = new ToggleGroup();
+    private static Long availableProductQuantity = 0L;
     public TableColumn<SaleDetail, SaleDetail> productDiscount;
-    private ComboBox<Customer> customer;
+    private ToggleGroup toggleGroup;
     private TableView<SaleDetail> cart;
     private TextField searchBar;
     private ComboBox<Discount> discount;
-    private Button checkOutBtn, emptyCartBtn;
-    private HBox filterPane;
-    private ScrollPane productScrollPane;
-    // @FXML
+    private CustomButton checkOutBtn;
+    private Button emptyCartBtn;
     // private BootstrapPane productHolder;
     private TableColumn<SaleDetail, SaleDetail> cartName;
-    private TableColumn<SaleDetail, Long> cartQuantity;
+    private TableColumn<SaleDetail, SaleDetail> cartQuantity;
     private TableColumn<SaleDetail, SaleDetail> productTax;
-    private TableColumn<SaleDetail, Double> cartSubTotal;
+    private TableColumn<SaleDetail, SaleDetail> cartSubTotal;
     private TableColumn<SaleDetail, SaleDetail> cartActions;
     private ComboBox<Tax> tax;
-    private MFXProgressSpinner progress;
-    private Long availableProductQuantity = 0L;
+    private SpotyProgressSpinner progress;
+
 
     public PointOfSalePage() {
         addNode(init());
-        configureProductScrollPane();
         setSearchBar();
         setPOSComboBoxes();
-        initializeCategoryFilters();
-        initializeProductsGridView();
         setCheckoutProductsTable();
-        bindTotalLabels();
-        SaleMasterViewModel.setDefaultCustomer();
         progress.setManaged(true);
         progress.setVisible(true);
-        ProductViewModel.getAllProducts(this::onDataInitializationSuccess, this::displayErrorMessage);
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> ProductViewModel.getAllProductsNonPaged(null, null)),
+                CompletableFuture.runAsync(() -> CustomerViewModel.getAllCustomers(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TaxViewModel.getTaxes(null, null, null, null)),
+                CompletableFuture.runAsync(() -> DiscountViewModel.getDiscounts(null, null, null, null)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
+    }
+
+    private static void handleProductCardClick(ProductCard productCard) {
+        Optional<SaleDetail> existingSaleDetail = SaleDetailViewModel.getSaleDetails().stream()
+                .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct()).findAny();
+
+        existingSaleDetail.ifPresentOrElse(saleDetail -> updateExistingSaleDetail(saleDetail, productCard),
+                () -> addNewSaleDetail(productCard));
+    }
+
+    private static void updateExistingSaleDetail(SaleDetail saleDetail, ProductCard productCard) {
+        try {
+            long quantity = calculateQuantity(saleDetail);
+            availableProductQuantity = quantity;
+
+            if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
+                SaleDetailViewModel.getCartSale(saleDetail);
+                updateSaleDetail(saleDetail, productCard, quantity);
+            } else {
+                SpotyUtils.errorMessage("Product out of stock");
+            }
+        } catch (Exception e) {
+            SpotyLogger.writeToFile(e, PointOfSalePage.class);
+        }
+    }
+
+    private static void updateSaleDetail(SaleDetail saleDetail, ProductCard productCard, long quantity) {
+        SaleDetailViewModel.setProduct(productCard.getProduct());
+        SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
+        SaleDetailViewModel.setQuantity(quantity);
+        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()) + saleDetail.getUnitPrice());
+        SaleDetailViewModel.updateCartSale((long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
+    }
+
+    private static void addNewSaleDetail(ProductCard productCard) {
+        if (productCard.getProduct().getQuantity() > 0) {
+            SaleDetailViewModel.setProduct(productCard.getProduct());
+            SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
+            SaleDetailViewModel.setQuantity(1L);
+            availableProductQuantity = 1L;
+            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+            SaleDetailViewModel.addSaleDetail();
+        } else {
+            SpotyUtils.errorMessage("Product out of stock");
+        }
+    }
+
+    private static double calculateSubTotal(Product product) {
+        double subTotal = product.getSalePrice();
+
+        if (Objects.nonNull(product.getTax()) && product.getTax().getPercentage() > 0) {
+            subTotal += (product.getTax().getPercentage() / 100) * subTotal;
+        }
+        if (Objects.nonNull(product.getDiscount()) && product.getDiscount().getPercentage() > 0) {
+            subTotal += (product.getDiscount().getPercentage() / 100) * subTotal;
+        }
+        return subTotal;
+    }
+
+    private static long calculateQuantity(SaleDetail saleDetail) {
+        return saleDetail.getQuantity() + 1;
+    }
+
+    private static VFXScrollPane buildGridScrollPane(VFXGrid<Product, ProductCard> grid) {
+        var sp = grid.makeScrollable();
+        sp.setSmoothScroll(true);
+        sp.setDragToScroll(true);
+        sp.setDragSmoothScroll(true);
+        sp.setShowButtons(true);
+        sp.getStylesheets().add(VFXResources.loadResource("VFXScrollPane.css"));
+        sp.setHBarPolicy(ScrollPaneEnums.ScrollBarPolicy.NEVER);
+        VFXScrollable.setSpeed(sp, grid, 0.1, true);
+        CSSFragment.Builder.build()
+                .addSelector(".vfx-scroll-pane")
+                .padding("10px")
+                .background("transparent")
+                .closeSelector()
+                .applyOn(sp);
+        CSSFragment.Builder.build()
+                .addSelector(".vfx-scroll-pane")
+                .background("transparent")
+                .closeSelector()
+                .applyOn(sp);
+        return sp;
+    }
+
+    private static VFXGrid<Product, ProductCard> buildGrid() {
+        var grid = new VFXGrid<>(ProductViewModel.getProducts(), product -> {
+            var cell = new ProductCard();
+            cell.setProduct(product);
+            cell.setOnMouseClicked(_ -> handleProductCardClick(cell));
+            return cell;
+        });
+        grid.autoArrange();
+        grid.setSpacing(25d, 25d);
+        grid.setCellSize(160, 250);
+        grid.setPrefSize(1000, 1000);
+        grid.setColumnsNum(6);
+        // grid.setBufferSize(BufferSize.MEDIUM);
+        return grid;
+    }
+
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, EmployeePage.class);
+        this.errorMessage();
+        return null;
+    }
+
+    private void errorMessage() {
+        SpotyUtils.errorMessage("An error occurred while loading view");
+        progress.setManaged(false);
+        progress.setVisible(false);
     }
 
     private void onDataInitializationSuccess() {
         progress.setManaged(false);
         progress.setVisible(false);
+        SaleMasterViewModel.setDefaultCustomer();
+        cartListeners();
     }
 
     // Top UI.
@@ -80,7 +210,7 @@ public class PointOfSalePage extends OutlinePage {
 
     // Header UI.
     private HBox buildLeftHeaderPane() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -130,28 +260,24 @@ public class PointOfSalePage extends OutlinePage {
 
     // Filter UI.
     private ScrollPane buildFilterUI() {
-        filterPane = new HBox();
+        toggleGroup = new ToggleGroup();
+
+        var filterPane = new HBox();
         filterPane.setAlignment(Pos.CENTER_LEFT);
         filterPane.setSpacing(10d);
         filterPane.setPadding(new Insets(5d));
+        setCategoryFilters(filterPane);
+        updateCategoryFilters(filterPane);
+
         var scroll = new ScrollPane(filterPane);
-        scroll.maxHeight(100d);
-        scroll.minHeight(60d);
-        scroll.prefHeight(80d);
+        scroll.maxHeight(200d);
+        scroll.prefHeight(160d);
+        scroll.minHeight(80d);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        VBox.setVgrow(scroll, Priority.NEVER);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        configureFilterScrollPane(scroll);
         return scroll;
-    }
-
-    // Product Card Holder UI.
-    private ScrollPane buildProductCardHolderUI() {
-        productScrollPane = new ScrollPane();
-        productScrollPane.setFitToHeight(true);
-        productScrollPane.setFitToWidth(true);
-        productScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        productScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        return productScrollPane;
     }
 
     // Product UI.
@@ -160,7 +286,13 @@ public class PointOfSalePage extends OutlinePage {
         vbox.getStyleClass().add("card-flat-top");
         vbox.setPadding(new Insets(2.5d));
         VBox.setVgrow(vbox, Priority.ALWAYS);
-        vbox.getChildren().addAll(buildFilterUI(), buildProductCardHolderUI());
+
+        var vbox1 = new VBox(buildFilterUI());
+        vbox1.maxHeight(200d);
+        vbox1.prefHeight(160d);
+        vbox1.minHeight(80d);
+
+        vbox.getChildren().addAll(vbox1, buildGridScrollPane(buildGrid()));
         return vbox;
     }
 
@@ -175,12 +307,14 @@ public class PointOfSalePage extends OutlinePage {
 
     // Customer UI.
     private VBox buildCustomerUI() {
-        customer = new ComboBox<>();
-        customer.setEditable(true);
-        customer.setPromptText("Customer");
-        customer.setPrefWidth(1000d);
-        HBox.setHgrow(customer, Priority.ALWAYS);
-        var vbox = new VBox(customer);
+        var customerComboBox = new ComboBox<Customer>();
+        customerComboBox.setEditable(true);
+        customerComboBox.setPromptText("Customer");
+        customerComboBox.setPrefWidth(1000d);
+        setupFilterComboBox(customerComboBox, CustomerViewModel.getCustomers(), SaleMasterViewModel.customerProperty(),
+                customer -> (customer == null) ? "" : customer.getName());
+        HBox.setHgrow(customerComboBox, Priority.ALWAYS);
+        var vbox = new VBox(customerComboBox);
         vbox.setPrefWidth(538d);
         vbox.setSpacing(10d);
         return vbox;
@@ -196,7 +330,7 @@ public class PointOfSalePage extends OutlinePage {
         cartQuantity = new TableColumn<>("Qnty");
         cartQuantity.setEditable(true);
         cartQuantity.setSortable(false);
-        cartQuantity.setPrefWidth(50d);
+        cartQuantity.setPrefWidth(45d);
         productTax = new TableColumn<>("Tax(%)");
         productTax.setEditable(false);
         productTax.setSortable(false);
@@ -205,14 +339,14 @@ public class PointOfSalePage extends OutlinePage {
         productDiscount.setEditable(false);
         productDiscount.setSortable(false);
         productDiscount.setPrefWidth(60d);
-        cartSubTotal = new TableColumn<>("Sub Total");
+        cartSubTotal = new TableColumn<>("Total");
         cartSubTotal.setEditable(false);
         cartSubTotal.setSortable(false);
-        cartSubTotal.setPrefWidth(75d);
+        cartSubTotal.setPrefWidth(70d);
         cartActions = new TableColumn<>();
         cartActions.setEditable(false);
         cartActions.setSortable(false);
-        cartActions.setPrefWidth(20d);
+        cartActions.setPrefWidth(30d);
         var columnList = new LinkedList<>(Stream.of(cartName,
                 cartQuantity,
                 productTax,
@@ -245,14 +379,33 @@ public class PointOfSalePage extends OutlinePage {
         return pane;
     }
 
+    private void cartListeners() {
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<? super SaleDetail>) _ -> {
+            if (SaleDetailViewModel.getSaleDetails().isEmpty()) {
+                checkOutBtn.setDisable(true);
+                emptyCartBtn.setDisable(true);
+                discount.setDisable(true);
+                tax.setDisable(true);
+            }
+            if (!SaleDetailViewModel.getSaleDetails().isEmpty()) {
+                checkOutBtn.setDisable(false);
+                emptyCartBtn.setDisable(false);
+                discount.setDisable(false);
+                tax.setDisable(false);
+            }
+        });
+    }
+
     // Deductions UI.
     private HBox buildDeductions() {
         discount = new ComboBox<>();
         discount.setPromptText("Discount(%)");
         discount.setPrefWidth(500d);
+        discount.setDisable(true);
         tax = new ComboBox<>();
         tax.setPromptText("Tax(%)");
         tax.setPrefWidth(500d);
+        tax.setDisable(true);
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER);
         hbox.setSpacing(10d);
@@ -262,16 +415,18 @@ public class PointOfSalePage extends OutlinePage {
 
     // Cart Buttons UI.
     private HBox buildButtons() {
-        checkOutBtn = new Button("CheckOut $0.00");
-        checkOutBtn.setOnAction(event -> savePOSSale());
+        checkOutBtn = new CustomButton("CheckOut $0.00");
+        checkOutBtn.setOnAction(_ -> savePOSSale());
         checkOutBtn.setPrefWidth(650d);
-        checkOutBtn.getStyleClass().add(Styles.SUCCESS);
+        checkOutBtn.getStyleClass().add(Styles.ACCENT);
         checkOutBtn.setDisable(true);
+        bindTotalLabels();
         emptyCartBtn = new Button("Empty Cart");
-        emptyCartBtn.setOnAction(event -> clearCart());
+        emptyCartBtn.setOnAction(_ -> clearCart());
         emptyCartBtn.setPrefWidth(400d);
-        emptyCartBtn.getStyleClass().add(Styles.DANGER);
+        emptyCartBtn.getStyleClass().addAll(Styles.DANGER);
         emptyCartBtn.setDisable(true);
+        emptyCartBtn.setCancelButton(true);
         var region = new Region();
         HBox.setHgrow(region, Priority.ALWAYS);
         var hbox = new HBox();
@@ -292,10 +447,9 @@ public class PointOfSalePage extends OutlinePage {
     // Right UI.
     private VBox buildRight() {
         var vbox = new VBox();
-        vbox.setPrefHeight(584d);
+        vbox.setMaxWidth(508d);
+        vbox.setPrefWidth(508d);
         vbox.setMinWidth(338d);
-        vbox.setPrefWidth(538d);
-        vbox.setMinWidth(538d);
         vbox.getStyleClass().add("card-flat");
         vbox.setSpacing(10d);
         vbox.setPadding(new Insets(10d, 5d, 5d, 5d));
@@ -314,10 +468,7 @@ public class PointOfSalePage extends OutlinePage {
         return pane;
     }
 
-
     private void setPOSComboBoxes() {
-        setupFilterComboBox(customer, CustomerViewModel.getCustomers(), SaleMasterViewModel.customerProperty(),
-                customer -> (customer == null) ? "" : customer.getName());
         setupComboBox(discount, DiscountViewModel.getDiscounts(), SaleMasterViewModel.discountProperty(), discount -> (discount == null) ? "" : discount.getName() + " (" + discount.getPercentage() + "%)");
         setupComboBox(tax, TaxViewModel.getTaxes(), SaleMasterViewModel.netTaxProperty(), tax -> (tax == null) ? "" : tax.getName() + " (" + tax.getPercentage() + "%)");
     }
@@ -332,7 +483,7 @@ public class PointOfSalePage extends OutlinePage {
             comboBox.setConverter(itemConverter);
         }
         if (items.isEmpty()) {
-            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+            items.addListener((ListChangeListener<T>) _ -> comboBox.setItems(items));
         } else {
             comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
         }
@@ -348,166 +499,37 @@ public class PointOfSalePage extends OutlinePage {
             comboBox.setConverter(itemConverter);
         }
         if (items.isEmpty()) {
-            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+            items.addListener((ListChangeListener<T>) _ -> comboBox.setItems(items));
         } else {
             comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
         }
     }
 
-
-    private void initializeProductsGridView() {
-        updateProductsGridView();
-        setProductsGridView();
-    }
-
-    private void initializeCategoryFilters() {
-        setCategoryFilters();
-        updateCategoryFilters();
-    }
-
-    private void updateProductsGridView() {
-        ProductViewModel.getProducts().addListener((ListChangeListener<Product>) c -> setProductsGridView());
-    }
-
-    private void setProductsGridView() {
-        var productsGridView = new GridPane();
-        var row = 1;
-        var column = 0;
-        productsGridView.setHgap(15);
-        productsGridView.setVgap(15);
-        productsGridView.setPadding(new Insets(5));
-        for (Product product : ProductViewModel.getProducts()) {
-            ProductCard productCard = new ProductCard(product);
-            configureProductCardAction(productCard);
-            if (column == 6) {
-                column = 0;
-                ++row;
-            }
-            productsGridView.add(productCard, column++, row);
-            GridPane.setMargin(productsGridView, new Insets(10));
-        }
-        productScrollPane.setContent(productsGridView);
-    }
-
-    // private void setProductsGridView() {
-    //     var row = new BootstrapRow();
-    //     for (Product product : ProductViewModel.getProducts()) {
-    //         ProductCard productCard = new ProductCard(product);
-    //         configureProductCardAction(productCard);
-    //         var column = new BootstrapColumn(productCard);
-    //         column.setBreakpointColumnWidth(Breakpoint.LARGE, 2);
-    //         column.setBreakpointColumnWidth(Breakpoint.SMALL, 4);
-    //         column.setBreakpointColumnWidth(Breakpoint.XSMALL, 8);
-    //         row.addColumn(column);
-    //     }
-    //     productHolder.addRow(row);
-    // }
-
-    // private void configureProductScrollPane() {
-    //     productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-    //         if (event.getDeltaX() != 0) {
-    //             event.consume();
-    //         }
-    //     });
-    //     productScrollPane.widthProperty().addListener((obs, oV, nV) -> {
-    //         productHolder.setMaxWidth(nV.doubleValue() - 10);
-    //         productHolder.setPrefWidth(nV.doubleValue() - 10);
-    //         productHolder.setMinWidth(nV.doubleValue() - 10);
-    //     });
-    //     productHolder.setAlignment(Pos.CENTER_LEFT);
-    //     productHolder.setPadding(new Insets(10));
-    // }
-
-    private void configureProductScrollPane() {
-        productScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-            if (event.getDeltaX() != 0) {
+    private void configureFilterScrollPane(ScrollPane scrollPane) {
+        scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaY() != 0) {
                 event.consume();
             }
         });
     }
 
-    private void configureProductCardAction(ProductCard productCard) {
-        productCard.setOnMouseClicked(event -> handleProductCardClick(productCard));
-    }
-
-    private void handleProductCardClick(ProductCard productCard) {
-        Optional<SaleDetail> existingSaleDetail = SaleDetailViewModel.getSaleDetails().stream()
-                .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct()).findAny();
-
-        existingSaleDetail.ifPresentOrElse(saleDetail -> updateExistingSaleDetail(saleDetail, productCard),
-                () -> addNewSaleDetail(productCard));
-    }
-
-    private void updateExistingSaleDetail(SaleDetail saleDetail, ProductCard productCard) {
-        try {
-            long quantity = calculateQuantity(saleDetail);
-            availableProductQuantity = quantity;
-
-            if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
-                SaleDetailViewModel.getCartSale(saleDetail);
-                updateSaleDetail(saleDetail, productCard, quantity);
-            } else {
-                displayNotification("Product out of stock", MessageVariants.ERROR, "fas-triangle-exclamation");
-            }
-        } catch (Exception e) {
-            SpotyLogger.writeToFile(e, this.getClass());
-        }
-    }
-
-    private void updateSaleDetail(SaleDetail saleDetail, ProductCard productCard, long quantity) {
-        SaleDetailViewModel.setProduct(productCard.getProduct());
-        SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
-        SaleDetailViewModel.setQuantity(quantity);
-        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()) + saleDetail.getSubTotalPrice());
-        SaleDetailViewModel.updateCartSale((long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
-    }
-
-    private void addNewSaleDetail(ProductCard productCard) {
-        if (productCard.getProduct().getQuantity() > 0) {
-            SaleDetailViewModel.setProduct(productCard.getProduct());
-            SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
-            SaleDetailViewModel.setQuantity(1L);
-            availableProductQuantity = 1L;
-            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
-            SaleDetailViewModel.addSaleDetail();
-        } else {
-            displayNotification("Product out of stock", MessageVariants.ERROR, "fas-triangle-exclamation");
-        }
-    }
-
-    private double calculateSubTotal(Product product) {
-        double subTotal = product.getSalePrice();
-
-        if (Objects.nonNull(product.getTax()) && product.getTax().getPercentage() > 0) {
-            subTotal += (product.getTax().getPercentage() / 100) * subTotal;
-        }
-        if (Objects.nonNull(product.getDiscount()) && product.getDiscount().getPercentage() > 0) {
-            subTotal += (product.getDiscount().getPercentage() / 100) * subTotal;
-        }
-        return subTotal;
-    }
-
     private double calculateTotal(ObservableList<SaleDetail> saleDetails) {
-        return saleDetails.stream().mapToDouble(SaleDetail::getSubTotalPrice).sum();
+        return saleDetails.stream().mapToDouble(SaleDetail::getUnitPrice).sum();
     }
 
-    private long calculateQuantity(SaleDetail saleDetail) {
-        return saleDetail.getQuantity() + 1;
-    }
-
-    private void setCategoryFilters() {
+    private void setCategoryFilters(HBox node) {
         ProductCategoryViewModel.getCategories().forEach(productCategory -> {
             ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
-            filterPane.getChildren().add(toggleButton);
+            node.getChildren().add(toggleButton);
         });
     }
 
-    private void updateCategoryFilters() {
-        ProductCategoryViewModel.getCategories().addListener((ListChangeListener<ProductCategory>) c -> {
-            filterPane.getChildren().clear();
+    private void updateCategoryFilters(HBox node) {
+        ProductCategoryViewModel.getCategories().addListener((ListChangeListener<ProductCategory>) _ -> {
+            node.getChildren().clear();
             ProductCategoryViewModel.getCategories().forEach(productCategory -> {
                 ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
-                filterPane.getChildren().add(toggleButton);
+                node.getChildren().add(toggleButton);
             });
         });
     }
@@ -525,15 +547,15 @@ public class PointOfSalePage extends OutlinePage {
     private void setCheckoutProductsTable() {
         setupCartTableColumns();
 
-        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) c -> {
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) _ -> {
             cart.setItems(SaleDetailViewModel.getSaleDetails());
-            enableButtonsOnSaleDetailsChange();
+            enableUIOnSaleDetailsChange();
         });
     }
 
     private void setupCartTableColumns() {
         cartName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        cartName.setCellFactory(tc -> new TableCell<>() {
+        cartName.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -541,12 +563,26 @@ public class PointOfSalePage extends OutlinePage {
             }
         });
 
-        cartQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        cartSubTotal.setCellValueFactory(new PropertyValueFactory<>("subTotalPrice"));
+        cartQuantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        cartQuantity.setCellFactory(_ -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getQuantity()));
+            }
+        });
+        cartSubTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        cartSubTotal.setCellFactory(_ -> new TableCell<>() {
+            @Override
+            public void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || Objects.isNull(item) ? null : AppUtils.decimalFormatter().format(item.getUnitPrice()));
+            }
+        });
 
         cartActions.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        cartActions.setCellFactory(param -> new TableCell<>() {
-            final MFXFontIcon delete = new MFXFontIcon("fas-trash", Color.RED);
+        cartActions.setCellFactory(_ -> new TableCell<>() {
+            final Button deleteIcon = new Button(null, new FontIcon(Feather.TRASH));
 
             @Override
             protected void updateItem(SaleDetail item, boolean empty) {
@@ -554,14 +590,15 @@ public class PointOfSalePage extends OutlinePage {
                 if (item == null) {
                     setGraphic(null);
                 } else {
-                    setGraphic(delete);
-                    delete.setOnMouseClicked(event -> removeItemFromCart(item));
+                    deleteIcon.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT, Styles.DANGER);
+                    setGraphic(deleteIcon);
+                    deleteIcon.setOnAction(_ -> removeItemFromCart(item));
                 }
             }
         });
 
         productTax.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        productTax.setCellFactory(param -> new TableCell<>() {
+        productTax.setCellFactory(_ -> new TableCell<>() {
             final Label value = new Label();
 
             @Override
@@ -581,7 +618,7 @@ public class PointOfSalePage extends OutlinePage {
         });
 
         productDiscount.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        productDiscount.setCellFactory(param -> new TableCell<>() {
+        productDiscount.setCellFactory(_ -> new TableCell<>() {
             final Label value = new Label();
 
             @Override
@@ -606,18 +643,24 @@ public class PointOfSalePage extends OutlinePage {
         availableProductQuantity = 0L;
     }
 
-    private void enableButtonsOnSaleDetailsChange() {
+    private void enableUIOnSaleDetailsChange() {
         if (checkOutBtn.isDisabled()) {
             checkOutBtn.setDisable(false);
         }
         if (emptyCartBtn.isDisabled()) {
             emptyCartBtn.setDisable(false);
         }
+        if (discount.isDisabled()) {
+            discount.setDisable(false);
+        }
+        if (tax.isDisabled()) {
+            tax.setDisable(false);
+        }
     }
 
     private void bindTotalLabels() {
-        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) listener ->
-                checkOutBtn.setText("CheckOut $" + calculateTotal(SaleDetailViewModel.getSaleDetails()))
+        SaleDetailViewModel.getSaleDetails().addListener((ListChangeListener<SaleDetail>) _ ->
+                checkOutBtn.setText("CheckOut: UGX " + AppUtils.decimalFormatter().format(calculateTotal(SaleDetailViewModel.getSaleDetails())))
         );
     }
 
@@ -626,6 +669,8 @@ public class PointOfSalePage extends OutlinePage {
         availableProductQuantity = 0L;
         checkOutBtn.setDisable(true);
         emptyCartBtn.setDisable(true);
+        discount.setDisable(true);
+        tax.setDisable(true);
     }
 
     public void savePOSSale() {
@@ -636,57 +681,36 @@ public class PointOfSalePage extends OutlinePage {
         SaleMasterViewModel.setAmountPaid(total);
         SaleMasterViewModel.setNotes("Approved.");
 
-        SpotyThreader.spotyThreadPool(() -> {
-            try {
-                SaleMasterViewModel.saveSaleMaster(this::onSuccess, this::displaySuccessMessage, this::displayErrorMessage);
-            } catch (Exception e) {
-                SpotyLogger.writeToFile(e, this.getClass());
-            }
-        });
+        try {
+            checkOutBtn.startLoading();
+            SaleMasterViewModel.saveSaleMaster(this::onSuccess, SpotyUtils::successMessage, this::displayErrorMessage);
+        } catch (Exception e) {
+            SpotyLogger.writeToFile(e, this.getClass());
+        }
     }
 
     private void onSuccess() {
         clearCart();
+        checkOutBtn.stopLoading();
         SaleMasterViewModel.setDefaultCustomer();
-        SaleMasterViewModel.getAllSaleMasters(null, null);
-        ProductViewModel.getAllProducts(null, null);
-    }
-
-    private void displaySuccessMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
+        SaleMasterViewModel.getAllSaleMasters(null, null, null, null);
+        ProductViewModel.getAllProductsNonPaged(null, this::displayErrorMessage);
     }
 
     private void displayErrorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        checkOutBtn.stopLoading();
         progress.setManaged(false);
         progress.setVisible(false);
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+        searchBar.textProperty().addListener((_, oldValue, newValue) -> {
             if (Objects.equals(oldValue, newValue)) {
                 return;
             }
             if (oldValue.isBlank() && newValue.isBlank()) {
-                ProductViewModel.getAllProducts(null, null);
+                ProductViewModel.getAllProductsNonPaged(null, this::displayErrorMessage);
             }
             progress.setManaged(true);
             progress.setVisible(true);

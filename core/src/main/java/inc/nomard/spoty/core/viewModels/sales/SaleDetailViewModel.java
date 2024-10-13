@@ -1,19 +1,28 @@
 package inc.nomard.spoty.core.viewModels.sales;
 
-import com.google.gson.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.adapters.*;
-import java.time.*;
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
+import inc.nomard.spoty.network_bridge.repositories.implementations.SalesRepositoryImpl;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
+
+import static inc.nomard.spoty.core.values.SharedResources.setTempId;
+
+@Log4j2
 public class SaleDetailViewModel {
     @Getter
     public static final ObservableList<SaleDetail> saleDetailsList =
@@ -137,7 +146,7 @@ public class SaleDetailViewModel {
                 SaleDetail.builder()
                         .product(getProduct())
                         .quantity(getQuantity())
-                        .subTotalPrice(getSubTotalPrice())
+                        .unitPrice(getSubTotalPrice())
                         .build();
         saleDetailsList.add(saleDetail);
     }
@@ -146,19 +155,19 @@ public class SaleDetailViewModel {
         var saleDetail = getSaleDetails().get(Math.toIntExact(index));
         saleDetail.setProduct(getProduct());
         saleDetail.setQuantity(getQuantity());
-        saleDetail.setSubTotalPrice(getSubTotalPrice());
+        saleDetail.setUnitPrice(getSubTotalPrice());
         getSaleDetails().set(Math.toIntExact(index), saleDetail);
     }
 
     public static void getCartSale(SaleDetail saleDetail) {
         setProduct(saleDetail.getProduct());
         setQuantity((long) saleDetail.getQuantity());
-        setSubTotalPrice(saleDetail.getSubTotalPrice());
+        setSubTotalPrice(saleDetail.getUnitPrice());
     }
 
     public static void getSaleDetail(SaleDetail saleDetail) {
         setProduct(saleDetail.getProduct());
         setQuantity((long) saleDetail.getQuantity());
-        setSubTotalPrice(saleDetail.getSubTotalPrice());
+        setSubTotalPrice(saleDetail.getUnitPrice());
     }
 }

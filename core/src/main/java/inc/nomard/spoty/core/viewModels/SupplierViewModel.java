@@ -1,25 +1,37 @@
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.SuppliersRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class SupplierViewModel {
     public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
@@ -35,13 +47,18 @@ public class SupplierViewModel {
     private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
     private static final SuppliersRepositoryImpl suppliersRepository = new SuppliersRepositoryImpl();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty firstName = new SimpleStringProperty("");
+    private static final StringProperty otherName = new SimpleStringProperty("");
+    private static final StringProperty lastName = new SimpleStringProperty("");
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static long getId() {
         return id.get();
@@ -55,16 +72,40 @@ public class SupplierViewModel {
         return id;
     }
 
-    public static String getName() {
-        return name.get();
+    public static String getFirstName() {
+        return firstName.get();
     }
 
-    public static void setName(String name) {
-        SupplierViewModel.name.set(name);
+    public static void setFirstName(String firstName) {
+        SupplierViewModel.firstName.set(firstName);
     }
 
-    public static StringProperty nameProperty() {
-        return name;
+    public static StringProperty firstNameProperty() {
+        return firstName;
+    }
+
+    public static String getOtherName() {
+        return otherName.get();
+    }
+
+    public static void setOtherName(String otherName) {
+        SupplierViewModel.otherName.set(otherName);
+    }
+
+    public static StringProperty otherNameProperty() {
+        return otherName;
+    }
+
+    public static String getLastName() {
+        return lastName.get();
+    }
+
+    public static void setLastName(String lastName) {
+        SupplierViewModel.lastName.set(lastName);
+    }
+
+    public static StringProperty lastNameProperty() {
+        return lastName;
     }
 
     public static String getEmail() {
@@ -151,9 +192,47 @@ public class SupplierViewModel {
         return suppliers;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        SupplierViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        SupplierViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        SupplierViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
-        setName("");
+        setFirstName("");
+        setOtherName("");
+        setLastName("");
         setEmail("");
         setEmail("");
         setPhone("");
@@ -167,7 +246,9 @@ public class SupplierViewModel {
                                     SpotyGotFunctional.MessageConsumer successMessage,
                                     SpotyGotFunctional.MessageConsumer errorMessage) {
         var supplier = Supplier.builder()
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())
@@ -217,16 +298,20 @@ public class SupplierViewModel {
     }
 
     public static void getAllSuppliers(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                       SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = suppliersRepository.fetchAll();
+                                       SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = suppliersRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<Supplier>>() {
+                    Type type = new TypeToken<ResponseModel<Supplier>>() {
                     }.getType();
-                    ArrayList<Supplier> supplierList = gson.fromJson(response.body(), listType);
+                    ResponseModel<Supplier> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<Supplier> supplierList = responseModel.getContent();
                     suppliersList.clear();
                     suppliersList.addAll(supplierList);
                     if (Objects.nonNull(onSuccess)) {
@@ -277,7 +362,9 @@ public class SupplierViewModel {
                 Platform.runLater(() -> {
                     var supplier = gson.fromJson(response.body(), Supplier.class);
                     setId(supplier.getId());
-                    setName(supplier.getName());
+                    setFirstName(supplier.getFirstName());
+                    setOtherName(supplier.getOtherName());
+                    setLastName(supplier.getLastName());
                     setEmail(supplier.getEmail());
                     setPhone(supplier.getPhone());
                     setCity(supplier.getCity());
@@ -373,7 +460,9 @@ public class SupplierViewModel {
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var supplier = Supplier.builder()
                 .id(getId())
-                .name(getName())
+                .firstName(getFirstName())
+                .otherName(getOtherName())
+                .lastName(getLastName())
                 .email(getEmail())
                 .phone(getPhone())
                 .city(getCity())

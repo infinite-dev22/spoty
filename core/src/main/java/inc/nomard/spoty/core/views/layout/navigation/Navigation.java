@@ -1,89 +1,71 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
-import inc.nomard.spoty.core.views.dashboard.*;
-import static inc.nomard.spoty.core.views.layout.navigation.Navigation.SubLayer.*;
+import inc.nomard.spoty.core.views.dashboard.DashboardPage;
 import inc.nomard.spoty.core.views.pages.*;
-import inc.nomard.spoty.core.views.pages.purchase.*;
-import inc.nomard.spoty.core.views.pages.sale.*;
-import inc.nomard.spoty.core.views.pages.sale.tabs.*;
-import inc.nomard.spoty.core.views.pos.*;
-import inc.nomard.spoty.core.views.settings.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.utils.flavouring.*;
-import java.util.*;
-import javafx.beans.property.*;
-import javafx.scene.control.*;
-import lombok.extern.java.*;
-import org.kordamp.ikonli.fontawesome5.*;
+import inc.nomard.spoty.core.views.pages.leave.LeaveMainPage;
+import inc.nomard.spoty.core.views.pages.purchase.PurchaseMainPage;
+import inc.nomard.spoty.core.views.pages.sale.SalesMainPage;
+import inc.nomard.spoty.core.views.pos.PointOfSalePage;
+import inc.nomard.spoty.core.views.settings.AppSettingPage;
+import inc.nomard.spoty.core.views.settings.BranchPage;
+import inc.nomard.spoty.core.views.settings.RolePage;
+import inc.nomard.spoty.core.views.settings.TenantSettingsPage;
+import inc.nomard.spoty.core.views.util.Page;
+import inc.nomard.spoty.utils.flavouring.AppConfig;
+import inc.nomard.spoty.utils.flavouring.AppFlavor;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.kordamp.ikonli.fontawesome5.FontAwesomeSolid.*;
+
+@Log4j2
 public class Navigation {
     public static final Class<? extends Page> DEFAULT_PAGE = DashboardPage.class;
-    private static final Map<String, NavTree.NavTreeItem> NAV_TREE = createNavItems();
+    private static final Map<Class<? extends Page>, NavTree.NavTreeItem> NAV_TREE = createNavItems();
     private final AppFlavor flavor = AppConfig.getActiveFlavor();
     private final ReadOnlyObjectWrapper<Class<? extends Page>> selectedPage = new ReadOnlyObjectWrapper<>();
-    private final ReadOnlyObjectWrapper<SubLayer> currentSubLayer = new ReadOnlyObjectWrapper<>(PAGE);
     private final ReadOnlyObjectWrapper<NavTree.NavTreeItem> navTree = new ReadOnlyObjectWrapper<>(createTree());
 
-    public static Map<String, NavTree.NavTreeItem> createNavItems() {
-        var map = new HashMap<String, NavTree.NavTreeItem>();
-        // People
-        map.put("SUPPLIERS", NavTree.NavTreeItem.page("Suppliers", SupplierPage.class));
-        map.put("CUSTOMERS", NavTree.NavTreeItem.page("Customers", CustomerPage.class));
-        // Deductions
-        map.put("TAXES", NavTree.NavTreeItem.page("Taxes", TaxPage.class));
-        map.put("DISCOUNTS", NavTree.NavTreeItem.page("Discounts", DiscountPage.class));
-        // Sales
-        map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", PointOfSalePage.class));
-        map.put("ORDERS", NavTree.NavTreeItem.page("Orders", SalesMainPage.class));
-        map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", SaleReturnPage.class));
-        map.put("CATEGORY", NavTree.NavTreeItem.page("Category", ProductCategoryPage.class));
-        map.put("BRAND", NavTree.NavTreeItem.page("Brand", BrandPage.class));
-        map.put("UNIT", NavTree.NavTreeItem.page("Unit", UnitOfMeasurePage.class));
-        map.put("PRODUCTS", NavTree.NavTreeItem.page("Products", ProductPage.class));
-        map.put("REQUISITIONS", NavTree.NavTreeItem.page("Requisitions", RequisitionPage.class));
-        map.put("STOCK_INS", NavTree.NavTreeItem.page("Stock Ins", StockInPage.class));
-        map.put("TRANSFERS", NavTree.NavTreeItem.page("Transfers", TransferPage.class));
-        map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", AdjustmentPage.class));
-        // Accounting
-        map.put("ACCOUNTS", NavTree.NavTreeItem.page("Accounts", AccountPage.class));
-        map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", ExpensePage.class));
-        map.put("TRANSACTIONS", NavTree.NavTreeItem.page("Transactions", AccountTransactionPage.class));
-        // HUMAN RESOURCE
-        // HRM
-        map.put("DEPARTMENTS", NavTree.NavTreeItem.page("Departments", DepartmentPage.class));
-        map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", DesignationPage.class));
-        map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", EmployeePage.class));
-        map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", EmploymentStatusPage.class));
-        // Leave
-        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Requests", LeaveRequestPage.class));
-        map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", CalendarPage.class));       // PayRoll
-        map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", PaySlipPage.class));
-        map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", BeneficiaryBadgePage.class));
-        map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", BeneficiaryTypePage.class));
-        // Purchases
-        map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", PurchaseMainPage.class));
-        // SETTINGS
-        map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", AppSettingPage.class));
-        map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", BranchPage.class));
-        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", CompanyDetailPage.class));
-        map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", CurrencyPage.class));
-        map.put("ROLES", NavTree.NavTreeItem.page("Roles", RolePage.class));
-
-        return map;
+    private static Map<Class<? extends Page>, NavTree.NavTreeItem> createNavItems() {
+        return Map.ofEntries(Map.entry(DepartmentPage.class, NavTree.NavTreeItem.page("Departments", DepartmentPage.class)),
+                Map.entry(DesignationPage.class, NavTree.NavTreeItem.page("Designation", DesignationPage.class)),
+                Map.entry(EmployeePage.class, NavTree.NavTreeItem.page("Employees", EmployeePage.class)),
+                Map.entry(EmploymentStatusPage.class, NavTree.NavTreeItem.page("Employment Statuses", EmploymentStatusPage.class)),
+                Map.entry(LeaveMainPage.class, NavTree.NavTreeItem.page("Leave", LeaveMainPage.class)),
+                Map.entry(PaySlipPage.class, NavTree.NavTreeItem.page("PayRoll", PaySlipPage.class)),
+                Map.entry(SalaryPage.class, NavTree.NavTreeItem.page("Salaries", SalaryPage.class)),
+                Map.entry(SupplierPage.class, NavTree.NavTreeItem.page("Suppliers", SupplierPage.class)),
+                Map.entry(CustomerPage.class, NavTree.NavTreeItem.page("Customers", CustomerPage.class)),
+                Map.entry(TaxPage.class, NavTree.NavTreeItem.page("Taxes", TaxPage.class)),
+                Map.entry(DiscountPage.class, NavTree.NavTreeItem.page("Discounts", DiscountPage.class)),
+                Map.entry(ProductCategoryPage.class, NavTree.NavTreeItem.page("Category", ProductCategoryPage.class)),
+                Map.entry(BrandPage.class, NavTree.NavTreeItem.page("Brand", BrandPage.class)),
+                Map.entry(UnitOfMeasurePage.class, NavTree.NavTreeItem.page("Unit", UnitOfMeasurePage.class)),
+                Map.entry(ProductPage.class, NavTree.NavTreeItem.page("Products", ProductPage.class)),
+                Map.entry(RequisitionPage.class, NavTree.NavTreeItem.page("Requisitions", RequisitionPage.class)),
+                Map.entry(PurchaseMainPage.class, NavTree.NavTreeItem.page("Purchases", PurchaseMainPage.class)),
+                Map.entry(StockInPage.class, NavTree.NavTreeItem.page("Stock Ins", StockInPage.class)),
+                Map.entry(AdjustmentPage.class, NavTree.NavTreeItem.page("Adjustments", AdjustmentPage.class)),
+                Map.entry(TransferPage.class, NavTree.NavTreeItem.page("Transfers", TransferPage.class)),
+                Map.entry(QuotationPage.class, NavTree.NavTreeItem.page("Quotations", QuotationPage.class)),
+                Map.entry(PointOfSalePage.class, NavTree.NavTreeItem.page("Point Of Sale", PointOfSalePage.class)),
+                Map.entry(SalesMainPage.class, NavTree.NavTreeItem.page("Orders", SalesMainPage.class)),
+                Map.entry(AccountPage.class, NavTree.NavTreeItem.page("Accounts", AccountPage.class)),
+                Map.entry(ExpensePage.class, NavTree.NavTreeItem.page("Expenses", ExpensePage.class)),
+                Map.entry(AccountTransactionPage.class, NavTree.NavTreeItem.page("Transactions", AccountTransactionPage.class)),
+                Map.entry(AppSettingPage.class, NavTree.NavTreeItem.page("App Settings", AppSettingPage.class)),
+                Map.entry(BranchPage.class, NavTree.NavTreeItem.page("Branches", BranchPage.class)),
+                Map.entry(RolePage.class, NavTree.NavTreeItem.page("Roles", RolePage.class)),
+                Map.entry(TenantSettingsPage.class, NavTree.NavTreeItem.page("Company Details", TenantSettingsPage.class)));  // Immutable map
     }
 
-    NavTree.NavTreeItem getTreeItemForPage(Class<? extends Page> pageClass) {
-        return NAV_TREE.getOrDefault(pageClass, NAV_TREE.get(DEFAULT_PAGE));
-    }
-
-    List<NavTree.NavTreeItem> findPages(String filter) {
-        return NAV_TREE.values().stream()
-                .filter(item -> item.getValue() != null && item.getValue().matches(filter))
-                .toList();
-    }
-
-    public TreeView<Nav> createNavigation() {
+    public NavTree createNavigation() {
         return new NavTree(this);
     }
 
@@ -91,196 +73,127 @@ public class Navigation {
         return selectedPage.getReadOnlyProperty();
     }
 
-    public ReadOnlyObjectProperty<SubLayer> currentSubLayerProperty() {
-        return currentSubLayer.getReadOnlyProperty();
-    }
-
     public ReadOnlyObjectProperty<NavTree.NavTreeItem> navTreeProperty() {
         return navTree.getReadOnlyProperty();
     }
 
     private NavTree.NavTreeItem createTree() {
-        var dashboard =
-                NavTree.NavTreeItem.mainPage("Dashboard", FontAwesomeSolid.CHART_BAR, DashboardPage.class);
-
-        NavTree.NavTreeItem sale;
-        if (flavor == AppFlavor.TRACTION) {
-            sale = NavTree.NavTreeItem.group("Sale", FontAwesomeSolid.BALANCE_SCALE);
-            sale
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("POINT_OF_SALE"),
-                            NAV_TREE.get("ORDERS"),
-                            NAV_TREE.get("SALE_RETURN"));
-        } else {
-            sale = NavTree.NavTreeItem.group("Sale", FontAwesomeSolid.BALANCE_SCALE);
-            sale
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("POINT_OF_SALE"),
-                            NAV_TREE.get("ORDERS"));
-        }
-
-        var people = NavTree.NavTreeItem.group("People", FontAwesomeSolid.USERS);
-        people
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("SUPPLIERS"),
-                        NAV_TREE.get("CUSTOMERS"));
-
-        var inventory = NavTree.NavTreeItem.group("Inventory", FontAwesomeSolid.CUBES);
-        if (flavor == AppFlavor.TRACTION || flavor == AppFlavor.DEV) {
-            inventory
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("CATEGORY"),
-                            NAV_TREE.get("BRAND"),
-                            NAV_TREE.get("UNIT"),
-                            NAV_TREE.get("PRODUCTS"),
-                            NAV_TREE.get("REQUISITIONS"),
-                            NAV_TREE.get("PURCHASES"),
-                            NAV_TREE.get("STOCK_INS"),
-                            NAV_TREE.get("TRANSFERS"),
-                            NAV_TREE.get("ADJUSTMENTS"));
-        } else {
-            inventory
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("CATEGORY"),
-                            NAV_TREE.get("BRAND"),
-                            NAV_TREE.get("UNIT"),
-                            NAV_TREE.get("PRODUCTS"),
-                            NAV_TREE.get("PURCHASES"),
-                            NAV_TREE.get("STOCK_INS"),
-                            NAV_TREE.get("ADJUSTMENTS"));
-        }
-
-        var humanResourceManagement = NavTree.NavTreeItem.group("HRM");
-        humanResourceManagement
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("DEPARTMENTS"),
-                        NAV_TREE.get("DESIGNATION"),
-                        NAV_TREE.get("EMPLOYMENT_STATUS"),
-                        NAV_TREE.get("EMPLOYEES"));
-
-        var leave = NavTree.NavTreeItem.group("Leave");
-        leave
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("LEAVE_REQUEST"),
-                        NAV_TREE.get("CALENDAR"));
-
-        var payRoll = NavTree.NavTreeItem.group("PayRoll");
-        payRoll
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("PAY_SLIPS"),
-                        NAV_TREE.get("BENEFICIARY_TYPE"),
-                        NAV_TREE.get("BENEFICIARY_BADGE"));
-
-        var humanResource = NavTree.NavTreeItem.group("Human Resource", FontAwesomeSolid.USER_TIE);
-        if (flavor == AppFlavor.TRACTION) {
-            humanResource
-                    .getChildren()
-                    .setAll(humanResourceManagement,
-                            leave,
-                            payRoll);
-        } else {
-            humanResource
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("DEPARTMENTS"),
-                            NAV_TREE.get("DESIGNATION"),
-                            NAV_TREE.get("EMPLOYMENT_STATUS"),
-                            NAV_TREE.get("EMPLOYEES"));
-        }
-
-        var accounts = NavTree.NavTreeItem.group("Accounting", FontAwesomeSolid.COINS);
-        accounts.getChildren().setAll(
-                NAV_TREE.get("ACCOUNTS"),
-                NAV_TREE.get("EXPENSE"),
-                NAV_TREE.get("TRANSACTIONS"));
-
-        var quotation = NavTree.NavTreeItem.mainPage("Quotations", FontAwesomeSolid.RECEIPT, QuotationPage.class);
-
-        var deductions = NavTree.NavTreeItem.group("Deductions", FontAwesomeSolid.MONEY_BILL);
-        deductions.getChildren().setAll(
-                NAV_TREE.get("TAXES"),
-                NAV_TREE.get("DISCOUNTS"));
-
-        var settings = NavTree.NavTreeItem.group("Settings", FontAwesomeSolid.COGS);
-
-        if (flavor == AppFlavor.TRACTION) {
-            settings
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("BRANCHES"),
-                            NAV_TREE.get("CURRENCIES"),
-                            NAV_TREE.get("APP_SETTINGS"),
-                            NAV_TREE.get("COMPANY"),
-                            NAV_TREE.get("ROLES"));
-        } else {
-            settings
-                    .getChildren()
-                    .setAll(
-                            NAV_TREE.get("APP_SETTINGS"),
-                            NAV_TREE.get("COMPANY"));
-        }
-
         var root = NavTree.NavTreeItem.root();
-        if (flavor == AppFlavor.PROD) {
-            root.getChildren()
-                    .addAll(
-                            dashboard,
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale,
-                            accounts);
-        } else if (flavor == AppFlavor.DEV) {
-            root.getChildren()
-                    .addAll(
-                            dashboard,
-                            humanResource,
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale,
-                            accounts,
-                            settings);
-        } else if (flavor == AppFlavor.TRACTION) {
-            root.getChildren()
-                    .addAll(dashboard,
-                            humanResource,
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale,
-                            accounts,
-                            settings);
-        } else if (flavor == AppFlavor.MVP) {
-            root.getChildren()
-                    .addAll(
-                            people,
-                            deductions,
-                            inventory,
-                            quotation,
-                            sale);
-        }
+        root.getChildren().addAll(
+                createDashboardPage(),
+                createHumanResourceGroup(),
+                createPeopleGroup(),
+                createDeductionsGroup(),
+                createInventoryGroup(),
+                createQuotationPage(),
+                createSalesGroup(),
+                createAccountsGroup(),
+                createSettingsGroup());
         return root;
     }
 
-    public void navigate(Class<? extends Page> page) {
-        selectedPage.set(Objects.requireNonNull(page));
-        currentSubLayer.set(PAGE);
+    // Example method breakdown for Sales Group
+    private NavTree.NavTreeItem createSalesGroup() {
+        var sale = NavTree.NavTreeItem.group("Sale", BALANCE_SCALE);
+        sale.getChildren().setAll(
+                NAV_TREE.get(PointOfSalePage.class),
+                NAV_TREE.get(SalesMainPage.class));
+        return sale;
     }
 
-    public enum SubLayer {
-        PAGE,
-        SOURCE_CODE
+    private NavTree.NavTreeItem createPeopleGroup() {
+        var people = NavTree.NavTreeItem.group("People", USERS);
+        people.getChildren().setAll(
+                NAV_TREE.get(SupplierPage.class),
+                NAV_TREE.get(CustomerPage.class));
+        return people;
+    }
+
+    private NavTree.NavTreeItem createDeductionsGroup() {
+        var deductions = NavTree.NavTreeItem.group("Deductions", MONEY_BILL);
+        deductions.getChildren().setAll(
+                NAV_TREE.get(TaxPage.class),
+                NAV_TREE.get(DiscountPage.class));
+        return deductions;
+    }
+
+    private NavTree.NavTreeItem createInventoryGroup() {
+        var inventory = NavTree.NavTreeItem.group("Inventory", CUBES);
+        inventory.getChildren().setAll(getInventoryPages());
+        return inventory;
+    }
+
+    private List<NavTree.NavTreeItem> getInventoryPages() {
+        List<NavTree.NavTreeItem> items = new ArrayList<>(List.of(
+                NAV_TREE.get(ProductCategoryPage.class),
+                NAV_TREE.get(BrandPage.class),
+                NAV_TREE.get(UnitOfMeasurePage.class),
+                NAV_TREE.get(ProductPage.class),
+                NAV_TREE.get(RequisitionPage.class),
+                NAV_TREE.get(PurchaseMainPage.class),
+                NAV_TREE.get(StockInPage.class),
+                NAV_TREE.get(AdjustmentPage.class)
+        ));
+        if (flavor == AppFlavor.DEV) {
+            items.add(NAV_TREE.get(TransferPage.class));
+        }
+        return items;
+    }
+
+    private NavTree.NavTreeItem createHumanResourceGroup() {
+        var humanResource = NavTree.NavTreeItem.group("Human Resource", USER_TIE);
+        humanResource.getChildren().setAll(getHumanResourcePages());
+        return humanResource;
+    }
+
+    private List<NavTree.NavTreeItem> getHumanResourcePages() {
+        List<NavTree.NavTreeItem> items = new ArrayList<>(List.of(
+                NAV_TREE.get(DepartmentPage.class),
+                NAV_TREE.get(DesignationPage.class),
+                NAV_TREE.get(EmploymentStatusPage.class),
+                NAV_TREE.get(EmployeePage.class)
+        ));
+        if (flavor == AppFlavor.DEV) {
+            items.add(NAV_TREE.get(LeaveMainPage.class));
+            items.add(NAV_TREE.get(PaySlipPage.class));
+        }
+        return items;
+    }
+
+    private NavTree.NavTreeItem createAccountsGroup() {
+        var accounts = NavTree.NavTreeItem.group("Accounts", MONEY_CHECK_ALT);
+        accounts.getChildren().setAll(
+                NAV_TREE.get(AccountPage.class),
+                NAV_TREE.get(ExpensePage.class),
+                NAV_TREE.get(AccountTransactionPage.class));
+        return accounts;
+    }
+
+    private NavTree.NavTreeItem createSettingsGroup() {
+        var settings = NavTree.NavTreeItem.group("Settings", COGS);
+        settings.getChildren().setAll(
+                NAV_TREE.get(AppSettingPage.class),
+                NAV_TREE.get(BranchPage.class),
+                NAV_TREE.get(TenantSettingsPage.class),
+                NAV_TREE.get(RolePage.class));
+        return settings;
+    }
+
+    private NavTree.NavTreeItem createQuotationPage() {
+        return NavTree.NavTreeItem.mainPage("Quotation", CLIPBOARD_LIST, QuotationPage.class);
+    }
+
+    private NavTree.NavTreeItem createDashboardPage() {
+        return NavTree.NavTreeItem.mainPage("Dashboard", CHART_BAR, DashboardPage.class);
+    }
+
+    public void navigate(Class<? extends Page> page) {
+        Objects.requireNonNull(page, "Page cannot be null");
+        selectedPage.set(page);
+        log.info(() -> "Navigated to: " + page.getSimpleName());
+    }
+
+    NavTree.NavTreeItem getTreeItemForPage(Class<? extends Page> pageClass) {
+        return NAV_TREE.getOrDefault(pageClass, NAV_TREE.get(DashboardPage.class));
     }
 }

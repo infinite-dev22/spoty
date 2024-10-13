@@ -1,32 +1,42 @@
 package inc.nomard.spoty.core.viewModels.hrm.leave;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
+import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.LeaveRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import io.github.palexdev.mfxcore.base.properties.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+
+@Log4j2
 public class LeaveStatusViewModel {
     public static final ObservableList<LeaveStatus> leaveStatusesList = FXCollections.observableArrayList();
     public static final ListProperty<LeaveStatus> leaveStatuses = new SimpleListProperty<>(leaveStatusesList);
-    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
+    public static final ObservableList<Employee> USERS_LIST = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     new UnixEpochDateTypeAdapter())
@@ -39,7 +49,7 @@ public class LeaveStatusViewModel {
             .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<User> employee = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Employee> employee = new SimpleObjectProperty<>();
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>();
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();
@@ -47,8 +57,11 @@ public class LeaveStatusViewModel {
     private static final StringProperty duration = new SimpleStringProperty("");
     private static final StringProperty leaveType = new SimpleStringProperty();
     private static final StringProperty attachment = new SimpleStringProperty("");
-    private static final CharProperty status = new CharProperty();
-    private static final LeaveStatusRepositoryImpl leaveStatusRepository = new LeaveStatusRepositoryImpl();
+    private static final StringProperty status = new SimpleStringProperty();
+    private static final LeaveRepositoryImpl leaveStatusRepository = new LeaveRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
     @Getter
     private static final ObservableList<String> leaveTypeList = FXCollections.observableArrayList(
             "Adoption Leave",
@@ -88,15 +101,15 @@ public class LeaveStatusViewModel {
         return id;
     }
 
-    public static User getEmployee() {
+    public static Employee getEmployee() {
         return employee.get();
     }
 
-    public static void setEmployee(User employee) {
+    public static void setEmployee(Employee employee) {
         LeaveStatusViewModel.employee.set(employee);
     }
 
-    public static ObjectProperty<User> employeeProperty() {
+    public static ObjectProperty<Employee> employeeProperty() {
         return employee;
     }
 
@@ -184,15 +197,15 @@ public class LeaveStatusViewModel {
         return attachment;
     }
 
-    public static char getStatus() {
+    public static String getStatus() {
         return status.get();
     }
 
-    public static void setStatus(char status) {
+    public static void setStatus(String status) {
         LeaveStatusViewModel.status.set(status);
     }
 
-    public static CharProperty statusProperty() {
+    public static StringProperty statusProperty() {
         return status;
     }
 
@@ -208,6 +221,42 @@ public class LeaveStatusViewModel {
         return leaveStatuses;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        LeaveStatusViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        LeaveStatusViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        LeaveStatusViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         setId(0);
         setEmployee(null);
@@ -218,7 +267,6 @@ public class LeaveStatusViewModel {
         setDuration("");
         setLeaveType("null");
         setAttachment("");
-        setStatus('P');
     }
 
     public static void saveLeaveStatus(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -277,16 +325,20 @@ public class LeaveStatusViewModel {
     }
 
     public static void getAllLeaveStatuses(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                           SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = leaveStatusRepository.fetchAll();
+                                           SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = leaveStatusRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<LeaveStatus>>() {
+                    Type type = new TypeToken<ResponseModel<LeaveStatus>>() {
                     }.getType();
-                    ArrayList<LeaveStatus> leaveStatusList = gson.fromJson(response.body(), listType);
+                    ResponseModel<LeaveStatus> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<LeaveStatus> leaveStatusList = responseModel.getContent();
                     leaveStatusesList.clear();
                     leaveStatusesList.addAll(leaveStatusList);
                     if (Objects.nonNull(onSuccess)) {

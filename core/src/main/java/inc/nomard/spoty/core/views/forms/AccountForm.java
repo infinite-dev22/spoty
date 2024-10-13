@@ -1,119 +1,149 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.accounting.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
-import java.util.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.util.converter.NumberStringConverter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class AccountForm extends MFXGenericDialog {
-    public ValidatableTextField balance,
-            accountName,
+import java.util.List;
+import java.util.Objects;
+
+@Log4j2
+public class AccountForm extends BorderPane {
+    private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
+    private final ModalPane modalPane;
+    public ValidatableNumberField balance;
+    public ValidatableTextField accountName,
             accountNumber;
-    public TextArea description;
+    public ValidatableTextArea description;
     public Label accountNameValidationLabel,
-            accountNumberValidationLabel;
-    public Button saveBtn,
-            cancelBtn;
+            accountNumberValidationLabel,
+            balanceValidationLabel;
+    public CustomButton saveBtn;
+    public Button cancelBtn;
+    private Integer reason;
+    private Text subTitle;
+    private Label balanceLabel;
     private List<Constraint> accountNameConstraints,
-            accountNumberConstraints;
-    private ActionEvent actionEvent = null;
+            accountNumberConstraints,
+            balanceConstraints;
 
-    public AccountForm() {
-        init();
-    }
-
-    public void init() {
+    public AccountForm(ModalPane modalPane, Integer reason) {
+        this.modalPane = modalPane;
+        this.reason = reason;
         buildDialogContent();
         requiredValidator();
         dialogOnActions();
+        this.setup();
     }
 
+    private VBox buildTitle() {
+        var title = new Text("Accounts");
+        title.getStyleClass().add(Styles.TITLE_3);
+        subTitle = new Text("Create Form");
+        subTitle.getStyleClass().add(Styles.TITLE_4);
+        return buildFieldHolder(title, subTitle, buildSeparator());
+    }
+
+    private VBox buildFieldHolder(Node... nodes) {
+        VBox vbox = new VBox();
+        vbox.setSpacing(5d);
+        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
+        vbox.getChildren().addAll(nodes);
+        HBox.setHgrow(vbox, Priority.ALWAYS);
+        return vbox;
+    }
+
+    private Separator buildSeparator() {
+        var separator = new Separator();
+        separator.setPrefWidth(200.0);
+        HBox.setHgrow(separator, Priority.ALWAYS);
+        return separator;
+    }
 
     private VBox buildName() {
         // Input.
         var label = new Label("Account Name");
         accountName = new ValidatableTextField();
-        accountName.setPrefWidth(400d);
+        accountName.setPrefWidth(1000d);
         accountName.textProperty().bindBidirectional(AccountViewModel.accountNameProperty());
         // Validation.
         accountNameValidationLabel = Validators.buildValidationLabel();
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, accountName, accountNameValidationLabel);
-        return vbox;
+        return buildFieldHolder(label, accountName, accountNameValidationLabel);
     }
 
     private VBox buildNumber() {
         // Input.
         var label = new Label("Account Number");
         accountNumber = new ValidatableTextField();
-        accountNumber.setPrefWidth(400d);
+        accountNumber.setPrefWidth(1000d);
         accountNumber.textProperty().bindBidirectional(AccountViewModel.accountNumberProperty());
         // Validation.
         accountNumberValidationLabel = Validators.buildValidationLabel();
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, accountNumber, accountNumberValidationLabel);
-        return vbox;
+        return buildFieldHolder(label, accountNumber, accountNumberValidationLabel);
     }
 
     private VBox buildBalance() {
         // Input.
-        var label = new Label("Balance (Optional)");
-        balance = new ValidatableTextField();
-        balance.setPrefWidth(400d);
-        balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty());
-        AccountViewModel.idProperty().addListener((observableValue, oV, nV) -> balance.setDisable(Objects.nonNull(oV) && (Double) oV > 0 || Objects.nonNull(nV) && (Double) nV > 0));
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, balance);
-        return vbox;
+        balanceLabel = new Label("Balance (Optional)");
+        balance = new ValidatableNumberField();
+        balance.setPrefWidth(1000d);
+        if (Objects.equals(balance.getText(), "0")) {
+            balance.setText(null);
+        }
+        balance.textProperty().addListener(observable -> {
+            if (Objects.equals(balance.getText(), "0")) {
+                balance.setText(null);
+            }
+        });
+        // Validation.
+        balanceValidationLabel = Validators.buildValidationLabel();
+        return buildFieldHolder(balanceLabel, balance, balanceValidationLabel);
     }
 
     private VBox buildDescription() {
         // Input.
         var label = new Label("Description (Optional)");
-        description = new TextArea();
-        description.setPrefWidth(400d);
+        description = new ValidatableTextArea();
+        description.setPrefWidth(1000d);
         description.textProperty().bindBidirectional(AccountViewModel.descriptionProperty());
         description.setWrapText(true);
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, description);
-        return vbox;
+        return buildFieldHolder(label, description);
     }
 
     private VBox buildCenter() {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildName(), buildNumber(), buildBalance(), buildDescription());
+        vbox.getChildren().addAll(buildTitle(), buildName(), buildNumber(), buildBalance(), buildDescription());
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Create");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -127,6 +157,7 @@ public class AccountForm extends MFXGenericDialog {
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setSpacing(20d);
+        hbox.setPadding(new Insets(10d));
         hbox.getChildren().addAll(buildSaveButton(), buildCancelButton());
         return hbox;
     }
@@ -134,25 +165,10 @@ public class AccountForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    AccountViewModel.clearAccountData();
-                    closeDialog(event);
-
-                    accountNameValidationLabel.setVisible(false);
-                    accountNumberValidationLabel.setVisible(false);
-                    accountNameValidationLabel.setManaged(false);
-                    accountNumberValidationLabel.setManaged(false);
-
-                    accountName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    accountNumber.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
+        cancelBtn.setOnAction((event) -> dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     accountNameConstraints = accountName.validate();
@@ -162,33 +178,46 @@ public class AccountForm extends MFXGenericDialog {
                         accountNameValidationLabel.setVisible(true);
                         accountNameValidationLabel.setText(accountNameConstraints.getFirst().getMessage());
                         accountName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) accountName.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (!accountNumberConstraints.isEmpty()) {
                         accountNumberValidationLabel.setManaged(true);
                         accountNumberValidationLabel.setVisible(true);
                         accountNumberValidationLabel.setText(accountNumberConstraints.getFirst().getMessage());
                         accountNumber.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) accountNumber.getScene().getWindow();
-                        dialog.sizeToScene();
+                    }
+                    if (reason == 2) {
+                        balanceConstraints = balance.validate();
+                        if (!balanceConstraints.isEmpty()) {
+                            balanceValidationLabel.setManaged(true);
+                            balanceValidationLabel.setVisible(true);
+                            balanceValidationLabel.setText(balanceConstraints.getFirst().getMessage());
+                            balance.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        }
                     }
                     if (accountNameConstraints.isEmpty()
                             && accountNumberConstraints.isEmpty()) {
-                        actionEvent = event;
-                        if (AccountViewModel.getId() > 0) {
-                            AccountViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                        if (reason == 2 && !balanceConstraints.isEmpty()) {
                             return;
                         }
-                        AccountViewModel.saveAccount(this::onSuccess, this::successMessage, this::errorMessage);
+                        saveBtn.startLoading();
+                        switch (reason) {
+                            case 1:
+                                AccountViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                                break;
+                            case 2:
+                                AccountViewModel.deposit(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                                break;
+                            default:
+                                AccountViewModel.saveAccount(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                                break;
+                        }
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        AccountViewModel.clearAccountData();
-        AccountViewModel.getAllAccounts(null, null);
+        dispose();
+        AccountViewModel.getAllAccounts(null, null, null, null);
     }
 
     public void requiredValidator() {
@@ -231,29 +260,62 @@ public class AccountForm extends MFXGenericDialog {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        AccountViewModel.clearAccountData();
+        accountName = null;
+        accountNameValidationLabel = null;
+        accountNumber = null;
+        accountNumberValidationLabel = null;
+        balance = null;
+        description = null;
+        saveBtn = null;
+        cancelBtn = null;
+        subTitle = null;
+        reason = null;
+    }
 
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+    private void setup() {
+        switch (reason) {
+            case 1:
+                accountName.setDisable(false);
+                accountNameValidationLabel.setDisable(false);
+                accountNumber.setDisable(false);
+                accountNumberValidationLabel.setDisable(false);
+                balance.setDisable(true);
+                balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty(), new NumberStringConverter());
+                description.setDisable(false);
+                saveBtn.textProperty().bindBidirectional(new SimpleStringProperty("Update"));
+                subTitle.textProperty().bindBidirectional(new SimpleStringProperty("Update Form"));
+                balanceLabel.textProperty().bindBidirectional(new SimpleStringProperty("Balance"));
+                balanceLabel.setDisable(true);
+                break;
+            case 2:
+                accountName.setDisable(true);
+                accountNameValidationLabel.setDisable(true);
+                accountNumber.setDisable(true);
+                accountNumberValidationLabel.setDisable(true);
+                balance.setDisable(false);
+                description.setDisable(true);
+                saveBtn.textProperty().bindBidirectional(new SimpleStringProperty("Deposit"));
+                subTitle.textProperty().bindBidirectional(new SimpleStringProperty("Deposit Form"));
+                balanceLabel.textProperty().bindBidirectional(new SimpleStringProperty("Deposit Amount"));
+                break;
+            default:
+                accountName.setDisable(false);
+                accountNameValidationLabel.setDisable(false);
+                accountNumber.setDisable(false);
+                accountNumberValidationLabel.setDisable(false);
+                balance.setDisable(false);
+                balance.textProperty().bindBidirectional(AccountViewModel.balanceProperty(), new NumberStringConverter());
+                description.setDisable(false);
+                break;
         }
     }
 }

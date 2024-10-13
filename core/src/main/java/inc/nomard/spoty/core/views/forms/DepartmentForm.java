@@ -1,42 +1,40 @@
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.*;
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.core.views.components.validatables.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import java.util.*;
-import javafx.collections.*;
-import javafx.css.*;
-import javafx.event.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
+import inc.nomard.spoty.core.views.components.CustomButton;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.core.views.util.Validators;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
+import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import lombok.extern.log4j.Log4j2;
 
-@Log
-public class DepartmentForm extends MFXGenericDialog {
+import java.util.List;
+
+@Log4j2
+public class DepartmentForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
-    public ValidatableTextField name, location;
-    public ValidatableComboBox<User> manager;
-    public ValidatableComboBox<Department> parentDepartment;
+    private final ModalPane modalPane;
+    public ValidatableTextField name;
     public Label nameValidationLabel;
-    public TextArea description;
-    public Button saveBtn;
+    public ValidatableTextArea description;
+    public CustomButton saveBtn;
     public Button cancelBtn;
     private List<Constraint> constraints;
-    private ActionEvent actionEvent = null;
 
-    public DepartmentForm() {
+    public DepartmentForm(ModalPane modalPane) {
+        this.modalPane = modalPane;
         init();
     }
 
@@ -62,50 +60,9 @@ public class DepartmentForm extends MFXGenericDialog {
         return vbox;
     }
 
-    private VBox buildManager() {
-        // Input.
-        var label = new Label("Manager");
-        manager = new ValidatableComboBox<>();
-        manager.setPrefWidth(400d);
-        manager.valueProperty().bindBidirectional(DepartmentViewModel.managerProperty());
-        setupManagerComboBox();
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, manager);
-        return vbox;
-    }
-
-    private VBox buildParentDepartment() {
-        // Input.
-        var label = new Label("Base Department (Optional)");
-        parentDepartment = new ValidatableComboBox<>();
-        parentDepartment.setPrefWidth(400d);
-        parentDepartment.valueProperty().bindBidirectional(DepartmentViewModel.parentDepartmentProperty());
-        setupDepartmentComboBox();
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, parentDepartment);
-        return vbox;
-    }
-
-    private VBox buildLocation() {
-        // Input.
-        location = new ValidatableTextField();
-        var label = new Label("Location (Optional)");
-        location.setPrefWidth(400d);
-        location.textProperty().bindBidirectional(DepartmentViewModel.locationProperty());
-        var vbox = new VBox();
-        vbox.setSpacing(2d);
-        vbox.setPadding(new Insets(2.5d, 0d, 2.5d, 0d));
-        vbox.getChildren().addAll(label, location);
-        return vbox;
-    }
-
     private VBox buildDescription() {
         // Input.
-        description = new TextArea();
+        description = new ValidatableTextArea();
         var label = new Label("Description (Optional)");
         description.setPrefWidth(400d);
         description.textProperty().bindBidirectional(DepartmentViewModel.descriptionProperty());
@@ -120,13 +77,13 @@ public class DepartmentForm extends MFXGenericDialog {
         var vbox = new VBox();
         vbox.setSpacing(8d);
         vbox.setPadding(new Insets(10d));
-        vbox.getChildren().addAll(buildName(), buildManager(), buildParentDepartment(), buildLocation(), buildDescription());
+        vbox.getChildren().addAll(buildName(), buildDescription());
         return vbox;
     }
 
-    private Button buildSaveButton() {
-        saveBtn = new Button("Save");
-        saveBtn.setDefaultButton(true);
+    private CustomButton buildSaveButton() {
+        saveBtn = new CustomButton("Save");
+        saveBtn.getStyleClass().add(Styles.ACCENT);
         return saveBtn;
     }
 
@@ -147,20 +104,10 @@ public class DepartmentForm extends MFXGenericDialog {
     private void buildDialogContent() {
         this.setCenter(buildCenter());
         this.setBottom(buildBottom());
-        this.setShowMinimize(false);
-        this.setShowAlwaysOnTop(false);
-        this.setShowClose(false);
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction(
-                (event) -> {
-                    DepartmentViewModel.clearDepartmentData();
-                    closeDialog(event);
-                    nameValidationLabel.setVisible(false);
-                    nameValidationLabel.setManaged(false);
-                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                });
+        cancelBtn.setOnAction(event -> this.dispose());
         saveBtn.setOnAction(
                 (event) -> {
                     constraints = name.validate();
@@ -169,24 +116,26 @@ public class DepartmentForm extends MFXGenericDialog {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(constraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
-                        dialog.sizeToScene();
                     }
                     if (constraints.isEmpty()) {
-                        actionEvent = event;
+                        saveBtn.startLoading();
                         if (DepartmentViewModel.getId() > 0) {
-                            DepartmentViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            return;
+                            DepartmentViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                        } else {
+                            DepartmentViewModel.saveDepartment(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
                         }
-                        DepartmentViewModel.saveDepartment(this::onSuccess, this::successMessage, this::errorMessage);
                     }
                 });
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        DepartmentViewModel.clearDepartmentData();
-        DepartmentViewModel.getAllDepartments(null, null);
+        this.dispose();
+        DepartmentViewModel.getAllDepartments(null, null, null, null);
+    }
+
+    private void errorMessage(String message) {
+        SpotyUtils.errorMessage(message);
+        saveBtn.stopLoading();
     }
 
     public void requiredValidator() {
@@ -212,57 +161,14 @@ public class DepartmentForm extends MFXGenericDialog {
                         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
-    private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
-    }
-
-    private void setupManagerComboBox() {
-        StringConverter<User> managerConverter = FunctionalStringConverter.to(
-                managerDetail -> (managerDetail == null) ? "" : managerDetail.getName());
-
-        manager.setConverter(managerConverter);
-
-        UserViewModel.getUsers().addListener((ListChangeListener<User>) c ->
-                manager.setItems(UserViewModel.getUsers())
-        );
-        if (!UserViewModel.getUsers().isEmpty()) {
-            manager.itemsProperty().bindBidirectional(UserViewModel.usersProperty());
-        }
-    }
-
-    private void setupDepartmentComboBox() {
-        StringConverter<Department> parentDepartmentConverter = FunctionalStringConverter.to(
-                parentDepartmentDetail -> (parentDepartmentDetail == null) ? "" : parentDepartmentDetail.getName());
-
-        parentDepartment.setConverter(parentDepartmentConverter);
-
-        DepartmentViewModel.getDepartments().addListener((ListChangeListener<Department>) c ->
-                parentDepartment.setItems(DepartmentViewModel.getDepartments())
-        );
-        if (!DepartmentViewModel.getDepartments().isEmpty()) {
-            parentDepartment.itemsProperty().bindBidirectional(DepartmentViewModel.departmentsProperty());
-        }
+    public void dispose() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
+        DepartmentViewModel.clearDepartmentData();
+        name = null;
+        nameValidationLabel = null;
+        description = null;
+        saveBtn = null;
+        cancelBtn = null;
     }
 }

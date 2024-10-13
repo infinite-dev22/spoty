@@ -1,16 +1,16 @@
 package inc.nomard.spoty.network_bridge.dtos.returns.sale_returns;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class SaleReturnDetail {
     private Long id;
     private String ref;

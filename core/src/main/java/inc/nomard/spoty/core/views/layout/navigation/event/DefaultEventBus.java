@@ -1,9 +1,12 @@
 package inc.nomard.spoty.core.views.layout.navigation.event;
 
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Consumer;
 
 /**
  * Simple event bus implementation.

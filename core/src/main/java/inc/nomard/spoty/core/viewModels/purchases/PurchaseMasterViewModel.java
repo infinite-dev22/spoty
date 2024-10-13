@@ -1,28 +1,42 @@
 package inc.nomard.spoty.core.viewModels.purchases;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-import inc.nomard.spoty.utils.connectivity.*;
-import inc.nomard.spoty.utils.functional_paradigm.*;
-import java.lang.reflect.*;
-import java.net.http.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-import javafx.application.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import inc.nomard.spoty.network_bridge.dtos.Discount;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.Tax;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
+import inc.nomard.spoty.network_bridge.dtos.response.ResponseModel;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.models.SearchModel;
+import inc.nomard.spoty.network_bridge.repositories.implementations.PurchasesRepositoryImpl;
+import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.connectivity.Connectivity;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-@Log
+import java.lang.reflect.Type;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.CompletableFuture;
+
+import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+
+@Log4j2
 public class PurchaseMasterViewModel {
     @Getter
     public static final ObservableList<PurchaseMaster> purchasesList = FXCollections.observableArrayList();
@@ -47,9 +61,17 @@ public class PurchaseMasterViewModel {
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
     private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
-    private static final StringProperty status = new SimpleStringProperty("");
+    private static final StringProperty purchaseStatus = new SimpleStringProperty("");
+    private static final StringProperty paymentStatus = new SimpleStringProperty("");
+    private static final StringProperty approvalStatus = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
+    private static final DoubleProperty amountPaid = new SimpleDoubleProperty(0d);
+    private static final DoubleProperty amountDue = new SimpleDoubleProperty(0d);
+    private static final DoubleProperty shippingFee = new SimpleDoubleProperty(0d);
     private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
+    private static final IntegerProperty totalPages = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageNumber = new SimpleIntegerProperty(0);
+    private static final IntegerProperty pageSize = new SimpleIntegerProperty(50);
 
     public static Long getId() {
         return id.get();
@@ -87,16 +109,40 @@ public class PurchaseMasterViewModel {
         return supplier;
     }
 
-    public static String getStatus() {
-        return status.get();
+    public static String getPurchaseStatus() {
+        return purchaseStatus.get();
     }
 
-    public static void setStatus(String status) {
-        PurchaseMasterViewModel.status.set(status);
+    public static void setPurchaseStatus(String purchaseStatus) {
+        PurchaseMasterViewModel.purchaseStatus.set(purchaseStatus);
     }
 
-    public static StringProperty statusProperty() {
-        return status;
+    public static StringProperty purchaseStatusProperty() {
+        return purchaseStatus;
+    }
+
+    public static String getPaymentStatus() {
+        return paymentStatus.get();
+    }
+
+    public static void setPaymentStatus(String paymentStatus) {
+        PurchaseMasterViewModel.paymentStatus.set(paymentStatus);
+    }
+
+    public static StringProperty paymentStatusProperty() {
+        return paymentStatus;
+    }
+
+    public static String getApprovalStatus() {
+        return approvalStatus.get();
+    }
+
+    public static void setApprovalStatus(String approvalStatus) {
+        PurchaseMasterViewModel.approvalStatus.set(approvalStatus);
+    }
+
+    public static StringProperty approvalStatusProperty() {
+        return approvalStatus;
     }
 
     public static Tax getTax() {
@@ -135,6 +181,42 @@ public class PurchaseMasterViewModel {
         return note;
     }
 
+    public static Double getShippingFee() {
+        return shippingFee.get();
+    }
+
+    public static void setShippingFee(Double shippingFee) {
+        PurchaseMasterViewModel.shippingFee.set(shippingFee);
+    }
+
+    public static DoubleProperty shippingFeeProperty() {
+        return shippingFee;
+    }
+
+    public static Double getAmountPaid() {
+        return amountPaid.get();
+    }
+
+    public static void setAmountPaid(Double amountPaid) {
+        PurchaseMasterViewModel.amountPaid.set(amountPaid);
+    }
+
+    public static DoubleProperty amountPaidProperty() {
+        return amountPaid;
+    }
+
+    public static Double getAmountDue() {
+        return amountDue.get();
+    }
+
+    public static void setAmountDue(Double amountDue) {
+        PurchaseMasterViewModel.amountDue.set(amountDue);
+    }
+
+    public static DoubleProperty amountDueProperty() {
+        return amountDue;
+    }
+
     public static ObservableList<PurchaseMaster> getPurchases() {
         return purchases.get();
     }
@@ -147,6 +229,42 @@ public class PurchaseMasterViewModel {
         return purchases;
     }
 
+    public static Integer getTotalPages() {
+        return totalPages.get();
+    }
+
+    public static void setTotalPages(Integer totalPages) {
+        PurchaseMasterViewModel.totalPages.set(totalPages);
+    }
+
+    public static IntegerProperty totalPagesProperty() {
+        return totalPages;
+    }
+
+    public static Integer getPageNumber() {
+        return pageNumber.get();
+    }
+
+    public static void setPageNumber(Integer pageNumber) {
+        PurchaseMasterViewModel.pageNumber.set(pageNumber);
+    }
+
+    public static IntegerProperty pageNumberProperty() {
+        return pageNumber;
+    }
+
+    public static Integer getPageSize() {
+        return pageSize.get();
+    }
+
+    public static void setPageSize(Integer pageSize) {
+        PurchaseMasterViewModel.pageSize.set(pageSize);
+    }
+
+    public static IntegerProperty pageSizeProperty() {
+        return pageSize;
+    }
+
     public static void resetProperties() {
         Platform.runLater(() -> {
             setId(0L);
@@ -154,8 +272,11 @@ public class PurchaseMasterViewModel {
             setSupplier(null);
             setTax(null);
             setDiscount(null);
-            setStatus("");
+            setPurchaseStatus("");
             setNote("");
+            setShippingFee(0d);
+            setAmountPaid(0d);
+            setAmountDue(0d);
             PENDING_DELETES.clear();
             PurchaseDetailViewModel.getPurchaseDetails().clear();
         });
@@ -169,9 +290,10 @@ public class PurchaseMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .amountPaid(0)
-                .total(0)
-                .amountDue(0)
+                .amountPaid(getAmountPaid())
+                .shippingFee(getShippingFee())
+                .purchaseStatus(getPurchaseStatus())
+                .paymentStatus("")
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
@@ -183,14 +305,18 @@ public class PurchaseMasterViewModel {
     }
 
     public static void getAllPurchaseMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                             SpotyGotFunctional.MessageConsumer errorMessage) {
-        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetchAll();
+                                             SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
+        CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
             if (response.statusCode() == 200) {
                 Platform.runLater(() -> {
-                    Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
+                    Type type = new TypeToken<ResponseModel<PurchaseMaster>>() {
                     }.getType();
-                    ArrayList<PurchaseMaster> purchaseList = gson.fromJson(response.body(), listType);
+                    ResponseModel<PurchaseMaster> responseModel = gson.fromJson(response.body(), type);
+                    setTotalPages(responseModel.getTotalPages());
+                    setPageNumber(responseModel.getPageable().getPageNumber());
+                    setPageSize(responseModel.getPageable().getPageSize());
+                    ArrayList<PurchaseMaster> purchaseList = responseModel.getContent();
                     purchasesList.clear();
                     purchasesList.addAll(purchaseList);
                     if (onSuccess != null) {
@@ -215,6 +341,14 @@ public class PurchaseMasterViewModel {
                     setNote(purchaseMaster.getNotes());
                     setDate(purchaseMaster.getDate());
                     setSupplier(purchaseMaster.getSupplier());
+                    setTax(purchaseMaster.getTax());
+                    setDiscount(purchaseMaster.getDiscount());
+                    setPurchaseStatus(purchaseMaster.getPurchaseStatus());
+                    setPaymentStatus(purchaseMaster.getPaymentStatus());
+                    setApprovalStatus(purchaseMaster.getApprovalStatus());
+                    setShippingFee(purchaseMaster.getShippingFee());
+                    setAmountPaid(purchaseMaster.getAmountPaid());
+                    setAmountDue(purchaseMaster.getAmountDue());
                     PurchaseDetailViewModel.getPurchaseDetails().clear();
                     PurchaseDetailViewModel.getPurchaseDetails().addAll(purchaseMaster.getPurchaseDetails());
                     if (onSuccess != null) {
@@ -258,9 +392,10 @@ public class PurchaseMasterViewModel {
                 .supplier(getSupplier())
                 .tax(getTax())
                 .discount(getDiscount())
-                .amountPaid(0)
-                .total(0)
-                .amountDue(0)
+                .amountPaid(getAmountPaid())
+                .shippingFee(getShippingFee())
+                .purchaseStatus(getPurchaseStatus())
+                .paymentStatus("")
                 .notes(getNotes())
                 .build();
         if (!PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
@@ -283,6 +418,7 @@ public class PurchaseMasterViewModel {
     private static void handleResponse(HttpResponse<String> response, SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                        SpotyGotFunctional.MessageConsumer successMessage,
                                        SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
         Platform.runLater(() -> {
             switch (response.statusCode()) {
                 case 200:
@@ -303,6 +439,7 @@ public class PurchaseMasterViewModel {
     }
 
     private static void handleNon200Status(HttpResponse<String> response, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.info("STATUS: " + response.statusCode() + " BODY: " + response.body());
         Platform.runLater(() -> {
             String message;
             switch (response.statusCode()) {
@@ -324,6 +461,7 @@ public class PurchaseMasterViewModel {
     }
 
     private static Void handleException(Throwable throwable, SpotyGotFunctional.MessageConsumer errorMessage) {
+        log.error(throwable.getMessage());
         Platform.runLater(() -> {
             SpotyLogger.writeToFile(throwable, PurchaseMasterViewModel.class);
             String message = Connectivity.isConnectedToInternet() ? "An in-app error occurred" : "No Internet Connection";

@@ -1,43 +1,43 @@
 package inc.nomard.spoty.core.views.pages;
 
-import atlantafx.base.util.*;
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.views.components.*;
-import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.layout.*;
-import inc.nomard.spoty.core.views.layout.message.*;
-import inc.nomard.spoty.core.views.layout.message.enums.*;
-import inc.nomard.spoty.core.views.previews.*;
-import inc.nomard.spoty.core.views.util.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import java.io.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.*;
-import javafx.beans.property.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
+import atlantafx.base.util.Animations;
+import inc.nomard.spoty.core.viewModels.CustomerViewModel;
+import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import inc.nomard.spoty.core.views.forms.CustomerForm;
+import inc.nomard.spoty.core.views.layout.AppManager;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
+import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.previews.CustomerPreview;
+import inc.nomard.spoty.core.views.util.OutlinePage;
+import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.*;
-import javafx.scene.input.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.*;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
+
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log
+@Log4j2
 public class CustomerPage extends OutlinePage {
+    private final SideModalPane modalPane;
     private TextField searchBar;
     private TableView<Customer> tableView;
-    private MFXProgressSpinner progress;
+    private SpotyProgressSpinner progress;
     private Button createBtn;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
     private TableColumn<Customer, String> name;
     private TableColumn<Customer, String> phone;
     private TableColumn<Customer, String> email;
@@ -45,20 +45,20 @@ public class CustomerPage extends OutlinePage {
     private TableColumn<Customer, String> city;
     private TableColumn<Customer, String> country;
     private TableColumn<Customer, String> taxNumber;
-    private TableColumn<Customer, Customer> createdBy;
-    private TableColumn<Customer, Customer> createdAt;
 
     public CustomerPage() {
         super();
-        try {
-            viewDialogPane();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        addNode(init());
+        modalPane = new SideModalPane();
+        getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        CustomerViewModel.getAllCustomers(this::onDataInitializationSuccess, this::errorMessage);
+        CustomerViewModel.getAllCustomers(this::onDataInitializationSuccess, this::errorMessage, null, null);
+        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
@@ -77,7 +77,7 @@ public class CustomerPage extends OutlinePage {
     }
 
     private HBox buildLeftTop() {
-        progress = new MFXProgressSpinner();
+        progress = new SpotyProgressSpinner();
         progress.setMinSize(30d, 30d);
         progress.setPrefSize(30d, 30d);
         progress.setMaxSize(30d, 30d);
@@ -121,10 +121,33 @@ public class CustomerPage extends OutlinePage {
         return hbox;
     }
 
-    private AnchorPane buildCenter() {
+    private VBox buildCenter() {
         tableView = new TableView<>();
-        NodeUtils.setAnchors(tableView, new Insets(0d));
-        return new AnchorPane(tableView);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+        HBox.setHgrow(tableView, Priority.ALWAYS);
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        paging.setPadding(new Insets(0d, 20d, 0d, 5d));
+        paging.setAlignment(Pos.CENTER);
+        if (CustomerViewModel.getTotalPages() > 0) {
+            paging.setVisible(true);
+            paging.setManaged(true);
+        } else {
+            paging.setVisible(false);
+            paging.setManaged(false);
+        }
+        CustomerViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+            if (CustomerViewModel.getTotalPages() > 0) {
+                paging.setVisible(true);
+                paging.setManaged(true);
+            } else {
+                paging.setVisible(false);
+                paging.setManaged(false);
+            }
+        });
+        var centerHolder = new VBox(tableView, paging);
+        VBox.setVgrow(centerHolder, Priority.ALWAYS);
+        HBox.setHgrow(centerHolder, Priority.ALWAYS);
+        return centerHolder;
     }
 
     private void setupTable() {
@@ -135,8 +158,6 @@ public class CustomerPage extends OutlinePage {
         city = new TableColumn<>("City");
         country = new TableColumn<>("Country");
         taxNumber = new TableColumn<>("Tax No.");
-        createdBy = new TableColumn<>("Created By");
-        createdAt = new TableColumn<>("Created At");
 
         name.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
         phone.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
@@ -145,12 +166,10 @@ public class CustomerPage extends OutlinePage {
         city.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         country.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
         taxNumber.prefWidthProperty().bind(tableView.widthProperty().multiply(.2));
-        createdBy.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
-        createdAt.prefWidthProperty().bind(tableView.widthProperty().multiply(.15));
 
         setupTableColumns();
 
-        var columnList = new LinkedList<>(Stream.of(name, phone, email, address, city, country, taxNumber, createdBy, createdAt).toList());
+        var columnList = new LinkedList<>(Stream.of(name, phone, email, address, city, country, taxNumber).toList());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
         styleCustomerTable();
@@ -184,14 +203,14 @@ public class CustomerPage extends OutlinePage {
         var view = new MenuItem("View");
         // Actions
         // Delete
-        delete.setOnAction(event -> new DeleteConfirmationDialog(() -> {
-            CustomerViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
+        delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
+            CustomerViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
-        }, obj.getItem().getName(), this));
+        }, obj.getItem().getName()).showDialog());
         // Edit
         edit.setOnAction(
                 e -> {
-                    CustomerViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new CustomerForm(), this).showAndWait(), this::errorMessage);
+                    CustomerViewModel.getItem(obj.getItem().getId(), this::showDialog, this::errorMessage);
                     e.consume();
                 });
         // View
@@ -206,30 +225,34 @@ public class CustomerPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> SpotyDialog.createDialog(new CustomerForm(), this).showAndWait());
+        createBtn.setOnAction(event -> this.showDialog());
     }
 
     private void onSuccess() {
-        CustomerViewModel.getAllCustomers(null, null);
+        CustomerViewModel.getAllCustomers(null, null, null, null);
     }
 
-    private void viewDialogPane() throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/CustomerPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new CustomerPreviewController());
-        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-        dialogContent.setHeaderText("Customer Details View");
-        dialogContent.setPrefHeight(screenHeight * .98);
-        dialogContent.setPrefWidth(700);
-        viewDialog = SpotyDialog.createDialog(dialogContent, this);
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new CustomerForm(modalPane));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     public void viewShow(Customer customer) {
-        CustomerPreviewController controller = viewFxmlLoader.getController();
-        controller.init(customer);
-        viewDialog.showAndWait();
+        var scrollPane = new ScrollPane(new CustomerPreview(customer, modalPane));
+        scrollPane.setMaxHeight(10_000);
+
+        var dialog = new ModalContentHolder(710, 800);
+        dialog.getChildren().add(scrollPane);
+        dialog.setPadding(new Insets(5d));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     public void setSearchBar() {
@@ -238,7 +261,7 @@ public class CustomerPage extends OutlinePage {
                 return;
             }
             if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
-                CustomerViewModel.getAllCustomers(null, null);
+                CustomerViewModel.getAllCustomers(null, null, null, null);
             }
             progress.setManaged(true);
             progress.setVisible(true);
@@ -249,32 +272,10 @@ public class CustomerPage extends OutlinePage {
         });
     }
 
-    private void successMessage(String message) {
-        displayNotification(message, MessageVariants.SUCCESS, "fas-circle-check");
-    }
-
     private void errorMessage(String message) {
-        displayNotification(message, MessageVariants.ERROR, "fas-triangle-exclamation");
+        SpotyUtils.errorMessage(message);
         progress.setManaged(false);
         progress.setVisible(false);
-    }
-
-    private void displayNotification(String message, MessageVariants type, String icon) {
-        SpotyMessage notification = new SpotyMessage.MessageBuilder(message)
-                .duration(MessageDuration.SHORT)
-                .icon(icon)
-                .type(type)
-                .height(60)
-                .build();
-        AnchorPane.setTopAnchor(notification, 5.0);
-        AnchorPane.setRightAnchor(notification, 5.0);
-
-        var in = Animations.slideInDown(notification, Duration.millis(250));
-        if (!AppManager.getMorphPane().getChildren().contains(notification)) {
-            AppManager.getMorphPane().getChildren().add(notification);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
-        }
     }
 
     private void setupTableColumns() {
@@ -285,25 +286,44 @@ public class CustomerPage extends OutlinePage {
         city.setCellValueFactory(new PropertyValueFactory<>("city"));
         country.setCellValueFactory(new PropertyValueFactory<>("country"));
         taxNumber.setCellValueFactory(new PropertyValueFactory<>("taxNumber"));
-        createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Customer item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getCreatedBy().getName());
-            }
-        });
-        createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
-            @Override
-            public void updateItem(Customer item, boolean empty) {
-                super.updateItem(item, empty);
-                this.setAlignment(Pos.CENTER);
+    }
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
-
-                setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getCreatedAt()) ? null : item.getCreatedAt().format(dtf));
-            }
+    private Pagination buildPagination() {
+        var pagination = new Pagination(CustomerViewModel.getTotalPages(), 0);
+        pagination.setMaxPageIndicatorCount(5);
+        pagination.pageCountProperty().bindBidirectional(CustomerViewModel.totalPagesProperty());
+        pagination.setPageFactory(pageNum -> {
+            progress.setManaged(true);
+            progress.setVisible(true);
+            CustomerViewModel.getAllCustomers(() -> {
+                progress.setManaged(false);
+                progress.setVisible(false);
+            }, null, pageNum, CustomerViewModel.getPageSize());
+            CustomerViewModel.setPageNumber(pageNum);
+            return new StackPane(); // null isn't allowed
         });
+        return pagination;
+    }
+
+    private ComboBox<Integer> buildPageSize() {
+        var pageSize = new ComboBox<Integer>();
+        pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
+        pageSize.valueProperty().bindBidirectional(CustomerViewModel.pageSizeProperty().asObject());
+        pageSize.valueProperty().addListener(
+                (observableValue, integer, t1) -> {
+                    progress.setManaged(true);
+                    progress.setVisible(true);
+                    CustomerViewModel
+                            .getAllCustomers(
+                                    () -> {
+                                        progress.setManaged(false);
+                                        progress.setVisible(false);
+                                    },
+                                    null,
+                                    CustomerViewModel.getPageNumber(),
+                                    t1);
+                    CustomerViewModel.setPageSize(t1);
+                });
+        return pageSize;
     }
 }

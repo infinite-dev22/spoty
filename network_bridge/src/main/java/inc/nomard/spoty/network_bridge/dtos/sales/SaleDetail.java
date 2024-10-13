@@ -1,21 +1,22 @@
 package inc.nomard.spoty.network_bridge.dtos.sales;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import javafx.beans.property.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import javafx.beans.property.SimpleBooleanProperty;
 import lombok.*;
-import lombok.extern.java.*;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log
+@Log4j2
 public class SaleDetail {
     private Long id;
     private Product product;
     private int quantity;
-    private double subTotalPrice;
+    private double unitPrice;
+    private double totalPrice;
     @Builder.Default
     private transient SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
 
