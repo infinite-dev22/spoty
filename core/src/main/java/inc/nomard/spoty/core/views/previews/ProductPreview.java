@@ -231,8 +231,7 @@ public class ProductPreview extends BorderPane {
         this.getStylesheets().addAll(
                 SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/Common.css"),
-                SpotyCoreResourceLoader.load("styles/TextFields.css"),
-                SpotyCoreResourceLoader.load("styles/theming/Default.css")
+                SpotyCoreResourceLoader.load("styles/TextFields.css")
         );
     }
 
