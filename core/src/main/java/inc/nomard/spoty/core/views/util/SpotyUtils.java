@@ -14,6 +14,7 @@ import javafx.util.Duration;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
+import java.io.File;
 import java.util.Optional;
 
 public final class SpotyUtils {
@@ -137,5 +138,15 @@ public final class SpotyUtils {
             // Default for unknown status codes
             default -> message.orElse("Unknown status code");
         };
+    }
+
+    public static String getFileExtension(File file) {
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf('.');
+
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            return fileName.substring(dotIndex + 1).toLowerCase();
+        }
+        return "Unknown";
     }
 }
