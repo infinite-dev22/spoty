@@ -9,7 +9,7 @@ import inc.nomard.spoty.core.views.pos.PointOfSalePage;
 import inc.nomard.spoty.core.views.settings.AppSettingPage;
 import inc.nomard.spoty.core.views.settings.BranchPage;
 import inc.nomard.spoty.core.views.settings.RolePage;
-import inc.nomard.spoty.core.views.settings.TenantSettingsPage;
+import inc.nomard.spoty.core.views.settings.tenant_settings.TenantSettingsPage;
 import inc.nomard.spoty.core.views.util.Page;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.flavouring.AppFlavor;

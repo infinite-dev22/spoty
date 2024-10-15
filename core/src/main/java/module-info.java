@@ -48,4 +48,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.pages.sale;
     opens inc.nomard.spoty.core.views.pages.sale.tabs;
     opens inc.nomard.spoty.core.views.pages.purchase.tabs;
+    opens inc.nomard.spoty.core.views.settings.tenant_settings;
+    opens inc.nomard.spoty.core.views.settings.tenant_settings.tabs;
 }
