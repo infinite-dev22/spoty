@@ -1,9 +1,9 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
-import inc.nomard.spoty.core.views.components.label_components.skins.LabeledTextAreaSkin;
-import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.util.validation.Validated;
 import inc.nomard.spoty.core.util.validation.Validator;
+import inc.nomard.spoty.core.views.components.label_components.skins.LabeledTextAreaSkin;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Control;

@@ -1,19 +1,21 @@
 package inc.nomard.spoty.core.views.components.label_components.skins;
 
+import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledDatePicker;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
+import javafx.scene.text.Text;
 
 public class LabeledDatePickerSkin extends SkinBase<LabeledDatePicker> {
 
-    private final Label label;
+    private final Text label;
     private final DatePicker datePicker;
 
     public LabeledDatePickerSkin(LabeledDatePicker control) {
         super(control);
 
-        label = new Label();
+        label = new Text();
+        label.getStyleClass().addAll(Styles.TEXT);
         datePicker = control.getDatePicker();
 
         getChildren().addAll(label, datePicker);
