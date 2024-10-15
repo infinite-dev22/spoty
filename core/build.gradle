@@ -26,48 +26,49 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-graalvmNative {
-    binaries.all {
-        resources.autodetect()
-    }
-    toolchainDetection = true
-    agent {
-        defaultMode = "standard"
-        enabled = true
-        modes {
-            standard {
-            }
-        }
-        builtinCallerFilter = true
-        builtinHeuristicFilter = true
-        enableExperimentalPredefinedClasses = false
-        enableExperimentalUnsafeAllocationTracing = false
-        trackReflectionMetadata = true
-        metadataCopy {
-            inputTaskNames.add("test")
-            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
-            mergeWithExisting = true
-        }
-    }
-    binaries {
-        main {
-            imageName = "OpenSale-ERP"
-            mainClass = "inc.nomard.spoty.core.Main"
-            debug = true
-            verbose = true
-            fallback = false
-            sharedLibrary = false
-            quickBuild = false
-            richOutput = false
-            buildArgs.add("-O4")
-            buildArgs.add("--initialize-at-build-time=org.apache.logging.log4j.*")
-        }
-    }
-    binaries.configureEach {
-        buildArgs.add("--verbose")
-        resources.autodetect()
-    }
-}
+//graalvmNative {
+//    binaries.all {
+//        resources.autodetect()
+//        buildArgs.add("-O4")
+//        buildArgs.add("--initialize-at-build-time=org.apache.logging.log4j.*")
+//        buildArgs.add("--initialize-at-build-time=org.apache.logging.log4j,org.apache.logging.log4j.core")
+//    }
+//    toolchainDetection = true
+//    agent {
+//        defaultMode = "standard"
+//        enabled = true
+//        modes {
+//            standard {
+//            }
+//        }
+//        builtinCallerFilter = true
+//        builtinHeuristicFilter = true
+//        enableExperimentalPredefinedClasses = false
+//        enableExperimentalUnsafeAllocationTracing = false
+//        trackReflectionMetadata = true
+//        metadataCopy {
+//            inputTaskNames.add("test")
+//            outputDirectories.add("src/main/resources/META-INF/native-image/<groupId>/<artifactId>/")
+//            mergeWithExisting = true
+//        }
+//    }
+//    binaries {
+//        main {
+//            imageName = "OpenSale-ERP"
+//            mainClass = "inc.nomard.spoty.core.Main"
+//            debug = true
+//            verbose = true
+//            fallback = false
+//            sharedLibrary = false
+//            quickBuild = false
+//            richOutput = false
+//        }
+//    }
+//    binaries.configureEach {
+//        buildArgs.add("--verbose")
+//        resources.autodetect()
+//    }
+//}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
@@ -223,35 +224,35 @@ jlink {
 dependencies {
     implementation project(":network_bridge")
     implementation project(":utils")
+    // Webp ImageIO
+    implementation "com.gitee.jmash:webp-imageio:$webp_imag_io"
     // VirtualizedFX
-    implementation 'io.github.palexdev:virtualizedfx:21.6.4'
-    // JFXtras
-    implementation 'org.jfxtras:jfxtras-controls:17-r1'
+    implementation "io.github.palexdev:virtualizedfx:$virtualized_fx"
     // Jakarta Inject API
     implementation "jakarta.inject:jakarta.inject-api:$jakarta_inject_api"
     // Measure Unit API
     implementation "javax.measure:unit-api:$measure_unit_api"
     // GemsFX
-    implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"
+    implementation "com.dlsc.gemsfx:gemsfx:$gems_fx"
     // CalendarFX
-    implementation "com.calendarfx:view:11.12.7"
+    implementation "com.calendarfx:view:$calendar_fx"
     // FX Charts
     implementation "eu.hansolo.fx:charts:$fx_charts"
     // AtlantaFX
-    implementation "io.github.mkpaz:atlantafx-parent:$atlantafx"
-    implementation "io.github.mkpaz:atlantafx-styles:$atlantafx"
-    implementation "io.github.mkpaz:atlantafx-base:$atlantafx"
+    implementation "io.github.mkpaz:atlantafx-parent:$atlanta_fx"
+    implementation "io.github.mkpaz:atlantafx-styles:$atlanta_fx"
+    implementation "io.github.mkpaz:atlantafx-base:$atlanta_fx"
     // GSon
     implementation "com.google.code.gson:gson:$gson"
     // MaterialFX
-    implementation "io.github.palexdev:materialfx:$materialfx"
+    implementation "io.github.palexdev:materialfx:$material_fx"
     // IkonLi
-    implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
-    implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
-    implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
-    implementation "org.kordamp.ikonli:ikonli-feather-pack:$ikonLi"
+    implementation "org.kordamp.ikonli:ikonli-javafx:$ikonli"
+    implementation "org.kordamp.ikonli:ikonli-core:$ikonli"
+    implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonli"
+    implementation "org.kordamp.ikonli:ikonli-feather-pack:$ikonli"
     // CSSFX
-    implementation "fr.brouillard.oss:cssfx:$cssfx"
+    implementation "fr.brouillard.oss:cssfx:$css_fx"
     // Lombok
     implementation "org.projectlombok:lombok:$lombok"
     compileOnly "org.projectlombok:lombok:$lombok"
