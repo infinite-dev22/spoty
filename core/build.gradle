@@ -166,10 +166,12 @@ jlink {
     }
 
     jpackage {
+        imageName = "$app_installer_name"
+        appVersion = "$project.version"
         installerOptions = [
-                "--name", app_installer_name,
+//                "--name", app_installer_name,
                 "--description", project.description,
-                "--app-version", project.version,
+//                "--app-version", project.version,
                 "--copyright", app_copyright,
                 "--vendor", app_vendor,
                 "--about-url", app_about_url,
@@ -178,6 +180,7 @@ jlink {
         ]
 
         if (os.linux) {
+            icon = "$linux_icon"
             installerOptions += [
                     "--icon", linux_icon,
                     "--type", deb_linux_installer_type  /*rpm_linux_installer_type*/,
@@ -190,6 +193,7 @@ jlink {
             ]
         }
         if (os.macOsX) {
+            icon = "$mac_icon"
             installerOptions += [
                     "--icon", mac_icon,
                     "--type", mac_installer_type,
@@ -204,6 +208,7 @@ jlink {
             ]
         }
         if (os.windows) {
+            icon = "$windows_icon"
             installerOptions += [
                     "--icon", windows_icon,
                     "--type", windows_installer_type,
