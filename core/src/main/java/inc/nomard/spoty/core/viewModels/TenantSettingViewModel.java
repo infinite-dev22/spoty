@@ -546,7 +546,9 @@ public class TenantSettingViewModel {
                     setApproveSaleReturns(tenantSettings.getApproveSaleReturns());
                     setApprovePurchaseReturns(tenantSettings.getApprovePurchaseReturns());
                     setDefaultCurrency(tenantSettings.getDefaultCurrency());
-                    onSuccess.run();
+                    if (Objects.nonNull(onSuccess)) {
+                        onSuccess.run();
+                    }
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
