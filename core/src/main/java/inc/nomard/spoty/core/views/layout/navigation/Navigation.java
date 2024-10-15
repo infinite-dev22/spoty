@@ -170,10 +170,13 @@ public class Navigation {
     }
 
     private NavTree.NavTreeItem createSettingsGroup() {
-        var settings = NavTree.NavTreeItem.group("Settings", COGS);
+        var settings = NavTree.NavTreeItem.group("Settings", COG);
+        if (flavor == AppFlavor.DEV) {
+            settings.getChildren().addAll(
+                    NAV_TREE.get(AppSettingPage.class),
+                    NAV_TREE.get(BranchPage.class));
+        }
         settings.getChildren().setAll(
-                NAV_TREE.get(AppSettingPage.class),
-                NAV_TREE.get(BranchPage.class),
                 NAV_TREE.get(TenantSettingsPage.class),
                 NAV_TREE.get(RolePage.class));
         return settings;
