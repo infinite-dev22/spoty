@@ -9,7 +9,7 @@ import inc.nomard.spoty.core.views.pos.PointOfSalePage;
 import inc.nomard.spoty.core.views.settings.AppSettingPage;
 import inc.nomard.spoty.core.views.settings.BranchPage;
 import inc.nomard.spoty.core.views.settings.RolePage;
-import inc.nomard.spoty.core.views.settings.TenantSettingsPage;
+import inc.nomard.spoty.core.views.settings.tenant_settings.TenantSettingsPage;
 import inc.nomard.spoty.core.views.util.Page;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.flavouring.AppFlavor;
@@ -170,10 +170,13 @@ public class Navigation {
     }
 
     private NavTree.NavTreeItem createSettingsGroup() {
-        var settings = NavTree.NavTreeItem.group("Settings", COGS);
+        var settings = NavTree.NavTreeItem.group("Settings", COG);
+        if (flavor == AppFlavor.DEV) {
+            settings.getChildren().addAll(
+                    NAV_TREE.get(AppSettingPage.class),
+                    NAV_TREE.get(BranchPage.class));
+        }
         settings.getChildren().setAll(
-                NAV_TREE.get(AppSettingPage.class),
-                NAV_TREE.get(BranchPage.class),
                 NAV_TREE.get(TenantSettingsPage.class),
                 NAV_TREE.get(RolePage.class));
         return settings;

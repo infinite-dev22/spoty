@@ -1,19 +1,21 @@
 package inc.nomard.spoty.core.views.components.label_components.skins;
 
 import atlantafx.base.controls.CustomTextField;
+import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledTextField;
-import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
+import javafx.scene.text.Text;
 
 public class LabeledTextFieldSkin extends SkinBase<LabeledTextField> {
 
-    private final Label label;
+    private final Text label;
     private final CustomTextField textField;
 
     public LabeledTextFieldSkin(LabeledTextField control) {
         super(control);
 
-        label = new Label();
+        label = new Text();
+        label.getStyleClass().addAll(Styles.TEXT);
         textField = new CustomTextField();
 
         getChildren().addAll(label, textField);

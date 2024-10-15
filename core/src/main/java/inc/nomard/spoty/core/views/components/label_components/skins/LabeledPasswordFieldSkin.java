@@ -1,19 +1,21 @@
 package inc.nomard.spoty.core.views.components.label_components.skins;
 
+import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledPasswordField;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.SkinBase;
+import javafx.scene.text.Text;
 
 public class LabeledPasswordFieldSkin extends SkinBase<LabeledPasswordField> {
 
-    private final Label label;
+    private final Text label;
     private final PasswordField textField;
 
     public LabeledPasswordFieldSkin(LabeledPasswordField control) {
         super(control);
 
-        label = new Label();
+        label = new Text();
+        label.getStyleClass().addAll(Styles.TEXT);
         textField = new PasswordField();
 
         getChildren().addAll(label, textField);

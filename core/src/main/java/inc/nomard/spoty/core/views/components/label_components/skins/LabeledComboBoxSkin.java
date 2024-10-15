@@ -1,19 +1,21 @@
 package inc.nomard.spoty.core.views.components.label_components.skins;
 
+import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
+import javafx.scene.text.Text;
 
 public class LabeledComboBoxSkin<T> extends SkinBase<LabeledComboBox<T>> {
 
-    private final Label label;
+    private final Text label;
     private final ComboBox<T> comboBox;
 
     public LabeledComboBoxSkin(LabeledComboBox<T> control) {
         super(control);
 
-        label = new Label();
+        label = new Text();
+        label.getStyleClass().addAll(Styles.TEXT);
         comboBox = control.getComboBox();
 
         getChildren().addAll(label, comboBox);

@@ -375,7 +375,7 @@ public class EndPoints {
     }
 
     public static final class TenantSettings {
-        public static final String tenantSettingsUrl = apiUrl + "tenant/settings";
+        public static final String tenantSettingsUrl = apiUrl + "/tenant/settings";
         public static final String getTenantSettings = tenantSettingsUrl + "/get";
         public static final String addTenantSettings = tenantSettingsUrl + "/add";
         public static final String updateTenantSettings = tenantSettingsUrl + "/update";

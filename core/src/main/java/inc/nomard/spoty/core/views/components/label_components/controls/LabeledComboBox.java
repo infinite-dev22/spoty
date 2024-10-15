@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.views.components.label_components.controls;
 
-import inc.nomard.spoty.core.views.components.label_components.skins.LabeledComboBoxSkin;
 import inc.nomard.spoty.core.util.validation.Validated;
 import inc.nomard.spoty.core.util.validation.Validator;
+import inc.nomard.spoty.core.views.components.label_components.skins.LabeledComboBoxSkin;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;

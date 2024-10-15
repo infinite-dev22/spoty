@@ -1,19 +1,21 @@
 package inc.nomard.spoty.core.views.components.label_components.skins;
 
+import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledTextArea;
-import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.control.TextArea;
+import javafx.scene.text.Text;
 
 public class LabeledTextAreaSkin extends SkinBase<LabeledTextArea> {
 
-    private final Label label;
+    private final Text label;
     private final TextArea textArea;
 
     public LabeledTextAreaSkin(LabeledTextArea control) {
         super(control);
 
-        label = new Label();
+        label = new Text();
+        label.getStyleClass().addAll(Styles.TEXT);
         textArea = control.getTextArea();
 
         getChildren().addAll(label, textArea);

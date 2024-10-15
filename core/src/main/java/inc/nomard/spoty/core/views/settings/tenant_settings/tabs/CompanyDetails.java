@@ -1,31 +1,25 @@
-package inc.nomard.spoty.core.views.settings;
+package inc.nomard.spoty.core.views.settings.tenant_settings.tabs;
 
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
 import inc.nomard.spoty.core.viewModels.TenantSettingViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
-import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledTextField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
-import inc.nomard.spoty.core.views.pages.EmployeePage;
-import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
-import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.UIUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
@@ -36,30 +30,30 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeBrands;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.Currency;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 @Log4j2
-public class TenantSettingsPage extends OutlinePage {
+public class CompanyDetails extends OutlinePage {
     private final SideModalPane modalPane;
     public CustomButton saveBtn;
     public Circle companyLogo;
-    public Label companyName,
-            companyWeblink,
-            fileLabel;
+    public Text companyName,
+            fileLabel,
+            companyWeblink;
     public HBox linkIcon,
             uploadIcon,
             heroImage;
@@ -78,27 +72,15 @@ public class TenantSettingsPage extends OutlinePage {
             emailsCheck,
             receiptsCheck;
     public ScrollPane scrollPane;
-    public LabeledComboBox<Currency> defaultCurrencyPicker;
     private Circle currentCompanyLogo;
     private VBox companyLogoBtn;
     private FileChooser fileChooser;
 
-    public TenantSettingsPage() {
+    public CompanyDetails() {
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
         progress();
-        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
-                CompletableFuture.runAsync(CurrencyViewModel::getAllCurrencies),
-                CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(null, null)));
-
-        allDataInitialization.thenRun(this::onDataInitializationSuccess)
-                .exceptionally(this::onDataInitializationFailure);
-    }
-
-    private Void onDataInitializationFailure(Throwable throwable) {
-        SpotyLogger.writeToFile(throwable, EmployeePage.class);
-        this.errorMessage("An error occurred while loading view");
-        return null;
+        CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(this::onDataInitializationSuccess, this::errorMessage));
     }
 
     private void onDataInitializationSuccess() {
@@ -123,12 +105,11 @@ public class TenantSettingsPage extends OutlinePage {
 
     private AnchorPane init() {
         var pane = new AnchorPane();
-        pane.getStyleClass().add("card-flat");
+        pane.getStyleClass().add("card-flat-top");
         BorderPane.setAlignment(pane, Pos.CENTER);
         BorderPane.setMargin(pane, new Insets(0d));
         pane.getChildren().add(buildScrollPane());
         setIcons();
-        setupComboBoxes();
         prefillForms();
         showData();
         addDocument();
@@ -137,6 +118,8 @@ public class TenantSettingsPage extends OutlinePage {
 
     private ScrollPane buildScrollPane() {
         scrollPane = new ScrollPane(buildContent());
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         componentSizing();
         NodeUtils.setAnchors(scrollPane, new Insets(0d));
@@ -144,19 +127,16 @@ public class TenantSettingsPage extends OutlinePage {
     }
 
     private VBox buildContent() {
-        var vbox = new VBox();
-        vbox.setSpacing(16d);
-        vbox.setPadding(new Insets(16d));
-        vbox.getChildren().addAll(buildHero(),
+        content = new VBox(16d);
+        content.setPadding(new Insets(16d));
+        content.getChildren().addAll(buildHero(),
                 buildCompanyProfile(),
                 separator(), buildCompanyPublicProfiles(),
                 separator(), buildCompanyTagLine(),
                 separator(), buildCompanyLogo(),
                 separator(), buildCompanyBranding(),
                 separator(), buildCompanySocialProfiles(),
-                separator(), buildCompanyDefaults());
-        content = new VBox(vbox);
-        content.setSpacing(16d);
+                new Spacer(100, Orientation.VERTICAL));
 
         return content;
     }
@@ -168,7 +148,7 @@ public class TenantSettingsPage extends OutlinePage {
         heroImage.setMaxHeight(140d);
         heroImage.setMinHeight(140d);
         heroImage.setPrefHeight(140d);
-        heroImage.getStyleClass().add(Styles.ACCENT);
+        heroImage.getStyleClass().add("hero-image");
         UIUtils.anchor(heroImage, 0d, 0d, null, 0d);
         return heroImage;
     }
@@ -186,13 +166,11 @@ public class TenantSettingsPage extends OutlinePage {
     }
 
     private VBox buildCompanyDetailsPreview() {
-        companyName = new Label();
-        companyName.getStyleClass().add("h3");
+        companyName = new Text();
+        companyName.getStyleClass().addAll(Styles.TITLE_1, Styles.TEXT_ITALIC);
 
-        companyWeblink = new Label();
-        companyWeblink.setTextFill(Color.web("#908686"));
-        companyWeblink.setWrapText(true);
-        companyName.getStyleClass().add("fs-italic");
+        companyWeblink = new Text();
+        companyWeblink.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_SUBTLE);
         linkIcon = new HBox();
         linkIcon.setAlignment(Pos.CENTER);
         linkIcon.setCursor(Cursor.HAND);
@@ -201,7 +179,7 @@ public class TenantSettingsPage extends OutlinePage {
         hbox.setSpacing(16d);
         hbox.getChildren().addAll(companyWeblink, linkIcon);
         var vbox = new VBox();
-        vbox.setAlignment(Pos.CENTER);
+        vbox.setAlignment(Pos.CENTER_LEFT);
         vbox.setSpacing(8d);
         vbox.getChildren().addAll(companyName, hbox);
         vbox.setPadding(new Insets(40d, 0d, 0d, 0d));
@@ -212,7 +190,7 @@ public class TenantSettingsPage extends OutlinePage {
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setSpacing(16d);
-        hbox.setPadding(new Insets(0d, 0d, 0d, 16d));
+        hbox.setPadding(new Insets(50d, 0d, 0d, 16d));
         UIUtils.anchor(hbox, null, 0d, 0d, 0d);
         hbox.getChildren().addAll(buildCompanyLogoHolder(), buildCompanyDetailsPreview());
         return hbox;
@@ -240,12 +218,26 @@ public class TenantSettingsPage extends OutlinePage {
     }
 
     private VBox buildSectionTitle(String title, String subTitle) {
-        var label = new Label(title);
-        label.setWrapText(true);
-        label.getStyleClass().add("h5");
-        var subLabel = new Label(subTitle);
-        subLabel.setWrapText(true);
-        subLabel.getStyleClass().add("disabled-text");
+        var label = new Text(title);
+        label.getStyleClass().addAll(Styles.TITLE_4);
+        label.sceneProperty().addListener((_, _, newScene) -> {
+            if (newScene != null) {
+                // At this point, the parent is guaranteed to be set
+                label.getParent().layoutBoundsProperty().addListener((_, _, newBounds) -> {
+                    label.setWrappingWidth(newBounds.getWidth() * 0.8); // Set wrapping width to 80% of parent's width
+                });
+            }
+        });
+        var subLabel = new Text(subTitle);
+        subLabel.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_SUBTLE);
+        subLabel.sceneProperty().addListener((_, _, newScene) -> {
+            if (newScene != null) {
+                // At this point, the parent is guaranteed to be set
+                subLabel.getParent().layoutBoundsProperty().addListener((_, _, newBounds) -> {
+                    subLabel.setWrappingWidth(newBounds.getWidth() * 0.8); // Set wrapping width to 80% of parent's width
+                });
+            }
+        });
         var vbox = buildSectionGroup();
         vbox.getChildren().addAll(label, subLabel);
         return vbox;
@@ -266,9 +258,9 @@ public class TenantSettingsPage extends OutlinePage {
 
     private HBox buildCompanyProfile() {
         // Save button.
-        saveBtn = new CustomButton("_Save Changes");
+        saveBtn = new CustomButton("Save Changes");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(mouseEvent -> TenantSettingViewModel.updateTenantSettings(this::onSuccess, SpotyUtils::successMessage, this::errorMessage));
+        saveBtn.setOnAction(_ -> TenantSettingViewModel.updateTenantSettings(this::onSuccess, SpotyUtils::successMessage, this::errorMessage));
         var hbox = new HBox();
         hbox.setSpacing(16d);
         hbox.setAlignment(Pos.CENTER_LEFT);
@@ -323,7 +315,8 @@ public class TenantSettingsPage extends OutlinePage {
                 buildSectionTitle("Social profiles",
                         "Add your company's social profiles."),
                 spacer(),
-                vbox);
+                vbox,
+                spacer());
         return hbox;
     }
 
@@ -334,13 +327,15 @@ public class TenantSettingsPage extends OutlinePage {
         companyTagLine.setMinHeight(100d);
         companyTagLine.setWrapText(true);
 //        companyTagLine.setPrompt("Your company's tagline e.g. Just Do It, Think Different, Quality never goes out of style, etc.");
-        var label = new Label("Tag line");
+        var label = new Text("Tag line");
+        label.getStyleClass().addAll(Styles.TEXT);
         var hbox = buildSection();
         hbox.getChildren().addAll(
                 buildSectionTitle("Tag line",
                         "A quick snapshot of your company"),
                 spacer(),
-                new VBox(label, companyTagLine));
+                new VBox(label, companyTagLine),
+                spacer());
         return hbox;
     }
 
@@ -359,9 +354,17 @@ public class TenantSettingsPage extends OutlinePage {
         uploadIcon = new HBox();
         uploadIcon.setAlignment(Pos.CENTER);
         // Label/file name.
-        fileLabel = new Label("Click to upload or Drag and drop png, jpg or gif. (max. size 800 x 400 px)");
+        fileLabel = new Text("Click to upload or Drag and drop png, jpg/jpeg or webp. (max. size 800 x 400 px)");
         fileLabel.setTextAlignment(TextAlignment.CENTER);
-        fileLabel.setWrapText(true);
+        fileLabel.getStyleClass().addAll(Styles.TEXT);
+        fileLabel.sceneProperty().addListener((_, _, newScene) -> {
+            if (newScene != null) {
+                // At this point, the parent is guaranteed to be set
+                fileLabel.getParent().layoutBoundsProperty().addListener((_, _, newBounds) -> {
+                    fileLabel.setWrappingWidth(newBounds.getWidth() * 0.8); // Set wrapping width to 80% of parent's width
+                });
+            }
+        });
         // Drop target and file explorer button.
         companyLogoBtn = new VBox();
         companyLogoBtn.setAlignment(Pos.CENTER);
@@ -392,7 +395,8 @@ public class TenantSettingsPage extends OutlinePage {
                 buildSectionTitle("Company logo",
                         "Update your company logo."),
                 spacer(),
-                buildLogoUI());
+                buildLogoUI(),
+                spacer());
         return hbox;
     }
 
@@ -419,7 +423,8 @@ public class TenantSettingsPage extends OutlinePage {
                 buildSectionTitle("Branding",
                         "Add your company's logo to documents, reports, emails, etc..."),
                 spacer(),
-                vbox);
+                vbox,
+                spacer());
         return hbox;
     }
 
@@ -451,23 +456,8 @@ public class TenantSettingsPage extends OutlinePage {
                 buildSectionTitle("Social profiles",
                         "Add your company's social profiles."),
                 spacer(),
-                vbox);
-        return hbox;
-    }
-
-    private HBox buildCompanyDefaults() {
-        defaultCurrencyPicker = new LabeledComboBox<Currency>();
-        defaultCurrencyPicker.setLabel("Default Currency");
-        defaultCurrencyPicker.setPrefWidth(400d);
-        var hbox = new HBox();
-        hbox.setPrefHeight(200d);
-        hbox.setSpacing(8d);
-        hbox.getChildren().addAll(
-                buildSectionTitle("Company Defaults",
-                        "Add your company's default settings. These will be used for certain functionalities" +
-                                " in the applications run time and processing."),
-                spacer(),
-                defaultCurrencyPicker);
+                vbox,
+                spacer());
         return hbox;
     }
 
@@ -478,12 +468,7 @@ public class TenantSettingsPage extends OutlinePage {
     }
 
     private void componentSizing() {
-        scrollPane.widthProperty().addListener((observableValue, ov, nv) -> {
-            content.setPrefWidth(nv.doubleValue());
-            heroImage.setMinWidth(nv.doubleValue());
-            heroImage.setPrefWidth(nv.doubleValue());
-            heroImage.setMaxWidth(nv.doubleValue());
-        });
+        scrollPane.widthProperty().addListener((_, _, nv) -> content.setPrefWidth(nv.doubleValue()));
     }
 
     private void prefillForms() {
@@ -528,31 +513,6 @@ public class TenantSettingsPage extends OutlinePage {
         companyLinkedin
                 .textProperty()
                 .bindBidirectional(TenantSettingViewModel.linkedInProperty());
-
-        defaultCurrencyPicker.setValue(TenantSettingViewModel.getDefaultCurrency());
-    }
-
-    private void setupComboBoxes() {
-        // Combo box Converter.
-        StringConverter<Currency> currencyConverter =
-                FunctionalStringConverter.to(currency -> (currency == null) ? "" : currency.getDisplayName() + " (" + currency.getSymbol() + ")");
-
-        // Combo box Filter Function.
-        Function<String, Predicate<Currency>> currencyFilterFunction =
-                searchStr ->
-                        currency ->
-                                currencyConverter.toString(currency).toLowerCase().contains(searchStr);
-
-        // Combo box properties.
-        defaultCurrencyPicker.setConverter(currencyConverter);
-        if (CurrencyViewModel.getCurrencies().isEmpty()) {
-            CurrencyViewModel.getCurrencies()
-                    .addListener(
-                            (ListChangeListener<Currency>)
-                                    c -> defaultCurrencyPicker.setItems(CurrencyViewModel.getCurrencies()));
-        } else {
-            defaultCurrencyPicker.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
-        }
     }
 
     private void showData() {
@@ -577,20 +537,12 @@ public class TenantSettingsPage extends OutlinePage {
             companyLogo.setFill(new ImagePattern(image));
             currentCompanyLogo.setFill(new ImagePattern(image));
         }
-        if (TenantSettingViewModel.nameProperty().get().isEmpty()) {
-            companyName.setText("Company Name");
-        } else {
-            companyName
-                    .textProperty()
-                    .bindBidirectional(TenantSettingViewModel.nameProperty());
-        }
-        if (TenantSettingViewModel.nameProperty().get().isEmpty()) {
-            companyWeblink.setText("Company Website");
-        } else {
-            companyWeblink
-                    .textProperty()
-                    .bindBidirectional(TenantSettingViewModel.websiteLinkProperty());
-        }
+        companyName
+                .textProperty()
+                .bindBidirectional(TenantSettingViewModel.nameProperty());
+        companyWeblink
+                .textProperty()
+                .bindBidirectional(TenantSettingViewModel.websiteLinkProperty());
     }
 
     private void addDocument() {
@@ -600,14 +552,26 @@ public class TenantSettingsPage extends OutlinePage {
         uploadIcon.getChildren().add(upload);
 
         if (Objects.equals(fileChooser, null)) {
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpeg)", "*.*.png", "*.jpeg");
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpeg, *.webp)", "*.*.png", "*.jpeg", "*.webp");
             fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(extFilter);
         }
-        companyLogoBtn.setOnMouseClicked(event -> {
+        companyLogoBtn.setOnMouseClicked(_ -> {
             var file = fileChooser.showOpenDialog(new Stage());
             if (Objects.nonNull(file)) {
-                fileLabel.setText(file.getName());
+                if (SpotyUtils.getFileExtension(file).toLowerCase().contains("png")
+                        || SpotyUtils.getFileExtension(file).toLowerCase().contains("jpg")
+                        || SpotyUtils.getFileExtension(file).toLowerCase().contains("jpeg")
+                        || SpotyUtils.getFileExtension(file).toLowerCase().contains("webp")) {
+                    fileLabel.setText("File: " + file.getName());
+                    try {
+                        setLogoImage(file);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    SpotyUtils.errorMessage("Un-Supported file type: " + SpotyUtils.getFileExtension(file));
+                }
             }
         });
 
@@ -624,15 +588,34 @@ public class TenantSettingsPage extends OutlinePage {
         companyLogoBtn.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasFiles()) {
-                fileLabel.setText(db.getFiles().getFirst().getName());
-                System.out.println("Dropped: " + db.getString() + " " + db.getFiles().toString());
-                success = true;
+            if (db.hasFiles() && db.getFiles().size() == 1) {
+                if (SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("png")
+                        || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("jpg")
+                        || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("jpeg")
+                        || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("webp")) {
+                    fileLabel.setText("File: " + db.getFiles().getFirst().getName());
+                    try {
+                        setLogoImage(db.getFiles().getFirst());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    success = true;
+                } else {
+                    SpotyUtils.errorMessage("Un-Supported file type: " + SpotyUtils.getFileExtension(db.getFiles().getFirst()));
+                }
+            } else if (db.getFiles().size() > 1) {
+                SpotyUtils.errorMessage("Un-Supported file action, drop only single file");
             }
             /* let the source know whether the string was successfully
              * transferred and used */
             event.setDropCompleted(success);
             event.consume();
         });
+    }
+
+    private void setLogoImage(File file) throws IOException {
+        var bufferedImage = ImageIO.read(file);
+        Image logoImage = javafx.embed.swing.SwingFXUtils.toFXImage(bufferedImage, null);
+        currentCompanyLogo.setFill(new ImagePattern(logoImage));
     }
 }

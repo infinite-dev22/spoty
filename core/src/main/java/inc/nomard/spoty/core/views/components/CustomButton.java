@@ -31,9 +31,9 @@ public class CustomButton extends HBox {
 
         this.progressSpinnerProperties();
 
-//        this.setMinHeight(40d);
-//        this.setPrefHeight(40d);
-//        this.setMaxHeight(40d);
+        this.setMinHeight(40d);
+        this.setPrefHeight(40d);
+        this.setMaxHeight(40d);
 
         HBox.setHgrow(this, Priority.NEVER);
         VBox.setVgrow(this, Priority.NEVER);

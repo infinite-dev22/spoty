@@ -20,6 +20,7 @@ module spoty.core {
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
     requires org.apache.logging.log4j.jul;
+    requires javafx.swing;
 
     opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;
@@ -47,4 +48,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.pages.sale;
     opens inc.nomard.spoty.core.views.pages.sale.tabs;
     opens inc.nomard.spoty.core.views.pages.purchase.tabs;
+    opens inc.nomard.spoty.core.views.settings.tenant_settings;
+    opens inc.nomard.spoty.core.views.settings.tenant_settings.tabs;
 }
