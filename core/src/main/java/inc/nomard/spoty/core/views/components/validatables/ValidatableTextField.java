@@ -18,13 +18,13 @@ public class ValidatableTextField extends CustomTextField implements Validated {
         validationListener();
     }
 
-    private void validationListener() {
-        this.textProperty().addListener((observable, oldValue, newValue) -> this.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false));
-    }
-
     public ValidatableTextField(String text) {
         super(text);
         this.validator = new Validator();
+    }
+
+    private void validationListener() {
+        this.textProperty().addListener((observable, oldValue, newValue) -> this.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false));
     }
 
     @Override

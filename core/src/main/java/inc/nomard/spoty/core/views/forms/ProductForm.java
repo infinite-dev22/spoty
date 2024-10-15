@@ -37,7 +37,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -113,8 +112,8 @@ public class ProductForm extends BorderPane {
         root.setPadding(new Insets(5.0));
 
         root.getColumnConstraints().addAll(
-                createColumnConstraints(1000d),
-                createColumnConstraints(1000d)
+                createColumnConstraints(),
+                createColumnConstraints()
         );
 
         root.getRowConstraints().addAll(
@@ -126,18 +125,18 @@ public class ProductForm extends BorderPane {
                 createRowConstraints()
         );
 
-        root.add(createValidationBox(name = new ValidatableTextField(), "Name", nameValidationLabel = new Label(), 1000.0), 0, 0);
-        root.add(createValidationBox(category = new ValidatableComboBox<>(), "Category", categoryValidationLabel = new Label(), 1000.0), 1, 0);
-        root.add(createValidationBox(brand = new ValidatableComboBox<>(), "Brand", brandValidationLabel = new Label(), 1000.0), 0, 1);
-        root.add(createValidationBox(unitOfMeasure = new ValidatableComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label(), 1000.0), 1, 1);
-        root.add(createSimpleBox(costPrice = new ValidatableNumberField(), "Cost Price (Optional)", 1000.0), 0, 2);
-        root.add(createValidationBox(salePrice = new ValidatableNumberField(), "Sale Price", priceValidationLabel = new Label(), 1000.0), 1, 2);
-        root.add(createSimpleBox(discount = new ValidatableComboBox<>(), "Discount (Optional)", 1000.0), 0, 3);
-        root.add(createSimpleBox(tax = new ValidatableComboBox<>(), "Tax (Optional)", 1000.0), 1, 3);
-        root.add(createValidationBox(barcodeType = new ValidatableComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label(), 1000.0), 0, 4);
-        root.add(createSimpleBox(serialNumber = new ValidatableTextField(), "Serial/Batch (Optional)", 1000.0), 1, 4);
-        root.add(createSimpleBox(stockAlert = new ValidatableNumberField(), "Stock Alert (Optional)", 1000.0), 0, 5);
-        root.add(createSimpleBox(createUploadImageBox(), "Product Image (Optional)"), 0, 6, 2, 2);
+        root.add(createValidationBox(name = new ValidatableTextField(), "Name", nameValidationLabel = new Label()), 0, 0);
+        root.add(createValidationBox(category = new ValidatableComboBox<>(), "Category", categoryValidationLabel = new Label()), 1, 0);
+        root.add(createValidationBox(brand = new ValidatableComboBox<>(), "Brand", brandValidationLabel = new Label()), 0, 1);
+        root.add(createValidationBox(unitOfMeasure = new ValidatableComboBox<>(), "Unit Of Measure", unitOfMeasureValidationLabel = new Label()), 1, 1);
+        root.add(createSimpleBox(costPrice = new ValidatableNumberField(), "Cost Price (Optional)"), 0, 2);
+        root.add(createValidationBox(salePrice = new ValidatableNumberField(), "Sale Price", priceValidationLabel = new Label()), 1, 2);
+        root.add(createSimpleBox(discount = new ValidatableComboBox<>(), "Discount (Optional)"), 0, 3);
+        root.add(createSimpleBox(tax = new ValidatableComboBox<>(), "Tax (Optional)"), 1, 3);
+        root.add(createValidationBox(barcodeType = new ValidatableComboBox<>(), "Barcode Type", barcodeTypeValidationLabel = new Label()), 0, 4);
+        root.add(createSimpleBox(serialNumber = new ValidatableTextField(), "Serial/Batch (Optional)"), 1, 4);
+        root.add(createSimpleBox(stockAlert = new ValidatableNumberField(), "Stock Alert (Optional)"), 0, 5);
+        root.add(createSimpleBox(createUploadImageBox()), 0, 6, 2, 2);
 
         this.setTop(buildTop());
         this.setBottom(createBottomButtons());
@@ -158,10 +157,10 @@ public class ProductForm extends BorderPane {
         salePrice.setLeft(new Label("UGX"));
     }
 
-    private ColumnConstraints createColumnConstraints(double prefWidth) {
+    private ColumnConstraints createColumnConstraints() {
         ColumnConstraints cc = new ColumnConstraints();
         cc.setHgrow(Priority.ALWAYS);
-//        cc.setPrefWidth(prefWidth);
+//        cc.setPrefWidth(1000d);
         return cc;
     }
 
@@ -171,23 +170,23 @@ public class ProductForm extends BorderPane {
         return rc;
     }
 
-    private VBox createValidationBox(ValidatableTextField textField, String promptText, Label validationLabel, double width) {
+    private VBox createValidationBox(ValidatableTextField textField, String promptText, Label validationLabel) {
         var label = new Label(promptText);
-        textField.setPrefWidth(width);
+        textField.setPrefWidth(1000.0);
 
         return createValidationContainer(label, textField, validationLabel);
     }
 
-    private <T> VBox createValidationBox(ValidatableComboBox<T> comboBox, String promptText, Label validationLabel, double width) {
+    private <T> VBox createValidationBox(ValidatableComboBox<T> comboBox, String promptText, Label validationLabel) {
         var label = new Label(promptText);
-        comboBox.setPrefWidth(width);
+        comboBox.setPrefWidth(1000.0);
 
         return createValidationContainer(label, comboBox, validationLabel);
     }
 
-    private <T> VBox createSimpleBox(ValidatableComboBox<T> comboBox, String promptText, double width) {
+    private <T> VBox createSimpleBox(ValidatableComboBox<T> comboBox, String promptText) {
         var label = new Label(promptText);
-        comboBox.setPrefWidth(width);
+        comboBox.setPrefWidth(1000.0);
 
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
@@ -195,9 +194,9 @@ public class ProductForm extends BorderPane {
         return box;
     }
 
-    private VBox createSimpleBox(TextField textField, String promptText, double width) {
+    private VBox createSimpleBox(TextField textField, String promptText) {
         var label = new Label(promptText);
-        textField.setPrefWidth(width);
+        textField.setPrefWidth(1000.0);
 
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
@@ -205,8 +204,8 @@ public class ProductForm extends BorderPane {
         return box;
     }
 
-    private VBox createSimpleBox(AnchorPane pane, String promptText) {
-        var label = new Label(promptText);
+    private VBox createSimpleBox(AnchorPane pane) {
+        var label = new Label("Product Image (Optional)");
 
         VBox box = new VBox(2.0);
         box.setPadding(new Insets(2.5, 0, 2.5, 0));
@@ -239,7 +238,7 @@ public class ProductForm extends BorderPane {
         imageIcon = new HBox();
         imageIcon.setAlignment(Pos.CENTER);
 
-        var uploadImageLabel = new Label("Click to upload or Drag and drop png or jpg. (max. size 800 x 400 px)");
+        var uploadImageLabel = new Label("Click to upload or Drag and drop png, jpg/jpeg or webp");
         uploadImageLabel.setTextAlignment(TextAlignment.CENTER);
         uploadImageLabel.setWrapText(true);
 
@@ -352,7 +351,7 @@ public class ProductForm extends BorderPane {
             UOMViewModel.getUnitsOfMeasure()
                     .addListener(
                             (ListChangeListener<UnitOfMeasure>)
-                                    c -> unitOfMeasure.setItems(UOMViewModel.getUnitsOfMeasure()));
+                                    _ -> unitOfMeasure.setItems(UOMViewModel.getUnitsOfMeasure()));
         } else {
             unitOfMeasure.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
         }
@@ -362,7 +361,7 @@ public class ProductForm extends BorderPane {
             ProductCategoryViewModel.getCategories()
                     .addListener(
                             (ListChangeListener<ProductCategory>)
-                                    c -> category.setItems(ProductCategoryViewModel.getCategories()));
+                                    _ -> category.setItems(ProductCategoryViewModel.getCategories()));
         } else {
             category.itemsProperty().bindBidirectional(ProductCategoryViewModel.categoriesProperty());
         }
@@ -372,7 +371,7 @@ public class ProductForm extends BorderPane {
             BrandViewModel.getBrands()
                     .addListener(
                             (ListChangeListener<Brand>)
-                                    c -> brand.setItems(BrandViewModel.getBrands()));
+                                    _ -> brand.setItems(BrandViewModel.getBrands()));
         } else {
             brand.itemsProperty().bindBidirectional(BrandViewModel.brandsProperty());
         }
@@ -382,7 +381,7 @@ public class ProductForm extends BorderPane {
             DiscountViewModel.getDiscounts()
                     .addListener(
                             (ListChangeListener<Discount>)
-                                    c -> discount.setItems(DiscountViewModel.getDiscounts()));
+                                    _ -> discount.setItems(DiscountViewModel.getDiscounts()));
         } else {
             discount.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
         }
@@ -392,7 +391,7 @@ public class ProductForm extends BorderPane {
             TaxViewModel.getTaxes()
                     .addListener(
                             (ListChangeListener<Tax>)
-                                    c -> tax.setItems(TaxViewModel.getTaxes()));
+                                    _ -> tax.setItems(TaxViewModel.getTaxes()));
         } else {
             tax.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
         }
@@ -401,9 +400,9 @@ public class ProductForm extends BorderPane {
     }
 
     private void dialogOnActions() {
-        cancelButton.setOnAction((event) -> this.dispose());
+        cancelButton.setOnAction((_) -> this.dispose());
         saveButton.setOnAction(
-                (event) -> {
+                (_) -> {
                     nameConstraints = name.validate();
                     priceConstraints = salePrice.validate();
                     brandConstraints = brand.validate();
@@ -473,18 +472,24 @@ public class ProductForm extends BorderPane {
             fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(extFilter);
         }
-        uploadImageButton.setOnMouseClicked(event -> {
+        uploadImageButton.setOnMouseClicked(_ -> {
             var file = fileChooser.showOpenDialog(new Stage());
             if (Objects.nonNull(file)) {
-                setProductImage(new File(file.getPath()).toURI().toString());
-                placeHolder.setVisible(false);
-                placeHolder.setManaged(false);
-                productImageView.setVisible(true);
-                productImageView.setManaged(true);
-                try {
-                    ProductViewModel.setImageFile(SpotyImageUtils.compress(file));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                if (SpotyUtils.getFileExtension(file).toLowerCase().contains("jpg")
+                        || SpotyUtils.getFileExtension(file).toLowerCase().contains("jpeg")
+                        || SpotyUtils.getFileExtension(file).toLowerCase().contains("webp")) {
+                    setProductImage(new File(file.getPath()).toURI().toString());
+                    placeHolder.setVisible(false);
+                    placeHolder.setManaged(false);
+                    productImageView.setVisible(true);
+                    productImageView.setManaged(true);
+                    try {
+                        ProductViewModel.setImageFile(SpotyImageUtils.compress(file));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    SpotyUtils.errorMessage("Un-Supported file type: " + SpotyUtils.getFileExtension(file));
                 }
             }
         });
@@ -502,18 +507,26 @@ public class ProductForm extends BorderPane {
         uploadImageButton.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasFiles()) {
-                setProductImage(new File(db.getFiles().getFirst().getPath()).toURI().toString());
-                placeHolder.setVisible(false);
-                placeHolder.setManaged(false);
-                productImageView.setVisible(true);
-                productImageView.setManaged(true);
-                try {
-                    ProductViewModel.setImageFile(SpotyImageUtils.compress(db.getFiles().getFirst()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            if (db.hasFiles() && db.getFiles().size() == 1) {
+                if (SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("jpg")
+                        || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("jpeg")
+                        || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("webp")) {
+                    setProductImage(new File(db.getFiles().getFirst().getPath()).toURI().toString());
+                    placeHolder.setVisible(false);
+                    placeHolder.setManaged(false);
+                    productImageView.setVisible(true);
+                    productImageView.setManaged(true);
+                    try {
+                        ProductViewModel.setImageFile(SpotyImageUtils.compress(db.getFiles().getFirst()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    success = true;
+                } else {
+                    SpotyUtils.errorMessage("Un-Supported file type: " + SpotyUtils.getFileExtension(db.getFiles().getFirst()));
                 }
-                success = true;
+            } else if (db.getFiles().size() > 1) {
+                SpotyUtils.errorMessage("Un-Supported file action, drop only single file");
             }
             /* let the source know whether the string was successfully
              * transferred and used */
@@ -577,7 +590,7 @@ public class ProductForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 nameValidationLabel.setManaged(false);
                                 nameValidationLabel.setVisible(false);
@@ -588,7 +601,7 @@ public class ProductForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 priceValidationLabel.setManaged(false);
                                 priceValidationLabel.setVisible(false);
@@ -599,7 +612,7 @@ public class ProductForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 brandValidationLabel.setManaged(false);
                                 brandValidationLabel.setVisible(false);
@@ -610,7 +623,7 @@ public class ProductForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 categoryValidationLabel.setManaged(false);
                                 categoryValidationLabel.setVisible(false);
@@ -621,7 +634,7 @@ public class ProductForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 unitOfMeasureValidationLabel.setManaged(false);
                                 unitOfMeasureValidationLabel.setVisible(false);
@@ -632,7 +645,7 @@ public class ProductForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 barcodeTypeValidationLabel.setManaged(false);
                                 barcodeTypeValidationLabel.setVisible(false);

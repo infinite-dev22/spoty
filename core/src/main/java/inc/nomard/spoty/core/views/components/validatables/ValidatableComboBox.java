@@ -2,9 +2,9 @@ package inc.nomard.spoty.core.views.components.validatables;
 
 import inc.nomard.spoty.core.util.validation.Validated;
 import inc.nomard.spoty.core.util.validation.Validator;
+import inc.nomard.spoty.core.values.strings.Values;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-import inc.nomard.spoty.core.values.strings.Values;
 
 public class ValidatableComboBox<T> extends ComboBox<T> implements Validated {
     protected final Validator validator;

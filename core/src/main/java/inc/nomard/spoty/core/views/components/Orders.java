@@ -7,7 +7,6 @@ import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
 import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
