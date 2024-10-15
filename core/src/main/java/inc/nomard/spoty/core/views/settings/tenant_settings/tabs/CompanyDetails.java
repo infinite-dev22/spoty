@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.settings.tenant_settings.tabs;
 
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
 import inc.nomard.spoty.core.viewModels.TenantSettingViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
@@ -81,7 +80,6 @@ public class CompanyDetails extends OutlinePage {
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
         progress();
-        CompletableFuture.runAsync(CurrencyViewModel::getAllCurrencies);
         CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(this::onDataInitializationSuccess, this::errorMessage));
     }
 
