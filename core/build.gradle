@@ -160,7 +160,6 @@ jlink {
                 "-Dprism.marlinratserizer=true",
                 "-Dprism.forceGPU=true",
                 "-Dprism.text=t2k",
-                "-Dprism.verbose=true",
                 "-Djavafx.platform=gtk3",
                 "-Dsun.java2d.opengl=true",
                 "-XX:+AutoCreateSharedArchive",
