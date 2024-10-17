@@ -55,12 +55,14 @@ public class TenantSettingViewModel {
     private static final BooleanProperty reportLogo = new SimpleBooleanProperty(false);
     private static final BooleanProperty emailLogo = new SimpleBooleanProperty(false);
     private static final BooleanProperty receiptLogo = new SimpleBooleanProperty(false);
+    private static final BooleanProperty approvals = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveAdjustments = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveRequisitions = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveTransfers = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveStockIns = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveQuotations = new SimpleBooleanProperty(false);
     private static final BooleanProperty approvePurchases = new SimpleBooleanProperty(false);
+    private static final BooleanProperty approveSales = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveSaleReturns = new SimpleBooleanProperty(false);
     private static final BooleanProperty approvePurchaseReturns = new SimpleBooleanProperty(false);
     private static final StringProperty twitter = new SimpleStringProperty("");
@@ -338,6 +340,19 @@ public class TenantSettingViewModel {
     }
 
 
+    public static boolean isApprovals() {
+        return approvals.get();
+    }
+
+    public static void setApprovals(boolean approvals) {
+        TenantSettingViewModel.approvals.set(approvals);
+    }
+
+    public static BooleanProperty approvalsProperty() {
+        return approvals;
+    }
+
+
     public static boolean isApproveAdjustments() {
         return approveAdjustments.get();
     }
@@ -408,6 +423,18 @@ public class TenantSettingViewModel {
 
     public static BooleanProperty approvePurchasesProperty() {
         return approvePurchases;
+    }
+
+    public static boolean isApproveSales() {
+        return approveSales.get();
+    }
+
+    public static void setApproveSales(boolean approveSales) {
+        TenantSettingViewModel.approveSales.set(approveSales);
+    }
+
+    public static BooleanProperty approveSalesProperty() {
+        return approveSales;
     }
 
     public static boolean isApproveSaleReturns() {
@@ -537,12 +564,14 @@ public class TenantSettingViewModel {
                     setFacebook(tenantSettings.getFacebook());
                     setLinkedIn(tenantSettings.getLinkedIn());
                     setLogo(tenantSettings.getLogo());
+                    setApprovals(tenantSettings.getApprovals());
                     setApproveAdjustments(tenantSettings.getApproveAdjustments());
                     setApproveRequisitions(tenantSettings.getApproveRequisitions());
                     setApproveTransfers(tenantSettings.getApproveTransfers());
                     setApproveStockIns(tenantSettings.getApproveStockIns());
                     setApproveQuotations(tenantSettings.getApproveQuotations());
                     setApprovePurchases(tenantSettings.getApprovePurchases());
+                    setApproveSales(tenantSettings.getApproveSales());
                     setApproveSaleReturns(tenantSettings.getApproveSaleReturns());
                     setApprovePurchaseReturns(tenantSettings.getApprovePurchaseReturns());
                     setDefaultCurrency(tenantSettings.getDefaultCurrency());
