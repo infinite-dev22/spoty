@@ -1,7 +1,7 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.DateFormat;
 import java.time.LocalDateTime;
@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log4j2
 public class PaySlip {
     private Long id;
     private LocalDateTime startDate;

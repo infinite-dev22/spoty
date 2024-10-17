@@ -1,9 +1,10 @@
-package inc.nomard.spoty.core.auto_updater.v2;
+package inc.nomard.spoty.core.app_updater;
 
-import inc.nomard.spoty.core.startup.SpotyPaths;
+import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.OSUtil;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Slf4j
 public class AutoUpdater {
 
     private static final String VERSION_URL = "http://yourserver.com/version.txt";
@@ -31,15 +33,13 @@ public class AutoUpdater {
         Path downloadPath = null;
         String installerFilePath = null;
         switch (OSUtil.getOs()) {
-            case LINUX, MACOS -> downloadPath = Paths.get(
-                    System.getProperty("user.home") + "/.config/OpenSaleERP/data/updates");
-            case WINDOWS -> downloadPath = Paths.get(System.getProperty("user.home")
-                    + "\\AppData\\Local\\OpenSaleERP\\data\\updates");
+            case LINUX, MACOS -> downloadPath = Paths.get(AppUtils.getInstallationDirectory() + "/data/updates");
+            case WINDOWS -> downloadPath = Paths.get(AppUtils.getInstallationDirectory() + "\\data\\updates");
         }
         try {
             Files.createDirectories(downloadPath);
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, SpotyPaths.class);
+            log.error(e.getMessage(), e);
         }
         switch (OSUtil.getOs()) {
             case LINUX -> installerFilePath = downloadPath + "/application-installer.rpm";
@@ -53,16 +53,14 @@ public class AutoUpdater {
         Path flagFilePath = null;
 
         switch (OSUtil.getOs()) {
-            case LINUX, MACOS -> flagFilePath = Paths.get(
-                    System.getProperty("user.home") + "/.config/OpenSaleERP/data/updates/flag");
-            case WINDOWS -> flagFilePath = Paths.get(System.getProperty("user.home")
-                    + "\\AppData\\Local\\OpenSaleERP\\data\\updates\\flag");
+            case LINUX, MACOS -> flagFilePath = Paths.get(AppUtils.getInstallationDirectory() + "/data/updates/flag");
+            case WINDOWS -> flagFilePath = Paths.get(AppUtils.getInstallationDirectory() + "\\data\\updates\\flag");
         }
 
         try {
             Files.createDirectories(flagFilePath);
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, SpotyPaths.class);
+            log.error(e.getMessage(), e);
         }
         return flagFilePath + "update-available.flag";
     }
@@ -76,6 +74,7 @@ public class AutoUpdater {
                     notifyUserForRestart();
                 }
             } catch (Exception e) {
+                log.error("Error checking for updates{}", e, e);
                 SpotyLogger.writeToFile(new Throwable("Error checking for updates" + e), AutoUpdater.class);
             }
         }).start();
@@ -115,7 +114,7 @@ public class AutoUpdater {
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
-            SpotyLogger.writeToFile(new Throwable("Update downloaded successfully."), AutoUpdater.class);
+            log.info("Update downloaded successfully.");
         }
     }
 
@@ -143,7 +142,7 @@ public class AutoUpdater {
                 Files.delete(Paths.get(getFlagFile()));
                 System.exit(0); // Exit the current application to allow the update to proceed
             } catch (IOException e) {
-                SpotyLogger.writeToFile(new Throwable("Error applying update" + e), AutoUpdater.class);
+                log.error("Error applying update{}", e, e);
             }
         }
     }

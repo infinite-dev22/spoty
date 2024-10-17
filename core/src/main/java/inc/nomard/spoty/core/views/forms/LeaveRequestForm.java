@@ -37,7 +37,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -49,7 +49,7 @@ import java.util.Objects;
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
-@Log4j2
+@Slf4j
 public class LeaveRequestForm extends BorderPane {
     public CustomButton saveButton;
     public Button cancelButton;

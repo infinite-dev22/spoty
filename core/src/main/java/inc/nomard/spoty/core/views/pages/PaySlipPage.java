@@ -2,13 +2,13 @@ package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.PaySlipViewModel;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
@@ -17,13 +17,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 public class PaySlipPage extends OutlinePage {
     public VBox paySlipItemHolder;
     public ScrollPane scrollPane;

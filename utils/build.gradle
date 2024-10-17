@@ -37,13 +37,10 @@ dependencies {
     // Lombok Tests
     testCompileOnly "org.projectlombok:lombok:$lombok"
     testAnnotationProcessor "org.projectlombok:lombok:$lombok"
-    // Log4j2 dependencies
-    implementation "org.apache.logging.log4j:log4j-api:$log4j2"
-    implementation "org.apache.logging.log4j:log4j-core:$log4j2"
-    // Async logging support in Log4j2
-    implementation "org.apache.logging.log4j:log4j-jul:$log4j2"
-    // Async logging (Disruptor) dependency
-    // implementation "com.lmax:disruptor:3.4.4"
+    // SLF4J
+    implementation "org.slf4j:slf4j-api:$slf4j"
+    // LogBack dependencies
+    implementation "ch.qos.logback:logback-classic:$log_back"
     // Unit Tests
     implementation "org.junit.jupiter:junit-jupiter-api:$junit"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit"

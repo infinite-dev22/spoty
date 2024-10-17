@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableNumberField;
@@ -9,8 +11,6 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
@@ -25,12 +25,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 public class AccountForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;

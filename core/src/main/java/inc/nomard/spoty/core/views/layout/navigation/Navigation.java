@@ -15,7 +15,7 @@ import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.flavouring.AppFlavor;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.Objects;
 
 import static org.kordamp.ikonli.fontawesome5.FontAwesomeSolid.*;
 
-@Log4j2
+@Slf4j
 public class Navigation {
     public static final Class<? extends Page> DEFAULT_PAGE = DashboardPage.class;
     private static final Map<Class<? extends Page>, NavTree.NavTreeItem> NAV_TREE = createNavItems();
@@ -193,7 +193,7 @@ public class Navigation {
     public void navigate(Class<? extends Page> page) {
         Objects.requireNonNull(page, "Page cannot be null");
         selectedPage.set(page);
-        log.info(() -> "Navigated to: " + page.getSimpleName());
+        log.info("Navigated to: {}", page.getSimpleName());
     }
 
     NavTree.NavTreeItem getTreeItemForPage(Class<? extends Page> pageClass) {

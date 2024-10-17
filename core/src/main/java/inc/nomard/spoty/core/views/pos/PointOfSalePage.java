@@ -33,7 +33,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -44,7 +44,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class PointOfSalePage extends OutlinePage {
     private static Long availableProductQuantity = 0L;
     public TableColumn<SaleDetail, SaleDetail> productDiscount;

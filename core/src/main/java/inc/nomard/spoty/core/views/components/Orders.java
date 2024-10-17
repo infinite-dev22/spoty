@@ -1,11 +1,10 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -14,13 +13,13 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class Orders extends AnchorPane {
     public TableView<SaleMaster> saleOrders;
     private TableColumn<SaleMaster, SaleMaster> saleCustomer;
@@ -51,7 +50,7 @@ public class Orders extends AnchorPane {
     }
 
     private Label buildTitle() {
-        var label = new Label(Labels.RECENT_ORDERS);
+        var label = new Label("Recent Orders");
         label.getStyleClass().add("card-title");
         UIUtils.anchor(label, 0d, null, 0d, 0d);
         return label;

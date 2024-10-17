@@ -5,7 +5,7 @@ import inc.nomard.spoty.network_bridge.dtos.Discount;
 import inc.nomard.spoty.network_bridge.dtos.Tax;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log4j2
 public class QuotationMaster {
     private Long id;
     private String ref;

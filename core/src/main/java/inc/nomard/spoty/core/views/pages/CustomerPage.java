@@ -8,12 +8,11 @@ import inc.nomard.spoty.core.views.forms.CustomerForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.previews.CustomerPreview;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
-import inc.nomard.spoty.utils.navigation.Spacer;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -24,14 +23,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log4j2
+@Slf4j
 public class CustomerPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;

@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
@@ -9,8 +11,6 @@ import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,11 +20,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-@Log4j2
+@Slf4j
 public class EmploymentStatusForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;

@@ -19,7 +19,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
+@Slf4j
 public class LeaveStatusViewModel {
     public static final ObservableList<LeaveStatus> leaveStatusesList = FXCollections.observableArrayList();
     public static final ListProperty<LeaveStatus> leaveStatuses = new SimpleListProperty<>(leaveStatusesList);

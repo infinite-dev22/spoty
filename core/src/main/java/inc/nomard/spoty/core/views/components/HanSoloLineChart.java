@@ -9,13 +9,13 @@ import javafx.geometry.Orientation;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Random;
 
-@Log4j2
+@Slf4j
 public class HanSoloLineChart extends AnchorPane {
     private static final Random RND = new Random();
     private static final Double AXIS_WIDTH = 25d;

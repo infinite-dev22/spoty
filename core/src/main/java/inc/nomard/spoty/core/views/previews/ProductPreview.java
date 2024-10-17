@@ -4,11 +4,11 @@ import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.values.PreloadedData;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.pos.components.ProductCard;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
@@ -25,7 +25,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Log4j2
+@Slf4j
 public class ProductPreview extends BorderPane {
     private static final double IMAGE_SIZE = 160;
     private static final double ARC_SIZE = 20;

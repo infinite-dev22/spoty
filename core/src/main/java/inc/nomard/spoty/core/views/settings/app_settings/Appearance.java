@@ -21,14 +21,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 public class Appearance extends VBox {
     private final String darkTheme = SpotyCoreResourceLoader.load("images/dark.png");
     private final String lightTheme = SpotyCoreResourceLoader.load("images/light.png");

@@ -1,12 +1,13 @@
-package inc.nomard.spoty.core.auto_updater.v2;
+package inc.nomard.spoty.core.app_updater;
 
-import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 public class UpdateScheduler {
     private static final ScheduledService<Void> scheduledService;
 
@@ -22,7 +23,7 @@ public class UpdateScheduler {
                     }
 
                     private Void onFailure(Throwable throwable) {
-                        SpotyLogger.writeToFile(throwable, UpdateScheduler.class);
+                        log.error(throwable.getMessage(), throwable);
                         return null;
                     }
                 };

@@ -1,12 +1,11 @@
 package inc.nomard.spoty.utils.flavouring;
 
-import inc.nomard.spoty.utils.SpotyLogger;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Properties;
 
-@Log4j2
+@Slf4j
 public class AppConfig {
 
     private static final String CONFIG_FILE = "config.properties";
@@ -20,7 +19,7 @@ public class AppConfig {
             String flavorString = properties.getProperty("app.flavor");
             return AppFlavor.valueOf(flavorString);
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, AppConfig.class);
+            log.error(e.getMessage());
             return AppFlavor.PROD;
         }
     }
@@ -31,7 +30,7 @@ public class AppConfig {
             String versionString = properties.getProperty("app.version");
             return "v" + versionString;
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, AppConfig.class);
+            log.error(e.getMessage());
             return "";
         }
     }
@@ -41,7 +40,7 @@ public class AppConfig {
             properties.load(AppConfig.class.getClassLoader().getResourceAsStream(APP_VERSION_FILE));
             return properties.getProperty("app.release-notes");
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, AppConfig.class);
+            log.error(e.getMessage());
             return "";
         }
     }
@@ -51,7 +50,7 @@ public class AppConfig {
             properties.load(AppConfig.class.getClassLoader().getResourceAsStream(APP_HOST_FILE));
             return properties.getProperty("app.host");
         } catch (IOException e) {
-            SpotyLogger.writeToFile(e, AppConfig.class);
+            log.error(e.getMessage());
             return "http://localhost:8080";
         }
     }

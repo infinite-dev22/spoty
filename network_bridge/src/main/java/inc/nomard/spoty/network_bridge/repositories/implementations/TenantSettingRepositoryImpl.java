@@ -9,7 +9,7 @@ import inc.nomard.spoty.network_bridge.repositories.interfaces.TenantSettingRepo
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
 public class TenantSettingRepositoryImpl extends ProtectedGlobals implements TenantSettingRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class,

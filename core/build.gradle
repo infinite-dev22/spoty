@@ -133,9 +133,13 @@ jlink {
             "com.calendarfx:view",
             ":utils"
     )
-    options = ["--strip-debug", "--no-header-files", "--no-man-pages"]
+    mergedModule {
+        additive = true
+    }
+    options = ['--bind-services', "--strip-debug", "--no-header-files", "--no-man-pages"]
     launcher {
         name = "OpenSale ERP"
+        noConsole = true
         jvmArgs = [
                 "-XX:NewRatio=1",
                 "-Xms256m",
@@ -169,9 +173,9 @@ jlink {
         imageName = "$app_installer_name"
         appVersion = "$project.version"
         installerOptions = [
-//                "--name", app_installer_name,
+                // "--name", app_installer_name,
                 "--description", project.description,
-//                "--app-version", project.version,
+                // "--app-version", project.version,
                 "--copyright", app_copyright,
                 "--vendor", app_vendor,
                 "--about-url", app_about_url,
@@ -265,11 +269,10 @@ dependencies {
     // Lombok Tests
     testCompileOnly "org.projectlombok:lombok:$lombok"
     testAnnotationProcessor "org.projectlombok:lombok:$lombok"
-    // Log4j2 dependencies
-    implementation "org.apache.logging.log4j:log4j-api:$log4j2"
-    implementation "org.apache.logging.log4j:log4j-core:$log4j2"
-    // Async logging support in Log4j2
-    implementation "org.apache.logging.log4j:log4j-jul:$log4j2"
+    // SLF4J
+    implementation "org.slf4j:slf4j-api:$slf4j"
+    // LogBack dependencies
+    implementation "ch.qos.logback:logback-classic:$log_back"
     // Async logging (Disruptor) dependency
     implementation "com.lmax:disruptor:3.4.4"
     // Unit Tests

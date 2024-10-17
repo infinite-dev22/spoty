@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.pos.components;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
@@ -14,13 +14,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
 @Setter
-@Log4j2
+@Slf4j
 public class CartItem extends HBox {
     private static String logo;
     private static String productName;

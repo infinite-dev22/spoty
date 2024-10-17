@@ -5,7 +5,7 @@ import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.PaymentsRepository;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,10 +13,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
 public class PaymentsRepositoryImpl extends ProtectedGlobals implements PaymentsRepository {
     // Trylla, Trilla, Trylli.
     // Freilla.
+    // Friella.
     @Override
     public CompletableFuture<HttpResponse<String>> cardPay(Object object) {
         var request = HttpRequest.newBuilder()

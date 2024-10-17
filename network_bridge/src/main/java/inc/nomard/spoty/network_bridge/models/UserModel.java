@@ -6,7 +6,7 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log4j2
 public class UserModel implements Serializable {
     private Long id;
     private String firstName;

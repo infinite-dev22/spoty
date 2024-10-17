@@ -2,11 +2,11 @@ package inc.nomard.spoty.core.views.previews;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,7 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class PurchaseReturnPreview extends BorderPane {
     static final ObservableList<PurchaseDetail> purchaseReturnDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<PurchaseDetail> purchaseReturnDetails = new SimpleListProperty<>(purchaseReturnDetailsList);

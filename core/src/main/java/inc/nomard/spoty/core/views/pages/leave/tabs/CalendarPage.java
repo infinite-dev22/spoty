@@ -6,13 +6,13 @@ import com.calendarfx.view.CalendarView;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @SuppressWarnings("unchecked")
-@Log4j2
+@Slf4j
 public class CalendarPage extends OutlinePage {
 
     public CalendarPage() {

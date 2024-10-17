@@ -2,9 +2,9 @@ package inc.nomard.spoty.core.views.pos.components;
 
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.values.PreloadedData;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.utils.AppUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.virtualizedfx.cells.base.VFXCell;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -21,9 +21,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 public class ProductCard extends VBox implements VFXCell<Product> {
     private static final Double IMAGE_SIZE = 160d;
     private static final Double ARC_SIZE = 20d;

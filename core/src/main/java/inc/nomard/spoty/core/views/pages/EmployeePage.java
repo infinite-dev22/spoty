@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.controls.ModalPane;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
@@ -10,15 +9,16 @@ import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.forms.EmployeeForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -30,14 +30,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class EmployeePage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;

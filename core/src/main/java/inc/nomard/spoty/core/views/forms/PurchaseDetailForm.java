@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
@@ -11,9 +13,6 @@ import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
-import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,14 +23,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
+import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
 
-@Log4j2
+@Slf4j
 public class PurchaseDetailForm extends BorderPane {
     private final ModalPane modalPane;
     public ValidatableNumberField quantity;

@@ -6,11 +6,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
-@Log4j2
+@Slf4j
 public class Title extends HBox {
     @FXML
     private Label label;
@@ -36,7 +36,7 @@ public class Title extends HBox {
         try {
             fxmlLoader.load();
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            log.error(ex.getLocalizedMessage(), ex);
         }
     }
 

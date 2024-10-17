@@ -7,6 +7,7 @@ import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.BrandViewModel;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.forms.BranchForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
@@ -14,10 +15,9 @@ import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.utils.navigation.Spacer;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -28,7 +28,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -36,7 +36,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-@Log4j2
+@Slf4j
 public class BranchPage extends OutlinePage {
     private final ModalPane modalPane;
     private CustomTextField searchBar;
@@ -124,7 +124,7 @@ public class BranchPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new inc.nomard.spoty.utils.navigation.Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         BrandViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {

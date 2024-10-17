@@ -13,13 +13,13 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
+@Slf4j
 public class PaymentsViewModel {
     private static final StringProperty cardNumber = new SimpleStringProperty("");
     private static final StringProperty cvv = new SimpleStringProperty("");

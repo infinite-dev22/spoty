@@ -16,7 +16,7 @@ import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
+@Slf4j
 public class LoginViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class,

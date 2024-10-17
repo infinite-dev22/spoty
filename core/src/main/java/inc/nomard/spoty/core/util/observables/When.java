@@ -1,19 +1,20 @@
 package inc.nomard.spoty.core.util.observables;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ObservableValue;
+
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ObservableValue;
 
 public abstract class When<T> {
     protected static final WeakHashMap<ObservableValue<?>, WeakReference<When<?>>> whens = new WeakHashMap();
     protected final ObservableValue<T> observableValue;
-    protected boolean oneShot = false;
     protected final Set<Observable> invalidatingObservables;
+    protected boolean oneShot = false;
     protected InvalidationListener invalidationListener;
 
     protected When(ObservableValue<T> observableValue) {
@@ -22,6 +23,23 @@ public abstract class When<T> {
         this.invalidationListener = (o) -> {
             this.invalidate();
         };
+    }
+
+    public static <T> OnInvalidated<T> onInvalidated(ObservableValue<T> observableValue) {
+        return OnInvalidated.forObservable(observableValue);
+    }
+
+    public static <T> OnChanged<T> onChanged(ObservableValue<T> observableValue) {
+        return OnChanged.forObservable(observableValue);
+    }
+
+    public static void disposeFor(ObservableValue<?> observableValue) {
+        WeakReference<When<?>> ref = (WeakReference) whens.remove(observableValue);
+        When<?> remove = ref != null ? (When) ref.get() : null;
+        if (remove != null) {
+            remove.dispose();
+        }
+
     }
 
     public abstract When<T> listen();
@@ -48,7 +66,7 @@ public abstract class When<T> {
     }
 
     public When<T> executeNow(Supplier<Boolean> condition) {
-        if ((Boolean)condition.get()) {
+        if ((Boolean) condition.get()) {
             this.executeNow();
         }
 
@@ -71,23 +89,6 @@ public abstract class When<T> {
         this.invalidatingObservables.clear();
         if (this.invalidationListener != null) {
             this.invalidationListener = null;
-        }
-
-    }
-
-    public static <T> OnInvalidated<T> onInvalidated(ObservableValue<T> observableValue) {
-        return OnInvalidated.forObservable(observableValue);
-    }
-
-    public static <T> OnChanged<T> onChanged(ObservableValue<T> observableValue) {
-        return OnChanged.forObservable(observableValue);
-    }
-
-    public static void disposeFor(ObservableValue<?> observableValue) {
-        WeakReference<When<?>> ref = (WeakReference)whens.remove(observableValue);
-        When<?> remove = ref != null ? (When)ref.get() : null;
-        if (remove != null) {
-            remove.dispose();
         }
 
     }

@@ -4,15 +4,15 @@ import atlantafx.base.controls.ModalPane;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.TaxViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.forms.TaxForm;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Tax;
-import inc.nomard.spoty.utils.navigation.Spacer;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -24,7 +24,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class TaxPage extends OutlinePage {
     private final ModalPane modalPane;
     private TextField searchBar;

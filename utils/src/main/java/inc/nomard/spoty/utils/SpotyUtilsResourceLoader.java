@@ -1,11 +1,8 @@
 package inc.nomard.spoty.utils;
 
-import lombok.extern.log4j.Log4j2;
-
 import java.io.InputStream;
 import java.net.URL;
 
-@Log4j2
 public class SpotyUtilsResourceLoader {
     public SpotyUtilsResourceLoader() {
     }

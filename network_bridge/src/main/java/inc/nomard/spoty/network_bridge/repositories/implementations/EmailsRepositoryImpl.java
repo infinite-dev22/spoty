@@ -6,7 +6,7 @@ import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.SimpleRepository;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,7 +15,6 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
 public class EmailsRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
     public CompletableFuture<HttpResponse<String>> fetchAll(Integer pageNo, Integer pageSize) {

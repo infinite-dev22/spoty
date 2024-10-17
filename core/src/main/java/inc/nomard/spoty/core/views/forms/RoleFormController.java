@@ -24,7 +24,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
@@ -35,7 +35,7 @@ import java.util.ResourceBundle;
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
-@Log4j2
+@Slf4j
 public class RoleFormController implements Initializable {
     @FXML
     public ValidatableTextField name;
