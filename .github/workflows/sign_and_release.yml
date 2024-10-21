@@ -1,5 +1,4 @@
 name: Build and Package with jpackage
-
 on:
   push:
     branches:
@@ -14,61 +13,34 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-
+        java: [ '23' ]
+      fail-fast: false
+    name: ${{ matrix.os }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Set up JDK 22 (required for jpackage and since jlink doesn't currently support 23)
-      - name: Set up JDK 22
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '22'
-
-      # Cache Gradle dependencies
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle
-
-      # Build the project using Gradle
-      - name: Build core project with Gradle
-        run: ./gradlew :clean :core:build
-
-      # Run jpackage for platform-specific build (Linux)
-      - name: Package with jpackage for Linux
-        if: runner.os != 'Windows'
-        run: ./gradlew :core:jpackage
-
-      # Run jpackage for platform-specific build (Windows)
-      - name: Package with jpackage for Windows
-        if: runner.os == 'Windows'
-        run: ./gradlew :core:jpackage
-
-      # # Install cosign for signing (only on Windows)
-      # - name: Install cosign
-      #   if: runner.os == 'Windows'
-      #   uses: sigstore/cosign-installer@v2
-      #   with:
-      #     cosign-release: 'v2.0.0'
-
-      # # Code signing the Windows executables with cosign (Keyless Signing)
-      # - name: Code signing for Windows using Sigstore
-      #   if: runner.os == 'Windows'
-      #   env:
-      #     COSIGN_EXPERIMENTAL: "true"  # Enable keyless signing
-      #   run: |
-      #     cosign sign --keyless core/build/jpackage/*.exe
-
-      # Upload artifact (signed or unsigned installers)
-      - name: Upload signed or unsigned installers
-        uses: actions/upload-artifact@v3
-        with:
-          name: installers-${{ runner.os }}
-          path: core/build/jpackage
+    - name: Git checkout
+      uses: actions/checkout@v2
+    # Set up JDK 23 (required for jpackage and since jlink doesn't currently support 23)
+    - name: Set up JDK 23
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '23'
+    # Cache Gradle dependencies
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle
+    # Build the project using Gradle
+    - name: Build core project with Gradle
+      run: ./gradlew :clean :core:build
+    # Upload artifact (signed or unsigned installers)
+    - name: Upload signed or unsigned installers
+      uses: actions/upload-artifact@v3
+      with:
+        name: installers-${{ runner.os }}
+        path: core/build/jpackage/*
