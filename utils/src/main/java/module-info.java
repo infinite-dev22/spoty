@@ -7,6 +7,7 @@ module spoty.utils {
     requires net.coobird.thumbnailator;
     requires jdk.compiler;
     requires org.slf4j;
+    requires java.net.http;
 
     opens inc.nomard.spoty.utils;
 
