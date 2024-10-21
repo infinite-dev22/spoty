@@ -37,12 +37,7 @@ jobs:
           ${{ runner.os }}-gradle
     # Build the project using Gradle
     - name: Build core project with Gradle
-      run: ./gradlew :clean :core:build
-    - name: Upload DMG as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: hellofx-jdk${{ matrix.java }}-${{ matrix.os }}-dmg
-        path: build/jpackage/*.dmg
+      run: ./gradlew :clean :core:build# Upload artifact (signed or unsigned installers)
     # Upload artifact (signed or unsigned installers)
     - name: Upload signed or unsigned installers
       uses: actions/upload-artifact@v3
