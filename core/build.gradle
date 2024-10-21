@@ -85,31 +85,17 @@ test {
 
 run {
     jvmArgs = [
-            "-XX:NewRatio=1",
+            "-XX:+UseZGC",
+            "-XX:+ZProactive",
+            "-XX:+ZUncommit",
             "-Xms256m",
             "-Xmx1G",
-            "-XX:ReservedCodeCacheSize=128m",
-            "-XX:MaxGCPauseMillis=200",
-            "-XX:SoftRefLRUPolicyMSPerMB=50",
+            "-XX:MaxGCPauseMillis=100",
             "-XX:+HeapDumpOnOutOfMemoryError",
-            "-Djbr.catch.SIGABRT=true",
-            "-Djdk.attach.allowAttachSelf=true",
-            "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
-            "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
-            "-XX:+TieredCompilation",
             "-XX:+UseStringDeduplication",
-            "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
-            "-Djava.security.egd=file:/dev/urandom",
             "-XX:+AlwaysPreTouch",
-            "-Dprism.marlinratserizer=true",
-            "-Dprism.forceGPU=true",
-            "-Dprism.text=t2k",
-            "-Dprism.verbose=true",
-            "-Djavafx.platform=gtk3",
-            "-Dsun.java2d.opengl=true",
             "-XX:+AutoCreateSharedArchive",
-            "-XX:SharedArchiveFile=spoty.jsa",
-            "-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector"
+            "-XX:SharedArchiveFile=app.jsa"
     ]
 }
 
@@ -141,35 +127,23 @@ jlink {
         name = "OpenSale ERP"
         noConsole = true
         jvmArgs = [
-                "-XX:NewRatio=1",
+                "-XX:+UseZGC",
+                "-XX:+ZProactive",
+                "-XX:ZUncommit=true",
                 "-Xms256m",
                 "-Xmx1G",
-                "-XX:ReservedCodeCacheSize=128m",
-                "-XX:MaxGCPauseMillis=200",
-                "-XX:SoftRefLRUPolicyMSPerMB=50",
+                "-XX:MaxGCPauseMillis=100",
                 "-XX:+HeapDumpOnOutOfMemoryError",
-                "-Djbr.catch.SIGABRT=true",
-                "-Djdk.attach.allowAttachSelf=true",
-                "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
-                "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
-                "-XX:+TieredCompilation",
                 "-XX:+UseStringDeduplication",
-                "-Xlog:gc*,gc+cpu,gc+heap=debug:file=/tmp/gc.log:time,uptime,level,tags",
-                "-Djava.security.egd=file:/dev/urandom",
                 "-XX:+AlwaysPreTouch",
-                "-Dprism.marlinratserizer=true",
-                "-Dprism.forceGPU=true",
-                "-Dprism.text=t2k",
-                "-Djavafx.platform=gtk3",
-                "-Dsun.java2d.opengl=true",
-                "-XX:+AutoCreateSharedArchive",
-                "-XX:SharedArchiveFile=spoty.jsa",
-                "-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector"
+                "-XX:SharedArchiveFile=app.jsa",
+                "-XX:AutoCreateSharedArchive"
         ]
     }
 
     jpackage {
-        imageName = "$app_installer_name"
+        imageName = "$app_image_name"
+        installerName = "$app_installer_name"
         appVersion = "$project.version"
         installerOptions = [
                 // "--name", app_installer_name,
@@ -272,8 +246,6 @@ dependencies {
     implementation "org.slf4j:slf4j-api:$slf4j"
     // LogBack dependencies
     implementation "ch.qos.logback:logback-classic:$log_back"
-    // Async logging (Disruptor) dependency
-    implementation "com.lmax:disruptor:3.4.4"
     // Unit Tests
     implementation "org.junit.jupiter:junit-jupiter-api:$junit"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
