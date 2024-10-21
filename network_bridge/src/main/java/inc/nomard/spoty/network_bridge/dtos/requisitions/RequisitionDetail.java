@@ -2,14 +2,13 @@ package inc.nomard.spoty.network_bridge.dtos.requisitions;
 
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Log4j2
 public class RequisitionDetail {
     private Long id;
     private Product product;

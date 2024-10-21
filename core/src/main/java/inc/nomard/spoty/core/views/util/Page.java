@@ -1,12 +1,11 @@
 package inc.nomard.spoty.core.views.util;
 
-import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;

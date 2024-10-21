@@ -32,11 +32,13 @@ public class TenantSettings {
     private String facebook;
     private String linkedIn;
     @Builder.Default
-    private Boolean approveAdjustments = true;
+    private Boolean review = false;
     @Builder.Default
-    private Boolean approveRequisitions = true;
+    private Boolean approveAdjustments = false;
     @Builder.Default
-    private Boolean approveTransfers = true;
+    private Boolean approveRequisitions = false;
+    @Builder.Default
+    private Boolean approveTransfers = false;
     @Builder.Default
     private Boolean approveStockIns = false;
     @Builder.Default
@@ -44,12 +46,14 @@ public class TenantSettings {
     @Builder.Default
     private Boolean approvePurchases = false;
     @Builder.Default
+    private Boolean approveSales = false;
+    @Builder.Default
     private Boolean approveSaleReturns = false;
     @Builder.Default
     private Boolean approvePurchaseReturns = false;
     @Builder.Default
     private Integer approvalLevels = 0;
-    private List<Approver> approvers;
+    private List<Reviewer> reviewers;
     private Currency defaultCurrency;
     private String logo;
     private Tenant tenant;

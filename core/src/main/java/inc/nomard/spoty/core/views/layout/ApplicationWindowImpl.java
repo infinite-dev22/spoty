@@ -4,9 +4,8 @@ import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 public class ApplicationWindowImpl extends StackPane implements ApplicationWindow {
     protected final StackPane window1 = new StackPane();

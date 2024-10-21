@@ -11,10 +11,10 @@ import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.net.http.HttpClient;
+import inc.nomard.spoty.utils.SpotyThreader;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
 public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
@@ -54,7 +53,7 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -67,7 +66,7 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -80,7 +79,7 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -93,7 +92,7 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -106,7 +105,7 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("PUT", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -119,7 +118,7 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -132,6 +131,6 @@ public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 }

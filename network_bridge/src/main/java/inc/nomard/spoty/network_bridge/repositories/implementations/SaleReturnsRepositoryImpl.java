@@ -9,10 +9,10 @@ import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.SimpleRepository;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.net.http.HttpClient;
+import inc.nomard.spoty.utils.SpotyThreader;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
 public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class,
@@ -46,7 +45,7 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -59,7 +58,7 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -72,7 +71,7 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -86,7 +85,7 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
                 .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -99,7 +98,7 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
                 .method("PUT", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -112,7 +111,7 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -125,6 +124,6 @@ public class SaleReturnsRepositoryImpl extends ProtectedGlobals implements Simpl
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 }

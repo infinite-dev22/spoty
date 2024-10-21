@@ -2,15 +2,15 @@ package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.accounting.AccountTransactionViewModel;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.accounting.AccountTransaction;
 import inc.nomard.spoty.utils.AppUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -19,7 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
@@ -29,7 +29,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class AccountTransactionPage extends OutlinePage {
     private TextField searchBar;
     private TableView<AccountTransaction> masterTable;

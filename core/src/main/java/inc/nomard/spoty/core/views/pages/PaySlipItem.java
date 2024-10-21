@@ -2,7 +2,7 @@ package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.views.layout.AppManager;
-import inc.nomard.spoty.utils.navigation.Spacer;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,13 +10,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-@Log4j2
+@Slf4j
 public class PaySlipItem extends HBox {
     public Label payRunPeriod;
     public Label employeeCount;

@@ -1,12 +1,13 @@
 package inc.nomard.spoty.core.util.observables;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ObservableValue;
+
 import java.lang.ref.WeakReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ObservableValue;
 
 public class OnInvalidated<T> extends When<T> {
     private InvalidationListener listener;
@@ -46,7 +47,7 @@ public class OnInvalidated<T> extends When<T> {
     }
 
     public OnInvalidated<T> executeNow(Supplier<Boolean> condition) {
-        if ((Boolean)condition.get()) {
+        if ((Boolean) condition.get()) {
             this.executeNow();
         }
 
@@ -57,7 +58,7 @@ public class OnInvalidated<T> extends When<T> {
         if (this.oneShot) {
             this.listener = (invalidated) -> {
                 T value = this.observableValue.getValue();
-                if ((Boolean)this.condition.apply(value)) {
+                if ((Boolean) this.condition.apply(value)) {
                     this.action.accept(value);
                     this.dispose();
                 } else {
@@ -68,7 +69,7 @@ public class OnInvalidated<T> extends When<T> {
         } else {
             this.listener = (invalidated) -> {
                 T value = this.observableValue.getValue();
-                if ((Boolean)this.condition.apply(value)) {
+                if ((Boolean) this.condition.apply(value)) {
                     this.action.accept(value);
                 } else {
                     this.otherwise.accept(new WeakReference(this), value);
@@ -87,7 +88,7 @@ public class OnInvalidated<T> extends When<T> {
 
     protected When<T> invalidate() {
         this.executeNow(() -> {
-            return (Boolean)this.condition.apply(this.observableValue.getValue());
+            return (Boolean) this.condition.apply(this.observableValue.getValue());
         });
         return this;
     }

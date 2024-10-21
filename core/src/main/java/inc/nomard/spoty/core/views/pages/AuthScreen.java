@@ -4,7 +4,6 @@ import atlantafx.base.theme.Styles;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
@@ -60,7 +59,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -68,7 +67,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class AuthScreen extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final Stage stage;
@@ -111,13 +110,13 @@ public class AuthScreen extends BorderPane {
         loginAppNameLbl.setAlignment(Pos.CENTER);
         loginAppNameLbl.setContentDisplay(ContentDisplay.CENTER);
         loginAppNameLbl.getStyleClass().add("app-label");
-        loginAppNameLbl.setText(Labels.APP_NAME);
+        loginAppNameLbl.setText("OpenSale ERP");
         VBox.setVgrow(loginAppNameLbl, Priority.ALWAYS);
         var loginPoweredByLbl = new Label();
         loginPoweredByLbl.setAlignment(Pos.CENTER);
         loginPoweredByLbl.setContentDisplay(ContentDisplay.CENTER);
         loginPoweredByLbl.getStyleClass().add("company-label");
-        loginPoweredByLbl.setText("Powered by " + Labels.COMPANY_NAME);
+        loginPoweredByLbl.setText("Powered by nomard Inc.");
         VBox.setVgrow(loginPoweredByLbl, Priority.ALWAYS);
 
         var vbox = new VBox();

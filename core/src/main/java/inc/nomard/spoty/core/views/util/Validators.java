@@ -1,12 +1,12 @@
 package inc.nomard.spoty.core.views.util;
 
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatablePasswordField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 

@@ -3,11 +3,10 @@ package inc.nomard.spoty.core;
 import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import fr.brouillard.oss.cssfx.CSSFX;
-import inc.nomard.spoty.core.auto_updater.v2.AutoUpdater;
-import inc.nomard.spoty.core.auto_updater.v2.UpdateScheduler;
+import inc.nomard.spoty.core.app_updater.AutoUpdater;
+import inc.nomard.spoty.core.app_updater.UpdateScheduler;
 import inc.nomard.spoty.core.startup.SpotyPaths;
 import inc.nomard.spoty.core.values.PreloadedData;
-import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.pages.AuthScreen;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
@@ -23,9 +22,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 public class Main extends Application {
 
     private static final String LIGHT_THEME_CSS = SpotyCoreResourceLoader.load("styles/theming/light-theme.css");
@@ -66,7 +63,7 @@ public class Main extends Application {
         var screenBounds = Screen.getPrimary().getVisualBounds();
         primaryStage.setScene(scene);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
-        primaryStage.setTitle(Labels.APP_NAME);
+        primaryStage.setTitle("OpenSale ERP");
         primaryStage.getIcons().addAll(
                 PreloadedData.icon16,
                 PreloadedData.icon32,

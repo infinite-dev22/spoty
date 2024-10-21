@@ -13,12 +13,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-@Log4j2
+@Slf4j
 public class RequisitionPreviewController implements Initializable {
     static final ObservableList<RequisitionDetail> requisitionDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<RequisitionDetail> requisitionDetails =

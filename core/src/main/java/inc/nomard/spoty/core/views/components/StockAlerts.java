@@ -1,11 +1,10 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.StockAlertModel;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -15,13 +14,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class StockAlerts extends AnchorPane {
     public TableView<StockAlertModel> stockAlert;
     private TableColumn<StockAlertModel, String> name;
@@ -50,7 +49,7 @@ public class StockAlerts extends AnchorPane {
     }
 
     private Label buildTitle() {
-        var label = new Label(Labels.STOCK_ALERTS);
+        var label = new Label("Stock Alerts");
         label.getStyleClass().add("card-title");
         UIUtils.anchor(label, 0d, null, 0d, 0d);
         return label;

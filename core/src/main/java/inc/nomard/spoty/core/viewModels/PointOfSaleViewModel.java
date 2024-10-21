@@ -10,14 +10,14 @@ import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 
-@Log4j2
+@Slf4j
 public class PointOfSaleViewModel {
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);
     private static final Gson gson = new GsonBuilder()

@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
 import inc.nomard.spoty.core.views.util.Page;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.css.PseudoClass;
@@ -15,14 +14,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 public class NavTree extends TreeView<Nav> {
     public static final double SIDEBAR_WIDTH = 250.0;
     public static final String EDGE_TO_EDGE = "edge-to-edge";

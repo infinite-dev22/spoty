@@ -17,10 +17,10 @@ module spoty.core {
     requires com.dlsc.gemsfx;
     requires org.kordamp.ikonli.materialdesign;
     requires org.kordamp.ikonli.feather;
-    requires org.apache.logging.log4j;
-    requires org.apache.logging.log4j.core;
-    requires org.apache.logging.log4j.jul;
+    requires org.slf4j;
     requires javafx.swing;
+    requires java.compiler;
+    requires java.naming;
 
     opens inc.nomard.spoty.core.views.pages;
     opens inc.nomard.spoty.core.views.components;
@@ -30,7 +30,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.forms;
     opens inc.nomard.spoty.core.views.layout.navigation;
     opens inc.nomard.spoty.core.views.layout.message;
-    opens inc.nomard.spoty.core.components.animations;
     opens inc.nomard.spoty.core;
     opens inc.nomard.spoty.core.views.layout.message.enums;
     opens inc.nomard.spoty.core.components.title;

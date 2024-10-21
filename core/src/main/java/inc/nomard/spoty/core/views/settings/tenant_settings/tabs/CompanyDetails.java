@@ -9,11 +9,11 @@ import inc.nomard.spoty.core.views.components.label_components.controls.LabeledT
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextArea;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.utils.UIUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -34,7 +34,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeBrands;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
+@Slf4j
 public class CompanyDetails extends OutlinePage {
     private final SideModalPane modalPane;
     public CustomButton saveBtn;

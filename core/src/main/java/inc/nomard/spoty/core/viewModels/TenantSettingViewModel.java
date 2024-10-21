@@ -2,7 +2,7 @@ package inc.nomard.spoty.core.viewModels;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.network_bridge.dtos.Approver;
+import inc.nomard.spoty.network_bridge.dtos.Reviewer;
 import inc.nomard.spoty.network_bridge.dtos.TenantSettings;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.repositories.implementations.TenantSettingRepositoryImpl;
@@ -17,7 +17,7 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
+@Slf4j
 public class TenantSettingViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
@@ -55,22 +55,24 @@ public class TenantSettingViewModel {
     private static final BooleanProperty reportLogo = new SimpleBooleanProperty(false);
     private static final BooleanProperty emailLogo = new SimpleBooleanProperty(false);
     private static final BooleanProperty receiptLogo = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviews = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveAdjustments = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveRequisitions = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveTransfers = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveStockIns = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveQuotations = new SimpleBooleanProperty(false);
     private static final BooleanProperty approvePurchases = new SimpleBooleanProperty(false);
+    private static final BooleanProperty approveSales = new SimpleBooleanProperty(false);
     private static final BooleanProperty approveSaleReturns = new SimpleBooleanProperty(false);
     private static final BooleanProperty approvePurchaseReturns = new SimpleBooleanProperty(false);
     private static final StringProperty twitter = new SimpleStringProperty("");
     private static final StringProperty facebook = new SimpleStringProperty("");
     private static final StringProperty linkedIn = new SimpleStringProperty("");
-    private static final IntegerProperty approvalLevels = new SimpleIntegerProperty();
+    private static final IntegerProperty reviewLevels = new SimpleIntegerProperty();
     private static final ObjectProperty<Currency> defaultCurrency = new SimpleObjectProperty<>(null);
     private static final StringProperty logo = new SimpleStringProperty("");
-    public static ObservableList<Approver> approversList = FXCollections.observableArrayList();
-    private static final ListProperty<Approver> approvers = new SimpleListProperty<>(approversList);
+    public static ObservableList<Reviewer> reviewersList = FXCollections.observableArrayList();
+    private static final ListProperty<Reviewer> reviewers = new SimpleListProperty<>(reviewersList);
     public static TenantSettingRepositoryImpl tenantSettingRepository = new TenantSettingRepositoryImpl();
 
     public static Long getId() {
@@ -229,16 +231,16 @@ public class TenantSettingViewModel {
         return logo;
     }
 
-    public static Integer getApprovalLevels() {
-        return approvalLevels.get();
+    public static Integer getReviewLevels() {
+        return reviewLevels.get();
     }
 
-    public static void setApprovalLevels(Integer approvalLevels) {
-        TenantSettingViewModel.approvalLevels.set(approvalLevels);
+    public static void setReviewLevels(Integer reviewLevels) {
+        TenantSettingViewModel.reviewLevels.set(reviewLevels);
     }
 
-    public static IntegerProperty approvalLevelsProperty() {
-        return approvalLevels;
+    public static IntegerProperty reviewLevelsProperty() {
+        return reviewLevels;
     }
 
     public static boolean isReportLogo() {
@@ -325,16 +327,29 @@ public class TenantSettingViewModel {
         return defaultCurrency;
     }
 
-    public static ObservableList<Approver> getApprovers() {
-        return approvers.get();
+    public static ObservableList<Reviewer> getApprovers() {
+        return reviewers.get();
     }
 
-    public static void setApprovers(ObservableList<Approver> approvers) {
-        TenantSettingViewModel.approvers.set(approvers);
+    public static void setApprovers(ObservableList<Reviewer> reviewers) {
+        TenantSettingViewModel.reviewers.set(reviewers);
     }
 
-    public static ListProperty<Approver> approversProperty() {
-        return approvers;
+    public static ListProperty<Reviewer> reviewersProperty() {
+        return reviewers;
+    }
+
+
+    public static boolean isReviews() {
+        return reviews.get();
+    }
+
+    public static void setReviews(boolean reviews) {
+        TenantSettingViewModel.reviews.set(reviews);
+    }
+
+    public static BooleanProperty reviewsProperty() {
+        return reviews;
     }
 
 
@@ -408,6 +423,18 @@ public class TenantSettingViewModel {
 
     public static BooleanProperty approvePurchasesProperty() {
         return approvePurchases;
+    }
+
+    public static boolean isApproveSales() {
+        return approveSales.get();
+    }
+
+    public static void setApproveSales(boolean approveSales) {
+        TenantSettingViewModel.approveSales.set(approveSales);
+    }
+
+    public static BooleanProperty approveSalesProperty() {
+        return approveSales;
     }
 
     public static boolean isApproveSaleReturns() {
@@ -537,12 +564,14 @@ public class TenantSettingViewModel {
                     setFacebook(tenantSettings.getFacebook());
                     setLinkedIn(tenantSettings.getLinkedIn());
                     setLogo(tenantSettings.getLogo());
+                    setReviews(tenantSettings.getReview());
                     setApproveAdjustments(tenantSettings.getApproveAdjustments());
                     setApproveRequisitions(tenantSettings.getApproveRequisitions());
                     setApproveTransfers(tenantSettings.getApproveTransfers());
                     setApproveStockIns(tenantSettings.getApproveStockIns());
                     setApproveQuotations(tenantSettings.getApproveQuotations());
                     setApprovePurchases(tenantSettings.getApprovePurchases());
+                    setApproveSales(tenantSettings.getApproveSales());
                     setApproveSaleReturns(tenantSettings.getApproveSaleReturns());
                     setApprovePurchaseReturns(tenantSettings.getApprovePurchaseReturns());
                     setDefaultCurrency(tenantSettings.getDefaultCurrency());

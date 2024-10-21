@@ -6,9 +6,9 @@ import eu.hansolo.fx.charts.data.XYItem;
 import eu.hansolo.fx.charts.series.XYSeries;
 import eu.hansolo.fx.charts.series.XYSeriesBuilder;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.LineChartModel;
 import inc.nomard.spoty.utils.UIUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -19,13 +19,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.LinkedList;
 
-@Log4j2
+@Slf4j
 public class GraphCard2 extends AnchorPane {
     private static final Double AXIS_WIDTH = 25d;
     private static final Double AXIS_HEIGHT = 25d;

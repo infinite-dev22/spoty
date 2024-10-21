@@ -14,13 +14,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 public class MainLayer extends BorderPane {
     private final PageView subLayerPane = new PageView();  // Handles pages
     private final WindowHeader windowHeader = new WindowHeader();  // Top header section

@@ -2,9 +2,9 @@ package inc.nomard.spoty.core.views.components;
 
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.LineChartModel;
 import inc.nomard.spoty.utils.UIUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,9 +19,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 public class TotalRevenue extends AnchorPane {
     private final ToggleButton monthlyViewBtn;
     private final ToggleButton weeklyViewBtn;

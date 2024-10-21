@@ -5,7 +5,6 @@ import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.utils.SpotyThreader;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;

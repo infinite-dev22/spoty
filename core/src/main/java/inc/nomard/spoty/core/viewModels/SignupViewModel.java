@@ -15,9 +15,8 @@ import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
+@Slf4j
 public class SignupViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
@@ -160,7 +159,7 @@ public class SignupViewModel {
             if (response.statusCode() == 201 || response.statusCode() == 204) {
                 // Process the successful response
                 Platform.runLater(() -> {
-                        onSuccess.run();
+                    onSuccess.run();
                     successMessage.showMessage("Account created successfully");
                 });
             } else if (response.statusCode() == 401) {

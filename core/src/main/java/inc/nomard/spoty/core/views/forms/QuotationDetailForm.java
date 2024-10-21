@@ -14,7 +14,6 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import javafx.beans.binding.BooleanExpression;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,14 +23,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.function.Function;
 
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
-@Log4j2
+@Slf4j
 public class QuotationDetailForm extends BorderPane {
     private final ModalPane modalPane;
     public ValidatableNumberField quantity;

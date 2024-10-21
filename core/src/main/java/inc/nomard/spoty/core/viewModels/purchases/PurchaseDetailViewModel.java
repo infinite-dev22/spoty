@@ -6,11 +6,11 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import static inc.nomard.spoty.core.values.SharedResources.*;
 
-@Log4j2
+@Slf4j
 public class PurchaseDetailViewModel {
     private static final ListProperty<PurchaseDetail> purchaseDetails =
             new SimpleListProperty<>(FXCollections.observableArrayList());

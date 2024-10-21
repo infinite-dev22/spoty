@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
@@ -17,8 +19,6 @@ import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
 import inc.nomard.spoty.utils.AppUtils;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
@@ -33,7 +33,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
-@Log4j2
+@Slf4j
 public class RequisitionMasterForm extends VBox {
     private final ModalPane modalPane1;
     private final ModalPane modalPane2;

@@ -14,13 +14,13 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 @Setter
 @Getter
-@Log4j2
+@Slf4j
 public class SpotyMessage extends StackPane {
     @Getter
     private static int layoutHeight;

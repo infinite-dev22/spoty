@@ -2,11 +2,11 @@ package inc.nomard.spoty.core.views.previews;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +20,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Log4j2
+@Slf4j
 public class AdjustmentPreview extends BorderPane {
     static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<AdjustmentDetail> adjustmentDetails = new SimpleListProperty<>(adjustmentDetailsList);

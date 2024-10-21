@@ -25,12 +25,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-@Log4j2
+@Slf4j
 public class StockInMasterForm extends VBox {
     private final ModalPane modalPane1;
     private final ModalPane modalPane2;

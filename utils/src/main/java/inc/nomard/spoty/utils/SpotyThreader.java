@@ -1,13 +1,12 @@
 package inc.nomard.spoty.utils;
 
-import lombok.extern.log4j.Log4j2;
-
+import java.net.http.HttpClient;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Log4j2
 public class SpotyThreader {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private static HttpClient client = HttpClient.newHttpClient();
 
     public static void spotyThreadPool(Runnable runnable) {
         executorService.execute(runnable);
@@ -19,9 +18,14 @@ public class SpotyThreader {
     }
 
     public static Thread singleThreadCreator(String name, Runnable runnable) {
-//        var thread = new Thread(runnable, name);
-//        thread.setDaemon(true);
-//        return thread;
-        return Thread.ofPlatform().name(name).daemon(true).start(runnable);
+        return Thread.ofVirtual().name(name).start(runnable);
+    }
+
+    public static HttpClient httpClient() {
+        if (client == null) {
+            client = HttpClient.newHttpClient();
+        }
+        return client;
+//        return HttpClient.newBuilder().executor(executorService).build();
     }
 }

@@ -3,10 +3,10 @@ package inc.nomard.spoty.core.views.previews;
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.functional_paradigm.SpotyGotFunctional;
-import inc.nomard.spoty.utils.navigation.Spacer;
 import javafx.beans.property.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,13 +20,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
-@Log4j2
+@Slf4j
 public class CustomerPreview extends BorderPane {
     private static final StringProperty nameProperty = new SimpleStringProperty();
     private static final StringProperty emailProperty = new SimpleStringProperty();

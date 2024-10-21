@@ -3,15 +3,14 @@ package inc.nomard.spoty.network_bridge.repositories.implementations;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.DashboardRepository;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.net.http.HttpClient;
+import inc.nomard.spoty.utils.SpotyThreader;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
 public class DashboardRepositoryImpl extends ProtectedGlobals implements DashboardRepository {
     @Override
     public CompletableFuture<HttpResponse<String>> kpiEarnings() {
@@ -23,7 +22,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -36,7 +35,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -49,7 +48,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -62,7 +61,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -75,7 +74,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -88,7 +87,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -101,7 +100,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -114,7 +113,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -127,7 +126,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -140,7 +139,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -153,7 +152,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -166,7 +165,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -179,7 +178,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -192,7 +191,7 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -205,6 +204,6 @@ public class DashboardRepositoryImpl extends ProtectedGlobals implements Dashboa
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 }

@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
@@ -16,8 +18,6 @@ import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.core.views.util.Validators;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
@@ -30,7 +30,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
-@Log4j2
+@Slf4j
 public class PurchaseReturnMasterForm extends VBox {
     private final ModalPane modalPane;
     public CustomButton saveBtn;

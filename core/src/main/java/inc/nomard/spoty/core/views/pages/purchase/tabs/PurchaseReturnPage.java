@@ -3,18 +3,18 @@ package inc.nomard.spoty.core.views.pages.purchase.tabs;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
+import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.layout.message.SpotyMessage;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageDuration;
 import inc.nomard.spoty.core.views.layout.message.enums.MessageVariants;
+import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.core.views.previews.PurchaseReturnPreview;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import inc.nomard.spoty.utils.AppUtils;
-import inc.nomard.spoty.utils.navigation.Spacer;
-import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -26,7 +26,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
@@ -37,7 +37,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
-@Log4j2
+@Slf4j
 public class PurchaseReturnPage extends OutlinePage {
     private final SideModalPane modalPane;
     private TextField searchBar;

@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.util.validation.Constraint;
+import inc.nomard.spoty.core.util.validation.Severity;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
 import inc.nomard.spoty.core.viewModels.TaxViewModel;
@@ -22,8 +24,6 @@ import inc.nomard.spoty.network_bridge.dtos.Discount;
 import inc.nomard.spoty.network_bridge.dtos.Tax;
 import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
 import inc.nomard.spoty.utils.AppUtils;
-import inc.nomard.spoty.core.util.validation.Constraint;
-import inc.nomard.spoty.core.util.validation.Severity;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -37,7 +37,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +47,7 @@ import java.util.function.Predicate;
 import static inc.nomard.spoty.core.util.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
-@Log4j2
+@Slf4j
 public class QuotationMasterForm extends VBox {
     private final ModalPane modalPane1;
     private final ModalPane modalPane2;
