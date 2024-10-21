@@ -12,7 +12,7 @@ import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.net.http.HttpClient;
+import inc.nomard.spoty.utils.SpotyThreader;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -40,7 +40,7 @@ public class TenantSettingRepositoryImpl extends ProtectedGlobals implements Ten
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TenantSettingRepositoryImpl extends ProtectedGlobals implements Ten
                 .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class TenantSettingRepositoryImpl extends ProtectedGlobals implements Ten
                 .method("PUT", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
@@ -79,6 +79,6 @@ public class TenantSettingRepositoryImpl extends ProtectedGlobals implements Ten
                 .method("DELETE", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 }

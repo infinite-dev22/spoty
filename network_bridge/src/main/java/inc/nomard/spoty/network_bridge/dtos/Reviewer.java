@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Approver {
+public class Reviewer {
     private Long id;
     private Employee employee;
     private Integer level;
