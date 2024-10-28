@@ -129,15 +129,15 @@ jlink {
         jvmArgs = [
                 "-XX:+UseZGC",
                 "-XX:+ZProactive",
-                "-XX:ZUncommit=true",
+                "-XX:+ZUncommit",
                 "-Xms256m",
                 "-Xmx1G",
                 "-XX:MaxGCPauseMillis=100",
                 "-XX:+HeapDumpOnOutOfMemoryError",
                 "-XX:+UseStringDeduplication",
                 "-XX:+AlwaysPreTouch",
-                "-XX:SharedArchiveFile=app.jsa",
-                "-XX:AutoCreateSharedArchive"
+                "-XX:+AutoCreateSharedArchive",
+                "-XX:SharedArchiveFile=app.jsa"
         ]
     }
 
