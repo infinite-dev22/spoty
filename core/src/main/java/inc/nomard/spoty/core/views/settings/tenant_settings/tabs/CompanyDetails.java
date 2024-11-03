@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.settings.tenant_settings.tabs;
 
 import atlantafx.base.theme.Styles;
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.values.PreloadedData;
 import inc.nomard.spoty.core.viewModels.TenantSettingViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
@@ -23,13 +23,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
@@ -48,9 +47,10 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class CompanyDetails extends OutlinePage {
+    private static final double IMAGE_SIZE1 = 200.0;
+    private static final double IMAGE_SIZE2 = 70.0;
     private final SideModalPane modalPane;
     public CustomButton saveBtn;
-    public Circle companyLogo;
     public Text companyName,
             fileLabel,
             companyWeblink;
@@ -72,7 +72,7 @@ public class CompanyDetails extends OutlinePage {
             emailsCheck,
             receiptsCheck;
     public ScrollPane scrollPane;
-    private Circle currentCompanyLogo;
+    private ImageView companyLogo, currentCompanyLogo;
     private VBox companyLogoBtn;
     private FileChooser fileChooser;
 
@@ -153,15 +153,14 @@ public class CompanyDetails extends OutlinePage {
         return heroImage;
     }
 
-    private Circle buildCompanyLogoHolder() {
-        companyLogo = new Circle();
+    private ImageView buildCompanyLogoHolder() {
+        companyLogo = new ImageView(PreloadedData.userPlaceholderImage);
         companyLogo.setCache(true);
         companyLogo.setCacheHint(CacheHint.SPEED);
-        companyLogo.setFill(Color.web("#4e4f5400"));
-        companyLogo.setRadius(100d);
-        companyLogo.setStroke(Color.web("#ffffff00"));
-        companyLogo.setStrokeType(StrokeType.INSIDE);
-        companyLogo.setStrokeWidth(0d);
+        companyLogo.setFitWidth(IMAGE_SIZE1);
+        companyLogo.setFitHeight(IMAGE_SIZE1);
+        Circle avatarClip = new Circle(IMAGE_SIZE1 / 2, IMAGE_SIZE1 / 2, IMAGE_SIZE1 / 2);
+        companyLogo.setClip(avatarClip);
         return companyLogo;
     }
 
@@ -339,13 +338,14 @@ public class CompanyDetails extends OutlinePage {
         return hbox;
     }
 
-    private Circle buildImagePreview() {
-        currentCompanyLogo = new Circle();
+    private ImageView buildImagePreview() {
+        currentCompanyLogo = new ImageView(PreloadedData.userPlaceholderImage);
         currentCompanyLogo.setCache(true);
         currentCompanyLogo.setCacheHint(CacheHint.SPEED);
-        currentCompanyLogo.setRadius(50d);
-        currentCompanyLogo.setStrokeType(StrokeType.INSIDE);
-        currentCompanyLogo.setStrokeWidth(0d);
+        currentCompanyLogo.setFitWidth(IMAGE_SIZE2);
+        currentCompanyLogo.setFitHeight(IMAGE_SIZE2);
+        Circle avatarClip = new Circle(IMAGE_SIZE2 / 2, IMAGE_SIZE2 / 2, IMAGE_SIZE2 / 2);
+        currentCompanyLogo.setClip(avatarClip);
         return currentCompanyLogo;
     }
 
@@ -516,27 +516,54 @@ public class CompanyDetails extends OutlinePage {
     }
 
     private void showData() {
-        if (Objects.nonNull(TenantSettingViewModel.getLogo()) && !TenantSettingViewModel.getLogo().isEmpty() && !TenantSettingViewModel.getLogo().isBlank()) {
-            var image = new Image(
-                    TenantSettingViewModel.getLogo(),
-                    10000,
-                    10000,
-                    true,
-                    true
-            );
-            companyLogo.setFill(new ImagePattern(image));
-            currentCompanyLogo.setFill(new ImagePattern(image));
-        } else {
-            var image = new Image(
-                    SpotyCoreResourceLoader.load("images/user-place-holder.png"),
-                    10000,
-                    10000,
-                    true,
-                    true
-            );
-            companyLogo.setFill(new ImagePattern(image));
-            currentCompanyLogo.setFill(new ImagePattern(image));
-        }
+        // if (Objects.nonNull(TenantSettingViewModel.getLogo()) && !TenantSettingViewModel.getLogo().isEmpty() && !TenantSettingViewModel.getLogo().isBlank()) {
+        //     var image = new Image(
+        //             TenantSettingViewModel.getLogo(),
+        //             10000,
+        //             10000,
+        //             true,
+        //             true
+        //     );
+        //     companyLogo.setImage(image);
+        //     currentCompanyLogo.setImage(image);
+        // } else {
+        //     var image = new Image(
+        //             PreloadedData.userPlaceholderImage.getUrl(),
+        //             10000,
+        //             10000,
+        //             true,
+        //             true
+        //     );
+        //     companyLogo.setImage(image);
+        //     currentCompanyLogo.setImage(image);
+        // }
+        TenantSettingViewModel.logoProperty().addListener((_, oldValue, newValue) -> {
+            if (!Objects.equals(newValue, oldValue)) {
+                var image = new Image(
+                        Objects.nonNull(newValue)
+                                && !newValue.isEmpty()
+                                && !newValue.isBlank() ?
+                                newValue
+                                : PreloadedData.userPlaceholderImage.getUrl(),
+                        10000,
+                        10000,
+                        true,
+                        true,
+                        true
+                );
+
+                // Handle image loading progress and error cases
+                image.progressProperty().addListener((_, _, newProgress) -> {
+                    if (newProgress.doubleValue() >= 1.0 && !image.isError()) {
+                        companyLogo.setImage(image);
+                        currentCompanyLogo.setImage(image);
+                    } else if (image.isError()) {
+                        companyLogo.setImage(PreloadedData.imageErrorPlaceholderImage);
+                        currentCompanyLogo.setImage(PreloadedData.imageErrorPlaceholderImage);
+                    }
+                });
+            }
+        });
         companyName
                 .textProperty()
                 .bindBidirectional(TenantSettingViewModel.nameProperty());
@@ -616,6 +643,6 @@ public class CompanyDetails extends OutlinePage {
     private void setLogoImage(File file) throws IOException {
         var bufferedImage = ImageIO.read(file);
         Image logoImage = javafx.embed.swing.SwingFXUtils.toFXImage(bufferedImage, null);
-        currentCompanyLogo.setFill(new ImagePattern(logoImage));
+        currentCompanyLogo.setImage(logoImage);
     }
 }

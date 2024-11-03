@@ -260,6 +260,7 @@ public class CompanySettings extends OutlinePage {
                 reviewers.setDisable(true);
             }
         });
+        reviews.selectedProperty().bindBidirectional(TenantSettingViewModel.reviewsProperty());
         var label = new Text("Enable reviews for your company");
         label.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_SUBTLE);
         label.sceneProperty().addListener((_, _, newScene) -> {
@@ -288,14 +289,14 @@ public class CompanySettings extends OutlinePage {
         flowPane.setAlignment(Pos.TOP_LEFT);
         flowPane.setHgap(16d);
         flowPane.setVgap(16d);
-        flowPane.getChildren().addAll(buildCheckBox(TenantSettingViewModel.reviewsProperty(), "Approve Adjustments", "Approve adjustments"),
-                buildCheckBox(TenantSettingViewModel.approveAdjustmentsProperty(), "Approve Purchases", "Approve purchases"),
-                buildCheckBox(TenantSettingViewModel.approvePurchasesProperty(), "Approve Purchase Returns", "Approve purchase returns"),
-                buildCheckBox(TenantSettingViewModel.approvePurchaseReturnsProperty(), "Approve Quotations", "Approve quotations"),
-                buildCheckBox(TenantSettingViewModel.approveQuotationsProperty(), "Approve Requisitions", "Approve requisitions"),
-                buildCheckBox(TenantSettingViewModel.approveRequisitionsProperty(), "Approve Sales", "Approve sales"),
-                buildCheckBox(TenantSettingViewModel.approveSalesProperty(), "Approve Sale Returns", "Approve sale returns"),
-                buildCheckBox(TenantSettingViewModel.approveSaleReturnsProperty(), "Approve StockIns", "Approve stock ins"));
+        flowPane.getChildren().addAll(buildCheckBox(TenantSettingViewModel.approveAdjustmentsProperty(), "Approve Adjustments", "Approve adjustments"),
+                buildCheckBox(TenantSettingViewModel.approvePurchasesProperty(), "Approve Purchases", "Approve purchases"),
+                buildCheckBox(TenantSettingViewModel.approvePurchaseReturnsProperty(), "Approve Purchase Returns", "Approve purchase returns"),
+                buildCheckBox(TenantSettingViewModel.approveQuotationsProperty(), "Approve Quotations", "Approve quotations"),
+                buildCheckBox(TenantSettingViewModel.approveRequisitionsProperty(), "Approve Requisitions", "Approve requisitions"),
+                buildCheckBox(TenantSettingViewModel.approveSalesProperty(), "Approve Sales", "Approve sales"),
+                buildCheckBox(TenantSettingViewModel.approveSaleReturnsProperty(), "Approve Sale Returns", "Approve sale returns"),
+                buildCheckBox(TenantSettingViewModel.approveStockInsProperty(), "Approve StockIns", "Approve stock ins"));
         return new VBox(separator(), flowPane);
     }
 
@@ -336,12 +337,12 @@ public class CompanySettings extends OutlinePage {
         flowPane.setHgap(16d);
         flowPane.setVgap(16d);
         flowPane.getChildren().addAll(
-                TenantSettingViewModel.reviewersProperty().stream()
+                TenantSettingViewModel.getReviewers().stream()
                         .map(ReviewerCard::new)
                         .toList()
         );
         TenantSettingViewModel.reviewersProperty().addListener((_, _, _) -> flowPane.getChildren().addAll(
-                TenantSettingViewModel.reviewersProperty().stream()
+                TenantSettingViewModel.getReviewers().stream()
                         .map(ReviewerCard::new)
                         .toList()
         ));

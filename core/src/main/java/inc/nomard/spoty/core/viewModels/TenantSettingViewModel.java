@@ -327,11 +327,11 @@ public class TenantSettingViewModel {
         return defaultCurrency;
     }
 
-    public static ObservableList<Reviewer> getApprovers() {
+    public static ObservableList<Reviewer> getReviewers() {
         return reviewers.get();
     }
 
-    public static void setApprovers(ObservableList<Reviewer> reviewers) {
+    public static void setReviewers(ObservableList<Reviewer> reviewers) {
         TenantSettingViewModel.reviewers.set(reviewers);
     }
 
@@ -493,6 +493,7 @@ public class TenantSettingViewModel {
                         .approvePurchases(isApprovePurchases())
                         .approveSaleReturns(isApproveSaleReturns())
                         .approvePurchaseReturns(isApprovePurchaseReturns())
+                        .reviewers(getReviewers())
                         .defaultCurrency(getDefaultCurrency())
                         .build();
         CompletableFuture<HttpResponse<String>> responseFuture = tenantSettingRepository.post(tenantSettings);
@@ -574,6 +575,7 @@ public class TenantSettingViewModel {
                     setApproveSales(tenantSettings.getApproveSales());
                     setApproveSaleReturns(tenantSettings.getApproveSaleReturns());
                     setApprovePurchaseReturns(tenantSettings.getApprovePurchaseReturns());
+                    setReviewers(FXCollections.observableArrayList(tenantSettings.getReviewers()));
                     setDefaultCurrency(tenantSettings.getDefaultCurrency());
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
