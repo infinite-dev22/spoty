@@ -552,7 +552,7 @@ public class CompanyDetails extends OutlinePage {
         uploadIcon.getChildren().add(upload);
 
         if (Objects.equals(fileChooser, null)) {
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpeg, *.webp)", "*.*.png", "*.jpeg", "*.webp");
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpg, *.jpeg, *.webp)", "*.*.png", "*.jpg", "*.jpeg", "*.webp");
             fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(extFilter);
         }
