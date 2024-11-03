@@ -5,6 +5,7 @@ import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
+import inc.nomard.spoty.core.values.PreloadedData;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.components.CustomButton;
@@ -26,11 +27,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -41,6 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -49,8 +52,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.awt.Image.SCALE_SMOOTH;
+
 @Slf4j
 public class ProductForm extends BorderPane {
+    private static final int IMAGE_SIZE = 160;
+    private static final Double ARC_SIZE = 25d;
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private final ModalPane modalPane;
     public ValidatableTextField name,
@@ -64,7 +71,7 @@ public class ProductForm extends BorderPane {
     public ValidatableComboBox<String> barcodeType;
     public ValidatableComboBox<Discount> discount;
     public ValidatableComboBox<Tax> tax;
-    public Rectangle productImageView;
+    public ImageView productImageView;
     public CustomButton saveButton;
     public Button cancelButton;
     public Image productImage;
@@ -245,9 +252,7 @@ public class ProductForm extends BorderPane {
         placeHolder = new VBox(20, imageIcon, uploadImageLabel);
         placeHolder.setAlignment(Pos.CENTER);
 
-        productImageView = new Rectangle();
-        productImageView.setArcHeight(25.0);
-        productImageView.setArcWidth(25.0);
+        productImageView = getProductImage();
         productImageView.setManaged(false);
         productImageView.setVisible(false);
 
@@ -278,19 +283,50 @@ public class ProductForm extends BorderPane {
         return box;
     }
 
-    private void setProductImage(String image) {
-        productImage = new Image(image, 200, 200, true, false);
-        if (productImage.getWidth() >= uploadImageButton.getWidth()) {
-            productImageView.setWidth(uploadImageButton.getWidth() - 10);
+    private ImageView getProductImage() {
+        var clip = new Rectangle(IMAGE_SIZE, IMAGE_SIZE);
+        clip.setArcWidth(ARC_SIZE);
+        clip.setArcHeight(ARC_SIZE);
+
+        var imageView = new ImageView(PreloadedData.productPlaceholderImage);
+        imageView.setFitWidth(IMAGE_SIZE);
+        imageView.setFitHeight(IMAGE_SIZE);
+        imageView.setClip(clip);
+
+        ProductViewModel.imageProperty().addListener((_, _, newValue) -> {
+            var image = new Image(newValue, IMAGE_SIZE, IMAGE_SIZE, true, true, true);
+            image.progressProperty().addListener((_, _, newProgress) -> {
+                if (newProgress.doubleValue() >= 1.0 && !image.isError()) {
+                    imageView.setImage(image); // Set the loaded image
+                } else if (image.isError()) {
+                    imageView.setImage(PreloadedData.imageErrorPlaceholderImage);
+                }
+            });
+        });
+
+        return imageView;
+    }
+
+    private void setLogoImage(File file) throws IOException {
+        var bufferedImage = ImageIO.read(file);// Resize the BufferedImage
+        var resizedImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
+        var g2d = resizedImage.createGraphics();
+        g2d.drawImage(bufferedImage.getScaledInstance(IMAGE_SIZE, IMAGE_SIZE, SCALE_SMOOTH), 0, 0, null);
+        g2d.dispose();
+
+        var image = javafx.embed.swing.SwingFXUtils.toFXImage(resizedImage, null);
+
+        if (image.getWidth() >= uploadImageButton.getWidth()) {
+            productImageView.setFitWidth(uploadImageButton.getWidth() - 10);
         } else {
-            productImageView.setWidth(productImage.getWidth());
+            productImageView.setFitWidth(image.getWidth());
         }
-        if (productImage.getHeight() >= uploadImageButton.getHeight()) {
-            productImageView.setHeight(uploadImageButton.getHeight() - 10);
+        if (image.getHeight() >= uploadImageButton.getHeight()) {
+            productImageView.setFitHeight(uploadImageButton.getHeight() - 10);
         } else {
-            productImageView.setHeight(productImage.getHeight());
+            productImageView.setFitHeight(image.getHeight());
         }
-        productImageView.setFill(new ImagePattern(productImage));
+        productImageView.setImage(image);
     }
 
     private void getFieldBindings() {
@@ -468,17 +504,22 @@ public class ProductForm extends BorderPane {
         imageIcon.getChildren().add(upload);
 
         if (Objects.equals(fileChooser, null)) {
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpeg)", "*.*.png", "*.jpeg");
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpeg, *jpg, *webp)", "*.png", "*.jpeg", "*.jpg", "*.webp");
             fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(extFilter);
         }
         uploadImageButton.setOnMouseClicked(_ -> {
             var file = fileChooser.showOpenDialog(new Stage());
             if (Objects.nonNull(file)) {
-                if (SpotyUtils.getFileExtension(file).toLowerCase().contains("jpg")
+                if (SpotyUtils.getFileExtension(file).toLowerCase().contains("png")
+                        || SpotyUtils.getFileExtension(file).toLowerCase().contains("jpg")
                         || SpotyUtils.getFileExtension(file).toLowerCase().contains("jpeg")
                         || SpotyUtils.getFileExtension(file).toLowerCase().contains("webp")) {
-                    setProductImage(new File(file.getPath()).toURI().toString());
+                    try {
+                        setLogoImage(new File(file.getPath()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     placeHolder.setVisible(false);
                     placeHolder.setManaged(false);
                     productImageView.setVisible(true);
@@ -508,10 +549,15 @@ public class ProductForm extends BorderPane {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasFiles() && db.getFiles().size() == 1) {
-                if (SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("jpg")
+                if (SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("png")
+                        || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("jpg")
                         || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("jpeg")
                         || SpotyUtils.getFileExtension(db.getFiles().getFirst()).toLowerCase().contains("webp")) {
-                    setProductImage(new File(db.getFiles().getFirst().getPath()).toURI().toString());
+                    try {
+                        setLogoImage(new File(db.getFiles().getFirst().getPath()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     placeHolder.setVisible(false);
                     placeHolder.setManaged(false);
                     productImageView.setVisible(true);
