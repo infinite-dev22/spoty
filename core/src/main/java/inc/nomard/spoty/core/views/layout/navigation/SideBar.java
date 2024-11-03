@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.views.layout.navigation;
 
 import atlantafx.base.theme.Styles;
+import inc.nomard.spoty.core.values.PreloadedData;
 import inc.nomard.spoty.core.views.layout.AppManager;
 import inc.nomard.spoty.utils.SpotyThreader;
 import inc.nomard.spoty.utils.flavouring.AppConfig;
@@ -9,35 +10,47 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.concurrent.CompletableFuture;
+
+import static java.awt.Image.SCALE_SMOOTH;
+
+@Slf4j
 public class SideBar extends VBox {
+    private static final double IMAGE_SIZE = 70.0;
+    private static final int IMAGE_SIZE2 = 70;
     final MenuItem viewProfile = new MenuItem("View profile");
     final MenuItem logOut = new MenuItem("Log out");
     private final Stage stage = AppManager.getPrimaryStage();
     private final NavTree navTree;
-    private Circle circle;
+    private ImageView avatarImageView;
     private Label username;
     private Label designation;
     private FontIcon moreActions;
@@ -49,7 +62,7 @@ public class SideBar extends VBox {
         navTree = navigation.createNavigation();
         init();
 
-        navigation.selectedPageProperty().addListener((obs, old, val) -> {
+        navigation.selectedPageProperty().addListener((_, _, val) -> {
             if (val != null) {
                 navTree.getSelectionModel().select(navigation.getTreeItemForPage(val));
             }
@@ -74,7 +87,7 @@ public class SideBar extends VBox {
     private FontIcon buildFontIcon(SpotyGotFunctional.ParameterlessConsumer onAction, String styleClass) {
         var icon = new FontIcon(FontAwesomeSolid.CIRCLE);
         icon.setIconSize(15);
-        icon.setOnMouseClicked(event -> onAction.run());
+        icon.setOnMouseClicked(_ -> onAction.run());
         icon.getStyleClass().add(styleClass);
         return icon;
     }
@@ -95,16 +108,16 @@ public class SideBar extends VBox {
         return hbox;
     }
 
-    private Circle buildProfileImage() {
-        circle = new Circle();
-        circle.setCache(true);
-        circle.setCacheHint(CacheHint.SPEED);
-        circle.setFill(Color.web("#4e4f5400"));
-        circle.setStroke(Color.web("#ffffff00"));
-        circle.setStrokeType(StrokeType.INSIDE);
-        circle.setStrokeWidth(0d);
-        circle.setRadius(30d);
-        return circle;
+    private ImageView getProfileAvatar() {
+        avatarImageView = new ImageView(PreloadedData.userPlaceholderImage);
+        avatarImageView.setFitWidth(IMAGE_SIZE);
+        avatarImageView.setFitHeight(IMAGE_SIZE);
+
+        // Create a circular clip for the avatar
+        Circle avatarClip = new Circle(IMAGE_SIZE / 2, IMAGE_SIZE / 2, IMAGE_SIZE / 2);
+        avatarImageView.setClip(avatarClip);
+
+        return avatarImageView;
     }
 
     private Label buildUserName() {
@@ -147,7 +160,7 @@ public class SideBar extends VBox {
         var hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setSpacing(10d);
-        hbox.getChildren().addAll(buildProfileImage(), buildProfileDetails(), new Spacer(), buildProfileActionsMenu());
+        hbox.getChildren().addAll(getProfileAvatar(), buildProfileDetails(), new Spacer(), buildProfileActionsMenu());
         return hbox;
     }
 
@@ -159,9 +172,7 @@ public class SideBar extends VBox {
         toggle.getStyleClass().add("nav-toggle");
         StackPane.setAlignment(toggle, Pos.CENTER_RIGHT);
         StackPane.setMargin(toggle, new Insets(40d, -45d, 0d, 0d));
-//        toggle.setVisible(false);
-//        toggle.setManaged(false);
-        toggle.setOnAction(event -> this.toggleSidebar());
+        toggle.setOnAction(_ -> this.toggleSidebar());
         return toggle;
     }
 
@@ -196,8 +207,43 @@ public class SideBar extends VBox {
         stage.setIconified(true);
     }
 
-    public void setProfileImage(Image image) {
-        circle.setFill(new ImagePattern(image));
+    public void setProfileImage(String imageURL) {
+        CompletableFuture.supplyAsync(() -> {
+            BufferedImage bufferedImage;
+
+            try {
+                if (imageURL.startsWith("http") || imageURL.startsWith("https")) {
+                    // Load image from URL
+                    URL url = URI.create(imageURL).toURL();
+                    bufferedImage = ImageIO.read(url);
+                } else {
+                    // Load image from local file
+                    File file = new File(imageURL);
+                    bufferedImage = ImageIO.read(file);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load image", e);
+            }
+
+            // Resize the image
+            BufferedImage resizedImage = new BufferedImage(IMAGE_SIZE2, IMAGE_SIZE2, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = resizedImage.createGraphics();
+            g2d.drawImage(bufferedImage.getScaledInstance(IMAGE_SIZE2, IMAGE_SIZE2, SCALE_SMOOTH), 0, 0, null);
+            g2d.dispose();
+
+            return SwingFXUtils.toFXImage(resizedImage, null);
+        }).handle((avatarImage, ex) -> {
+            // Handle errors and fallback to a placeholder image
+            if (ex != null) {
+                log.error("Exception: {}", ex.getMessage());
+                return PreloadedData.imageErrorPlaceholderImage;
+            }
+            return avatarImage;
+        }).thenApply(avatarImage -> {
+            // Update UI with the loaded image asynchronously
+            Platform.runLater(() -> avatarImageView.setImage(avatarImage));
+            return avatarImage;
+        });
     }
 
     public void setUsername(String username) {
@@ -215,11 +261,11 @@ public class SideBar extends VBox {
     }
 
     public void setViewProfileOnAction(SpotyGotFunctional.ParameterlessConsumer action) {
-        viewProfile.setOnAction(event -> action.run());
+        viewProfile.setOnAction(_ -> action.run());
     }
 
     public void setLogOutOnAction(SpotyGotFunctional.ParameterlessConsumer action) {
-        logOut.setOnAction(event -> action.run());
+        logOut.setOnAction(_ -> action.run());
     }
 
 //    private void toggleSidebar() {
