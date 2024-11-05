@@ -184,5 +184,5 @@
 
 .table-view {
     -fx-border-color: transparent transparent -border-disabled transparent;
-    -fx-border-width: 0 0 2px 0;
+    -fx-border-width: 0 0 1px 0;
 }
