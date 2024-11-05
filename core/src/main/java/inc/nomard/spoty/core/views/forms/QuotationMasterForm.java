@@ -100,7 +100,7 @@ public class QuotationMasterForm extends VBox {
         addBtn = new Button("Add Product");
         addBtn.setDefaultButton(true);
         addBtn.setPrefWidth(10000d);
-        addBtn.setOnAction(event -> this.showForm());
+        addBtn.setOnAction(_ -> this.showForm());
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
     }
@@ -146,23 +146,18 @@ public class QuotationMasterForm extends VBox {
         customer
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.customerProperty());
-        // ComboBox Converters.
         StringConverter<Customer> customerConverter =
                 FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
-
-        // ComboBox Filter Functions.
         Function<String, Predicate<Customer>> customerFilterFunction =
                 searchStr ->
                         customer ->
                                 customerConverter.toString(customer).toLowerCase().contains(searchStr);
-
-        // Combo box properties.
         customer.setConverter(customerConverter);
         if (CustomerViewModel.getCustomers().isEmpty()) {
             CustomerViewModel.getCustomers()
                     .addListener(
                             (ListChangeListener<Customer>)
-                                    c -> customer.setItems(CustomerViewModel.getCustomers()));
+                                    _ -> customer.setItems(CustomerViewModel.getCustomers()));
         } else {
             customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
         }
@@ -177,23 +172,18 @@ public class QuotationMasterForm extends VBox {
         tax
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.taxProperty());
-        // ComboBox Converters.
         StringConverter<Tax> taxConverter =
                 FunctionalStringConverter.to(tax -> (tax == null) ? "" : tax.getName());
-
-        // ComboBox Filter Functions.
         Function<String, Predicate<Tax>> taxFilterFunction =
                 searchStr ->
                         tax ->
                                 taxConverter.toString(tax).toLowerCase().contains(searchStr);
-
-        // Combo box properties.
         tax.setConverter(taxConverter);
         if (TaxViewModel.getTaxes().isEmpty()) {
             TaxViewModel.getTaxes()
                     .addListener(
                             (ListChangeListener<Tax>)
-                                    c -> tax.setItems(TaxViewModel.getTaxes()));
+                                    _ -> tax.setItems(TaxViewModel.getTaxes()));
         } else {
             tax.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
         }
@@ -207,23 +197,18 @@ public class QuotationMasterForm extends VBox {
         discount
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.discountProperty());
-        // ComboBox Converters.
         StringConverter<Discount> discountConverter =
                 FunctionalStringConverter.to(discount -> (discount == null) ? "" : discount.getName());
-
-        // ComboBox Filter Functions.
         Function<String, Predicate<Discount>> discountFilterFunction =
                 searchStr ->
                         discount ->
                                 discountConverter.toString(discount).toLowerCase().contains(searchStr);
-
-        // Combo box properties.
         discount.setConverter(discountConverter);
         if (DiscountViewModel.getDiscounts().isEmpty()) {
             DiscountViewModel.getDiscounts()
                     .addListener(
                             (ListChangeListener<Discount>)
-                                    c -> discount.setItems(DiscountViewModel.getDiscounts()));
+                                    _ -> discount.setItems(DiscountViewModel.getDiscounts()));
         } else {
             discount.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
         }
@@ -251,7 +236,7 @@ public class QuotationMasterForm extends VBox {
     private CustomButton buildSaveButton() {
         saveBtn = new CustomButton("Save");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(event -> {
+        saveBtn.setOnAction(_ -> {
             if (!table.isDisabled() && QuotationDetailViewModel.getQuotationDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
             }
@@ -272,7 +257,7 @@ public class QuotationMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> this.dispose());
+        cancelBtn.setOnAction(_ -> this.dispose());
         return cancelBtn;
     }
 
@@ -304,19 +289,25 @@ public class QuotationMasterForm extends VBox {
 
     private void getQuotationDetailTable() {
         table.setRowFactory(
-                quotationDetail -> {
-                    TableRow<QuotationDetail> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<QuotationDetail>) event.getSource())
-                                        .show(
-                                                table.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(QuotationDetail item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<QuotationDetail>) event.getSource())
+                                                .show(
+                                                        table.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -325,24 +316,19 @@ public class QuotationMasterForm extends VBox {
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             QuotationDetailViewModel.removeQuotationDetail(
                     obj.getItem().getId(),
                     QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getItem()));
             event.consume();
         }, obj.getItem().getProductName()).showDialog());
-        // Edit
         edit.setOnAction(
                 event -> {
                     QuotationDetailViewModel.getQuotationDetail(obj.getItem());
                     this.showForm();
                     event.consume();
                 });
-
         contextMenu.getItems().addAll(edit, delete);
-
         return contextMenu;
     }
 
@@ -370,7 +356,6 @@ public class QuotationMasterForm extends VBox {
     }
 
     public void requiredValidator() {
-        // Name input validation.
         Constraint customerConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -378,12 +363,11 @@ public class QuotationMasterForm extends VBox {
                         .setCondition(customer.valueProperty().isNotNull())
                         .get();
         customer.getValidator().constraint(customerConstraint);
-        // Display error.
         customer
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 customerValidationLabel.setManaged(false);
                                 customerValidationLabel.setVisible(false);
@@ -399,7 +383,7 @@ public class QuotationMasterForm extends VBox {
 
     private void setupTableColumnData() {
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -407,7 +391,7 @@ public class QuotationMasterForm extends VBox {
             }
         });
         price.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        price.setCellFactory(tableColumn -> new TableCell<>() {
+        price.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -415,7 +399,7 @@ public class QuotationMasterForm extends VBox {
             }
         });
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+        quantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationDetail item, boolean empty) {
                 super.updateItem(item, empty);

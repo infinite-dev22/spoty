@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.SalaryViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
@@ -14,14 +15,15 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.Salary;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
+import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
@@ -33,12 +35,12 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@SuppressWarnings("unchecked")
 @Slf4j
 public class SalaryPage extends OutlinePage {
     private TextField searchBar;
     private TableView<Salary> masterTable;
     private SpotyProgressSpinner progress;
-    private FXMLLoader viewFxmlLoader;
     private TableColumn<Salary, Salary> payslip;
     private TableColumn<Salary, Salary> employee;
     private TableColumn<Salary, String> status;
@@ -63,7 +65,6 @@ public class SalaryPage extends OutlinePage {
         pane.setCenter(buildCenter());
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -115,7 +116,7 @@ public class SalaryPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (SalaryViewModel.getTotalPages() > 0) {
@@ -125,7 +126,7 @@ public class SalaryPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        SalaryViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        SalaryViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (SalaryViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -135,25 +136,11 @@ public class SalaryPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
     }
-
-//    private void salaryViewDialogPane() throws IOException {
-//        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-//        viewFxmlLoader = fxmlLoader("views/previews/SalaryPreview.fxml");
-//        viewFxmlLoader.setControllerFactory(c -> new SalaryPreviewController());
-//
-//        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-//        dialogContent.setShowMinimize(false);
-//        dialogContent.setShowAlwaysOnTop(false);
-//        dialogContent.setShowClose(false);
-//
-//        dialogContent.setPrefHeight(screenHeight * .98);
-//        dialogContent.setPrefWidth(700);
-////        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
-//    }
 
     private void setupTable() {
         payslip = new TableColumn<>("Status");
@@ -174,27 +161,33 @@ public class SalaryPage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleTable();
-
         masterTable.setItems(SalaryViewModel.getSalaries());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleTable() {
         masterTable.setPrefSize(1000, 1000);
 
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<Salary> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<Salary>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(Salary item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<Salary>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -203,17 +196,7 @@ public class SalaryPage extends OutlinePage {
         var view = new MenuItem("View");
         var delete = new MenuItem("Delete");
 
-        // Actions
-        // View
-        view.setOnAction(event -> {
-            try {
-//                salaryViewShow(obj.getItem());
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-            event.consume();
-        });
-        // Delete
+        view.setOnAction(Event::consume);
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             SalaryViewModel.deleteSalary(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
@@ -226,12 +209,6 @@ public class SalaryPage extends OutlinePage {
     private void onSuccess() {
         SalaryViewModel.getAllSalaries(null, null, null, null);
     }
-
-//    public void salaryViewShow(Salary salary) {
-//        SalaryPreviewController controller = viewFxmlLoader.getController();
-//        controller.init(salary);
-//        viewDialog.showAndWait();
-//    }
 
     private void successMessage(String message) {
         displayNotification(message, MessageVariants.SUCCESS, FontAwesomeSolid.CHECK_CIRCLE);
@@ -257,15 +234,12 @@ public class SalaryPage extends OutlinePage {
         if (!AppManager.getMorphPane().getChildren().contains(notification)) {
             AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+            in.setOnFinished(_ -> SpotyMessage.delay(notification));
         }
     }
 
-    public void createBtnAction() {
-    }
-
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -283,7 +257,7 @@ public class SalaryPage extends OutlinePage {
 
     private void setupTableColumns() {
         payslip.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        payslip.setCellFactory(tableColumn -> new TableCell<>() {
+        payslip.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Salary item, boolean empty) {
                 super.updateItem(item, empty);
@@ -293,7 +267,7 @@ public class SalaryPage extends OutlinePage {
             }
         });
         employee.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        employee.setCellFactory(tableColumn -> new TableCell<>() {
+        employee.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Salary item, boolean empty) {
                 super.updateItem(item, empty);
@@ -317,7 +291,7 @@ public class SalaryPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(SalaryViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(SalaryViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -332,12 +306,12 @@ public class SalaryPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(SalaryViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     SalaryViewModel
@@ -351,6 +325,8 @@ public class SalaryPage extends OutlinePage {
                                     t1);
                     SalaryViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

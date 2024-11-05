@@ -101,7 +101,7 @@ public class RequisitionMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> this.showForm());
+        addBtn.setOnAction(_ -> this.showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
@@ -151,7 +151,7 @@ public class RequisitionMasterForm extends VBox {
     private CustomButton buildSaveButton() {
         saveBtn = new CustomButton("Save");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(event -> {
+        saveBtn.setOnAction(_ -> {
             if (!tableView.isDisabled() && RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
             }
@@ -160,9 +160,13 @@ public class RequisitionMasterForm extends VBox {
             if (isValidForm()) {
                 saveBtn.startLoading();
                 if (RequisitionMasterViewModel.getId() > 0) {
-                    RequisitionMasterViewModel.updateItem(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                    RequisitionMasterViewModel.updateItem(this::onSuccess,
+                            SpotyUtils::successMessage,
+                            this::errorMessage);
                 } else {
-                    RequisitionMasterViewModel.saveRequisitionMaster(this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
+                    RequisitionMasterViewModel.saveRequisitionMaster(this::onSuccess,
+                            SpotyUtils::successMessage,
+                            this::errorMessage);
                 }
             }
         });
@@ -172,9 +176,7 @@ public class RequisitionMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            this.dispose();
-        });
+        cancelBtn.setOnAction(_ -> this.dispose());
         return cancelBtn;
     }
 
@@ -194,13 +196,16 @@ public class RequisitionMasterForm extends VBox {
     }
 
     private void configureSupplierComboBox() {
-        StringConverter<Supplier> supplierConverter = FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
-        Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr -> supplier -> supplierConverter.toString(supplier).toLowerCase().contains(searchStr);
+        StringConverter<Supplier> supplierConverter = FunctionalStringConverter.to(
+                supplier -> (supplier == null) ? "" : supplier.getName());
+        Function<String, Predicate<Supplier>> supplierFilterFunction = searchStr ->
+                supplier -> supplierConverter.toString(supplier).toLowerCase().contains(searchStr);
 
         supplier.setConverter(supplierConverter);
 
         if (SupplierViewModel.getSuppliers().isEmpty()) {
-            SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) c -> supplier.setItems(SupplierViewModel.getSuppliers()));
+            SupplierViewModel.getSuppliers().addListener(
+                    (ListChangeListener<Supplier>) _ -> supplier.setItems(SupplierViewModel.getSuppliers()));
         } else {
             supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
         }
@@ -221,7 +226,9 @@ public class RequisitionMasterForm extends VBox {
     }
 
     private boolean isValidForm() {
-        return supplier.validate().isEmpty() && !tableView.isDisabled() && !RequisitionDetailViewModel.getRequisitionDetails().isEmpty();
+        return supplier.validate().isEmpty()
+                && !tableView.isDisabled()
+                && !RequisitionDetailViewModel.getRequisitionDetails().isEmpty();
     }
 
     private void setupTable() {
@@ -246,16 +253,25 @@ public class RequisitionMasterForm extends VBox {
 
     private void styleTable() {
         tableView.setPrefSize(10000, 10000);
-        tableView.setRowFactory(t -> {
-            TableRow<RequisitionDetail> row = new TableRow<>();
-            row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
-            return row;
+        tableView.setRowFactory(_ -> new TableRow<>() {
+            @Override
+            public void updateItem(RequisitionDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setStyle("");
+                } else {
+                    setOnContextMenuRequested(event -> showContextMenu(this).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
+                }
+            }
         });
     }
 
     private ContextMenu showContextMenu(TableRow<RequisitionDetail> row) {
         var contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(createMenuItem("Delete", event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> handleDeleteAction(row), row.getItem().getProductName()).showDialog()), createMenuItem("Edit", event -> handleEditAction(row)));
+        contextMenu.getItems().addAll(createMenuItem("Delete",
+                        _ -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(),
+                                () -> handleDeleteAction(row), row.getItem().getProductName()).showDialog()),
+                createMenuItem("Edit", _ -> handleEditAction(row)));
         return contextMenu;
     }
 
@@ -266,7 +282,8 @@ public class RequisitionMasterForm extends VBox {
     }
 
     private void handleDeleteAction(TableRow<RequisitionDetail> row) {
-        RequisitionDetailViewModel.removeRequisitionDetail(row.getItem().getId(), RequisitionDetailViewModel.getRequisitionDetails().indexOf(row.getItem()));
+        RequisitionDetailViewModel.removeRequisitionDetail(row.getItem().getId(),
+                RequisitionDetailViewModel.getRequisitionDetails().indexOf(row.getItem()));
     }
 
     private void handleEditAction(TableRow<RequisitionDetail> row) {
@@ -284,18 +301,18 @@ public class RequisitionMasterForm extends VBox {
     }
 
     private void requiredValidator() {
-        setupValidation(supplier, "Supplier is required", supplierValidationLabel);
+        setupValidation(supplier, supplierValidationLabel);
     }
 
-    private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
+    private <T> void setupValidation(ValidatableComboBox<T> field, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Supplier is required")
                 .setCondition(field.valueProperty().isNotNull())
                 .get();
 
         field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+        field.getValidator().validProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 validationLabel.setManaged(false);
                 validationLabel.setVisible(false);
@@ -311,7 +328,7 @@ public class RequisitionMasterForm extends VBox {
 
     private void setupTableColumnData() {
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -319,7 +336,7 @@ public class RequisitionMasterForm extends VBox {
             }
         });
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+        quantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionDetail item, boolean empty) {
                 super.updateItem(item, empty);

@@ -1,6 +1,8 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
@@ -23,6 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +35,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@SuppressWarnings("unchecked")
 @Slf4j
 public class DepartmentPage extends OutlinePage {
     private final ModalPane modalPane;
@@ -54,7 +58,7 @@ public class DepartmentPage extends OutlinePage {
         progress.setVisible(true);
         DepartmentViewModel.getAllDepartments(this::onDataInitializationSuccess, this::errorMessage, null, null);
 
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -127,7 +131,7 @@ public class DepartmentPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (DepartmentViewModel.getTotalPages() > 0) {
@@ -137,7 +141,7 @@ public class DepartmentPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        DepartmentViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        DepartmentViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (DepartmentViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -147,6 +151,7 @@ public class DepartmentPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -178,27 +183,33 @@ public class DepartmentPage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleDepartmentTable();
-
         masterTable.setItems(DepartmentViewModel.getDepartments());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleDepartmentTable() {
         masterTable.setPrefSize(1200, 1000);
 
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<Department> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<Department>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(Department item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<Department>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -225,7 +236,7 @@ public class DepartmentPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> this.showDialog());
+        createBtn.setOnAction(_ -> this.showDialog());
     }
 
     private void showDialog() {
@@ -245,7 +256,7 @@ public class DepartmentPage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -271,7 +282,7 @@ public class DepartmentPage extends OutlinePage {
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Department item, boolean empty) {
                 super.updateItem(item, empty);
@@ -279,7 +290,7 @@ public class DepartmentPage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Department item, boolean empty) {
                 super.updateItem(item, empty);
@@ -291,7 +302,7 @@ public class DepartmentPage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Department item, boolean empty) {
                 super.updateItem(item, empty);
@@ -299,7 +310,7 @@ public class DepartmentPage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Department item, boolean empty) {
                 super.updateItem(item, empty);
@@ -314,7 +325,7 @@ public class DepartmentPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(DepartmentViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(DepartmentViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -329,12 +340,12 @@ public class DepartmentPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(DepartmentViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, integer, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     DepartmentViewModel
@@ -348,6 +359,8 @@ public class DepartmentPage extends OutlinePage {
                                     t1);
                     DepartmentViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

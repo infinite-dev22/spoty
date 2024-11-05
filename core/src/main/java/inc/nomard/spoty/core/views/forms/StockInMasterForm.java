@@ -98,7 +98,7 @@ public class StockInMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> showForm());
+        addBtn.setOnAction(_ -> showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
@@ -139,7 +139,7 @@ public class StockInMasterForm extends VBox {
         saveBtn = new CustomButton("Save");
         saveBtn.setId("saveBtn");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(event -> {
+        saveBtn.setOnAction(_ -> {
             if (StockInDetailViewModel.stockInDetailsList.isEmpty()) {
                 errorMessage("Table can't be Empty");
                 return;
@@ -155,23 +155,29 @@ public class StockInMasterForm extends VBox {
         cancelBtn = new Button("Cancel");
         cancelBtn.setId("cancelBtn");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> this.dispose());
+        cancelBtn.setOnAction(_ -> this.dispose());
 
         buttonBox.getChildren().addAll(saveBtn, cancelBtn);
         return buttonBox;
     }
 
     private void configureTable() {
-        tableView.setRowFactory(stockInDetail -> {
-            TableRow<StockInDetail> row = new TableRow<>();
-            row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
-            return row;
+        tableView.setRowFactory(_ -> new TableRow<>() {
+            @Override
+            public void updateItem(StockInDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setStyle("");
+                } else {
+                    setOnContextMenuRequested(event -> showContextMenu(this).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
+                }
+            }
         });
     }
 
     private ContextMenu showContextMenu(TableRow<StockInDetail> row) {
         var contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(createMenuItem("Edit", event -> editRow(row)), createMenuItem("Delete", event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> deleteRow(row), row.getItem().getProductName()).showDialog()));
+        contextMenu.getItems().addAll(createMenuItem("Edit", _ -> editRow(row)), createMenuItem("Delete", _ -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> deleteRow(row), row.getItem().getProductName()).showDialog()));
         return contextMenu;
     }
 
@@ -202,7 +208,7 @@ public class StockInMasterForm extends VBox {
 
     private void setupTableColumns() {
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(StockInDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -210,7 +216,7 @@ public class StockInMasterForm extends VBox {
             }
         });
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+        quantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(StockInDetail item, boolean empty) {
                 super.updateItem(item, empty);

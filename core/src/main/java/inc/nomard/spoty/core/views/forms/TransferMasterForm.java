@@ -30,7 +30,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -55,7 +54,6 @@ public class TransferMasterForm extends VBox {
     public ValidatableDatePicker date;
     public TableView<TransferDetail> table;
     public ValidatableTextArea note;
-    public BorderPane contentPane;
     public CustomButton saveBtn;
     public Button addBtn,
             cancelBtn;
@@ -108,7 +106,7 @@ public class TransferMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> showForm());
+        addBtn.setOnAction(_ -> showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
@@ -154,23 +152,18 @@ public class TransferMasterForm extends VBox {
         fromBranch
                 .valueProperty()
                 .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
-        // ComboBox Converters.
         StringConverter<Branch> fromBranchConverter =
                 FunctionalStringConverter.to(fromBranch -> (fromBranch == null) ? "" : fromBranch.getName());
-
-        // ComboBox Filter Functions.
         Function<String, Predicate<Branch>> fromBranchFilterFunction =
                 searchStr ->
                         fromBranch ->
                                 fromBranchConverter.toString(fromBranch).toLowerCase().contains(searchStr);
-
-        // Combo box properties.
         fromBranch.setConverter(fromBranchConverter);
         if (BranchViewModel.getBranches().isEmpty()) {
             BranchViewModel.getBranches()
                     .addListener(
                             (ListChangeListener<Branch>)
-                                    c -> fromBranch.setItems(BranchViewModel.getBranches()));
+                                    _ -> fromBranch.setItems(BranchViewModel.getBranches()));
         } else {
             fromBranch.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
         }
@@ -185,23 +178,18 @@ public class TransferMasterForm extends VBox {
         toBranch
                 .valueProperty()
                 .bindBidirectional(TransferMasterViewModel.toBranchProperty());
-        // ComboBox Converters.
         StringConverter<Branch> toBranchConverter =
                 FunctionalStringConverter.to(toBranch -> (toBranch == null) ? "" : toBranch.getName());
-
-        // ComboBox Filter Functions.
         Function<String, Predicate<Branch>> toBranchFilterFunction =
                 searchStr ->
                         toBranch ->
                                 toBranchConverter.toString(toBranch).toLowerCase().contains(searchStr);
-
-        // Combo box properties.
         toBranch.setConverter(toBranchConverter);
         if (BranchViewModel.getBranches().isEmpty()) {
             BranchViewModel.getBranches()
                     .addListener(
                             (ListChangeListener<Branch>)
-                                    c -> toBranch.setItems(BranchViewModel.getBranches()));
+                                    _ -> toBranch.setItems(BranchViewModel.getBranches()));
         } else {
             toBranch.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
         }
@@ -230,7 +218,7 @@ public class TransferMasterForm extends VBox {
     private CustomButton buildSaveButton() {
         saveBtn = new CustomButton("Save");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(event -> {
+        saveBtn.setOnAction(_ -> {
             if (!table.isDisabled() && TransferDetailViewModel.getTransferDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
             }
@@ -251,7 +239,7 @@ public class TransferMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> this.dispose());
+        cancelBtn.setOnAction(_ -> this.dispose());
         return cancelBtn;
     }
 
@@ -279,21 +267,26 @@ public class TransferMasterForm extends VBox {
 
     private void getTransferDetailTable() {
         table.setPrefSize(10000d, 10000d);
-
         table.setRowFactory(
-                transferDetail -> {
-                    TableRow<TransferDetail> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<TransferDetail>) event.getSource())
-                                        .show(
-                                                table.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(TransferDetail item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<TransferDetail>) event.getSource())
+                                                .show(
+                                                        table.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -302,8 +295,6 @@ public class TransferMasterForm extends VBox {
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             SpotyThreader.spotyThreadPool(
                     () ->
@@ -312,7 +303,6 @@ public class TransferMasterForm extends VBox {
                                     TransferDetailViewModel.transferDetailsList.indexOf(obj.getItem())));
             event.consume();
         }, obj.getItem().getProductName()).showDialog());
-        // Edit
         edit.setOnAction(
                 event -> {
                     SpotyThreader.spotyThreadPool(
@@ -328,7 +318,6 @@ public class TransferMasterForm extends VBox {
                 });
 
         contextMenu.getItems().addAll(edit, delete);
-
         return contextMenu;
     }
 
@@ -368,7 +357,6 @@ public class TransferMasterForm extends VBox {
     }
 
     public void requiredValidator() {
-        // Name input validation.
         Constraint dateConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -390,12 +378,11 @@ public class TransferMasterForm extends VBox {
                         .setCondition(toBranch.valueProperty().isNotNull())
                         .get();
         toBranch.getValidator().constraint(toBranchConstraint);
-        // Display error.
         date
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 dateValidationLabel.setManaged(false);
                                 dateValidationLabel.setVisible(false);
@@ -406,7 +393,7 @@ public class TransferMasterForm extends VBox {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 fromBranchValidationLabel.setManaged(false);
                                 fromBranchValidationLabel.setVisible(false);
@@ -417,7 +404,7 @@ public class TransferMasterForm extends VBox {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 toBranchValidationLabel.setManaged(false);
                                 toBranchValidationLabel.setVisible(false);
@@ -433,7 +420,7 @@ public class TransferMasterForm extends VBox {
 
     private void setupTableColumns() {
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -441,7 +428,7 @@ public class TransferMasterForm extends VBox {
             }
         });
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+        quantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferDetail item, boolean empty) {
                 super.updateItem(item, empty);

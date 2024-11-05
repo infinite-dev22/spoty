@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
@@ -24,6 +26,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,13 +61,13 @@ public class AdjustmentPage extends OutlinePage {
         getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane1.setAlignment(Pos.CENTER);
                 modalPane1.usePredefinedTransitionFactories(null);
             }
         });
-        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane2.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane2.setAlignment(Pos.CENTER);
                 modalPane2.usePredefinedTransitionFactories(null);
@@ -150,7 +153,7 @@ public class AdjustmentPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (AdjustmentMasterViewModel.getTotalPages() > 0) {
@@ -160,7 +163,7 @@ public class AdjustmentPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        AdjustmentMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        AdjustmentMasterViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (AdjustmentMasterViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -170,6 +173,7 @@ public class AdjustmentPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -197,28 +201,33 @@ public class AdjustmentPage extends OutlinePage {
         var columnList = new LinkedList<>(Stream.of(reference, note, approvalStatus, createdBy, createdAt, updatedBy, updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
-
         getAdjustmentMasterTable();
         masterTable.setItems(AdjustmentMasterViewModel.getAdjustmentMasters());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getAdjustmentMasterTable() {
         masterTable.setPrefSize(1000, 1000);
-
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<AdjustmentMaster> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<AdjustmentMaster>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(AdjustmentMaster item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<AdjustmentMaster>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -236,7 +245,7 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> {
+        createBtn.setOnAction(_ -> {
             var dialog = new ModalContentHolder(500, -1);
             dialog.getChildren().add(new AdjustmentMasterForm(modalPane1, modalPane2));
             dialog.setPadding(new Insets(5d));
@@ -256,7 +265,7 @@ public class AdjustmentPage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -277,7 +286,7 @@ public class AdjustmentPage extends OutlinePage {
         note.setCellValueFactory(new PropertyValueFactory<>("notes"));
         approvalStatus.setCellValueFactory(new PropertyValueFactory<>("approvalStatus"));
         approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        approvalStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AdjustmentMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -325,7 +334,7 @@ public class AdjustmentPage extends OutlinePage {
             }
         });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AdjustmentMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -333,7 +342,7 @@ public class AdjustmentPage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AdjustmentMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -345,7 +354,7 @@ public class AdjustmentPage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AdjustmentMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -354,7 +363,7 @@ public class AdjustmentPage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AdjustmentMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -369,7 +378,7 @@ public class AdjustmentPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(AdjustmentMasterViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(AdjustmentMasterViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -384,12 +393,12 @@ public class AdjustmentPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(AdjustmentMasterViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     AdjustmentMasterViewModel
@@ -403,7 +412,9 @@ public class AdjustmentPage extends OutlinePage {
                                     t1);
                     AdjustmentMasterViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 
     public void viewShow(AdjustmentMaster adjustmentMaster) {

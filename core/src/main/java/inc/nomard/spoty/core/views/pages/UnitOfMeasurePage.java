@@ -1,6 +1,8 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.UOMViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
@@ -24,6 +26,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,7 +61,7 @@ public class UnitOfMeasurePage extends OutlinePage {
         progress.setManaged(true);
         progress.setVisible(true);
         UOMViewModel.getAllUOMs(this::onDataInitializationSuccess, this::errorMessage, null, null);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -130,7 +133,7 @@ public class UnitOfMeasurePage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (UOMViewModel.getTotalPages() > 0) {
@@ -140,7 +143,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        UOMViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        UOMViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (UOMViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -150,6 +153,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -190,24 +194,30 @@ public class UnitOfMeasurePage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getUnitOfMeasureTable();
-
         masterTable.setItems(UOMViewModel.getUnitsOfMeasure());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getUnitOfMeasureTable() {
         masterTable.setPrefSize(1000, 1000);
 
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<UnitOfMeasure> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<UnitOfMeasure>) event.getSource())
-                                        .show(masterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(UnitOfMeasure item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<UnitOfMeasure>) event.getSource())
+                                                .show(masterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -216,13 +226,10 @@ public class UnitOfMeasurePage extends OutlinePage {
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             UOMViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName()).showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     UOMViewModel.getItem(obj.getItem().getId(), this::showDialog, this::errorMessage);
@@ -234,7 +241,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> this.showDialog());
+        createBtn.setOnAction(_ -> this.showDialog());
     }
 
     private void showDialog() {
@@ -260,7 +267,7 @@ public class UnitOfMeasurePage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -280,7 +287,7 @@ public class UnitOfMeasurePage extends OutlinePage {
         uomName.setCellValueFactory(new PropertyValueFactory<>("name"));
         uomShortName.setCellValueFactory(new PropertyValueFactory<>("shortName"));
         uomBaseUnit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        uomBaseUnit.setCellFactory(tableColumn -> new TableCell<>() {
+        uomBaseUnit.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
@@ -289,7 +296,7 @@ public class UnitOfMeasurePage extends OutlinePage {
         });
         uomOperator.setCellValueFactory(new PropertyValueFactory<>("operator"));
         uomOperationValue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        uomOperationValue.setCellFactory(tableColumn -> new TableCell<>() {
+        uomOperationValue.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
@@ -297,7 +304,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             }
         });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
@@ -305,7 +312,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
@@ -317,7 +324,7 @@ public class UnitOfMeasurePage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
@@ -325,14 +332,12 @@ public class UnitOfMeasurePage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(UnitOfMeasure item, boolean empty) {
                 super.updateItem(item, empty);
                 this.setAlignment(Pos.CENTER_RIGHT);
-
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault());
-
                 setText(empty || Objects.isNull(item) ? null : Objects.isNull(item.getUpdatedAt()) ? null : item.getUpdatedAt().format(dtf));
             }
         });
@@ -340,7 +345,7 @@ public class UnitOfMeasurePage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(UOMViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(UOMViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -355,12 +360,12 @@ public class UnitOfMeasurePage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(UOMViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     UOMViewModel
@@ -374,6 +379,8 @@ public class UnitOfMeasurePage extends OutlinePage {
                                     t1);
                     UOMViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

@@ -177,3 +177,12 @@
 .orange-bg {
     -fx-background-color: orange;
 }
+
+.spoty-table-row:hover {
+    -fx-background-color: rgba(205, 205, 205, 0.1);
+}
+
+.table-view {
+    -fx-border-color: transparent transparent -border-disabled transparent;
+    -fx-border-width: 0 0 2px 0;
+}

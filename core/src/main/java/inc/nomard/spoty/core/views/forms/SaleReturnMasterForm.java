@@ -124,7 +124,7 @@ public class SaleReturnMasterForm extends VBox {
     private CustomButton buildSaveButton() {
         saveBtn = new CustomButton("Save");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(event -> {
+        saveBtn.setOnAction(_ -> {
             processProducts();
             if (!tableView.isDisabled() && SaleReturnDetailViewModel.getSaleReturnDetails().isEmpty()) {
                 errorMessage("No products selected");
@@ -141,9 +141,7 @@ public class SaleReturnMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> {
-            this.dispose();
-        });
+        cancelBtn.setOnAction(_ -> this.dispose());
         return cancelBtn;
     }
 
@@ -168,7 +166,7 @@ public class SaleReturnMasterForm extends VBox {
         customer.setConverter(customerConverter);
 
         if (CustomerViewModel.getCustomers().isEmpty()) {
-            CustomerViewModel.getCustomers().addListener((ListChangeListener<Customer>) c -> customer.setItems(CustomerViewModel.getCustomers()));
+            CustomerViewModel.getCustomers().addListener((ListChangeListener<Customer>) _ -> customer.setItems(CustomerViewModel.getCustomers()));
         } else {
             customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
         }
@@ -214,7 +212,7 @@ public class SaleReturnMasterForm extends VBox {
         quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
 
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -222,7 +220,7 @@ public class SaleReturnMasterForm extends VBox {
             }
         });
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+        quantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -232,7 +230,7 @@ public class SaleReturnMasterForm extends VBox {
                     quantitySpinner.getStyleClass().addAll(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
                     quantitySpinner.getValueFactory().setValue(item.getQuantity());
                     quantitySpinner.valueProperty().addListener(
-                            (obs, oldValue, newValue) -> {
+                            (_, _, newValue) -> {
                                 SaleDetailViewModel.getSaleDetail(item);
                                 SaleDetailViewModel.setQuantity(Long.valueOf(newValue));
                             }
@@ -254,11 +252,15 @@ public class SaleReturnMasterForm extends VBox {
 
     private void styleTable() {
         tableView.setPrefSize(10000, 10000);
-        tableView.setRowFactory(t -> {
-            TableRow<SaleDetail> row = new TableRow<>();
-            row.setOnContextMenuRequested(event -> {
-            });
-            return row;
+        tableView.setRowFactory(_ -> new TableRow<>() {
+            @Override
+            public void updateItem(SaleDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setStyle("");
+                } else {
+                }
+            }
         });
     }
 

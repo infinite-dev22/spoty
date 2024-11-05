@@ -116,6 +116,9 @@ public class ProductCard extends VBox implements VFXCell<Product> {
         var imageView = new ImageView(PreloadedData.productPlaceholderImage);
         imageView.setFitWidth(IMAGE_SIZE);
         imageView.setFitHeight(IMAGE_SIZE);
+        imageView.setCache(true);
+        imageView.setCacheHint(CacheHint.SPEED);
+        imageView.setPreserveRatio(true);
         imageView.setClip(clip);
 
         productProperty.addListener((_, _, newValue) -> {

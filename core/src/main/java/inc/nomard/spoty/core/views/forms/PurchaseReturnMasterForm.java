@@ -145,7 +145,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private CustomButton buildSaveButton() {
         saveBtn = new CustomButton("Save");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(event -> {
+        saveBtn.setOnAction(_ -> {
             processProducts();
             if (!tableView.isDisabled() && PurchaseReturnDetailViewModel.getPurchaseReturnDetails().isEmpty()) {
                 errorMessage("No products selected");
@@ -163,7 +163,7 @@ public class PurchaseReturnMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> this.dispose());
+        cancelBtn.setOnAction(_ -> this.dispose());
         return cancelBtn;
     }
 
@@ -189,7 +189,7 @@ public class PurchaseReturnMasterForm extends VBox {
         supplier.setConverter(supplierConverter);
 
         if (SupplierViewModel.getSuppliers().isEmpty()) {
-            SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) c -> supplier.setItems(SupplierViewModel.getSuppliers()));
+            SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) _ -> supplier.setItems(SupplierViewModel.getSuppliers()));
         } else {
             supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
         }
@@ -260,7 +260,7 @@ public class PurchaseReturnMasterForm extends VBox {
         quantity.prefWidthProperty().bind(tableView.widthProperty().multiply(.3));
 
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -268,7 +268,7 @@ public class PurchaseReturnMasterForm extends VBox {
             }
         });
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+        quantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -278,7 +278,7 @@ public class PurchaseReturnMasterForm extends VBox {
                     quantitySpinner.getStyleClass().addAll(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
                     quantitySpinner.getValueFactory().setValue(item.getQuantity());
                     quantitySpinner.valueProperty().addListener(
-                            (obs, oldValue, newValue) -> {
+                            (_, _, newValue) -> {
                                 PurchaseDetailViewModel.getPurchaseDetail(item);
                                 PurchaseDetailViewModel.setQuantity(String.valueOf(newValue));
                             }
@@ -300,11 +300,15 @@ public class PurchaseReturnMasterForm extends VBox {
 
     private void styleTable() {
         tableView.setPrefSize(10000, 10000);
-        tableView.setRowFactory(t -> {
-            TableRow<PurchaseDetail> row = new TableRow<>();
-            row.setOnContextMenuRequested(event -> {
-            });
-            return row;
+        tableView.setRowFactory(_ -> new TableRow<>() {
+            @Override
+            public void updateItem(PurchaseDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setStyle("");
+                } else {
+                }
+            }
         });
     }
 
@@ -330,7 +334,7 @@ public class PurchaseReturnMasterForm extends VBox {
                 .get();
 
         field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+        field.getValidator().validProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 validationLabel.setManaged(false);
                 validationLabel.setVisible(false);
@@ -347,7 +351,7 @@ public class PurchaseReturnMasterForm extends VBox {
                 .get();
 
         field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+        field.getValidator().validProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 validationLabel.setManaged(false);
                 validationLabel.setVisible(false);

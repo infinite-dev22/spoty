@@ -124,7 +124,7 @@ public class PurchaseMasterForm extends VBox {
     private Button buildAddButton() {
         addBtn = new Button("Add");
         addBtn.setDefaultButton(true);
-        addBtn.setOnAction(event -> this.showForm());
+        addBtn.setOnAction(_ -> this.showForm());
         addBtn.setPrefWidth(10000d);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         return addBtn;
@@ -182,7 +182,7 @@ public class PurchaseMasterForm extends VBox {
     private CustomButton buildSaveButton() {
         saveBtn = new CustomButton("Save");
         saveBtn.getStyleClass().add(Styles.ACCENT);
-        saveBtn.setOnAction(event -> {
+        saveBtn.setOnAction(_ -> {
             if (!tableView.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
                 errorMessage("Table can't be Empty");
             }
@@ -203,7 +203,7 @@ public class PurchaseMasterForm extends VBox {
     private Button buildCancelButton() {
         cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add(Styles.BUTTON_OUTLINED);
-        cancelBtn.setOnAction(event -> this.dispose());
+        cancelBtn.setOnAction(_ -> this.dispose());
         return cancelBtn;
     }
 
@@ -255,7 +255,7 @@ public class PurchaseMasterForm extends VBox {
             comboBox.setConverter(itemConverter);
         }
         if (items.isEmpty()) {
-            items.addListener((ListChangeListener<T>) c -> comboBox.setItems(items));
+            items.addListener((ListChangeListener<T>) _ -> comboBox.setItems(items));
         } else {
             comboBox.itemsProperty().bindBidirectional(new SimpleListProperty<>(items));
         }
@@ -302,7 +302,7 @@ public class PurchaseMasterForm extends VBox {
         supplier.setConverter(supplierConverter);
 
         if (SupplierViewModel.getSuppliers().isEmpty()) {
-            SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) c -> supplier.setItems(SupplierViewModel.getSuppliers()));
+            SupplierViewModel.getSuppliers().addListener((ListChangeListener<Supplier>) _ -> supplier.setItems(SupplierViewModel.getSuppliers()));
         } else {
             supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
         }
@@ -371,16 +371,22 @@ public class PurchaseMasterForm extends VBox {
 
     private void styleTable() {
         tableView.setPrefSize(10000, 10000);
-        tableView.setRowFactory(t -> {
-            TableRow<PurchaseDetail> row = new TableRow<>();
-            row.setOnContextMenuRequested(event -> showContextMenu(row).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
-            return row;
+        tableView.setRowFactory(_ -> new TableRow<>() {
+            @Override
+            public void updateItem(PurchaseDetail item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setStyle("");
+                } else {
+                    setOnContextMenuRequested(event -> showContextMenu(this).show(tableView.getScene().getWindow(), event.getScreenX(), event.getScreenY()));
+                }
+            }
         });
     }
 
     private ContextMenu showContextMenu(TableRow<PurchaseDetail> row) {
         var contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(createMenuItem("Delete", event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> handleDeleteAction(row), row.getItem().getProductName()).showDialog()), createMenuItem("Edit", event -> handleEditAction(row)));
+        contextMenu.getItems().addAll(createMenuItem("Delete", _ -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> handleDeleteAction(row), row.getItem().getProductName()).showDialog()), createMenuItem("Edit", _ -> handleEditAction(row)));
         return contextMenu;
     }
 
@@ -409,21 +415,21 @@ public class PurchaseMasterForm extends VBox {
     }
 
     private void requiredValidator() {
-        setupValidation(supplier, "Supplier is required", supplierValidationLabel);
+        setupValidation(supplier, supplierValidationLabel);
         setupValidation(date, dateValidationLabel);
         setupValidation(paidAmount, "Paid Amount is required", paidAmountValidationLabel);
         setupValidation(shipping, "Shipping is required", shippingValidationLabel);
     }
 
-    private <T> void setupValidation(ValidatableComboBox<T> field, String message, Label validationLabel) {
+    private <T> void setupValidation(ValidatableComboBox<T> field, Label validationLabel) {
         Constraint constraint = Constraint.Builder.build()
                 .setSeverity(Severity.ERROR)
-                .setMessage(message)
+                .setMessage("Supplier is required")
                 .setCondition(field.valueProperty().isNotNull())
                 .get();
 
         field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+        field.getValidator().validProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 validationLabel.setManaged(false);
                 validationLabel.setVisible(false);
@@ -440,7 +446,7 @@ public class PurchaseMasterForm extends VBox {
                 .get();
 
         field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+        field.getValidator().validProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 validationLabel.setManaged(false);
                 validationLabel.setVisible(false);
@@ -457,7 +463,7 @@ public class PurchaseMasterForm extends VBox {
                 .get();
 
         field.getValidator().constraint(constraint);
-        field.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
+        field.getValidator().validProperty().addListener((_, _, newValue) -> {
             if (newValue) {
                 validationLabel.setManaged(false);
                 validationLabel.setVisible(false);
@@ -473,7 +479,7 @@ public class PurchaseMasterForm extends VBox {
 
     private void setupTableColumnData() {
         product.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        product.setCellFactory(tableColumn -> new TableCell<>() {
+        product.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseDetail item, boolean empty) {
                 super.updateItem(item, empty);
@@ -481,7 +487,7 @@ public class PurchaseMasterForm extends VBox {
             }
         });
         quantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quantity.setCellFactory(tableColumn -> new TableCell<>() {
+        quantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseDetail item, boolean empty) {
                 super.updateItem(item, empty);

@@ -2,6 +2,7 @@ package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
@@ -26,9 +27,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +39,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+@SuppressWarnings("unchecked")
 @Slf4j
 public class EmployeePage extends OutlinePage {
     private final ModalPane modalPane;
@@ -46,32 +49,30 @@ public class EmployeePage extends OutlinePage {
     private Button createBtn;
     private TableColumn<Employee, Employee> employeeName;
     private TableColumn<Employee, Employee> phone;
-    private TableColumn<Employee, String> email;
     private TableColumn<Employee, Employee> employmentStatus;
     private TableColumn<Employee, Employee> department;
     private TableColumn<Employee, Employee> status;
-    private TableColumn<Employee, String> salary;
+    private TableColumn<Employee, Employee> salary;
     private TableColumn<Employee, Employee> role;
 
     public EmployeePage() {
-        super();
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
             }
         });
+        createBtn.setDisable(true);
 
         CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> DepartmentViewModel.getAllDepartments(null, null, null, null)),
                 CompletableFuture.runAsync(() -> DesignationViewModel.getAllDesignations(null, null, null, null)),
                 CompletableFuture.runAsync(() -> EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null, null)),
-                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null, null, null)),
-                CompletableFuture.runAsync(() -> EmployeeViewModel.getAllEmployees(null, null, null, null)));
+                CompletableFuture.runAsync(() -> RoleViewModel.getAllRoles(null, null, null, null)));
 
         allDataInitialization.thenRun(this::onDataInitializationSuccess)
                 .exceptionally(this::onDataInitializationFailure);
@@ -80,12 +81,14 @@ public class EmployeePage extends OutlinePage {
     private Void onDataInitializationFailure(Throwable throwable) {
         SpotyLogger.writeToFile(throwable, EmployeePage.class);
         this.errorMessage("An error occurred while loading view");
+        createBtn.setDisable(true);
         return null;
     }
 
     private void onDataInitializationSuccess() {
         progress.setManaged(false);
         progress.setVisible(false);
+        createBtn.setDisable(true);
     }
 
     public BorderPane init() {
@@ -147,7 +150,7 @@ public class EmployeePage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (EmployeeViewModel.getTotalPages() > 0) {
@@ -157,7 +160,7 @@ public class EmployeePage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        EmployeeViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        EmployeeViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (EmployeeViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -167,6 +170,7 @@ public class EmployeePage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -174,47 +178,47 @@ public class EmployeePage extends OutlinePage {
 
     private void setupTable() {
         employeeName = new TableColumn<>("Name");
-        phone = new TableColumn<>("Phone");
-        email = new TableColumn<>("Email");
-        employmentStatus = new TableColumn<>("Employment Status");
         department = new TableColumn<>("Department");
-        status = new TableColumn<>("Status");
+        phone = new TableColumn<>("Phone");
         salary = new TableColumn<>("Salary");
         role = new TableColumn<>("Role");
+        employmentStatus = new TableColumn<>("Employment Status");
+        status = new TableColumn<>("Status");
 
-        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        email.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        department.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         phone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        role.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        department.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
         status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        role.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
         setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(
                 employeeName,
-                phone,
-                email,
-                employmentStatus,
                 department,
-                status,
+                phone,
                 salary,
-                role).toList());
+                role,
+                employmentStatus,
+                status).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleEmployeeTable();
-
-        masterTable.setItems(EmployeeViewModel.getEmployees());
+        masterTable.setItems(EmployeeViewModel.employeesList);
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleEmployeeTable() {
-        masterTable.setPrefSize(1200, 1000);
-
-        masterTable.setRowFactory(
-                t -> {
-                    TableRow<Employee> row = new TableRow<>();
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.setRowFactory(_ -> new TableRow<>() {
+            @Override
+            public void updateItem(Employee item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
+                    setStyle("");
+                } else {
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((TableRow<Employee>) event.getSource())
@@ -224,9 +228,13 @@ public class EmployeePage extends OutlinePage {
                                                 event.getScreenY());
                                 event.consume();
                             };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
-                });
+                    setMinHeight(40);
+                    setPrefHeight(50);
+                    setMinHeight(60);
+                    setOnContextMenuRequested(eventHandler);
+                }
+            }
+        });
     }
 
     private ContextMenu showContextMenu(TableRow<Employee> obj) {
@@ -234,13 +242,10 @@ public class EmployeePage extends OutlinePage {
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             EmployeeViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, SpotyUtils::errorMessage);
             event.consume();
         }, obj.getItem().getName()).showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     EmployeeViewModel.getItem(obj.getItem().getId(), this::showDialog, SpotyUtils::errorMessage);
@@ -252,7 +257,7 @@ public class EmployeePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> this.showDialog());
+        createBtn.setOnAction(_ -> this.showDialog());
     }
 
     private void showDialog() {
@@ -272,7 +277,7 @@ public class EmployeePage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -296,110 +301,149 @@ public class EmployeePage extends OutlinePage {
 
     private void setupTableColumns() {
         employeeName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        employeeName.setCellFactory(tableColumn -> new TableCell<>() {
+        employeeName.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getDesignationName())) {
-                    var employeeName = new Label(item.getName());
-                    var employeeDesignation = new Label(item.getDesignationName());
-                    employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
-                    var vbox = new VBox(employeeName, employeeDesignation);
-                    setGraphic(vbox);
-                    setText(null);
-                } else {
+                if (empty && Objects.isNull(item)) {
                     setGraphic(null);
-                    setText(null);
+                } else {
+                    this.setAlignment(Pos.CENTER);
+                    var employeeName = new Text(item.getName());
+                    var employeeEmail = new Text(item.getEmail());
+                    employeeEmail.getStyleClass().add(Styles.TEXT_MUTED);
+                    var vbox = new VBox(employeeName, employeeEmail);
+                    vbox.setAlignment(Pos.CENTER_LEFT);
+                    setGraphic(vbox);
                 }
             }
         });
         phone.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        phone.setCellFactory(tableColumn -> new TableCell<>() {
+        phone.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER);
                 setText(empty && Objects.isNull(item) ? null : Objects.isNull(item.getCreatedBy()) ? null : item.getPhone());
             }
         });
-        email.setCellValueFactory(new PropertyValueFactory<>("email"));
         employmentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        employmentStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        employmentStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && !Objects.isNull(item) && !Objects.isNull(item.getEmploymentStatusColor()) && !Objects.isNull(item.getEmploymentStatusName())) {
+                if (empty && Objects.isNull(item)) {
+                    setGraphic(null);
+                } else {
                     this.setAlignment(Pos.CENTER);
-
                     var chip = new Label(item.getEmploymentStatusName());
                     chip.setAlignment(Pos.CENTER);
                     chip.setPadding(new Insets(5, 10, 5, 10));
                     chip.setPrefWidth(150);
-                    chip.setStyle("-fx-background-color: " + item.getEmploymentStatusColor() + ";"
-                            + "-fx-foreground-color: white;"
-                            + "-fx-background-radius: 50;"
-                            + "-fx-border-radius: 50;");
+
+                    Color col;
+                    Color color;
+                    switch (item.getEmploymentStatusColor().toLowerCase()) {
+                        case "green" -> {
+                            col = Color.rgb(50, 215, 75);
+                            color = Color.rgb(50, 215, 75, .1);
+                        }
+                        case "blue" -> {
+                            col = Color.rgb(10, 132, 255);
+                            color = Color.rgb(10, 132, 255, .1);
+                        }
+                        case "red" -> {
+                            col = Color.rgb(255, 69, 58);
+                            color = Color.rgb(255, 69, 58, .1);
+                        }
+                        case "orange" -> {
+                            col = Color.rgb(255, 159, 10);
+                            color = Color.rgb(255, 159, 10, .1);
+                        }
+                        case "purple" -> {
+                            col = Color.rgb(158, 0, 255);
+                            color = Color.rgb(158, 0, 255, .1);
+                        }
+                        case "brown" -> {
+                            col = Color.rgb(255, 128, 0);
+                            color = Color.rgb(255, 128, 0, .1);
+                        }
+                        default -> {
+                            col = Color.web("#aeaeb2");
+                            color = Color.web("#aeaeb2", .1);
+                        }
+                    }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
                     setGraphic(chip);
-                    setText(null);
-                } else {
-                    setGraphic(null);
-                    setText(null);
                 }
             }
         });
         status.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        status.setCellFactory(tableColumn -> new TableCell<>() {
+        status.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && Objects.nonNull(item)) {
+                if (empty && Objects.isNull(item)) {
+                    setGraphic(null);
+                } else {
                     this.setAlignment(Pos.CENTER);
-
                     var chip = new Label(item.getIsActive());
-                    chip.setAlignment(Pos.CENTER);
                     chip.setPadding(new Insets(5, 10, 5, 10));
                     chip.setPrefWidth(150);
-                    chip.setStyle("-fx-foreground-color: white;"
-                            + "-fx-background-radius: 50;"
-                            + "-fx-border-radius: 50;");
+                    chip.setAlignment(Pos.CENTER);
+
+                    Color col;
+                    Color color;
                     if (item.isActive()) {
-                        chip.getStyleClass().add(Styles.SUCCESS);
+                        col = Color.rgb(50, 215, 75);
+                        color = Color.rgb(50, 215, 75, .1);
                     } else {
-                        chip.getStyleClass().add(Styles.DANGER);
+                        col = Color.rgb(255, 69, 58);
+                        color = Color.rgb(255, 69, 58, .1);
                     }
+
+                    chip.setTextFill(col);
+                    chip.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), Insets.EMPTY)));
                     setGraphic(chip);
-                    setText(null);
-                } else {
-                    setGraphic(null);
-                    setText(null);
                 }
             }
         });
-        salary.setCellValueFactory(new PropertyValueFactory<>("salary"));
-        role.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        role.setCellFactory(tableColumn -> new TableCell<>() {
+        salary.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        salary.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && Objects.nonNull(item)) {
-                    this.setAlignment(Pos.CENTER);
-                    setText(item.getRole().getName());
-                } else {
-                    setGraphic(null);
-                    setText(null);
-                }
+                this.setAlignment(Pos.CENTER_RIGHT);
+                setText(empty && Objects.isNull(item) ? null : item.getSalary());
+            }
+        });
+        role.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        role.setCellFactory(_ -> new TableCell<>() {
+            @Override
+            public void updateItem(Employee item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setAlignment(Pos.CENTER_LEFT);
+                setText(empty && Objects.isNull(item) ? null : item.getRole().getName());
             }
         });
         department.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        department.setCellFactory(tableColumn -> new TableCell<>() {
+        department.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Employee item, boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && Objects.nonNull(item)) {
-                    this.setAlignment(Pos.CENTER);
-                    setText(item.getDepartmentName());
-                } else {
+                this.setAlignment(Pos.CENTER_LEFT);
+                if (empty && Objects.isNull(item)) {
                     setGraphic(null);
-                    setText(null);
+                } else {
+                    this.setAlignment(Pos.CENTER);
+                    var employeeDepartment = new Text(item.getDepartmentName());
+                    var employeeDesignation = new Text(item.getDesignationName());
+                    employeeDesignation.getStyleClass().add(Styles.TEXT_MUTED);
+                    var vbox = new VBox(employeeDepartment, employeeDesignation);
+                    vbox.setAlignment(Pos.CENTER_LEFT);
+                    setGraphic(vbox);
                 }
             }
         });
@@ -407,7 +451,7 @@ public class EmployeePage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(EmployeeViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(EmployeeViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -422,12 +466,12 @@ public class EmployeePage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(EmployeeViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     EmployeeViewModel
@@ -441,6 +485,8 @@ public class EmployeePage extends OutlinePage {
                                     t1);
                     EmployeeViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

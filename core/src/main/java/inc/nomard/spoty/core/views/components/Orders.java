@@ -1,11 +1,14 @@
 package inc.nomard.spoty.core.views.components;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
 import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -91,23 +94,22 @@ public class Orders extends AnchorPane {
         saleOrders.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         saleOrders.getColumns().addAll(columnList);
         styleSaleMasterTable();
-
         saleOrders.setItems(DashboardViewModel.getRecentOrders());
+        saleOrders.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleSaleMasterTable() {
         saleOrders.setPrefSize(1200, 1000);
-
         saleOrders.setRowFactory(
-                t -> {
-                    TableRow<SaleMaster> row = new TableRow<>();
+                _ -> {
+                    var row = new TableRow<SaleMaster>() {
+                        @Override
+                        public void updateItem(SaleMaster item, boolean empty) {
+                            super.updateItem(item, empty);
+                        }
+                    };
                     EventHandler<MouseEvent> eventHandler =
-                            event -> {
-                                if (Objects.equals(event.getEventType(), MouseEvent.MOUSE_CLICKED)) {
-                                    log.info("Row with Customer \"" + row.getItem().getCustomerName() + "\" has been clicked.");
-                                }
-                                event.consume();
-                            };
+                            Event::consume;
                     row.setOnMouseClicked(eventHandler);
                     return row;
                 });
@@ -115,7 +117,7 @@ public class Orders extends AnchorPane {
 
     private void setupTableColumns() {
         saleCustomer.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleCustomer.setCellFactory(tableColumn -> new TableCell<>() {
+        saleCustomer.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -123,7 +125,7 @@ public class Orders extends AnchorPane {
             }
         });
         saleStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        saleStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -167,7 +169,7 @@ public class Orders extends AnchorPane {
             }
         });
         salePaymentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        salePaymentStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        salePaymentStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -211,7 +213,7 @@ public class Orders extends AnchorPane {
             }
         });
         saleGrandTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleGrandTotal.setCellFactory(tableColumn -> new TableCell<>() {
+        saleGrandTotal.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -220,7 +222,7 @@ public class Orders extends AnchorPane {
             }
         });
         saleAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+        saleAmountPaid.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleMaster item, boolean empty) {
                 super.updateItem(item, empty);

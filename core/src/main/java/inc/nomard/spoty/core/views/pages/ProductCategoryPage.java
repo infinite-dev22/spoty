@@ -1,6 +1,8 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
@@ -23,6 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +57,7 @@ public class ProductCategoryPage extends OutlinePage {
         progress.setManaged(true);
         progress.setVisible(true);
         ProductCategoryViewModel.getAllProductCategories(this::onDataInitializationSuccess, this::errorMessage, null, null);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -126,7 +129,7 @@ public class ProductCategoryPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (ProductCategoryViewModel.getTotalPages() > 0) {
@@ -136,7 +139,7 @@ public class ProductCategoryPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        ProductCategoryViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        ProductCategoryViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (ProductCategoryViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -146,6 +149,7 @@ public class ProductCategoryPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -173,23 +177,30 @@ public class ProductCategoryPage extends OutlinePage {
         masterTable.getColumns().addAll(columnList);
         getProductCategoryTable();
         masterTable.setItems(ProductCategoryViewModel.getCategories());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getProductCategoryTable() {
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<ProductCategory> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<ProductCategory>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(ProductCategory item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<ProductCategory>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -197,13 +208,11 @@ public class ProductCategoryPage extends OutlinePage {
         var contextMenu = new ContextMenu();
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
-        // Actions
-        // Delete
+
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             ProductCategoryViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName()).showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     ProductCategoryViewModel.getItem(obj.getItem().getId(), this::showDialog, this::errorMessage);
@@ -215,7 +224,7 @@ public class ProductCategoryPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> this.showDialog());
+        createBtn.setOnAction(_ -> this.showDialog());
     }
 
     private void showDialog() {
@@ -241,7 +250,7 @@ public class ProductCategoryPage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -258,7 +267,7 @@ public class ProductCategoryPage extends OutlinePage {
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(ProductCategory item, boolean empty) {
                 super.updateItem(item, empty);
@@ -266,7 +275,7 @@ public class ProductCategoryPage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(ProductCategory item, boolean empty) {
                 super.updateItem(item, empty);
@@ -278,7 +287,7 @@ public class ProductCategoryPage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(ProductCategory item, boolean empty) {
                 super.updateItem(item, empty);
@@ -286,7 +295,7 @@ public class ProductCategoryPage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(ProductCategory item, boolean empty) {
                 super.updateItem(item, empty);
@@ -301,7 +310,7 @@ public class ProductCategoryPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(ProductCategoryViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(ProductCategoryViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -316,12 +325,12 @@ public class ProductCategoryPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(ProductCategoryViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     ProductCategoryViewModel
@@ -335,6 +344,8 @@ public class ProductCategoryPage extends OutlinePage {
                                     t1);
                     ProductCategoryViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

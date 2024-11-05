@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.views.pages.leave.tabs;
 
 import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
@@ -14,12 +15,14 @@ import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
@@ -37,7 +40,6 @@ public class TablePage extends OutlinePage {
     private TextField searchBar;
     private TableView<LeaveStatus> masterTable;
     private SpotyProgressSpinner progress;
-    private Button createBtn;
     private TableColumn<LeaveStatus, LeaveStatus> employeeName;
     private TableColumn<LeaveStatus, LeaveStatus> dateAndTime;
     private TableColumn<LeaveStatus, LeaveStatus> leaveType;
@@ -64,7 +66,6 @@ public class TablePage extends OutlinePage {
         pane.setCenter(buildCenter());
         setSearchBar();
         setupTable();
-        createBtnAction();
         return pane;
     }
 
@@ -96,7 +97,7 @@ public class TablePage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new Button("Create");
+        Button createBtn = new Button("Create");
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -117,7 +118,7 @@ public class TablePage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (LeaveStatusViewModel.getTotalPages() > 0) {
@@ -127,7 +128,7 @@ public class TablePage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        LeaveStatusViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        LeaveStatusViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (LeaveStatusViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -137,6 +138,7 @@ public class TablePage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -165,7 +167,7 @@ public class TablePage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleLeaveStatusTable();
-
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
         masterTable.setItems(LeaveStatusViewModel.getLeaveStatuses());
     }
 
@@ -173,19 +175,25 @@ public class TablePage extends OutlinePage {
         masterTable.setPrefSize(1200, 1000);
 
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<LeaveStatus> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<LeaveStatus>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(LeaveStatus item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<LeaveStatus>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -194,25 +202,15 @@ public class TablePage extends OutlinePage {
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             LeaveStatusViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getEmployeeName() + "'s leave request").showDialog());
-        // Edit
         edit.setOnAction(
-                e -> {
-//                    LeaveStatusViewModel.getItem(obj.getItem().getId(), () -> SpotyDialog.createDialog(new LeaveRequestForm()).showDialog().showAndWait(), this::errorMessage);
-                    e.consume();
-                });
+                Event::consume);
         contextMenu.getItems().addAll(edit, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
-    }
-
-    public void createBtnAction() {
-//        createBtn.setOnAction(event -> SpotyDialog.createDialog(new LeaveRequestForm()).showDialog().showAndWait());
     }
 
     private void onSuccess() {
@@ -220,7 +218,7 @@ public class TablePage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -260,13 +258,13 @@ public class TablePage extends OutlinePage {
         if (!AppManager.getMorphPane().getChildren().contains(notification)) {
             AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+            in.setOnFinished(_ -> SpotyMessage.delay(notification));
         }
     }
 
     private void setupTableColumns() {
         employeeName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        employeeName.setCellFactory(tableColumn -> new TableCell<>() {
+        employeeName.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
@@ -284,7 +282,7 @@ public class TablePage extends OutlinePage {
             }
         });
         dateAndTime.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        dateAndTime.setCellFactory(tableColumn -> new TableCell<>() {
+        dateAndTime.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
@@ -311,7 +309,7 @@ public class TablePage extends OutlinePage {
             }
         });
         leaveType.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        leaveType.setCellFactory(tableColumn -> new TableCell<>() {
+        leaveType.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
@@ -320,7 +318,7 @@ public class TablePage extends OutlinePage {
             }
         });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
@@ -328,7 +326,7 @@ public class TablePage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
@@ -340,7 +338,7 @@ public class TablePage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
@@ -349,7 +347,7 @@ public class TablePage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(LeaveStatus item, boolean empty) {
                 super.updateItem(item, empty);
@@ -364,7 +362,7 @@ public class TablePage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(LeaveStatusViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(LeaveStatusViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -379,12 +377,12 @@ public class TablePage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(LeaveStatusViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     LeaveStatusViewModel
@@ -398,6 +396,8 @@ public class TablePage extends OutlinePage {
                                     t1);
                     LeaveStatusViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

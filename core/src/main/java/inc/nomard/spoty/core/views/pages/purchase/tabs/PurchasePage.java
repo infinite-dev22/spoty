@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages.purchase.tabs;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -32,6 +34,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,13 +69,13 @@ public class PurchasePage extends OutlinePage {
         getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane1.setAlignment(Pos.CENTER);
                 modalPane1.usePredefinedTransitionFactories(null);
             }
         });
-        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane2.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane2.setAlignment(Pos.CENTER);
                 modalPane2.usePredefinedTransitionFactories(null);
@@ -139,7 +142,7 @@ public class PurchasePage extends OutlinePage {
 
     private HBox buildRightTop() {
         var createBtn = new Button("Create");
-        createBtn.setOnAction(event -> showForm());
+        createBtn.setOnAction(_ -> showForm());
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -184,7 +187,7 @@ public class PurchasePage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (PurchaseMasterViewModel.getTotalPages() > 0) {
@@ -194,7 +197,7 @@ public class PurchasePage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        PurchaseMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        PurchaseMasterViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (PurchaseMasterViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -204,6 +207,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -259,23 +263,30 @@ public class PurchasePage extends OutlinePage {
         masterTable.getColumns().addAll(columnList);
         getTable();
         masterTable.setItems(PurchaseMasterViewModel.getPurchases());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getTable() {
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<PurchaseMaster> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<PurchaseMaster>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(PurchaseMaster item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<PurchaseMaster>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -331,7 +342,7 @@ public class PurchasePage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -350,7 +361,7 @@ public class PurchasePage extends OutlinePage {
     private void setupTableColumns() {
         reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
         supplier.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        supplier.setCellFactory(tableColumn -> new TableCell<>() {
+        supplier.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -358,7 +369,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         purchaseDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        purchaseDate.setCellFactory(tableColumn -> new TableCell<>() {
+        purchaseDate.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -370,7 +381,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         purchaseTotalPrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        purchaseTotalPrice.setCellFactory(tableColumn -> new TableCell<>() {
+        purchaseTotalPrice.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -379,7 +390,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         purchaseAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        purchaseAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+        purchaseAmountPaid.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -388,7 +399,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         purchaseAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        purchaseAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+        purchaseAmountDue.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -397,7 +408,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        approvalStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -445,7 +456,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         purchaseStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        purchaseStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        purchaseStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -489,7 +500,7 @@ public class PurchasePage extends OutlinePage {
             }
         });
         paymentStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        paymentStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        paymentStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(PurchaseMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -536,7 +547,7 @@ public class PurchasePage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(PurchaseMasterViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(PurchaseMasterViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -551,12 +562,12 @@ public class PurchasePage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(PurchaseMasterViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     PurchaseMasterViewModel
@@ -570,6 +581,8 @@ public class PurchasePage extends OutlinePage {
                                     t1);
                     PurchaseMasterViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

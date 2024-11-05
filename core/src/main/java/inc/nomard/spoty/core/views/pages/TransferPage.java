@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -27,6 +29,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
@@ -64,13 +67,13 @@ public class TransferPage extends OutlinePage {
         progress.setManaged(true);
         progress.setVisible(true);
 
-        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane1.setAlignment(Pos.CENTER);
                 modalPane1.usePredefinedTransitionFactories(null);
             }
         });
-        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane2.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane2.setAlignment(Pos.CENTER);
                 modalPane2.usePredefinedTransitionFactories(null);
@@ -135,7 +138,7 @@ public class TransferPage extends OutlinePage {
 
     private HBox buildRightTop() {
         var createBtn = new Button("Create");
-        createBtn.setOnAction(event -> showForm());
+        createBtn.setOnAction(_ -> showForm());
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -156,7 +159,7 @@ public class TransferPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (TransferMasterViewModel.getTotalPages() > 0) {
@@ -166,7 +169,7 @@ public class TransferPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        TransferMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        TransferMasterViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (TransferMasterViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -176,6 +179,7 @@ public class TransferPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -216,27 +220,33 @@ public class TransferPage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getTransferMasterTable();
-
         masterTable.setItems(TransferMasterViewModel.getTransfers());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getTransferMasterTable() {
         masterTable.setPrefSize(1000, 1000);
 
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<TransferMaster> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<TransferMaster>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(TransferMaster item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<TransferMaster>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -246,19 +256,15 @@ public class TransferPage extends OutlinePage {
         var edit = new MenuItem("Edit");
         var view = new MenuItem("View");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             TransferMasterViewModel.deleteTransfer(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getFromBranchName() + " - " + obj.getItem().getToBranchName() + " transfer").showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     TransferMasterViewModel.getTransfer(obj.getItem().getId(), this::showForm, this::errorMessage);
                     e.consume();
                 });
-        // View
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
@@ -319,12 +325,12 @@ public class TransferPage extends OutlinePage {
         if (!AppManager.getMorphPane().getChildren().contains(notification)) {
             AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+            in.setOnFinished(_ -> SpotyMessage.delay(notification));
         }
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -343,7 +349,7 @@ public class TransferPage extends OutlinePage {
     private void setupTableColumns() {
         reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
         fromBranch.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        fromBranch.setCellFactory(tableColumn -> new TableCell<>() {
+        fromBranch.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -351,7 +357,7 @@ public class TransferPage extends OutlinePage {
             }
         });
         toBranch.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        toBranch.setCellFactory(tableColumn -> new TableCell<>() {
+        toBranch.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -359,7 +365,7 @@ public class TransferPage extends OutlinePage {
             }
         });
         transferDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        transferDate.setCellFactory(tableColumn -> new TableCell<>() {
+        transferDate.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -371,7 +377,7 @@ public class TransferPage extends OutlinePage {
         });
         note.setCellValueFactory(new PropertyValueFactory<>("note"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -379,7 +385,7 @@ public class TransferPage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -391,7 +397,7 @@ public class TransferPage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -400,7 +406,7 @@ public class TransferPage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(TransferMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -415,7 +421,7 @@ public class TransferPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(TransferMasterViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(TransferMasterViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -430,12 +436,12 @@ public class TransferPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(TransferMasterViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     TransferMasterViewModel
@@ -449,6 +455,8 @@ public class TransferPage extends OutlinePage {
                                     t1);
                     TransferMasterViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

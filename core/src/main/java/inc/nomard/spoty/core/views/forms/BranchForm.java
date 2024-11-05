@@ -27,8 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-
 @Slf4j
 public class BranchForm extends BorderPane {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
@@ -50,7 +48,6 @@ public class BranchForm extends BorderPane {
     private List<Constraint> nameConstraints,
             townConstraints,
             cityConstraints;
-    private Event actionEvent = null;
 
     public BranchForm(ModalPane modalPane, Integer reason) {
         this.modalPane = modalPane;
@@ -185,9 +182,9 @@ public class BranchForm extends BorderPane {
     }
 
     private void dialogOnActions() {
-        cancelBtn.setOnAction((event) -> dispose());
+        cancelBtn.setOnAction((_) -> dispose());
         saveBtn.setOnAction(
-                (event) -> {
+                (_) -> {
                     nameConstraints = name.validate();
                     townConstraints = town.validate();
                     cityConstraints = city.validate();
@@ -223,13 +220,11 @@ public class BranchForm extends BorderPane {
     }
 
     private void onSuccess() {
-        closeDialog(actionEvent);
-        BranchViewModel.clearBranchData();
+        dispose();
         BranchViewModel.getAllBranches(null, null, null, null);
     }
 
     public void requiredValidator() {
-        // Name input validation.
         Constraint branchFormNameConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -251,12 +246,11 @@ public class BranchForm extends BorderPane {
                         .setCondition(town.textProperty().length().greaterThan(0))
                         .get();
         town.getValidator().constraint(branchFormTownConstraint);
-        // Display error.
         name
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 nameValidationLabel.setManaged(false);
                                 nameValidationLabel.setVisible(false);
@@ -267,7 +261,7 @@ public class BranchForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 cityValidationLabel.setManaged(false);
                                 cityValidationLabel.setVisible(false);
@@ -278,7 +272,7 @@ public class BranchForm extends BorderPane {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 townValidationLabel.setManaged(false);
                                 townValidationLabel.setVisible(false);

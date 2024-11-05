@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages.sale.tabs;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnMasterViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
@@ -24,6 +26,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
@@ -60,7 +63,7 @@ public class SaleReturnPage extends OutlinePage {
         progress.setManaged(true);
         progress.setVisible(true);
         SaleReturnMasterViewModel.getSaleReturnMasters(this::onDataInitializationSuccess, this::errorMessage, null, null);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -130,7 +133,7 @@ public class SaleReturnPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (SaleReturnMasterViewModel.getTotalPages() > 0) {
@@ -140,7 +143,7 @@ public class SaleReturnPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        SaleReturnMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        SaleReturnMasterViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (SaleReturnMasterViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -150,6 +153,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -194,7 +198,7 @@ public class SaleReturnPage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleSaleReturnMasterTable();
-
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
         masterTable.setItems(SaleReturnMasterViewModel.getSales());
     }
 
@@ -202,19 +206,25 @@ public class SaleReturnPage extends OutlinePage {
         masterTable.setPrefSize(1200, 1000);
 
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<SaleReturnMaster> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<SaleReturnMaster>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(SaleReturnMaster item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<SaleReturnMaster>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -223,13 +233,10 @@ public class SaleReturnPage extends OutlinePage {
         var delete = new MenuItem("Delete");
         var view = new MenuItem("View");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             SaleReturnMasterViewModel.deleteSaleReturnMaster(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getCustomerName() + "'s order").showDialog());
-        // View
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
@@ -278,12 +285,12 @@ public class SaleReturnPage extends OutlinePage {
         if (!AppManager.getMorphPane().getChildren().contains(notification)) {
             AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+            in.setOnFinished(_ -> SpotyMessage.delay(notification));
         }
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -301,7 +308,7 @@ public class SaleReturnPage extends OutlinePage {
 
     private void setupTableColumns() {
         saleCustomer.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleCustomer.setCellFactory(tableColumn -> new TableCell<>() {
+        saleCustomer.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -309,7 +316,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         saleDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleDate.setCellFactory(tableColumn -> new TableCell<>() {
+        saleDate.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -320,7 +327,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         saleGrandTotal.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleGrandTotal.setCellFactory(tableColumn -> new TableCell<>() {
+        saleGrandTotal.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -328,7 +335,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         saleAmountPaid.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleAmountPaid.setCellFactory(tableColumn -> new TableCell<>() {
+        saleAmountPaid.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -336,7 +343,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         saleAmountDue.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        saleAmountDue.setCellFactory(tableColumn -> new TableCell<>() {
+        saleAmountDue.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -346,7 +353,7 @@ public class SaleReturnPage extends OutlinePage {
         saleStatus.setCellValueFactory(new PropertyValueFactory<>("saleStatus"));
         salePaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -354,7 +361,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -366,7 +373,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -375,7 +382,7 @@ public class SaleReturnPage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(SaleReturnMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -390,7 +397,7 @@ public class SaleReturnPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(SaleReturnMasterViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(SaleReturnMasterViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -405,12 +412,12 @@ public class SaleReturnPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(SaleReturnMasterViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     SaleReturnMasterViewModel
@@ -424,6 +431,8 @@ public class SaleReturnPage extends OutlinePage {
                                     t1);
                     SaleReturnMasterViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

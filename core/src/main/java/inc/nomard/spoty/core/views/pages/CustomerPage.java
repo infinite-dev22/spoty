@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.views.components.DeleteConfirmationDialog;
@@ -22,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,7 +55,7 @@ public class CustomerPage extends OutlinePage {
         progress.setManaged(true);
         progress.setVisible(true);
         CustomerViewModel.getAllCustomers(this::onDataInitializationSuccess, this::errorMessage, null, null);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -124,7 +127,7 @@ public class CustomerPage extends OutlinePage {
         tableView = new TableView<>();
         VBox.setVgrow(tableView, Priority.ALWAYS);
         HBox.setHgrow(tableView, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (CustomerViewModel.getTotalPages() > 0) {
@@ -134,7 +137,7 @@ public class CustomerPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        CustomerViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        CustomerViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (CustomerViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -144,6 +147,7 @@ public class CustomerPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(tableView, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -169,29 +173,34 @@ public class CustomerPage extends OutlinePage {
         setupTableColumns();
 
         var columnList = new LinkedList<>(Stream.of(name, phone, email, address, city, country, taxNumber).toList());
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
         styleCustomerTable();
-
         tableView.setItems(CustomerViewModel.getCustomers());
+        tableView.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleCustomerTable() {
         tableView.setPrefSize(1000, 1000);
         tableView.setRowFactory(
-                t -> {
-                    TableRow<Customer> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<Customer>) event.getSource())
-                                        .show(
-                                                tableView.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(Customer item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<Customer>) event.getSource())
+                                                .show(
+                                                        tableView.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -224,7 +233,7 @@ public class CustomerPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> this.showDialog());
+        createBtn.setOnAction(_ -> this.showDialog());
     }
 
     private void onSuccess() {
@@ -255,7 +264,7 @@ public class CustomerPage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -289,7 +298,7 @@ public class CustomerPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(CustomerViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(CustomerViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -304,12 +313,12 @@ public class CustomerPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(CustomerViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     CustomerViewModel
@@ -323,6 +332,8 @@ public class CustomerPage extends OutlinePage {
                                     t1);
                     CustomerViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

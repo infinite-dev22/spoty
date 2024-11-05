@@ -1,11 +1,14 @@
 package inc.nomard.spoty.core.views.components;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
 import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.ProductSalesModel;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -84,23 +87,22 @@ public class TopProducts extends AnchorPane {
         products.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         products.getColumns().addAll(columnList);
         getTable();
-
         products.setItems(DashboardViewModel.getTopProducts());
+        products.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getTable() {
         products.setPrefSize(1000, 1000);
-
         products.setRowFactory(
-                t -> {
-                    TableRow<ProductSalesModel> row = new TableRow<>();
+                _ -> {
+                    var row = new TableRow<ProductSalesModel>() {
+                        @Override
+                        public void updateItem(ProductSalesModel item, boolean empty) {
+                            super.updateItem(item, empty);
+                        }
+                    };
                     EventHandler<MouseEvent> eventHandler =
-                            event -> {
-                                if (Objects.equals(event.getEventType(), MouseEvent.MOUSE_CLICKED)) {
-                                    log.info("Row with Product \"" + row.getItem().getName() + "\" has been clicked.");
-                                }
-                                event.consume();
-                            };
+                            Event::consume;
                     row.setOnMouseClicked(eventHandler);
                     return row;
                 });
@@ -109,7 +111,7 @@ public class TopProducts extends AnchorPane {
     private void setupTableColumns() {
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         cost.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        cost.setCellFactory(tableColumn -> new TableCell<>() {
+        cost.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(ProductSalesModel item, boolean empty) {
                 super.updateItem(item, empty);
@@ -117,7 +119,7 @@ public class TopProducts extends AnchorPane {
             }
         });
         price.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        price.setCellFactory(tableColumn -> new TableCell<>() {
+        price.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(ProductSalesModel item, boolean empty) {
                 super.updateItem(item, empty);
@@ -125,7 +127,7 @@ public class TopProducts extends AnchorPane {
             }
         });
         totalSale.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        totalSale.setCellFactory(tableColumn -> new TableCell<>() {
+        totalSale.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(ProductSalesModel item, boolean empty) {
                 super.updateItem(item, empty);

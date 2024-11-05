@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
@@ -17,8 +19,8 @@ import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
 import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
+import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -27,6 +29,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +48,6 @@ public class RequisitionPage extends OutlinePage {
     private TextField searchBar;
     private TableView<RequisitionMaster> masterTable;
     private SpotyProgressSpinner progress;
-    private FXMLLoader viewFxmlLoader;
     private TableColumn<RequisitionMaster, String> reference;
     private TableColumn<RequisitionMaster, RequisitionMaster> supplier;
     private TableColumn<RequisitionMaster, RequisitionMaster> status;
@@ -63,13 +65,13 @@ public class RequisitionPage extends OutlinePage {
         progress.setManaged(true);
         progress.setVisible(true);
 
-        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane1.setAlignment(Pos.CENTER);
                 modalPane1.usePredefinedTransitionFactories(null);
             }
         });
-        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane2.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane2.setAlignment(Pos.CENTER);
                 modalPane2.usePredefinedTransitionFactories(null);
@@ -134,7 +136,7 @@ public class RequisitionPage extends OutlinePage {
 
     private HBox buildRightTop() {
         var createBtn = new Button("Create");
-        createBtn.setOnAction(event -> showForm());
+        createBtn.setOnAction(_ -> showForm());
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -155,7 +157,7 @@ public class RequisitionPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (RequisitionMasterViewModel.getTotalPages() > 0) {
@@ -165,7 +167,7 @@ public class RequisitionPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        RequisitionMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        RequisitionMasterViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (RequisitionMasterViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -175,6 +177,7 @@ public class RequisitionPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -211,28 +214,34 @@ public class RequisitionPage extends OutlinePage {
                 updatedAt).toList());
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
+        masterTable.getStyleClass().add(Styles.STRIPED);
         getTable();
-
         masterTable.setItems(RequisitionMasterViewModel.getRequisitions());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getTable() {
         masterTable.setPrefSize(1200, 1000);
-
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<RequisitionMaster> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<RequisitionMaster>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(RequisitionMaster item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<RequisitionMaster>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -242,24 +251,16 @@ public class RequisitionPage extends OutlinePage {
         var edit = new MenuItem("Edit");
         var view = new MenuItem("View");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             RequisitionMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getSupplierName() + "'s requisition").showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     RequisitionMasterViewModel.getRequisitionMaster(obj.getItem().getId(), this::showForm, this::errorMessage);
                     e.consume();
                 });
-        // View
-        view.setOnAction(
-                event -> {
-//                    viewShow(obj.getItem());
-                    event.consume();
-                });
+        view.setOnAction(Event::consume);
         contextMenu.getItems().addAll(view, edit, delete);
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
@@ -281,25 +282,6 @@ public class RequisitionPage extends OutlinePage {
         RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null, null);
     }
 
-//    private void viewDialogPane() throws IOException {
-//        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-//        viewFxmlLoader = fxmlLoader("views/previews/RequisitionPreview.fxml");
-//        viewFxmlLoader.setControllerFactory(c -> new RequisitionPreviewController());
-//        MFXGenericDialog dialogContent = viewFxmlLoader.load();
-//        dialogContent.setShowMinimize(false);
-//        dialogContent.setShowAlwaysOnTop(false);
-//
-//        dialogContent.setPrefHeight(screenHeight * .98);
-//        dialogContent.setPrefWidth(700);
-////        viewDialog = SpotyDialog.createDialog(dialogContent).showDialog();
-//    }
-//
-//    public void viewShow(RequisitionMaster requisitionMaster) {
-//        RequisitionPreviewController controller = viewFxmlLoader.getController();
-//        controller.init(requisitionMaster);
-//        viewDialog.showAndWait();
-//    }
-
     private void errorMessage(String message) {
         SpotyUtils.errorMessage(message);
         progress.setManaged(false);
@@ -307,7 +289,7 @@ public class RequisitionPage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -326,7 +308,7 @@ public class RequisitionPage extends OutlinePage {
     private void setupTableColumns() {
         reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
         supplier.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        supplier.setCellFactory(tableColumn -> new TableCell<>() {
+        supplier.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -334,7 +316,7 @@ public class RequisitionPage extends OutlinePage {
             }
         });
         status.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        status.setCellFactory(tableColumn -> new TableCell<>() {
+        status.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -378,7 +360,7 @@ public class RequisitionPage extends OutlinePage {
             }
         });
         approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        approvalStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -426,7 +408,7 @@ public class RequisitionPage extends OutlinePage {
             }
         });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -434,7 +416,7 @@ public class RequisitionPage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -446,7 +428,7 @@ public class RequisitionPage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -454,7 +436,7 @@ public class RequisitionPage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(RequisitionMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -469,7 +451,7 @@ public class RequisitionPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(RequisitionMasterViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(RequisitionMasterViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -484,12 +466,12 @@ public class RequisitionPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(RequisitionMasterViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     RequisitionMasterViewModel
@@ -503,6 +485,8 @@ public class RequisitionPage extends OutlinePage {
                                     t1);
                     RequisitionMasterViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

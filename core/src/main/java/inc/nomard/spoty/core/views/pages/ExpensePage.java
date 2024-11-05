@@ -1,6 +1,8 @@
 package inc.nomard.spoty.core.views.pages;
 
 import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.accounting.AccountViewModel;
 import inc.nomard.spoty.core.viewModels.accounting.ExpensesViewModel;
@@ -28,6 +30,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
@@ -61,7 +64,7 @@ public class ExpensePage extends OutlinePage {
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -146,7 +149,7 @@ public class ExpensePage extends OutlinePage {
         tableView = new TableView<>();
         VBox.setVgrow(tableView, Priority.ALWAYS);
         HBox.setHgrow(tableView, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (ExpensesViewModel.getTotalPages() > 0) {
@@ -156,7 +159,7 @@ public class ExpensePage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        ExpensesViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        ExpensesViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (ExpensesViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -166,6 +169,7 @@ public class ExpensePage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(tableView, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -194,26 +198,32 @@ public class ExpensePage extends OutlinePage {
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         tableView.getColumns().addAll(columnList);
         styleExpenseTable();
-
         tableView.setItems(ExpensesViewModel.getExpenses());
+        tableView.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleExpenseTable() {
         tableView.setPrefSize(1200, 1000);
         tableView.setRowFactory(
-                t -> {
-                    TableRow<Expense> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<Expense>) event.getSource())
-                                        .show(
-                                                tableView.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(Expense item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<Expense>) event.getSource())
+                                                .show(
+                                                        tableView.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -221,13 +231,11 @@ public class ExpensePage extends OutlinePage {
         var contextMenu = new ContextMenu();
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
-        // Actions
-        // Delete
+
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             ExpensesViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName()).showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     ExpensesViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
@@ -239,7 +247,7 @@ public class ExpensePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> this.showDialog(0));
+        createBtn.setOnAction(_ -> this.showDialog(0));
     }
 
     private void showDialog(Integer reason) {
@@ -259,7 +267,7 @@ public class ExpensePage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -299,13 +307,13 @@ public class ExpensePage extends OutlinePage {
         if (!AppManager.getMorphPane().getChildren().contains(notification)) {
             AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+            in.setOnFinished(_ -> SpotyMessage.delay(notification));
         }
     }
 
     private void setupTableColumns() {
         accountName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        accountName.setCellFactory(tableColumn -> new TableCell<>() {
+        accountName.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Expense item, boolean empty) {
                 super.updateItem(item, empty);
@@ -314,7 +322,7 @@ public class ExpensePage extends OutlinePage {
         });
         expenseName.setCellValueFactory(new PropertyValueFactory<>("name"));
         date.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        date.setCellFactory(tableColumn -> new TableCell<>() {
+        date.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Expense item, boolean empty) {
                 super.updateItem(item, empty);
@@ -326,7 +334,7 @@ public class ExpensePage extends OutlinePage {
             }
         });
         amount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        amount.setCellFactory(tableColumn -> new TableCell<>() {
+        amount.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Expense item, boolean empty) {
                 super.updateItem(item, empty);
@@ -336,7 +344,7 @@ public class ExpensePage extends OutlinePage {
         });
         note.setCellValueFactory(new PropertyValueFactory<>("note"));
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Expense item, boolean empty) {
                 super.updateItem(item, empty);
@@ -344,7 +352,7 @@ public class ExpensePage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Expense item, boolean empty) {
                 super.updateItem(item, empty);
@@ -359,7 +367,7 @@ public class ExpensePage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(ExpensesViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(ExpensesViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -374,12 +382,12 @@ public class ExpensePage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(ExpensesViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     ExpensesViewModel
@@ -393,6 +401,8 @@ public class ExpensePage extends OutlinePage {
                                     t1);
                     ExpensesViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

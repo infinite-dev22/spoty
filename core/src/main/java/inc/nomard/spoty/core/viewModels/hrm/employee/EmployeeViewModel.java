@@ -39,8 +39,8 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class EmployeeViewModel {
-    public static final ObservableList<Employee> employeesLists = FXCollections.observableArrayList();
-    public static final ListProperty<Employee> Employees = new SimpleListProperty<>(employeesLists);
+    public static final ObservableList<Employee> employeesList = FXCollections.observableArrayList();
+    public static final ListProperty<Employee> Employees = new SimpleListProperty<>(employeesList);
     @Getter
     private static final ObservableList<String> workShiftsList = FXCollections.observableArrayList("Day", "Evening", "Full");
     private static final Gson gson = new GsonBuilder()
@@ -353,9 +353,7 @@ public class EmployeeViewModel {
                                        SpotyGotFunctional.MessageConsumer errorMessage, Integer pageNo, Integer pageSize) {
         CompletableFuture<HttpResponse<String>> responseFuture = usersRepository.fetchAll(pageNo, pageSize);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
             if (response.statusCode() == 200) {
-                // Process the successful response
                 Platform.runLater(() -> {
                     Type type = new TypeToken<ResponseModel<Employee>>() {
                     }.getType();
@@ -364,8 +362,7 @@ public class EmployeeViewModel {
                     setPageNumber(responseModel.getPageable().getPageNumber());
                     setPageSize(responseModel.getPageable().getPageSize());
                     ArrayList<Employee> employeeList = responseModel.getContent();
-                    employeesLists.clear();
-                    employeesLists.addAll(employeeList);
+                    employeesList.setAll(employeeList);
                     if (Objects.nonNull(onSuccess)) {
                         onSuccess.run();
                     }
@@ -469,10 +466,8 @@ public class EmployeeViewModel {
                 Platform.runLater(() -> {
                     Type listType = new TypeToken<ArrayList<Employee>>() {
                     }.getType();
-                    ArrayList<Employee> employeeList = gson.fromJson(
-                            response.body(), listType);
-                    employeesLists.clear();
-                    employeesLists.addAll(employeeList);
+                    ArrayList<Employee> employeeList = gson.fromJson(response.body(), listType);
+                    employeesList.setAll(employeeList);
                     onSuccess.run();
                 });
             } else if (response.statusCode() == 401) {

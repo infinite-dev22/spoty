@@ -2,6 +2,8 @@ package inc.nomard.spoty.core.views.settings;
 
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.controls.ModalPane;
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.BrandViewModel;
@@ -27,6 +29,7 @@ import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
@@ -42,14 +45,13 @@ public class BranchPage extends OutlinePage {
     private CustomTextField searchBar;
     private TableView<Branch> masterTable;
     private SpotyProgressSpinner progress;
-    private Button createBtn;
 
     public BranchPage() {
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -101,9 +103,9 @@ public class BranchPage extends OutlinePage {
     }
 
     private HBox buildRightTop() {
-        createBtn = new Button("Create");
+        Button createBtn = new Button("Create");
         createBtn.setDefaultButton(true);
-        createBtn.setOnAction(event -> showDialog(0));
+        createBtn.setOnAction(_ -> showDialog(0));
         var hbox = new HBox(createBtn);
         hbox.setAlignment(Pos.CENTER_RIGHT);
         hbox.setPadding(new Insets(0d, 10d, 0d, 10d));
@@ -124,10 +126,10 @@ public class BranchPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
-        BrandViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        BrandViewModel.totalPagesProperty().addListener((_, oldNum, newNum) -> {
             if (!(oldNum != null && (Integer) oldNum > 1) || !(newNum != null && (Integer) newNum > 1)) {
                 paging.setVisible(false);
                 paging.setManaged(false);
@@ -137,6 +139,7 @@ public class BranchPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -160,30 +163,29 @@ public class BranchPage extends OutlinePage {
                 .addAll(branchName, branchPhone, branchCity, branchTown, branchEmail);
 
         getBranchTable();
-
-        if (BranchViewModel.getBranches().isEmpty()) {
-            BranchViewModel.getBranches()
-                    .addListener(
-                            (ListChangeListener<Branch>)
-                                    c -> masterTable.setItems(BranchViewModel.getBranches()));
-        } else {
-            masterTable.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
-        }
+        masterTable.setItems(BranchViewModel.getBranches());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getBranchTable() {
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<Branch> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event ->
-                                    showContextMenu((TableRow<Branch>) event.getSource())
-                                            .show(
-                                                    this.getScene().getWindow(),
-                                                    event.getScreenX(),
-                                                    event.getScreenY());
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(Branch item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event ->
+                                            showContextMenu((TableRow<Branch>) event.getSource())
+                                                    .show(
+                                                            this.getScene().getWindow(),
+                                                            event.getScreenX(),
+                                                            event.getScreenY());
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -191,13 +193,11 @@ public class BranchPage extends OutlinePage {
         var contextMenu = new ContextMenu();
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
-        // Actions
-        // Delete
+
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             BranchViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, this::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getName()).showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     BranchViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
@@ -245,7 +245,7 @@ public class BranchPage extends OutlinePage {
         if (!AppManager.getMorphPane().getChildren().contains(notification)) {
             AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+            in.setOnFinished(_ -> SpotyMessage.delay(notification));
         }
     }
 
@@ -254,7 +254,7 @@ public class BranchPage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -272,7 +272,7 @@ public class BranchPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(BrandViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(BrandViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -287,12 +287,12 @@ public class BranchPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(BrandViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     BrandViewModel
@@ -306,6 +306,8 @@ public class BranchPage extends OutlinePage {
                                     t1);
                     BrandViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

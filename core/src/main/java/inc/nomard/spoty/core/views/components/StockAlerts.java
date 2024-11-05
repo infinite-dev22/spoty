@@ -1,11 +1,14 @@
 package inc.nomard.spoty.core.views.components;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import inc.nomard.spoty.core.viewModels.dashboard.DashboardViewModel;
 import inc.nomard.spoty.core.views.layout.navigation.Spacer;
 import inc.nomard.spoty.network_bridge.dtos.dashboard.StockAlertModel;
 import inc.nomard.spoty.utils.AppUtils;
 import inc.nomard.spoty.utils.UIUtils;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -82,23 +85,22 @@ public class StockAlerts extends AnchorPane {
         stockAlert.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         stockAlert.getColumns().addAll(columnList);
         styleTable();
-
         stockAlert.setItems(DashboardViewModel.getStockAlerts());
+        stockAlert.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleTable() {
         stockAlert.setPrefSize(1000, 1000);
-
         stockAlert.setRowFactory(
-                t -> {
-                    TableRow<StockAlertModel> row = new TableRow<>();
+                _ -> {
+                    var row = new TableRow<StockAlertModel>() {
+                        @Override
+                        public void updateItem(StockAlertModel item, boolean empty) {
+                            super.updateItem(item, empty);
+                        }
+                    };
                     EventHandler<MouseEvent> eventHandler =
-                            event -> {
-                                if (Objects.equals(event.getEventType(), MouseEvent.MOUSE_CLICKED)) {
-                                    log.info("Row with Product \"" + row.getItem().getName() + "\" has been clicked.");
-                                }
-                                event.consume();
-                            };
+                            Event::consume;
                     row.setOnMouseClicked(eventHandler);
                     return row;
                 });
@@ -107,7 +109,7 @@ public class StockAlerts extends AnchorPane {
     private void setupTableColumns() {
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         totalQuantity.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        totalQuantity.setCellFactory(tableColumn -> new TableCell<>() {
+        totalQuantity.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(StockAlertModel item, boolean empty) {
                 super.updateItem(item, empty);
@@ -116,7 +118,7 @@ public class StockAlerts extends AnchorPane {
             }
         });
         costPrice.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        costPrice.setCellFactory(tableColumn -> new TableCell<>() {
+        costPrice.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(StockAlertModel item, boolean empty) {
                 super.updateItem(item, empty);

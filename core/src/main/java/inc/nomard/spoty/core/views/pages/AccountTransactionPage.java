@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.accounting.AccountTransactionViewModel;
 import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
@@ -18,6 +20,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.Ikon;
@@ -112,7 +115,7 @@ public class AccountTransactionPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (AccountTransactionViewModel.getTotalPages() > 0) {
@@ -122,7 +125,7 @@ public class AccountTransactionPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        AccountTransactionViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        AccountTransactionViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (AccountTransactionViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -132,6 +135,7 @@ public class AccountTransactionPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -160,16 +164,27 @@ public class AccountTransactionPage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         styleBankTable();
-
         masterTable.setItems(AccountTransactionViewModel.transactionsList);
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void styleBankTable() {
         masterTable.setPrefSize(1000, 1000);
+        masterTable.setRowFactory(
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(AccountTransaction item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                        }
+                    }
+                });
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -203,13 +218,13 @@ public class AccountTransactionPage extends OutlinePage {
         if (!AppManager.getMorphPane().getChildren().contains(notification)) {
             AppManager.getMorphPane().getChildren().add(notification);
             in.playFromStart();
-            in.setOnFinished(actionEvent -> SpotyMessage.delay(notification));
+            in.setOnFinished(_ -> SpotyMessage.delay(notification));
         }
     }
 
     private void setupTableColumns() {
         accountName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        accountName.setCellFactory(tableColumn -> new TableCell<>() {
+        accountName.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AccountTransaction item, boolean empty) {
                 super.updateItem(item, empty);
@@ -218,7 +233,7 @@ public class AccountTransactionPage extends OutlinePage {
         });
         transactionType.setCellValueFactory(new PropertyValueFactory<>("transactionType"));
         credit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        credit.setCellFactory(tableColumn -> new TableCell<>() {
+        credit.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AccountTransaction item, boolean empty) {
                 super.updateItem(item, empty);
@@ -226,7 +241,7 @@ public class AccountTransactionPage extends OutlinePage {
             }
         });
         debit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        debit.setCellFactory(tableColumn -> new TableCell<>() {
+        debit.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AccountTransaction item, boolean empty) {
                 super.updateItem(item, empty);
@@ -234,7 +249,7 @@ public class AccountTransactionPage extends OutlinePage {
             }
         });
         amount.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        amount.setCellFactory(tableColumn -> new TableCell<>() {
+        amount.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AccountTransaction item, boolean empty) {
                 super.updateItem(item, empty);
@@ -243,7 +258,7 @@ public class AccountTransactionPage extends OutlinePage {
         });
         note.setCellValueFactory(new PropertyValueFactory<>("note"));
         transactionDate.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        transactionDate.setCellFactory(tableColumn -> new TableCell<>() {
+        transactionDate.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(AccountTransaction item, boolean empty) {
                 super.updateItem(item, empty);
@@ -258,7 +273,7 @@ public class AccountTransactionPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(AccountTransactionViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(AccountTransactionViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -273,12 +288,12 @@ public class AccountTransactionPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(AccountTransactionViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     AccountTransactionViewModel
@@ -292,6 +307,8 @@ public class AccountTransactionPage extends OutlinePage {
                                     t1);
                     AccountTransactionViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

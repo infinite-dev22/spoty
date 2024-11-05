@@ -29,7 +29,6 @@ public class Main extends Application {
     private static final String DARK_THEME_CSS = SpotyCoreResourceLoader.load("styles/theming/dark-theme.css");
 
     private static void initializePrimaryStage(Stage primaryStage) {
-//        configureUserAgent();
         CSSFX.start();
         AppManager.setPrimaryStage(primaryStage);
 

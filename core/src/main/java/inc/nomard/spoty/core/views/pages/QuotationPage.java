@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.pages;
 
+import atlantafx.base.theme.Styles;
+import atlantafx.base.theme.Tweaks;
 import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.viewModels.DiscountViewModel;
@@ -31,6 +33,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,13 +69,13 @@ public class QuotationPage extends OutlinePage {
         getChildren().addAll(modalPane1, modalPane2, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        modalPane1.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane1.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane1.setAlignment(Pos.CENTER);
                 modalPane1.usePredefinedTransitionFactories(null);
             }
         });
-        modalPane2.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane2.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane2.setAlignment(Pos.CENTER);
                 modalPane2.usePredefinedTransitionFactories(null);
@@ -160,7 +163,7 @@ public class QuotationPage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (QuotationMasterViewModel.getTotalPages() > 0) {
@@ -170,7 +173,7 @@ public class QuotationPage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        QuotationMasterViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        QuotationMasterViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (QuotationMasterViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -180,6 +183,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         var centerHolder = new VBox(masterTable, paging);
+        centerHolder.getStyleClass().add("card-flat-top");
         VBox.setVgrow(centerHolder, Priority.ALWAYS);
         HBox.setHgrow(centerHolder, Priority.ALWAYS);
         return centerHolder;
@@ -220,27 +224,32 @@ public class QuotationPage extends OutlinePage {
         masterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         masterTable.getColumns().addAll(columnList);
         getQuotationMasterTable();
-
         masterTable.setItems(QuotationMasterViewModel.getQuotations());
+        masterTable.getStyleClass().addAll(Styles.STRIPED, Tweaks.EDGE_TO_EDGE);
     }
 
     private void getQuotationMasterTable() {
         masterTable.setPrefSize(1000, 1000);
-
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<QuotationMaster> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<QuotationMaster>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(QuotationMaster item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<QuotationMaster>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -250,19 +259,15 @@ public class QuotationPage extends OutlinePage {
         var delete = new MenuItem("Delete");
         var edit = new MenuItem("Edit");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             QuotationMasterViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getCustomerName() + "'s quotation").showDialog());
-        // Edit
         edit.setOnAction(
                 e -> {
                     QuotationMasterViewModel.getQuotationMaster(obj.getItem().getId(), this::createBtnAction, this::errorMessage);
                     e.consume();
                 });
-        // View
         view.setOnAction(
                 event -> {
                     viewShow(obj.getItem());
@@ -274,7 +279,7 @@ public class QuotationPage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> showForm());
+        createBtn.setOnAction(_ -> showForm());
     }
 
     private void showForm() {
@@ -308,7 +313,7 @@ public class QuotationPage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -328,7 +333,7 @@ public class QuotationPage extends OutlinePage {
     private void setupTableColumns() {
         reference.setCellValueFactory(new PropertyValueFactory<>("ref"));
         customer.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        customer.setCellFactory(tableColumn -> new TableCell<>() {
+        customer.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -336,7 +341,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         total.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        total.setCellFactory(tableColumn -> new TableCell<>() {
+        total.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -344,7 +349,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         quotationStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        quotationStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        quotationStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -384,7 +389,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         approvalStatus.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        approvalStatus.setCellFactory(tableColumn -> new TableCell<>() {
+        approvalStatus.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -432,7 +437,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         createdBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdBy.setCellFactory(tableColumn -> new TableCell<>() {
+        createdBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -440,7 +445,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         createdAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        createdAt.setCellFactory(tableColumn -> new TableCell<>() {
+        createdAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -452,7 +457,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         updatedBy.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedBy.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedBy.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -461,7 +466,7 @@ public class QuotationPage extends OutlinePage {
             }
         });
         updatedAt.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        updatedAt.setCellFactory(tableColumn -> new TableCell<>() {
+        updatedAt.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(QuotationMaster item, boolean empty) {
                 super.updateItem(item, empty);
@@ -476,7 +481,7 @@ public class QuotationPage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(QuotationMasterViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(QuotationMasterViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -491,12 +496,12 @@ public class QuotationPage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(QuotationMasterViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     QuotationMasterViewModel
@@ -510,6 +515,8 @@ public class QuotationPage extends OutlinePage {
                                     t1);
                     QuotationMasterViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 }

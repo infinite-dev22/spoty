@@ -25,6 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,7 +54,7 @@ public class RolePage extends OutlinePage {
         getChildren().addAll(modalPane, init());
         progress.setManaged(true);
         progress.setVisible(true);
-        modalPane.displayProperty().addListener((observableValue, closed, open) -> {
+        modalPane.displayProperty().addListener((_, _, open) -> {
             if (!open) {
                 modalPane.setAlignment(Pos.CENTER);
                 modalPane.usePredefinedTransitionFactories(null);
@@ -71,7 +72,6 @@ public class RolePage extends OutlinePage {
         var pane = new BorderPane();
         pane.setTop(buildTop());
         pane.setCenter(buildCenter());
-//        setIcons();
         setSearchBar();
         setupTable();
         createBtnAction();
@@ -127,7 +127,7 @@ public class RolePage extends OutlinePage {
         masterTable = new TableView<>();
         VBox.setVgrow(masterTable, Priority.ALWAYS);
         HBox.setHgrow(masterTable, Priority.ALWAYS);
-        var paging = new HBox(new Spacer(), buildPagination(), new Spacer(), buildPageSize());
+        var paging = new HBox(buildPageSize(), new Spacer(), buildPagination());
         paging.setPadding(new Insets(0d, 20d, 0d, 5d));
         paging.setAlignment(Pos.CENTER);
         if (AccountViewModel.getTotalPages() > 0) {
@@ -137,7 +137,7 @@ public class RolePage extends OutlinePage {
             paging.setVisible(false);
             paging.setManaged(false);
         }
-        AccountViewModel.totalPagesProperty().addListener((observableValue, oldNum, newNum) -> {
+        AccountViewModel.totalPagesProperty().addListener((_, _, _) -> {
             if (AccountViewModel.getTotalPages() > 0) {
                 paging.setVisible(true);
                 paging.setManaged(true);
@@ -195,19 +195,25 @@ public class RolePage extends OutlinePage {
         masterTable.setPrefSize(1000, 1000);
 
         masterTable.setRowFactory(
-                t -> {
-                    TableRow<Account> row = new TableRow<>();
-                    EventHandler<ContextMenuEvent> eventHandler =
-                            event -> {
-                                showContextMenu((TableRow<Account>) event.getSource())
-                                        .show(
-                                                masterTable.getScene().getWindow(),
-                                                event.getScreenX(),
-                                                event.getScreenY());
-                                event.consume();
-                            };
-                    row.setOnContextMenuRequested(eventHandler);
-                    return row;
+                _ -> new TableRow<>() {
+                    @Override
+                    public void updateItem(Account item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setStyle("");
+                        } else {
+                            EventHandler<ContextMenuEvent> eventHandler =
+                                    event -> {
+                                        showContextMenu((TableRow<Account>) event.getSource())
+                                                .show(
+                                                        masterTable.getScene().getWindow(),
+                                                        event.getScreenX(),
+                                                        event.getScreenY());
+                                        event.consume();
+                                    };
+                            setOnContextMenuRequested(eventHandler);
+                        }
+                    }
                 });
     }
 
@@ -217,19 +223,15 @@ public class RolePage extends OutlinePage {
         var edit = new MenuItem("Edit");
         var deposit = new MenuItem("Deposit");
 
-        // Actions
-        // Delete
         delete.setOnAction(event -> new DeleteConfirmationDialog(AppManager.getGlobalModalPane(), () -> {
             AccountViewModel.deleteItem(obj.getItem().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
             event.consume();
         }, obj.getItem().getAccountName()).showDialog());
-        // Edit
         edit.setOnAction(
                 event -> {
                     AccountViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(1), this::errorMessage);
                     event.consume();
                 });
-        // Deposit
         deposit.setOnAction(
                 event -> {
                     AccountViewModel.getItem(obj.getItem().getId(), () -> this.showDialog(2), this::errorMessage);
@@ -241,7 +243,7 @@ public class RolePage extends OutlinePage {
     }
 
     public void createBtnAction() {
-        createBtn.setOnAction(event -> this.showDialog(0));
+        createBtn.setOnAction(_ -> this.showDialog(0));
     }
 
     private void showDialog(Integer reason) {
@@ -261,7 +263,7 @@ public class RolePage extends OutlinePage {
     }
 
     public void setSearchBar() {
-        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+        searchBar.textProperty().addListener((_, ov, nv) -> {
             if (Objects.equals(ov, nv)) {
                 return;
             }
@@ -287,7 +289,7 @@ public class RolePage extends OutlinePage {
         accountName.setCellValueFactory(new PropertyValueFactory<>("accountName"));
         accountNumber.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
         credit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        credit.setCellFactory(tableColumn -> new TableCell<>() {
+        credit.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Account item, boolean empty) {
                 super.updateItem(item, empty);
@@ -296,7 +298,7 @@ public class RolePage extends OutlinePage {
             }
         });
         debit.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        debit.setCellFactory(tableColumn -> new TableCell<>() {
+        debit.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Account item, boolean empty) {
                 super.updateItem(item, empty);
@@ -305,7 +307,7 @@ public class RolePage extends OutlinePage {
             }
         });
         balance.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-        balance.setCellFactory(tableColumn -> new TableCell<>() {
+        balance.setCellFactory(_ -> new TableCell<>() {
             @Override
             public void updateItem(Account item, boolean empty) {
                 super.updateItem(item, empty);
@@ -318,7 +320,7 @@ public class RolePage extends OutlinePage {
 
     private Pagination buildPagination() {
         var pagination = new Pagination(AccountViewModel.getTotalPages(), 0);
-        pagination.setMaxPageIndicatorCount(5);
+        pagination.setMaxPageIndicatorCount(6);
         pagination.pageCountProperty().bindBidirectional(AccountViewModel.totalPagesProperty());
         pagination.setPageFactory(pageNum -> {
             progress.setManaged(true);
@@ -333,12 +335,12 @@ public class RolePage extends OutlinePage {
         return pagination;
     }
 
-    private ComboBox<Integer> buildPageSize() {
+    private HBox buildPageSize() {
         var pageSize = new ComboBox<Integer>();
         pageSize.setItems(FXCollections.observableArrayList(25, 50, 75, 100));
         pageSize.valueProperty().bindBidirectional(AccountViewModel.pageSizeProperty().asObject());
         pageSize.valueProperty().addListener(
-                (observableValue, integer, t1) -> {
+                (_, _, t1) -> {
                     progress.setManaged(true);
                     progress.setVisible(true);
                     AccountViewModel
@@ -352,7 +354,9 @@ public class RolePage extends OutlinePage {
                                     t1);
                     AccountViewModel.setPageSize(t1);
                 });
-        return pageSize;
+        var hbox = new HBox(10, new Text("Rows per page:"), pageSize);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        return hbox;
     }
 
     @Override

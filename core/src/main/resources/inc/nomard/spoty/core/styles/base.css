@@ -531,3 +531,7 @@
     -fx-font-family: 'Varela Round';
     -fx-font-size: 12;
 }
+
+.pagination {
+    -fx-page-information-visible: false;
+}
