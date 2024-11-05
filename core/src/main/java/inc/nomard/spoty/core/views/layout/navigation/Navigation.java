@@ -193,7 +193,6 @@ public class Navigation {
     public void navigate(Class<? extends Page> page) {
         Objects.requireNonNull(page, "Page cannot be null");
         selectedPage.set(page);
-        log.info("Navigated to: {}", page.getSimpleName());
     }
 
     NavTree.NavTreeItem getTreeItemForPage(Class<? extends Page> pageClass) {

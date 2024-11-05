@@ -30,22 +30,15 @@ public class NavTree extends TreeView<Nav> {
 
     public NavTree(Navigation navigation) {
         super();
-
-        log.info("Initializing NavTree with navigation: " + navigation);
-
         getSelectionModel()
                 .selectedItemProperty()
                 .addListener((obs, old, val) -> {
                     if (!(val instanceof NavTreeItem navTreeItem)) {
-                        log.warn("Selected item is not of type NavTreeItem: {}", val != null ? val.getClass() : "null");
                         return;
                     }
 
                     if (!navTreeItem.isGroup()) {
-                        log.info("Navigating to view: {}", navTreeItem.view().getName());
                         navigation.navigate(navTreeItem.view());
-                    } else {
-                        log.info("Selected item is a group: {}", navTreeItem.nav.title());
                     }
 
                     // Collapse an already expanded node when another is clicked
@@ -55,7 +48,7 @@ public class NavTree extends TreeView<Nav> {
                     }
                 });
 
-        expandedListener = (obs, wasExpanded, isNowExpanded) -> {
+        expandedListener = (obs, _, isNowExpanded) -> {
             if (isNowExpanded) {
                 ReadOnlyProperty<?> expandedProperty = (ReadOnlyProperty<?>) obs;
                 Object itemThatWasJustExpanded = expandedProperty.getBean();
@@ -63,12 +56,10 @@ public class NavTree extends TreeView<Nav> {
                 if (getRoot() != null && getRoot().getChildren() != null) {
                     for (TreeItem<Nav> item : getRoot().getChildren()) {
                         if (item != itemThatWasJustExpanded) {
-                            log.info("Collapsing item: " + item.getValue().title());
                             item.setExpanded(false);
                             if (item.getChildren() != null && !item.getChildren().isEmpty()) {
                                 item.getChildren().forEach(child -> {
                                     if (child != null && child.isExpanded()) {
-                                        log.info("Collapsing child item: " + child.getValue().title());
                                         child.setExpanded(false);
                                     }
                                 });
@@ -123,12 +114,10 @@ public class NavTree extends TreeView<Nav> {
 
             root.setOnMouseClicked(e -> {
                 if (getTreeItem() == null) {
-                    log.warn("TreeItem is null.");
                     return;
                 }
 
                 if (!(getTreeItem() instanceof NavTreeItem navTreeItem)) {
-                    log.warn("TreeItem is not of type NavTreeItem: " + getTreeItem().getClass());
                     return;
                 }
 
@@ -137,9 +126,7 @@ public class NavTree extends TreeView<Nav> {
 
                     // Get the row index for scrolling
                     int rowIndex = getTreeView().getRow(navTreeItem);
-                    log.info("Row index for navTreeItem: " + rowIndex);
                     if (rowIndex >= 0) { // Ensure row index is valid
-                        log.info("Scrolling to row index: " + (rowIndex - 10));
                         getTreeView().scrollTo(rowIndex - 10);
                     }
                 }
@@ -148,7 +135,6 @@ public class NavTree extends TreeView<Nav> {
             treeItemProperty()
                     .addListener((obs, oldTreeItem, newTreeItem) -> {
                         pseudoClassStateChanged(SUB_ITEM, newTreeItem != null && newTreeItem.getParent() != getTreeView().getRoot());
-                        log.info("TreeItem changed from {} to {}", oldTreeItem, newTreeItem);
                     });
 
             getStyleClass().add("nav-tree-cell");
@@ -160,14 +146,12 @@ public class NavTree extends TreeView<Nav> {
             setDisclosureNode(null);
 
             if (nav == null || empty) {
-                log.info("Updating item: cell is empty");
                 setText("");
                 setGraphic(null);
                 titleLabel.setText(null);
                 tagLabel.setText(null);
                 titleLabel.setGraphic(null);
             } else {
-                log.info("Updating item: {}", nav.title());
                 setGraphic(root);
                 titleLabel.setGraphic(nav.graphic());
                 titleLabel.setText(nav.title());
@@ -185,7 +169,6 @@ public class NavTree extends TreeView<Nav> {
         public NavTreeItem(Nav nav) {
             this.nav = Objects.requireNonNull(nav, "nav");
             setValue(nav);
-            log.info("Created NavTreeItem: {}", nav.title());
         }
 
         public static NavTreeItem root() {
@@ -194,28 +177,23 @@ public class NavTree extends TreeView<Nav> {
 
         public static NavTreeItem group(String title, Ikon icon) {
             FontIcon node = new FontIcon(icon);
-            log.info("Creating group NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, node, null, null));
         }
 
         public static NavTreeItem group(String title) {
-            log.info("Creating group NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, null, null, null));
         }
 
         public static NavTreeItem mainPage(String title, Ikon icon, Class<? extends Page> view) {
             FontIcon node = new FontIcon(icon);
-            log.info("Creating main page NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, node, view, null));
         }
 
         public static NavTreeItem page(String title, Class<? extends Page> view) {
-            log.info("Creating page NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, null, view, null));
         }
 
         public static NavTreeItem page(String title, Class<? extends Page> view, String... searchKeywords) {
-            log.info("Creating searchable page NavTreeItem: " + title);
             return new NavTreeItem(new Nav(title, null, null, view, List.of(searchKeywords)));
         }
 
