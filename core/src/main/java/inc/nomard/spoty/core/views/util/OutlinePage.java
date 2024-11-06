@@ -42,6 +42,6 @@ public abstract class OutlinePage extends StackPane implements Page {
 
     // Some properties can only be obtained after node placed
     // to the scene graph and here is the place do this.
-    protected void onRendered() {
+    public void onRendered() {
     }
 }

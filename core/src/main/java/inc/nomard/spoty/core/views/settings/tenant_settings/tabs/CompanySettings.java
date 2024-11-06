@@ -46,8 +46,6 @@ public class CompanySettings extends OutlinePage {
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
         progress();
-        CompletableFuture.runAsync(CurrencyViewModel::getAllCurrencies);
-        CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(this::onDataInitializationSuccess, this::errorMessage));
     }
 
     private void onDataInitializationSuccess() {
@@ -109,13 +107,15 @@ public class CompanySettings extends OutlinePage {
 
     private VBox buildSectionGroup() {
         var vbox = new VBox();
+        vbox.setMinWidth(350d);
         vbox.setPrefWidth(450d);
+        vbox.setMaxWidth(550d);
         vbox.setSpacing(8d);
         return vbox;
     }
 
-    private VBox buildTitle(String title, String subTitle) {
-        var label = new Text(title);
+    private VBox buildTitle() {
+        var label = new Text("Company System Features");
         label.getStyleClass().addAll(Styles.TITLE_2);
         label.sceneProperty().addListener((_, _, newScene) -> {
             if (newScene != null) {
@@ -125,7 +125,11 @@ public class CompanySettings extends OutlinePage {
                 });
             }
         });
-        var subLabel = new Text(subTitle);
+        var subLabel = new Text("""
+                Features required or used at your company by your employees. \
+                
+                Note:
+                These features will change for your entire system and will affect all employee work stations.""");
         subLabel.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_SUBTLE);
         subLabel.sceneProperty().addListener((_, _, newScene) -> {
             if (newScene != null) {
@@ -189,12 +193,8 @@ public class CompanySettings extends OutlinePage {
         hbox.setSpacing(16d);
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.getChildren().addAll(
-                buildTitle("Company System Features",
-                        """
-                                Features required or used at your company by your employees. \
-                                
-                                Note:
-                                These features will change for your entire system and will affect all employee work stations."""),
+                buildTitle(
+                ),
                 new Spacer(),
                 saveBtn);
         return hbox;
@@ -356,5 +356,12 @@ public class CompanySettings extends OutlinePage {
         } else {
             defaultCurrencyPicker.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
         }
+    }
+
+    @Override
+    public void onRendered() {
+        super.onRendered();
+        CurrencyViewModel.getAllCurrencies();
+        CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(this::onDataInitializationSuccess, this::errorMessage));
     }
 }

@@ -81,6 +81,7 @@ public class MainLayer extends BorderPane {
 
             // Add the new page with a fade-in animation
             subLayerPane.add(nextPage.getView());
+            nextPage.onRendered();
             subLayerPane.remove(prevPage.getView());  // Remove the old page
         } catch (Exception e) {
             log.error("Exception: {}", e.getMessage());

@@ -20,6 +20,7 @@ public interface Page {
     Parent getView();
 
     void reset();
+    void onRendered();
 
     ///////////////////////////////////////////////////////////////////////////
 
