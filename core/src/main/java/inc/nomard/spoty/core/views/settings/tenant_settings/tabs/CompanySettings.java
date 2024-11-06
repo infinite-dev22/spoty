@@ -314,16 +314,14 @@ public class CompanySettings extends OutlinePage {
         flowPane.setAlignment(Pos.TOP_LEFT);
         flowPane.setHgap(16d);
         flowPane.setVgap(16d);
-        flowPane.getChildren().addAll(
-                TenantSettingViewModel.getReviewers().stream()
-                        .map(ReviewerCard::new)
-                        .toList()
-        );
-        TenantSettingViewModel.reviewersProperty().addListener((_, _, _) -> flowPane.getChildren().addAll(
-                TenantSettingViewModel.getReviewers().stream()
-                        .map(ReviewerCard::new)
-                        .toList()
-        ));
+        TenantSettingViewModel.reviewersProperty().addListener((_, _, _) -> {
+            flowPane.getChildren().retainAll();
+            flowPane.getChildren().addAll(
+                    TenantSettingViewModel.getReviewers().stream()
+                            .map(ReviewerCard::new)
+                            .toList()
+            );
+        });
 
         return new VBox(separator(),
                 hbox,
