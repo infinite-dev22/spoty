@@ -61,6 +61,10 @@ public class CompanyDetails extends OutlinePage {
             companyWebLinkTxt,
             companyPhoneTxt,
             companyEmailTxt,
+            supportEmailTxt,
+            infoEmailTxt,
+            hrEmailTxt,
+            salesEmailTxt,
             companyPostalAddressTxt,
             companyAddressTxt,
             companyTwitter,
@@ -292,6 +296,22 @@ public class CompanyDetails extends OutlinePage {
         companyEmailTxt = new LabeledTextField();
         companyEmailTxt.setLabel("Email");
         companyEmailTxt.setPrefWidth(400d);
+        // Support Email text box.
+        supportEmailTxt = new LabeledTextField();
+        supportEmailTxt.setLabel("Support Email");
+        supportEmailTxt.setPrefWidth(400d);
+        // Info Email text box.
+        infoEmailTxt = new LabeledTextField();
+        infoEmailTxt.setLabel("Info Email");
+        infoEmailTxt.setPrefWidth(400d);
+        // HR Email text box.
+        hrEmailTxt = new LabeledTextField();
+        hrEmailTxt.setLabel("HR Email");
+        hrEmailTxt.setPrefWidth(400d);
+        // Sales Email text box.
+        salesEmailTxt = new LabeledTextField();
+        salesEmailTxt.setLabel("Sales Email");
+        salesEmailTxt.setPrefWidth(400d);
         // Postal Address text box.
         companyPostalAddressTxt = new LabeledTextField();
         companyPostalAddressTxt.setLabel("Postal Address (P.O.Box)");
@@ -306,6 +326,10 @@ public class CompanyDetails extends OutlinePage {
                 companyWebLinkTxt,
                 companyPhoneTxt,
                 companyEmailTxt,
+                supportEmailTxt,
+                infoEmailTxt,
+                hrEmailTxt,
+                salesEmailTxt,
                 companyPostalAddressTxt,
                 companyAddressTxt);
         var hbox = buildSection();
@@ -484,6 +508,18 @@ public class CompanyDetails extends OutlinePage {
         companyEmailTxt
                 .textProperty()
                 .bindBidirectional(TenantSettingViewModel.emailProperty());
+        supportEmailTxt
+                .textProperty()
+                .bindBidirectional(TenantSettingViewModel.supportEmailProperty());
+        infoEmailTxt
+                .textProperty()
+                .bindBidirectional(TenantSettingViewModel.infoEmailProperty());
+        hrEmailTxt
+                .textProperty()
+                .bindBidirectional(TenantSettingViewModel.hrEmailProperty());
+        salesEmailTxt
+                .textProperty()
+                .bindBidirectional(TenantSettingViewModel.salesEmailProperty());
         companyPostalAddressTxt
                 .textProperty()
                 .bindBidirectional(TenantSettingViewModel.postalAddressProperty());
