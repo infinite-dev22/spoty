@@ -62,7 +62,6 @@ public class MainLayer extends BorderPane {
     }
 
     private void loadPage(Class<? extends Page> pageClass) {
-        log.info("Load Page: {}", pageClass.getSimpleName());
         try {
             final Page prevPage = (Page) subLayerPane.getChildren().stream()
                     .filter(c -> c instanceof Page)
