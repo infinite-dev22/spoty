@@ -315,8 +315,7 @@ public class CompanySettings extends OutlinePage {
         var label = new Text("Tag line");
         label.getStyleClass().addAll(Styles.TEXT);
         var hbox = buildSection();
-        hbox.getChildren().addAll(separator(),
-                new VBox(
+        hbox.getChildren().addAll(new VBox(
                         20,
                         buildSectionTitle("Review Levels",
                                 "Times a document must be reviewed to pass"),
