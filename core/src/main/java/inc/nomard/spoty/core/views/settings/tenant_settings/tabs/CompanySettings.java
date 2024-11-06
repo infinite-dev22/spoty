@@ -144,26 +144,12 @@ public class CompanySettings extends OutlinePage {
     }
 
     private VBox buildSectionTitle(String title, String subTitle) {
-        var label = new Text(title);
+        var label = new Label(title);
         label.getStyleClass().addAll(Styles.TITLE_4);
-        label.sceneProperty().addListener((_, _, newScene) -> {
-            if (newScene != null) {
-                // At this point, the parent is guaranteed to be set
-                label.getParent().layoutBoundsProperty().addListener((_, _, newBounds) -> {
-                    label.setWrappingWidth(newBounds.getWidth() * 0.8); // Set wrapping width to 80% of parent's width
-                });
-            }
-        });
-        var subLabel = new Text(subTitle);
+        label.setWrapText(true);
+        var subLabel = new Label(subTitle);
         subLabel.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_SUBTLE);
-        subLabel.sceneProperty().addListener((_, _, newScene) -> {
-            if (newScene != null) {
-                // At this point, the parent is guaranteed to be set
-                subLabel.getParent().layoutBoundsProperty().addListener((_, _, newBounds) -> {
-                    subLabel.setWrappingWidth(newBounds.getWidth() * 0.8); // Set wrapping width to 80% of parent's width
-                });
-            }
-        });
+        subLabel.setWrapText(true);
         var vbox = buildSectionGroup();
         vbox.getChildren().addAll(label, subLabel);
         return vbox;
@@ -186,16 +172,9 @@ public class CompanySettings extends OutlinePage {
         var checkBox = new CheckBox(label);
         checkBox.selectedProperty()
                 .bindBidirectional(property);
-        var text = new Text(subTitle);
+        var text = new Label(subTitle);
         text.getStyleClass().addAll(Styles.TEXT, Styles.TEXT_SUBTLE);
-        text.sceneProperty().addListener((_, _, newScene) -> {
-            if (newScene != null) {
-                // At this point, the parent is guaranteed to be set
-                text.getParent().layoutBoundsProperty().addListener((_, _, newBounds) -> {
-                    text.setWrappingWidth(newBounds.getWidth() * 0.8); // Set wrapping width to 80% of parent's width
-                });
-            }
-        });
+        text.setWrapText(true);
         var vbox = new VBox(10d, checkBox, text);
         vbox.setPrefWidth(250d);
         return vbox;

@@ -8,12 +8,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 
 /**
  * ReviewerCard is a custom UI component that displays information about a reviewer,
@@ -21,19 +21,10 @@ import javafx.scene.text.Text;
  * This class utilizes JavaFX's layout management, bindings, and caching for optimal performance.
  */
 public class ReviewerCard extends HBox {
-
-    // Constants for layout and image settings
     private static final double IMAGE_SIZE = 50.0;
     private static final double CARD_SPACING = 10.0;
-
-    // UI elements for displaying reviewer information
-    private final Text reviewerNameLbl;
-    private final Text reviewerLevelLbl;
-
-    // Property to hold the current reviewer, allowing for easy binding and updates
+    private final Label reviewerNameLbl, reviewerLevelLbl;
     private final ObjectProperty<Reviewer> reviewerProperty = new SimpleObjectProperty<>();
-
-    // ImageView to display the reviewer's avatar
     private ImageView avatarImageView;
 
     /**
@@ -51,10 +42,10 @@ public class ReviewerCard extends HBox {
      */
     public ReviewerCard() {
         // Initialize labels to display reviewer name and level
-        reviewerNameLbl = new Text();
+        reviewerNameLbl = new Label();
         reviewerNameLbl.getStyleClass().addAll(Styles.TEXT_BOLD);
 
-        reviewerLevelLbl = new Text();
+        reviewerLevelLbl = new Label();
         reviewerLevelLbl.getStyleClass().addAll(Styles.TEXT_SUBTLE, Styles.TEXT_SMALL);
 
         attachReviewerListeners();
