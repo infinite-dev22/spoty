@@ -1,15 +1,20 @@
 package inc.nomard.spoty.core.views.settings.tenant_settings.widgets;
 
+import atlantafx.base.controls.ModalPane;
 import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.values.PreloadedData;
 import inc.nomard.spoty.core.viewModels.TenantSettingViewModel;
 import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
+import inc.nomard.spoty.core.views.forms.ReviewerForm;
+import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
 import inc.nomard.spoty.network_bridge.dtos.Reviewer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.CacheHint;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,6 +24,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -32,6 +38,7 @@ public class ReviewerCard extends StackPane {
     private static final double IMAGE_SIZE = 50.0;
     private static final double CARD_SPACING = 10.0;
     private final ObjectProperty<Reviewer> reviewerProperty = new SimpleObjectProperty<>();
+    private ModalPane modalPane;
     private Label reviewerNameLbl, reviewerLevelLbl;
     private Button editBtn, removeBtn;
     private ImageView avatarImageView;
@@ -42,9 +49,10 @@ public class ReviewerCard extends StackPane {
      *
      * @param reviewer The reviewer object to be displayed in the card.
      */
-    public ReviewerCard(Reviewer reviewer) {
-        this(); // Call the default constructor to set up the UI
-        setReviewer(reviewer); // Set the provided reviewer
+    public ReviewerCard(Reviewer reviewer, ModalPane modalPane) {
+        this();
+        this.modalPane = modalPane;
+        setReviewer(reviewer);
     }
 
     /**
@@ -191,6 +199,23 @@ public class ReviewerCard extends StackPane {
             progress.setManaged(true);
             TenantSettingViewModel.removeReviewer(getReviewer().getId(), this::onSuccess, SpotyUtils::successMessage, this::errorMessage);
         });
+        editBtn.setOnAction(
+                event -> {
+                    TenantSettingViewModel.getItem(getReviewer(), this::showDialog, this::errorMessage);
+                    event.consume();
+                });
+    }
+
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new ReviewerForm(modalPane, 1));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
     }
 
     private void onSuccess() {

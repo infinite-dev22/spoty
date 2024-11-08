@@ -1,11 +1,14 @@
 package inc.nomard.spoty.core.views.settings.tenant_settings.tabs;
 
 import atlantafx.base.theme.Styles;
+import atlantafx.base.util.Animations;
 import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
 import inc.nomard.spoty.core.viewModels.TenantSettingViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.EmployeeViewModel;
 import inc.nomard.spoty.core.views.components.CustomButton;
 import inc.nomard.spoty.core.views.components.SpotyProgressSpinner;
 import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
+import inc.nomard.spoty.core.views.forms.ReviewerForm;
 import inc.nomard.spoty.core.views.layout.ModalContentHolder;
 import inc.nomard.spoty.core.views.layout.SideModalPane;
 import inc.nomard.spoty.core.views.layout.navigation.Spacer;
@@ -14,16 +17,18 @@ import inc.nomard.spoty.core.views.util.FunctionalStringConverter;
 import inc.nomard.spoty.core.views.util.NodeUtils;
 import inc.nomard.spoty.core.views.util.OutlinePage;
 import inc.nomard.spoty.core.views.util.SpotyUtils;
+import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
-import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -32,7 +37,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@Slf4j
 public class CompanySettings extends OutlinePage {
     private final SideModalPane modalPane;
     private CustomButton saveBtn;
@@ -40,23 +44,25 @@ public class CompanySettings extends OutlinePage {
     private CheckBox reviews;
     private ScrollPane scrollPane;
     private LabeledComboBox<Currency> defaultCurrencyPicker;
-    private Spinner<Integer> reviewLevels;
 
     public CompanySettings() {
         modalPane = new SideModalPane();
         getChildren().addAll(modalPane, init());
-        progress();
+        modalPane.displayProperty().addListener((_, _, open) -> {
+            if (!open) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     private void onDataInitializationSuccess() {
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        closeProgress();
     }
 
     private void errorMessage(String message) {
         SpotyUtils.errorMessage(message);
-        modalPane.hide(true);
-        modalPane.setPersistent(false);
+        closeProgress();
     }
 
     public void progress() {
@@ -66,6 +72,11 @@ public class CompanySettings extends OutlinePage {
         modalPane.setAlignment(Pos.CENTER);
         modalPane.show(dialog);
         modalPane.setPersistent(true);
+    }
+
+    public void closeProgress() {
+        modalPane.hide(true);
+        modalPane.setPersistent(false);
     }
 
     private AnchorPane init() {
@@ -279,8 +290,20 @@ public class CompanySettings extends OutlinePage {
         return new VBox(separator(), flowPane);
     }
 
+    private void showDialog() {
+        var dialog = new ModalContentHolder(500, -1);
+        dialog.getChildren().add(new ReviewerForm(modalPane, 0));
+        dialog.setPadding(new Insets(5d));
+        modalPane.setAlignment(Pos.TOP_RIGHT);
+        modalPane.usePredefinedTransitionFactories(Side.RIGHT);
+        modalPane.setOutTransitionFactory(node -> Animations.fadeOutRight(node, Duration.millis(400)));
+        modalPane.setInTransitionFactory(node -> Animations.slideInRight(node, Duration.millis(400)));
+        modalPane.show(dialog);
+        modalPane.setPersistent(true);
+    }
+
     private VBox buildReviewLevels() {
-        reviewLevels = new Spinner<>();
+        Spinner<Integer> reviewLevels = new Spinner<>();
         reviewLevels.setPrefWidth(100d);
         reviewLevels.getStyleClass().addAll(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
         reviewLevels.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0));
@@ -302,7 +325,7 @@ public class CompanySettings extends OutlinePage {
         var title = buildSectionTitle("Reviewers", "Employees who can review work of other employees.Add up to 10+ reviewers");
         var addReviewerBtn = new Button(null, new FontIcon(FontAwesomeSolid.PLUS));
         addReviewerBtn.getStyleClass().add(Styles.ACCENT);
-        addReviewerBtn.setOnAction(_ -> TenantSettingViewModel.updateTenantSettings(this::onSuccess, SpotyUtils::successMessage, this::errorMessage));
+        addReviewerBtn.setOnAction(_ -> this.showDialog());
         var hbox = new HBox(title, new Spacer(), addReviewerBtn);
         var flowPane = new FlowPane();
         flowPane.setAlignment(Pos.TOP_LEFT);
@@ -312,7 +335,7 @@ public class CompanySettings extends OutlinePage {
             flowPane.getChildren().retainAll();
             flowPane.getChildren().addAll(
                     TenantSettingViewModel.getReviewers().stream()
-                            .map(ReviewerCard::new)
+                            .map(reviewer -> new ReviewerCard(reviewer, modalPane))
                             .toList()
             );
         });
@@ -349,10 +372,23 @@ public class CompanySettings extends OutlinePage {
         }
     }
 
+    private Void onDataInitializationFailure(Throwable throwable) {
+        SpotyLogger.writeToFile(throwable, CompanySettings.class);
+        this.errorMessage("An error occurred while loading view");
+        return null;
+    }
+
     @Override
     public void onRendered() {
         super.onRendered();
+        progress();
         CurrencyViewModel.getAllCurrencies();
-        CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(this::onDataInitializationSuccess, this::errorMessage));
+
+        CompletableFuture<Void> allDataInitialization = CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> EmployeeViewModel.getAllEmployees(null, null, null, null)),
+                CompletableFuture.runAsync(() -> TenantSettingViewModel.getTenantSettings(null, this::errorMessage)));
+
+        allDataInitialization.thenRun(this::onDataInitializationSuccess)
+                .exceptionally(this::onDataInitializationFailure);
     }
 }

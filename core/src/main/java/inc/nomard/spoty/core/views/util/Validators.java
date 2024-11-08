@@ -3,8 +3,8 @@ package inc.nomard.spoty.core.views.util;
 import atlantafx.base.theme.Styles;
 import inc.nomard.spoty.core.util.validation.Constraint;
 import inc.nomard.spoty.core.util.validation.Severity;
-import inc.nomard.spoty.core.views.components.label_components.controls.LabeledComboBox;
-import inc.nomard.spoty.core.views.components.label_components.controls.LabeledDatePicker;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableComboBox;
+import inc.nomard.spoty.core.views.components.validatables.ValidatableDatePicker;
 import inc.nomard.spoty.core.views.components.validatables.ValidatablePasswordField;
 import inc.nomard.spoty.core.views.components.validatables.ValidatableTextField;
 import javafx.beans.binding.Bindings;
@@ -46,7 +46,6 @@ public class Validators {
             return false;
         }
 
-        // Remove all non-digit characters and check the length
         String digitsOnly = phone.replaceAll("\\D", "");
         return digitsOnly.length() >= 7 && digitsOnly.length() <= 15;
     }
@@ -63,7 +62,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);
@@ -104,7 +103,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);
@@ -125,7 +124,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);
@@ -150,7 +149,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);
@@ -159,7 +158,7 @@ public class Validators {
                         });
     }
 
-    public static void requiredValidator(LabeledDatePicker control, Label validationLabel, String message) {
+    public static void requiredValidator(ValidatableDatePicker control, Label validationLabel, String message) {
         Constraint constraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -171,7 +170,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);
@@ -180,7 +179,7 @@ public class Validators {
                         });
     }
 
-    public static <T> void requiredValidator(LabeledComboBox<T> control, Label validationLabel, String message) {
+    public static <T> void requiredValidator(ValidatableComboBox<T> control, Label validationLabel, String message) {
         Constraint constraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -192,7 +191,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);
@@ -216,7 +215,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);
@@ -240,7 +239,7 @@ public class Validators {
                 .getValidator()
                 .validProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (_, _, newValue) -> {
                             if (newValue) {
                                 validationLabel.setManaged(false);
                                 validationLabel.setVisible(false);

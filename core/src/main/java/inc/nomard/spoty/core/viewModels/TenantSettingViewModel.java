@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import inc.nomard.spoty.network_bridge.dtos.Reviewer;
 import inc.nomard.spoty.network_bridge.dtos.TenantSettings;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Employee;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.repositories.implementations.TenantSettingRepositoryImpl;
 import inc.nomard.spoty.utils.SpotyLogger;
@@ -71,6 +72,8 @@ public class TenantSettingViewModel {
     private static final IntegerProperty reviewLevels = new SimpleIntegerProperty();
     private static final ObjectProperty<Currency> defaultCurrency = new SimpleObjectProperty<>(null);
     private static final StringProperty logo = new SimpleStringProperty("");
+    private static final ObjectProperty<Employee> employee = new SimpleObjectProperty<>();
+    private static final IntegerProperty reviewLevel = new SimpleIntegerProperty();
     public static ObservableList<Reviewer> reviewersList = FXCollections.observableArrayList();
     private static final ListProperty<Reviewer> reviewers = new SimpleListProperty<>(reviewersList);
     public static TenantSettingRepositoryImpl tenantSettingRepository = new TenantSettingRepositoryImpl();
@@ -461,6 +464,35 @@ public class TenantSettingViewModel {
         return reviewPurchaseReturns;
     }
 
+    public static Employee getEmployee() {
+        return employee.get();
+    }
+
+    public static void setEmployee(Employee employee) {
+        TenantSettingViewModel.employee.set(employee);
+    }
+
+    public static ObjectProperty<Employee> employeeProperty() {
+        return employee;
+    }
+
+    public static Integer getReviewLevel() {
+        return reviewLevel.get();
+    }
+
+    public static void setReviewLevel(Integer reviewLevel) {
+        TenantSettingViewModel.reviewLevel.set(reviewLevel);
+    }
+
+    public static IntegerProperty reviewLevelProperty() {
+        return reviewLevel;
+    }
+
+    public static void clearReviewData() {
+        setEmployee(null);
+        setReviewLevel(0);
+    }
+
     public static void addTenantSettings(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                                          SpotyGotFunctional.MessageConsumer successMessage,
                                          SpotyGotFunctional.MessageConsumer errorMessage) {
@@ -538,8 +570,8 @@ public class TenantSettingViewModel {
     }
 
     public static void removeReviewer(Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                      SpotyGotFunctional.MessageConsumer successMessage,
+                                      SpotyGotFunctional.MessageConsumer errorMessage) {
         CompletableFuture<HttpResponse<String>> responseFuture = tenantSettingRepository.removeReviewer(FindModel.builder().id(index).build());
         responseFuture.thenAccept(response -> {
             // Handle successful response
@@ -549,6 +581,148 @@ public class TenantSettingViewModel {
                     onSuccess.run();
                     successMessage.showMessage("Reviewer removed successfully");
                 });
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
+            SpotyLogger.writeToFile(throwable, TenantSettingViewModel.class);
+            return null;
+        });
+    }
+
+    public static void addReviewer(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                   SpotyGotFunctional.MessageConsumer successMessage,
+                                   SpotyGotFunctional.MessageConsumer errorMessage) {
+        var employee = Reviewer.builder()
+                .employee(getEmployee())
+                .level(getReviewLevel())
+                .build();
+        CompletableFuture<HttpResponse<String>> responseFuture = tenantSettingRepository.addReviewer(employee);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Reviewer Added successfully");
+                });
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
+            SpotyLogger.writeToFile(throwable, TenantSettingViewModel.class);
+            return null;
+        });
+    }
+
+    public static void editReviewer(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                   SpotyGotFunctional.MessageConsumer successMessage,
+                                   SpotyGotFunctional.MessageConsumer errorMessage) {
+        var employee = Reviewer.builder()
+                .employee(getEmployee())
+                .level(getReviewLevel())
+                .build();
+        CompletableFuture<HttpResponse<String>> responseFuture = tenantSettingRepository.editReviewer(employee);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Reviewer Added successfully");
+                });
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
+            SpotyLogger.writeToFile(throwable, TenantSettingViewModel.class);
+            return null;
+        });
+    }
+
+    public static void getItem(Reviewer reviewer,
+                               SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                               SpotyGotFunctional.MessageConsumer errorMessage) {
+        var employee = Reviewer.builder()
+                .employee(getEmployee())
+                .level(getReviewLevel())
+                .build();
+        CompletableFuture<HttpResponse<String>> responseFuture = tenantSettingRepository.addReviewer(employee);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 200 || response.statusCode() == 204) {
+                setEmployee(reviewer.getEmployee());
+                setReviewLevel(reviewer.getLevel());
+                Platform.runLater(onSuccess::run);
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
                 if (Objects.nonNull(errorMessage)) {
@@ -610,7 +784,7 @@ public class TenantSettingViewModel {
                     setLinkedIn(tenantSettings.getLinkedIn());
                     setLogo(tenantSettings.getLogo());
                     setReviews(tenantSettings.getReview());
-                    
+
                     setReviewAdjustments(tenantSettings.getReviewAdjustments());
                     setReviewRequisitions(tenantSettings.getReviewRequisitions());
                     setReviewTransfers(tenantSettings.getReviewTransfers());
