@@ -4,15 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.network_bridge.end_points.EndPoints;
-import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.TenantSettingRepository;
+import inc.nomard.spoty.utils.SpotyThreader;
 import inc.nomard.spoty.utils.adapters.LocalDateTimeTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalDateTypeAdapter;
 import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import inc.nomard.spoty.utils.SpotyThreader;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
@@ -77,6 +75,45 @@ public class TenantSettingRepositoryImpl extends ProtectedGlobals implements Ten
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .method("DELETE", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
+    public CompletableFuture<HttpResponse<String>> addReviewer(Object object) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.TenantSettings.addReviewer))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
+                .build();
+
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
+    public CompletableFuture<HttpResponse<String>> editReviewer(Object object) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.TenantSettings.editReviewer))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
+                .build();
+
+        return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Override
+    public CompletableFuture<HttpResponse<String>> removeReviewer(Object object) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.TenantSettings.removeReviewer))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
         return SpotyThreader.httpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());

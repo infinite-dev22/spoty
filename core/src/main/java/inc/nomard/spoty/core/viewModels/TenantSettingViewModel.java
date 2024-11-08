@@ -56,15 +56,15 @@ public class TenantSettingViewModel {
     private static final BooleanProperty emailLogo = new SimpleBooleanProperty(false);
     private static final BooleanProperty receiptLogo = new SimpleBooleanProperty(false);
     private static final BooleanProperty reviews = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approveAdjustments = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approveRequisitions = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approveTransfers = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approveStockIns = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approveQuotations = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approvePurchases = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approveSales = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approveSaleReturns = new SimpleBooleanProperty(false);
-    private static final BooleanProperty approvePurchaseReturns = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewAdjustments = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewRequisitions = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewTransfers = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewStockIns = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewQuotations = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewPurchases = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewSales = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewSaleReturns = new SimpleBooleanProperty(false);
+    private static final BooleanProperty reviewPurchaseReturns = new SimpleBooleanProperty(false);
     private static final StringProperty twitter = new SimpleStringProperty("");
     private static final StringProperty facebook = new SimpleStringProperty("");
     private static final StringProperty linkedIn = new SimpleStringProperty("");
@@ -353,112 +353,112 @@ public class TenantSettingViewModel {
     }
 
 
-    public static boolean isApproveAdjustments() {
-        return approveAdjustments.get();
+    public static boolean isReviewAdjustments() {
+        return reviewAdjustments.get();
     }
 
-    public static void setApproveAdjustments(boolean approveAdjustments) {
-        TenantSettingViewModel.approveAdjustments.set(approveAdjustments);
+    public static void setReviewAdjustments(boolean reviewAdjustments) {
+        TenantSettingViewModel.reviewAdjustments.set(reviewAdjustments);
     }
 
-    public static BooleanProperty approveAdjustmentsProperty() {
-        return approveAdjustments;
+    public static BooleanProperty reviewAdjustmentsProperty() {
+        return reviewAdjustments;
     }
 
-    public static boolean isApproveRequisitions() {
-        return approveRequisitions.get();
+    public static boolean isReviewRequisitions() {
+        return reviewRequisitions.get();
     }
 
-    public static void setApproveRequisitions(boolean approveRequisitions) {
-        TenantSettingViewModel.approveRequisitions.set(approveRequisitions);
+    public static void setReviewRequisitions(boolean reviewRequisitions) {
+        TenantSettingViewModel.reviewRequisitions.set(reviewRequisitions);
     }
 
-    public static BooleanProperty approveRequisitionsProperty() {
-        return approveRequisitions;
+    public static BooleanProperty reviewRequisitionsProperty() {
+        return reviewRequisitions;
     }
 
-    public static boolean isApproveTransfers() {
-        return approveTransfers.get();
+    public static boolean isReviewTransfers() {
+        return reviewTransfers.get();
     }
 
-    public static void setApproveTransfers(boolean approveTransfers) {
-        TenantSettingViewModel.approveTransfers.set(approveTransfers);
+    public static void setReviewTransfers(boolean reviewTransfers) {
+        TenantSettingViewModel.reviewTransfers.set(reviewTransfers);
     }
 
-    public static BooleanProperty approveTransfersProperty() {
-        return approveTransfers;
+    public static BooleanProperty reviewTransfersProperty() {
+        return reviewTransfers;
     }
 
-    public static boolean isApproveStockIns() {
-        return approveStockIns.get();
+    public static boolean isReviewStockIns() {
+        return reviewStockIns.get();
     }
 
-    public static void setApproveStockIns(boolean approveStockIns) {
-        TenantSettingViewModel.approveStockIns.set(approveStockIns);
+    public static void setReviewStockIns(boolean reviewStockIns) {
+        TenantSettingViewModel.reviewStockIns.set(reviewStockIns);
     }
 
-    public static BooleanProperty approveStockInsProperty() {
-        return approveStockIns;
+    public static BooleanProperty reviewStockInsProperty() {
+        return reviewStockIns;
     }
 
-    public static boolean isApproveQuotations() {
-        return approveQuotations.get();
+    public static boolean isReviewQuotations() {
+        return reviewQuotations.get();
     }
 
-    public static void setApproveQuotations(boolean approveQuotations) {
-        TenantSettingViewModel.approveQuotations.set(approveQuotations);
+    public static void setReviewQuotations(boolean reviewQuotations) {
+        TenantSettingViewModel.reviewQuotations.set(reviewQuotations);
     }
 
-    public static BooleanProperty approveQuotationsProperty() {
-        return approveQuotations;
+    public static BooleanProperty reviewQuotationsProperty() {
+        return reviewQuotations;
     }
 
-    public static boolean isApprovePurchases() {
-        return approvePurchases.get();
+    public static boolean isReviewPurchases() {
+        return reviewPurchases.get();
     }
 
-    public static void setApprovePurchases(boolean approvePurchases) {
-        TenantSettingViewModel.approvePurchases.set(approvePurchases);
+    public static void setReviewPurchases(boolean reviewPurchases) {
+        TenantSettingViewModel.reviewPurchases.set(reviewPurchases);
     }
 
-    public static BooleanProperty approvePurchasesProperty() {
-        return approvePurchases;
+    public static BooleanProperty reviewPurchasesProperty() {
+        return reviewPurchases;
     }
 
-    public static boolean isApproveSales() {
-        return approveSales.get();
+    public static boolean isReviewSales() {
+        return reviewSales.get();
     }
 
-    public static void setApproveSales(boolean approveSales) {
-        TenantSettingViewModel.approveSales.set(approveSales);
+    public static void setReviewSales(boolean reviewSales) {
+        TenantSettingViewModel.reviewSales.set(reviewSales);
     }
 
-    public static BooleanProperty approveSalesProperty() {
-        return approveSales;
+    public static BooleanProperty reviewSalesProperty() {
+        return reviewSales;
     }
 
-    public static boolean isApproveSaleReturns() {
-        return approveSaleReturns.get();
+    public static boolean isReviewSaleReturns() {
+        return reviewSaleReturns.get();
     }
 
-    public static void setApproveSaleReturns(boolean approveSaleReturns) {
-        TenantSettingViewModel.approveSaleReturns.set(approveSaleReturns);
+    public static void setReviewSaleReturns(boolean reviewSaleReturns) {
+        TenantSettingViewModel.reviewSaleReturns.set(reviewSaleReturns);
     }
 
-    public static BooleanProperty approveSaleReturnsProperty() {
-        return approveSaleReturns;
+    public static BooleanProperty reviewSaleReturnsProperty() {
+        return reviewSaleReturns;
     }
 
-    public static boolean isApprovePurchaseReturns() {
-        return approvePurchaseReturns.get();
+    public static boolean isReviewPurchaseReturns() {
+        return reviewPurchaseReturns.get();
     }
 
-    public static void setApprovePurchaseReturns(boolean approvePurchaseReturns) {
-        TenantSettingViewModel.approvePurchaseReturns.set(approvePurchaseReturns);
+    public static void setReviewPurchaseReturns(boolean reviewPurchaseReturns) {
+        TenantSettingViewModel.reviewPurchaseReturns.set(reviewPurchaseReturns);
     }
 
-    public static BooleanProperty approvePurchaseReturnsProperty() {
-        return approvePurchaseReturns;
+    public static BooleanProperty reviewPurchaseReturnsProperty() {
+        return reviewPurchaseReturns;
     }
 
     public static void addTenantSettings(SpotyGotFunctional.ParameterlessConsumer onSuccess,
@@ -485,14 +485,14 @@ public class TenantSettingViewModel {
                         .facebook(getFacebook())
                         .linkedIn(getLinkedIn())
                         .logo(getLogo())
-                        .approveAdjustments(isApproveAdjustments())
-                        .approveRequisitions(isApproveRequisitions())
-                        .approveTransfers(isApproveTransfers())
-                        .approveStockIns(isApproveStockIns())
-                        .approveQuotations(isApproveQuotations())
-                        .approvePurchases(isApprovePurchases())
-                        .approveSaleReturns(isApproveSaleReturns())
-                        .approvePurchaseReturns(isApprovePurchaseReturns())
+                        .reviewAdjustments(isReviewAdjustments())
+                        .reviewRequisitions(isReviewRequisitions())
+                        .reviewTransfers(isReviewTransfers())
+                        .reviewStockIns(isReviewStockIns())
+                        .reviewQuotations(isReviewQuotations())
+                        .reviewPurchases(isReviewPurchases())
+                        .reviewSaleReturns(isReviewSaleReturns())
+                        .reviewPurchaseReturns(isReviewPurchaseReturns())
                         .reviewers(getReviewers())
                         .defaultCurrency(getDefaultCurrency())
                         .build();
@@ -504,6 +504,50 @@ public class TenantSettingViewModel {
                 Platform.runLater(() -> {
                     onSuccess.run();
                     successMessage.showMessage("Tenant settings created successfully");
+                });
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
+            SpotyLogger.writeToFile(throwable, TenantSettingViewModel.class);
+            return null;
+        });
+    }
+
+    public static void removeReviewer(Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = tenantSettingRepository.removeReviewer(FindModel.builder().id(index).build());
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Reviewer removed successfully");
                 });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
@@ -566,15 +610,17 @@ public class TenantSettingViewModel {
                     setLinkedIn(tenantSettings.getLinkedIn());
                     setLogo(tenantSettings.getLogo());
                     setReviews(tenantSettings.getReview());
-                    setApproveAdjustments(tenantSettings.getApproveAdjustments());
-                    setApproveRequisitions(tenantSettings.getApproveRequisitions());
-                    setApproveTransfers(tenantSettings.getApproveTransfers());
-                    setApproveStockIns(tenantSettings.getApproveStockIns());
-                    setApproveQuotations(tenantSettings.getApproveQuotations());
-                    setApprovePurchases(tenantSettings.getApprovePurchases());
-                    setApproveSales(tenantSettings.getApproveSales());
-                    setApproveSaleReturns(tenantSettings.getApproveSaleReturns());
-                    setApprovePurchaseReturns(tenantSettings.getApprovePurchaseReturns());
+                    
+                    setReviewAdjustments(tenantSettings.getReviewAdjustments());
+                    setReviewRequisitions(tenantSettings.getReviewRequisitions());
+                    setReviewTransfers(tenantSettings.getReviewTransfers());
+                    setReviewStockIns(tenantSettings.getReviewStockIns());
+                    setReviewQuotations(tenantSettings.getReviewQuotations());
+                    setReviewPurchases(tenantSettings.getReviewPurchases());
+                    setReviewSales(tenantSettings.getReviewSales());
+                    setReviewSaleReturns(tenantSettings.getReviewSaleReturns());
+                    setReviewPurchaseReturns(tenantSettings.getReviewPurchaseReturns());
+                    setReviewLevels(tenantSettings.getApprovalLevels());
                     setReviewers(FXCollections.observableArrayList(tenantSettings.getReviewers()));
                     setDefaultCurrency(tenantSettings.getDefaultCurrency());
                     if (Objects.nonNull(onSuccess)) {

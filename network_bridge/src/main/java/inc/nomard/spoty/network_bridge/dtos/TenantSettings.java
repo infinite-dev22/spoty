@@ -34,23 +34,23 @@ public class TenantSettings {
     @Builder.Default
     private Boolean review = false;
     @Builder.Default
-    private Boolean approveAdjustments = false;
+    private Boolean reviewAdjustments = false;
     @Builder.Default
-    private Boolean approveRequisitions = false;
+    private Boolean reviewRequisitions = false;
     @Builder.Default
-    private Boolean approveTransfers = false;
+    private Boolean reviewTransfers = false;
     @Builder.Default
-    private Boolean approveStockIns = false;
+    private Boolean reviewStockIns = false;
     @Builder.Default
-    private Boolean approveQuotations = false;
+    private Boolean reviewQuotations = false;
     @Builder.Default
-    private Boolean approvePurchases = false;
+    private Boolean reviewPurchases = false;
     @Builder.Default
-    private Boolean approveSales = false;
+    private Boolean reviewSales = false;
     @Builder.Default
-    private Boolean approveSaleReturns = false;
+    private Boolean reviewSaleReturns = false;
     @Builder.Default
-    private Boolean approvePurchaseReturns = false;
+    private Boolean reviewPurchaseReturns = false;
     @Builder.Default
     private Integer approvalLevels = 0;
     private List<Reviewer> reviewers;

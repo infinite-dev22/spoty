@@ -53,3 +53,7 @@ app-root {
 .pos-product-card:hover {
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.12, -1.0, 2.0);
 }
+
+.reviewer-action-handler {
+    -fx-background-color: rgba(28, 28, 30, 0.3);
+}

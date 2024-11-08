@@ -60,3 +60,7 @@ app-root {
     -mfx-color3: #2f96ff;
     -mfx-color4: #2f96ff;
 }
+
+.reviewer-action-handler {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+}

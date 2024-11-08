@@ -268,14 +268,14 @@ public class CompanySettings extends OutlinePage {
         flowPane.setAlignment(Pos.TOP_LEFT);
         flowPane.setHgap(16d);
         flowPane.setVgap(16d);
-        flowPane.getChildren().addAll(buildCheckBox(TenantSettingViewModel.approveAdjustmentsProperty(), "Approve Adjustments", "Approve adjustments"),
-                buildCheckBox(TenantSettingViewModel.approvePurchasesProperty(), "Approve Purchases", "Approve purchases"),
-                buildCheckBox(TenantSettingViewModel.approvePurchaseReturnsProperty(), "Approve Purchase Returns", "Approve purchase returns"),
-                buildCheckBox(TenantSettingViewModel.approveQuotationsProperty(), "Approve Quotations", "Approve quotations"),
-                buildCheckBox(TenantSettingViewModel.approveRequisitionsProperty(), "Approve Requisitions", "Approve requisitions"),
-                buildCheckBox(TenantSettingViewModel.approveSalesProperty(), "Approve Sales", "Approve sales"),
-                buildCheckBox(TenantSettingViewModel.approveSaleReturnsProperty(), "Approve Sale Returns", "Approve sale returns"),
-                buildCheckBox(TenantSettingViewModel.approveStockInsProperty(), "Approve StockIns", "Approve stock ins"));
+        flowPane.getChildren().addAll(buildCheckBox(TenantSettingViewModel.reviewAdjustmentsProperty(), "Approve Adjustments", "Approve adjustments"),
+                buildCheckBox(TenantSettingViewModel.reviewPurchasesProperty(), "Approve Purchases", "Approve purchases"),
+                buildCheckBox(TenantSettingViewModel.reviewPurchaseReturnsProperty(), "Approve Purchase Returns", "Approve purchase returns"),
+                buildCheckBox(TenantSettingViewModel.reviewQuotationsProperty(), "Approve Quotations", "Approve quotations"),
+                buildCheckBox(TenantSettingViewModel.reviewRequisitionsProperty(), "Approve Requisitions", "Approve requisitions"),
+                buildCheckBox(TenantSettingViewModel.reviewSalesProperty(), "Approve Sales", "Approve sales"),
+                buildCheckBox(TenantSettingViewModel.reviewSaleReturnsProperty(), "Approve Sale Returns", "Approve sale returns"),
+                buildCheckBox(TenantSettingViewModel.reviewStockInsProperty(), "Approve StockIns", "Approve stock ins"));
         return new VBox(separator(), flowPane);
     }
 
@@ -283,13 +283,8 @@ public class CompanySettings extends OutlinePage {
         reviewLevels = new Spinner<>();
         reviewLevels.setPrefWidth(100d);
         reviewLevels.getStyleClass().addAll(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
-
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
-        reviewLevels.setValueFactory(valueFactory);
-
-        // Bind the spinner value bidirectionally with the property
-        valueFactory.valueProperty().bindBidirectional(TenantSettingViewModel.reviewLevelsProperty().asObject());
-        // TenantSettingViewModel.reviewLevelsProperty().bindBidirectional(reviewLevels.proper());
+        reviewLevels.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0));
+        reviewLevels.getValueFactory().valueProperty().bindBidirectional(TenantSettingViewModel.reviewLevelsProperty().asObject());
 
         var label = new Text("Tag line");
         label.getStyleClass().addAll(Styles.TEXT);
@@ -297,15 +292,14 @@ public class CompanySettings extends OutlinePage {
         hbox.getChildren().addAll(new VBox(
                         20,
                         buildSectionTitle("Review Levels",
-                                "Times a document must be reviewed to pass"),
+                                "Number of times a document must be reviewed to pass"),
                         reviewLevels),
                 spacer());
         return new VBox(separator(), hbox);
     }
 
     private VBox buildReviewers() {
-        var title = buildSectionTitle("Reviewers", "Add up to 10 reviewers");
-        // Add Reviewer button.
+        var title = buildSectionTitle("Reviewers", "Employees who can review work of other employees.Add up to 10+ reviewers");
         var addReviewerBtn = new Button(null, new FontIcon(FontAwesomeSolid.PLUS));
         addReviewerBtn.getStyleClass().add(Styles.ACCENT);
         addReviewerBtn.setOnAction(_ -> TenantSettingViewModel.updateTenantSettings(this::onSuccess, SpotyUtils::successMessage, this::errorMessage));
@@ -322,7 +316,6 @@ public class CompanySettings extends OutlinePage {
                             .toList()
             );
         });
-
         return new VBox(separator(),
                 hbox,
                 new Spacer(10d, Orientation.VERTICAL),

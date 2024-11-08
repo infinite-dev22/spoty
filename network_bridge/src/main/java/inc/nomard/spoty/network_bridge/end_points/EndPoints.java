@@ -379,5 +379,8 @@ public class EndPoints {
         public static final String addTenantSettings = tenantSettingsUrl + "/add";
         public static final String updateTenantSettings = tenantSettingsUrl + "/update";
         public static final String deleteTenantSettings = tenantSettingsUrl + "/delete";
+        public static final String addReviewer = tenantSettingsUrl + "/add/reviewer";
+        public static final String editReviewer = tenantSettingsUrl + "/edit/reviewer";
+        public static final String removeReviewer = tenantSettingsUrl + "/remove/reviewer";
     }
 }

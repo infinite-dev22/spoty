@@ -535,3 +535,8 @@
 .pagination {
     -fx-page-information-visible: false;
 }
+
+.reviewer-action-handler {
+    -fx-background-radius: 5 10 5 5;
+    -fx-border-radius: 5 10 5 5;
+}

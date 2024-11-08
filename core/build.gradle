@@ -88,14 +88,17 @@ run {
             "-XX:+UseZGC",
             "-XX:+ZProactive",
             "-XX:+ZUncommit",
-            "-Xms256m",
-            "-Xmx1G",
+            "-Xms512m",
+            "-Xmx2G",
             "-XX:MaxGCPauseMillis=100",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-XX:+UseStringDeduplication",
             "-XX:+AlwaysPreTouch",
             "-XX:+AutoCreateSharedArchive",
-            "-XX:SharedArchiveFile=app.jsa"
+            "-XX:SharedArchiveFile=app.jsa",
+            "-XX:MetaspaceSize=256m",
+            "-XX:MaxMetaspaceSize=512m",
+            "-XX:ZCollectionInterval=20"
     ]
 }
 
